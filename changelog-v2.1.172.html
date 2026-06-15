@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.172 — Changelog</title>
+<style>
+  :root{
+    --bg:#16140f;--bg-2:#1d1a13;--panel:#211d15;--panel-2:#27221a;
+    --line:#3a3328;--line-soft:#2c2820;
+    --ink:#f3ecdf;--ink-2:#c7bca6;--ink-3:#8f8775;
+    --accent:#d97757;--accent-2:#e89b7f;--accent-ink:#1a120d;
+    --green:#7fae6a;--blue:#7fa8d9;--violet:#b08fd9;--amber:#d9b15a;--red:#d97c7c;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono","Cascadia Code",Consolas,monospace;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --radius:14px;--shadow:0 12px 40px -18px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:
+      radial-gradient(1100px 520px at 82% -8%,rgba(217,119,87,.16),transparent 60%),
+      radial-gradient(900px 480px at 5% 0%,rgba(127,168,217,.08),transparent 55%),
+      var(--bg);
+    color:var(--ink);font-family:var(--sans);line-height:1.6;
+    -webkit-font-smoothing:antialiased;font-size:15px;
+  }
+  a{color:var(--accent-2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.86em}
+  ::selection{background:rgba(217,119,87,.32)}
+
+  .wrap{max-width:1860px;margin:0 auto;padding:0 36px}
+  .card-grid{column-width:400px;column-gap:18px}
+
+  /* ---------- Header ---------- */
+  header.hero{padding:60px 0 30px;border-bottom:1px solid var(--line-soft)}
+  .eyebrow{display:flex;align-items:center;gap:12px;color:var(--ink-3);
+    font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600}
+  .logo-dot{width:11px;height:11px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%,var(--accent-2),var(--accent));
+    box-shadow:0 0 0 4px rgba(217,119,87,.15)}
+  h1.title{font-size:clamp(34px,5vw,52px);line-height:1.05;margin:18px 0 6px;
+    font-weight:800;letter-spacing:-.02em}
+  h1.title .v{
+    background:linear-gradient(92deg,var(--accent),var(--accent-2));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--ink-2);max-width:760px;font-size:16.5px;margin:14px 0 0}
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:var(--panel);
+    border:1px solid var(--line);border-radius:999px;padding:6px 13px;
+    font-size:12.5px;color:var(--ink-2)}
+  .chip b{color:var(--ink);font-weight:600}
+  .chip .k{color:var(--ink-3)}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
+  .stat{background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+  .stat .n{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1}
+  .stat .l{color:var(--ink-3);font-size:12px;margin-top:7px;letter-spacing:.04em;text-transform:uppercase}
+  .stat.f .n{color:var(--accent-2)} .stat.b .n{color:var(--red)}
+  .stat.d .n{color:var(--violet)} .stat.s .n{color:var(--blue)}
+
+  /* ---------- Main ---------- */
+  main{padding:34px 0 90px;min-width:0}
+  .section-head{display:flex;align-items:center;gap:14px;margin:42px 0 20px}
+  .section-head:first-child{margin-top:8px}
+  .section-head h2{font-size:13px;letter-spacing:.18em;text-transform:uppercase;
+    margin:0;color:var(--ink-2);font-weight:700;white-space:nowrap}
+  .section-head .ln{height:1px;background:var(--line-soft);flex:1}
+  .section-head .ct{color:var(--ink-3);font-size:12px;font-weight:600}
+
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 24px;margin:0 0 18px;box-shadow:var(--shadow);
+    break-inside:avoid;-webkit-column-break-inside:avoid;
+    scroll-margin-top:22px;transition:border-color .2s,transform .2s}
+  .card:hover{border-color:#4b4234}
+  .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+  .card h3{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .card h3 .anchor{color:var(--ink-3);opacity:0;margin-left:8px;font-weight:400;font-size:16px}
+  .card:hover h3 .anchor{opacity:1}
+  .tags{display:flex;flex-wrap:wrap;gap:7px;flex-shrink:0;justify-content:flex-end}
+  .tag{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    padding:4px 9px;border-radius:6px;border:1px solid transparent;white-space:nowrap}
+  .tag.new{color:var(--accent-2);background:rgba(217,119,87,.13);border-color:rgba(217,119,87,.3)}
+  .tag.fix{color:var(--green);background:rgba(127,174,106,.12);border-color:rgba(127,174,106,.3)}
+  .tag.set{color:var(--blue);background:rgba(127,168,217,.12);border-color:rgba(127,168,217,.3)}
+  .tag.sec{color:var(--red);background:rgba(217,124,124,.12);border-color:rgba(217,124,124,.3)}
+  .tag.key{color:var(--amber);background:rgba(217,177,90,.12);border-color:rgba(217,177,90,.3)}
+  .tag.dev{color:var(--violet);background:rgba(176,143,217,.12);border-color:rgba(176,143,217,.3)}
+  .tag.neu{color:var(--ink-2);background:var(--panel-2);border-color:var(--line)}
+
+  .what{color:var(--ink);margin:14px 0 0;font-size:15px}
+  .status{margin-top:14px;font-size:13.5px;color:var(--amber);
+    display:flex;gap:9px;align-items:flex-start;
+    background:rgba(217,177,90,.07);border:1px solid rgba(217,177,90,.22);
+    border-radius:10px;padding:10px 13px}
+  .status b{color:var(--ink)}
+
+  .block-label{font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:700;margin:20px 0 9px}
+
+  ul.details{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+  ul.details li{position:relative;padding-left:22px;color:var(--ink-2);font-size:14.3px}
+  ul.details li::before{content:"";position:absolute;left:4px;top:9px;width:6px;height:6px;
+    border-radius:50%;background:var(--accent);opacity:.85}
+
+  pre{margin:0;background:#100e0a;border:1px solid var(--line-soft);
+    border-radius:11px;overflow:auto;position:relative}
+  pre code{display:block;padding:15px 16px;font-size:12.8px;line-height:1.65;color:#e7dccb}
+  pre .lang{position:absolute;top:8px;right:10px;font-size:10px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--ink-3);font-weight:700}
+  .copy{position:absolute;top:7px;right:64px;background:var(--panel);
+    border:1px solid var(--line);color:var(--ink-2);border-radius:6px;
+    font-size:10.5px;padding:3px 8px;cursor:pointer;font-family:var(--sans);
+    opacity:0;transition:opacity .15s}
+  pre:hover .copy{opacity:1}
+  .copy:hover{color:var(--ink);border-color:var(--accent)}
+  .copy.ok{color:var(--green);border-color:var(--green)}
+  .tok-c{color:#7d7464;font-style:italic}
+  .tok-k{color:var(--accent-2)}
+  .tok-p{color:var(--blue)}
+  .tok-s{color:var(--green)}
+  .tok-n{color:var(--violet)}
+
+  .evidence{margin-top:18px;padding-top:14px;border-top:1px solid var(--line-soft);
+    font-size:12.6px;color:var(--ink-3);display:flex;gap:9px;align-items:flex-start}
+  .evidence .ico{color:var(--accent);flex-shrink:0;margin-top:1px}
+  .evidence code{color:var(--ink-2);background:var(--panel-2);
+    padding:1px 5px;border-radius:4px;border:1px solid var(--line-soft)}
+
+  .what code,.details code,.status code{background:var(--panel-2);color:var(--accent-2);
+    padding:1px 6px;border-radius:5px;border:1px solid var(--line-soft);font-size:.85em}
+
+  footer{border-top:1px solid var(--line-soft);padding:30px 0 70px;color:var(--ink-3);font-size:13px}
+  footer .gen{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px}
+  footer .gen div{background:var(--panel);border:1px solid var(--line-soft);
+    border-radius:10px;padding:11px 14px}
+  footer .gen .k{color:var(--ink-3);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+  footer .gen .val{color:var(--ink-2);font-family:var(--mono);font-size:12.5px;margin-top:4px;word-break:break-all}
+
+  .totop{position:fixed;right:26px;bottom:26px;width:44px;height:44px;border-radius:50%;
+    background:var(--accent);color:var(--accent-ink);border:none;cursor:pointer;
+    font-size:19px;font-weight:800;box-shadow:var(--shadow);opacity:0;pointer-events:none;
+    transition:opacity .25s,transform .25s;transform:translateY(8px)}
+  .totop.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+
+  @media(max-width:920px){.stats{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){
+    .wrap{padding:0 18px}
+    .card-top{flex-direction:column}
+    .tags{justify-content:flex-start}
+    .stats{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code · Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.172</span></h1>
+    <p class="sub">The new <code>Artifact</code> tool lets Claude publish HTML and Markdown files to private claude.ai web pages. Also ships: <code>--plugin-dir-no-mcp</code>, targeted ultra auth error messages, a <code>web_fetch</code> URL provenance check, two new env vars, 13 improvements, and 6 bug fixes.</p>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+      <span class="chip"><span class="k">Diff</span> <b>v2.1.170 → v2.1.172</b></span>
+      <span class="chip"><span class="k">Provider</span> <b>claude</b></span>
+      <span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>
+    </div>
+    <div class="stats">
+      <div class="stat f"><div class="n">21</div><div class="l">Features &amp; Changes</div></div>
+      <div class="stat b"><div class="n">6</div><div class="l">Bug Fixes</div></div>
+      <div class="stat d"><div class="n">0</div><div class="l">In Development</div></div>
+      <div class="stat s"><div class="n">5</div><div class="l">New Env Vars / Flags</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<main>
+
+  <div class="section-head">
+    <h2>Features &amp; Changes</h2><div class="ln"></div><span class="ct">21 items</span>
+  </div>
+
+  <div class="card-grid">
+
+  <!-- Artifact Tool -->
+  <article class="card" id="artifact-tool">
+    <div class="card-top">
+      <h3>Artifact Tool <a class="anchor" href="#artifact-tool">#</a></h3>
+      <div class="tags"><span class="tag new">New</span><span class="tag neu">Tool</span></div>
+    </div>
+    <p class="what">Claude can now render an HTML or Markdown file to a private, shareable web page hosted on claude.ai. The resulting URL can be shared with teammates. Markdown is automatically converted to styled HTML.</p>
+    <div class="block-label">Usage</div>
+    <pre><span class="lang">python</span><button class="copy">copy</button><code>Artifact(file_path=<span class="tok-s">"report.html"</span>, favicon=<span class="tok-s">"&#x1F4CA;"</span>)
+Artifact(file_path=<span class="tok-s">"notes.md"</span>, favicon=<span class="tok-s">"&#x1F4DD;"</span>, label=<span class="tok-s">"v2"</span>)</code></pre>
+    <div class="block-label">Details</div>
+    <ul class="details">
+      <li>Accepts <code>.html</code>, <code>.htm</code>, and <code>.md</code> files</li>
+      <li><code>favicon</code> (required) — one or two emoji, no markup — sets the browser-tab icon</li>
+      <li><code>label</code> (optional) — human-readable version label shown in the version picker</li>
+      <li><code>url</code> (optional) — redeploy to an existing artifact URL the user provides</li>
+      <li>A strict CSP blocks all external resources — inline all CSS/JS and embed assets as <code>data:</code> URIs</li>
+      <li>Same file path → same URL on redeploy; different file path → new URL</li>
+      <li>Disable via <code>CLAUDE_CODE_DISABLE_ARTIFACT</code> env var or <code>disableArtifact</code> setting</li>
+      <li>Gated by feature flag <code>tengu_cobalt_plinth</code>; enabled for eligible claude.ai accounts</li>
+    </ul>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"Render an HTML or Markdown file to an Artifact"</code> and <code>uAH = "Artifact"</code></div></div>
+  </article>
+
+  <!-- --plugin-dir-no-mcp -->
+  <article class="card" id="plugin-dir-no-mcp">
+    <div class="card-top">
+      <h3>--plugin-dir-no-mcp Flag <a class="anchor" href="#plugin-dir-no-mcp">#</a></h3>
+      <div class="tags"><span class="tag new">New</span><span class="tag set">Flag</span></div>
+    </div>
+    <p class="what">Loads a plugin directory without also reading its <code>.mcp.json</code> file. Intended for SDK hosts that register MCP servers themselves rather than delegating to the engine.</p>
+    <div class="block-label">Usage</div>
+    <pre><span class="lang">bash</span><button class="copy">copy</button><code><span class="tok-k">claude</span> --plugin-dir-no-mcp <span class="tok-s">&lt;path&gt;</span></code></pre>
+    <div class="block-label">Details</div>
+    <ul class="details">
+      <li>Behaves exactly like <code>--plugin-dir</code> except the engine skips <code>.mcp.json</code> / <code>mcpServers</code> discovery for that plugin</li>
+      <li>Equivalent setting: <code>noMcp: true</code> in the plugin frontmatter</li>
+    </ul>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"Like --plugin-dir but the engine will not read this plugin's .mcp.json"</code></div></div>
+  </article>
+
+  <!-- Ultra Auth Error Messages -->
+  <article class="card" id="ultra-auth-errors">
+    <div class="card-top">
+      <h3>Ultra (Cloud Review) Auth Error Messages <a class="anchor" href="#ultra-auth-errors">#</a></h3>
+      <div class="tags"><span class="tag new">New</span><span class="tag neu">UX</span></div>
+    </div>
+    <p class="what">When ultra (cloud review) is unavailable, Claude Code now surfaces specific, actionable error messages depending on the exact auth state rather than a single generic message.</p>
+    <div class="block-label">Error cases</div>
+    <ul class="details">
+      <li><b>API key auth:</b> "ultra (cloud review) requires claude.ai account auth. Unset <code>ANTHROPIC_API_KEY</code> … to use ultra."</li>
+      <li><b>Missing profile scope:</b> "ultra (cloud review) requires a full-scope login token — run <code>claude auth login</code> to use it"</li>
+      <li><b>Not in rollout:</b> "ultra (cloud review) isn't enabled for your account yet — run <code>claude auth login</code> to refresh your entitlements"</li>
+      <li><b>Unauthenticated:</b> "ultra (cloud review) requires a claude.ai account — sign in to claude.ai to use it"</li>
+      <li>All messages include a link to <code>https://code.claude.com/docs/en/ultrareview</code></li>
+    </ul>
+    <div class="evidence"><span class="ico">◆</span><div>Error routing function — search <code>"ultra (cloud review) requires claude.ai account auth"</code></div></div>
+  </article>
+
+  <!-- URL Provenance Check -->
+  <article class="card" id="web-fetch-provenance">
+    <div class="card-top">
+      <h3>web_fetch URL Provenance Check <a class="anchor" href="#web-fetch-provenance">#</a></h3>
+      <div class="tags"><span class="tag new">New</span><span class="tag sec">Security</span></div>
+    </div>
+    <p class="what"><code>web_fetch</code> now enforces a provenance check — it can only retrieve URLs that appeared in a user message or a prior <code>web_fetch</code> result. Fetching URLs outside this set presents a permission prompt.</p>
+    <div class="block-label">Details</div>
+    <ul class="details">
+      <li>If the user approves, the fetch proceeds; if denied or timed out, Claude receives an error</li>
+      <li>Timeout message: "The permission request for this URL was not answered in time. Ask the user to approve the fetch or include the URL in a message, then try again."</li>
+      <li>Error type: <code>PROVENANCE_REQUIRED</code></li>
+      <li>Suppressed in <code>bypassPermissions</code> and <code>dontAsk</code> modes</li>
+    </ul>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"URL not in provenance set. web_fetch can only retrieve URLs that appeared in a user message"</code></div></div>
+  </article>
+
+  <!-- /memories/export -->
+  <article class="card" id="memories-export">
+    <div class="card-top">
+      <h3>/memories/export Route <a class="anchor" href="#memories-export">#</a></h3>
+      <div class="tags"><span class="tag new">New</span><span class="tag neu">Memory</span></div>
+    </div>
+    <p class="what">A new internal <code>/memories/export</code> route has been registered, enabling memory export functionality.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"/memories/export"</code></div></div>
+  </article>
+
+  <!-- CLAUDE_CODE_CHILD_SESSION -->
+  <article class="card" id="child-session-env">
+    <div class="card-top">
+      <h3>CLAUDE_CODE_CHILD_SESSION Env Var <a class="anchor" href="#child-session-env">#</a></h3>
+      <div class="tags"><span class="tag new">New</span><span class="tag set">Env</span></div>
+    </div>
+    <p class="what">Marks a session as a child session when set, suppressing certain persistence behaviors — session data is not persisted when this is set alongside other child-session conditions.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"CLAUDE_CODE_CHILD_SESSION"</code></div></div>
+  </article>
+
+  <!-- CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS -->
+  <article class="card" id="skip-plugin-mcp">
+    <div class="card-top">
+      <h3>CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS Env Var <a class="anchor" href="#skip-plugin-mcp">#</a></h3>
+      <div class="tags"><span class="tag new">New</span><span class="tag set">Env</span></div>
+    </div>
+    <p class="what">When set, skips MCP server discovery for plugin directories during startup — useful for environments where plugin MCP connections are managed externally.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS is set"</code></div></div>
+  </article>
+
+  <!-- ShowOnboardingRolePicker -->
+  <article class="card" id="cowork-role-picker">
+    <div class="card-top">
+      <h3>ShowOnboardingRolePicker Tool (Cowork) <a class="anchor" href="#cowork-role-picker">#</a></h3>
+      <div class="tags"><span class="tag new">New</span><span class="tag neu">Cowork</span></div>
+    </div>
+    <p class="what">A new internal tool for Cowork onboarding that renders an interactive role-picker chip row. Users tap a chip (e.g. "Legal", "Engineering") to select their role and trigger automatic plugin installation.</p>
+    <div class="block-label">Details</div>
+    <ul class="details">
+      <li>Blocks until the user responds: chip click, free-form text entry, or dismissal</li>
+      <li>Returns <code>{"role": "..."}</code> on selection, <code>{"dismissed": true}</code> on cancel, <code>{}</code> on confirm-without-role</li>
+      <li>Only enabled in Cowork sessions via <code>KOf</code> environment check</li>
+    </ul>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"Render a clickable role-picker chip row during Cowork onboarding"</code></div></div>
+  </article>
+
+  <!-- /rc labels -->
+  <article class="card" id="rc-labels">
+    <div class="card-top">
+      <h3>Remote Control Status Labels Renamed to /rc <a class="anchor" href="#rc-labels">#</a></h3>
+      <div class="tags"><span class="tag neu">UX</span></div>
+    </div>
+    <p class="what">Status-bar labels for the Remote Control feature have been shortened from "Remote Control active / connecting / failed / reconnecting" to <code>/rc active</code>, <code>/rc connecting…</code>, <code>/rc failed</code>, <code>/rc reconnecting</code>.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Status label function — search <code>"/rc active"</code> and <code>"/rc failed"</code></div></div>
+  </article>
+
+  <!-- Chrome batch ToolSearch -->
+  <article class="card" id="chrome-batch-tools">
+    <div class="card-top">
+      <h3>Chrome Browser Tools: Batch ToolSearch Loading <a class="anchor" href="#chrome-batch-tools">#</a></h3>
+      <div class="tags"><span class="tag neu">Browser</span></div>
+    </div>
+    <p class="what">The Chrome browser automation system prompt now explicitly instructs Claude to load all needed tools in a single <code>ToolSearch</code> call using a comma-separated <code>select:</code> query, rather than one call per tool.</p>
+    <div class="block-label">Details</div>
+    <ul class="details">
+      <li>New guidance: "Do NOT load tools one at a time; each separate ToolSearch call wastes a full round-trip"</li>
+      <li>Recommended starter set covers <code>tabs_context_mcp</code>, <code>navigate</code>, <code>computer</code>, <code>read_page</code>, and <code>tabs_create_mcp</code> in one call</li>
+      <li>Task-specific extras (recording, forms, console debugging) should be added to that same call when obviously needed</li>
+    </ul>
+    <div class="evidence"><span class="ico">◆</span><div>Updated browser automation prompt — search <code>"batch every tool you expect to need into ONE ToolSearch call"</code></div></div>
+  </article>
+
+  <!-- Team Memory -->
+  <article class="card" id="team-memory-steps">
+    <div class="card-top">
+      <h3>Team Memory: Two-Step Save Process <a class="anchor" href="#team-memory-steps">#</a></h3>
+      <div class="tags"><span class="tag neu">Memory</span></div>
+    </div>
+    <p class="what">The team memory system prompt has been overhauled with clearer, step-by-step guidance for saving memories. When using indexed memory, the instructions now explicitly describe a two-step process.</p>
+    <div class="block-label">Details</div>
+    <ul class="details">
+      <li>Step 1: Write memory to its own file using the frontmatter format</li>
+      <li>Step 2: Add a pointer entry (<code>- [Title](file.md) — one-line hook</code>) to the index file</li>
+      <li>Index entries are capped at ~150 characters</li>
+      <li>Clarified that team memory directories already exist — no need to run <code>mkdir</code></li>
+      <li>Read-only sessions now receive: "If the user asks you to remember something, explain that memory is read-only in this session."</li>
+    </ul>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"**Step 1** — write the memory to its own file in"</code></div></div>
+  </article>
+
+  <!-- AWS Region Source -->
+  <article class="card" id="aws-region-source">
+    <div class="card-top">
+      <h3>AWS Region Display Shows Configuration Source <a class="anchor" href="#aws-region-source">#</a></h3>
+      <div class="tags"><span class="tag neu">AWS</span></div>
+    </div>
+    <p class="what">The AWS region display in Bedrock configuration now shows where the region came from — environment variable, AWS shared config file, or the built-in default — rather than just the region name.</p>
+    <div class="block-label">Examples</div>
+    <ul class="details">
+      <li>From env var: <code>us-east-1</code></li>
+      <li>From <code>~/.aws/config</code>: <code>us-east-1 (from AWS config)</code></li>
+      <li>Default fallback: <code>us-east-1 (default — set AWS_REGION or add a region to your AWS config)</code></li>
+    </ul>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"(from AWS config)"</code> and <code>"(default — set AWS_REGION or add a region to your AWS config)"</code></div></div>
+  </article>
+
+  <!-- --bg/--pool conflict -->
+  <article class="card" id="bg-pool-conflict">
+    <div class="card-top">
+      <h3>--bg / --pool Conflict Error Improved <a class="anchor" href="#bg-pool-conflict">#</a></h3>
+      <div class="tags"><span class="tag neu">CLI</span></div>
+    </div>
+    <p class="what">The error shown when combining <code>--bg</code> with another backend flag now distinguishes between <code>--pool</code> and <code>--cloud</code> with targeted guidance for each.</p>
+    <div class="block-label">New messages</div>
+    <ul class="details">
+      <li><code>--bg</code> + <code>--pool</code>: "Use <code>claude -p '&lt;task&gt;' --pool &lt;pool_id&gt;</code> directly to start a session on the pool."</li>
+      <li><code>--bg</code> + <code>--cloud</code>: "Use <code>claude --cloud '&lt;task&gt;'</code> directly to start a cloud session."</li>
+    </ul>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"--bg and --pool are different backends"</code></div></div>
+  </article>
+
+  <!-- Help improve AI models -->
+  <article class="card" id="help-improve-rename">
+    <div class="card-top">
+      <h3>"Help improve our AI models" Renamed <a class="anchor" href="#help-improve-rename">#</a></h3>
+      <div class="tags"><span class="tag neu">UX</span></div>
+    </div>
+    <p class="what">The consent UI string "Help improve Claude" has been renamed to "Help improve our AI models" across all display states (ON, OFF, OFF for domain emails).</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"Help improve our AI models"</code></div></div>
+  </article>
+
+  <!-- Plugin Disuse Tracking -->
+  <article class="card" id="plugin-disuse">
+    <div class="card-top">
+      <h3>Plugin Disuse Tracking <a class="anchor" href="#plugin-disuse">#</a></h3>
+      <div class="tags"><span class="tag neu">Plugins</span></div>
+    </div>
+    <p class="what">Claude Code now tracks the last time each plugin was used (<code>lastUsedAt</code> and <code>lastUsedNumStartups</code>). The tip system can surface a warning when a plugin hasn't been used in a while.</p>
+    <div class="block-label">Details</div>
+    <ul class="details">
+      <li>Tip shown: "You haven't used the [plugin] in a while. It still adds startup and context cost — review it with…"</li>
+      <li>Tracks both calendar days and session count since last use</li>
+    </ul>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"plugin in a while. It still adds startup and context cost"</code></div></div>
+  </article>
+
+  <!-- MCP OAuth Token Clearing -->
+  <article class="card" id="mcp-oauth-preserve">
+    <div class="card-top">
+      <h3>MCP OAuth Token Clearing: Preserve Client Registration <a class="anchor" href="#mcp-oauth-preserve">#</a></h3>
+      <div class="tags"><span class="tag neu">MCP</span></div>
+    </div>
+    <p class="what">When clearing MCP OAuth tokens, Claude Code can now optionally preserve the client registration (client ID) while discarding only the access/refresh tokens — avoiding a full re-registration flow when tokens simply need refreshing.</p>
+    <div class="block-label">Details</div>
+    <ul class="details">
+      <li>Opt-in with <code>preserveClientRegistration: true</code> — only <code>accessToken</code>, <code>refreshToken</code>, <code>expiresAt</code>, and <code>scope</code> are cleared</li>
+      <li>Log message: "Cleared stored tokens (preserved client registration)"</li>
+    </ul>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"Cleared stored tokens (preserved client registration)"</code></div></div>
+  </article>
+
+  <!-- Structured Output Retraction -->
+  <article class="card" id="structured-output-retraction">
+    <div class="card-top">
+      <h3>Structured Output Retraction Error Message <a class="anchor" href="#structured-output-retraction">#</a></h3>
+      <div class="tags"><span class="tag neu">SDK</span></div>
+    </div>
+    <p class="what">When a model fallback causes structured output to be retracted and no retry succeeds, Claude Code now surfaces a more specific error: "the cloud agent called StructuredOutput but no attempt produced a surviving valid output (failed schema validation, or retracted by a model fallback)".</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"retracted by a model fallback and no retry produced a valid result"</code></div></div>
+  </article>
+
+  <!-- Subagent Model Allowlist Warning -->
+  <article class="card" id="subagent-allowlist-warn">
+    <div class="card-top">
+      <h3>Subagent Model Allowlist Warning Improved <a class="anchor" href="#subagent-allowlist-warn">#</a></h3>
+      <div class="tags"><span class="tag neu">Agents</span></div>
+    </div>
+    <p class="what">When a subagent is configured with a model not in the <code>availableModels</code> allowlist, the warning now distinguishes between the subagent and teammate cases.</p>
+    <div class="block-label">New messages</div>
+    <ul class="details">
+      <li>Subagent: "Subagent model <code>X</code> is not in the availableModels allowlist; inheriting the parent model instead"</li>
+      <li>Teammate: "Teammate model <code>X</code> is not in the availableModels allowlist; using the default teammate model instead"</li>
+    </ul>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"Subagent model"</code> and <code>"Teammate model"</code> with allowlist messages</div></div>
+  </article>
+
+  <!-- Trusted Device Error -->
+  <article class="card" id="trusted-device-error">
+    <div class="card-top">
+      <h3>Trusted Device Error Message Centralized <a class="anchor" href="#trusted-device-error">#</a></h3>
+      <div class="tags"><span class="tag neu">Auth</span></div>
+    </div>
+    <p class="what">The "not enrolled as a trusted device" error message is now generated from a single function, ensuring consistent text across all call sites: "this device is not enrolled as a trusted device; run /login to enroll".</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"this device is not enrolled as a trusted device; run /login to enroll"</code></div></div>
+  </article>
+
+  <!-- Fullscreen Feedback -->
+  <article class="card" id="fullscreen-feedback">
+    <div class="card-top">
+      <h3>Fullscreen Feedback Prompt Simplified <a class="anchor" href="#fullscreen-feedback">#</a></h3>
+      <div class="tags"><span class="tag neu">UX</span></div>
+    </div>
+    <p class="what">The fullscreen mode exit survey prompt has been simplified — the old "(optional, Enter to skip)" parenthetical is removed. The prompt now reads directly: "To help us make fullscreen mode better, what made you switch back?"</p>
+    <div class="evidence"><span class="ico">◆</span><div>String change — old prompt contained <code>"(optional, Enter to skip)"</code></div></div>
+  </article>
+
+  <!-- Session Status Timestamps -->
+  <article class="card" id="status-timestamps">
+    <div class="card-top">
+      <h3>Session Status Update Timestamps <a class="anchor" href="#status-timestamps">#</a></h3>
+      <div class="tags"><span class="tag neu">Sessions</span></div>
+    </div>
+    <p class="what">When a session's status changes, a separate <code>statusUpdatedAt</code> timestamp is now recorded alongside the general <code>updatedAt</code> timestamp, enabling more precise tracking of status transition times.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"statusUpdatedAt"</code> alongside <code>"updatedAt"</code></div></div>
+  </article>
+
+  </div><!-- /card-grid -->
+
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div><span class="ct">6 items</span>
+  </div>
+
+  <div class="card-grid">
+
+  <article class="card" id="bug-deeplink">
+    <div class="card-top">
+      <h3>Deep-Link Injection Guard <a class="anchor" href="#bug-deeplink">#</a></h3>
+      <div class="tags"><span class="tag fix">Fix</span><span class="tag sec">Security</span></div>
+    </div>
+    <p class="what"><code>--handle-uri</code> invocations with extra arguments after the URI are now rejected with an explanatory message, blocking URI-based argument injection.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"claude: rejected deep-link invocation — unexpected arguments after the URI"</code></div></div>
+  </article>
+
+  <article class="card" id="bug-artifact-412">
+    <div class="card-top">
+      <h3>Artifact Upload Precondition Retry <a class="anchor" href="#bug-artifact-412">#</a></h3>
+      <div class="tags"><span class="tag fix">Fix</span><span class="tag neu">Artifact</span></div>
+    </div>
+    <p class="what">Uploading an artifact now detects HTTP 412 (create-only precondition failed) and returns a clear message: "upload 412: this version was already written (create-only precondition). Re-run publish to mint a fresh version."</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"this version was already written (create-only precondition)"</code></div></div>
+  </article>
+
+  <article class="card" id="bug-transcript-markers">
+    <div class="card-top">
+      <h3>Transcript Third-Party Marker Filtering <a class="anchor" href="#bug-transcript-markers">#</a></h3>
+      <div class="tags"><span class="tag fix">Fix</span></div>
+    </div>
+    <p class="what">When sharing session history, transcripts containing third-party markers are now silently excluded rather than included verbatim. Both the raw transcript and recent sessions lists are independently filtered.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"rawTranscriptJsonl withheld from session history: contains_3p_transcript_markers"</code></div></div>
+  </article>
+
+  <article class="card" id="bug-1m-suffix">
+    <div class="card-top">
+      <h3>Model [1m] Suffix Handling Made Case-Insensitive <a class="anchor" href="#bug-1m-suffix">#</a></h3>
+      <div class="tags"><span class="tag fix">Fix</span></div>
+    </div>
+    <p class="what">Functions that strip or normalize the <code>[1m]</code> model suffix now use case-insensitive matching (<code>/\[1m\]/i</code>), preventing edge cases where mixed-case suffixes were not recognized.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"/\\[1m\\]/i"</code></div></div>
+  </article>
+
+  <article class="card" id="bug-interactive-stop">
+    <div class="card-top">
+      <h3>Interactive Command Detection Message Updated <a class="anchor" href="#bug-interactive-stop">#</a></h3>
+      <div class="tags"><span class="tag fix">Fix</span><span class="tag neu">UX</span></div>
+    </div>
+    <p class="what">The message shown when a command appears blocked on an interactive prompt now says "Stop this task" instead of "Kill this task", matching the updated UI terminology.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"The command is likely blocked on an interactive prompt. Stop this task"</code></div></div>
+  </article>
+
+  <article class="card" id="bug-tmux-label">
+    <div class="card-top">
+      <h3>tmux Session Cleanup Label Corrected <a class="anchor" href="#bug-tmux-label">#</a></h3>
+      <div class="tags"><span class="tag fix">Fix</span><span class="tag neu">UX</span></div>
+    </div>
+    <p class="what">The worktree cleanup option now reads "Keep worktree, end tmux session" instead of the previous "Keep worktree, kill tmux session".</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"Keep worktree, end tmux session"</code></div></div>
+  </article>
+
+  </div><!-- /card-grid -->
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package — these notes are reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+      <div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div>
+      <div><div class="k">Primary diff</div><div class="val">changes/changes-v2.1.172.md (filtered astdiff)</div></div>
+      <div><div class="k">String diff</div><div class="val">changes/string-diff-v2.1.172.txt</div></div>
+    </div>
+  </footer>
+
+</main>
+</div>
+
+<button class="totop" id="totop" title="Back to top">&#8593;</button>
+
+<script>
+  document.querySelectorAll('.copy').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const code=btn.parentElement.querySelector('code').innerText;
+      navigator.clipboard.writeText(code).then(()=>{
+        const t=btn.textContent;btn.textContent='copied';btn.classList.add('ok');
+        setTimeout(()=>{btn.textContent=t;btn.classList.remove('ok');},1200);
+      });
+    });
+  });
+  const top=document.getElementById('totop');
+  top.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  addEventListener('scroll',()=>top.classList.toggle('show',scrollY>600));
+</script>
+</body>
+</html>

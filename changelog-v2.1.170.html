@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.170 — Changelog</title>
+<style>
+  :root{
+    --bg:#16140f;--bg-2:#1d1a13;--panel:#211d15;--panel-2:#27221a;
+    --line:#3a3328;--line-soft:#2c2820;
+    --ink:#f3ecdf;--ink-2:#c7bca6;--ink-3:#8f8775;
+    --accent:#d97757;--accent-2:#e89b7f;--accent-ink:#1a120d;
+    --green:#7fae6a;--blue:#7fa8d9;--violet:#b08fd9;--amber:#d9b15a;--red:#d97c7c;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono","Cascadia Code",Consolas,monospace;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --radius:14px;--shadow:0 12px 40px -18px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:
+      radial-gradient(1100px 520px at 82% -8%,rgba(217,119,87,.16),transparent 60%),
+      radial-gradient(900px 480px at 5% 0%,rgba(127,168,217,.08),transparent 55%),
+      var(--bg);
+    color:var(--ink);font-family:var(--sans);line-height:1.6;
+    -webkit-font-smoothing:antialiased;font-size:15px;
+  }
+  a{color:var(--accent-2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.86em}
+  ::selection{background:rgba(217,119,87,.32)}
+
+  .wrap{max-width:1860px;margin:0 auto;padding:0 36px}
+  .card-grid{column-width:400px;column-gap:18px}
+
+  /* ---------- Header ---------- */
+  header.hero{padding:60px 0 30px;border-bottom:1px solid var(--line-soft)}
+  .eyebrow{display:flex;align-items:center;gap:12px;color:var(--ink-3);
+    font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600}
+  .logo-dot{width:11px;height:11px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%,var(--accent-2),var(--accent));
+    box-shadow:0 0 0 4px rgba(217,119,87,.15)}
+  h1.title{font-size:clamp(34px,5vw,52px);line-height:1.05;margin:18px 0 6px;
+    font-weight:800;letter-spacing:-.02em}
+  h1.title .v{
+    background:linear-gradient(92deg,var(--accent),var(--accent-2));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--ink-2);max-width:760px;font-size:16.5px;margin:14px 0 0}
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:var(--panel);
+    border:1px solid var(--line);border-radius:999px;padding:6px 13px;
+    font-size:12.5px;color:var(--ink-2)}
+  .chip b{color:var(--ink);font-weight:600}
+  .chip .k{color:var(--ink-3)}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
+  .stat{background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+  .stat .n{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1}
+  .stat .l{color:var(--ink-3);font-size:12px;margin-top:7px;letter-spacing:.04em;text-transform:uppercase}
+  .stat.f .n{color:var(--accent-2)} .stat.b .n{color:var(--red)}
+  .stat.d .n{color:var(--violet)} .stat.s .n{color:var(--blue)}
+
+  /* ---------- Main ---------- */
+  main{padding:34px 0 90px;min-width:0}
+  .section-head{display:flex;align-items:center;gap:14px;margin:42px 0 20px}
+  .section-head:first-child{margin-top:8px}
+  .section-head h2{font-size:13px;letter-spacing:.18em;text-transform:uppercase;
+    margin:0;color:var(--ink-2);font-weight:700;white-space:nowrap}
+  .section-head .ln{height:1px;background:var(--line-soft);flex:1}
+  .section-head .ct{color:var(--ink-3);font-size:12px;font-weight:600}
+
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 24px;margin:0 0 18px;box-shadow:var(--shadow);
+    break-inside:avoid;-webkit-column-break-inside:avoid;
+    scroll-margin-top:22px;transition:border-color .2s,transform .2s}
+  .card:hover{border-color:#4b4234}
+  .card.hidden{display:none}
+  .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+  .card h3{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .card h3 .anchor{color:var(--ink-3);opacity:0;margin-left:8px;font-weight:400;font-size:16px}
+  .card:hover h3 .anchor{opacity:1}
+  .tags{display:flex;flex-wrap:wrap;gap:7px;flex-shrink:0;justify-content:flex-end}
+  .tag{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    padding:4px 9px;border-radius:6px;border:1px solid transparent;white-space:nowrap}
+  .tag.new{color:var(--accent-2);background:rgba(217,119,87,.13);border-color:rgba(217,119,87,.3)}
+  .tag.fix{color:var(--green);background:rgba(127,174,106,.12);border-color:rgba(127,174,106,.3)}
+  .tag.set{color:var(--blue);background:rgba(127,168,217,.12);border-color:rgba(127,168,217,.3)}
+  .tag.sec{color:var(--red);background:rgba(217,124,124,.12);border-color:rgba(217,124,124,.3)}
+  .tag.key{color:var(--amber);background:rgba(217,177,90,.12);border-color:rgba(217,177,90,.3)}
+  .tag.dev{color:var(--violet);background:rgba(176,143,217,.12);border-color:rgba(176,143,217,.3)}
+  .tag.neu{color:var(--ink-2);background:var(--panel-2);border-color:var(--line)}
+
+  .what{color:var(--ink);margin:14px 0 0;font-size:15px}
+  .status{margin-top:14px;font-size:13.5px;color:var(--amber);
+    display:flex;gap:9px;align-items:flex-start;
+    background:rgba(217,177,90,.07);border:1px solid rgba(217,177,90,.22);
+    border-radius:10px;padding:10px 13px}
+  .status b{color:var(--ink)}
+
+  .block-label{font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:700;margin:20px 0 9px}
+
+  ul.details{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+  ul.details li{position:relative;padding-left:22px;color:var(--ink-2);font-size:14.3px}
+  ul.details li::before{content:"";position:absolute;left:4px;top:9px;width:6px;height:6px;
+    border-radius:50%;background:var(--accent);opacity:.85}
+
+  /* code */
+  pre{margin:0;background:#100e0a;border:1px solid var(--line-soft);
+    border-radius:11px;overflow:auto;position:relative}
+  pre code{display:block;padding:15px 16px;font-size:12.8px;line-height:1.65;color:#e7dccb}
+  pre .lang{position:absolute;top:8px;right:10px;font-size:10px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--ink-3);font-weight:700}
+  .copy{position:absolute;top:7px;right:64px;background:var(--panel);
+    border:1px solid var(--line);color:var(--ink-2);border-radius:6px;
+    font-size:10.5px;padding:3px 8px;cursor:pointer;font-family:var(--sans);
+    opacity:0;transition:opacity .15s}
+  pre:hover .copy{opacity:1}
+  .copy:hover{color:var(--ink);border-color:var(--accent)}
+  .copy.ok{color:var(--green);border-color:var(--green)}
+  .tok-c{color:#7d7464;font-style:italic}
+  .tok-k{color:var(--accent-2)}
+  .tok-p{color:var(--blue)}
+  .tok-s{color:var(--green)}
+  .tok-n{color:var(--violet)}
+
+  .evidence{margin-top:18px;padding-top:14px;border-top:1px solid var(--line-soft);
+    font-size:12.6px;color:var(--ink-3);display:flex;gap:9px;align-items:flex-start}
+  .evidence .ico{color:var(--accent);flex-shrink:0;margin-top:1px}
+  .evidence code{color:var(--ink-2);background:var(--panel-2);
+    padding:1px 5px;border-radius:4px;border:1px solid var(--line-soft)}
+
+  .what code,.details code,.status code{background:var(--panel-2);color:var(--accent-2);
+    padding:1px 6px;border-radius:5px;border:1px solid var(--line-soft);font-size:.85em}
+
+  .no-results{display:none;text-align:center;color:var(--ink-3);padding:60px 0;font-size:15px}
+
+  footer{border-top:1px solid var(--line-soft);padding:30px 0 70px;color:var(--ink-3);font-size:13px}
+  footer .gen{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px}
+  footer .gen div{background:var(--panel);border:1px solid var(--line-soft);
+    border-radius:10px;padding:11px 14px}
+  footer .gen .k{color:var(--ink-3);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+  footer .gen .val{color:var(--ink-2);font-family:var(--mono);font-size:12.5px;margin-top:4px;word-break:break-all}
+
+  .totop{position:fixed;right:26px;bottom:26px;width:44px;height:44px;border-radius:50%;
+    background:var(--accent);color:var(--accent-ink);border:none;cursor:pointer;
+    font-size:19px;font-weight:800;box-shadow:var(--shadow);opacity:0;pointer-events:none;
+    transition:opacity .25s,transform .25s;transform:translateY(8px)}
+  .totop.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+
+  @media(max-width:920px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:560px){
+    .wrap{padding:0 18px}
+    .card-top{flex-direction:column}
+    .tags{justify-content:flex-start}
+    .stats{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code · Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.170</span></h1>
+    <p class="sub">Claude Fable 5 lands as the new highest-tier model with a launch banner, custom-provider env vars, and a <code>fable</code> alias — plus a <code>model_refusal_fallback</code> SDK protocol event, graceful tool-call tombstone cancellation, <code>CLAUDE_CODE_DISABLE_MOUSE</code>, and four bug fixes.</p>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+      <span class="chip"><span class="k">Diff</span> <b>v2.1.169 → v2.1.170</b></span>
+      <span class="chip"><span class="k">Provider</span> <b>claude</b></span>
+      <span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>
+    </div>
+    <div class="stats">
+      <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+      <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+      <div class="stat d"><div class="n">0</div><div class="l">In Development</div></div>
+      <div class="stat s"><div class="n">6</div><div class="l">New Env Vars / Flags</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <main>
+
+    <div class="section-head">
+      <h2>Features &amp; Changes</h2><div class="ln"></div><span class="ct">14 items</span>
+    </div>
+
+    <div class="card-grid">
+
+    <!-- Fable 5 Model -->
+    <article class="card" id="fable-5-model">
+      <div class="card-top">
+        <h3>Claude Fable 5 Model <a class="anchor" href="#fable-5-model">#</a></h3>
+        <div class="tags"><span class="tag new">New</span><span class="tag neu">Model</span></div>
+      </div>
+      <p class="what">Fable 5 is now a first-class model in Claude Code, positioned as the most capable option for the hardest and longest-running tasks. A <code>fable</code> alias (and <code>fable[1m]</code> for 1M context) resolve to <code>claude-fable-5</code>.</p>
+      <div class="block-label">Usage</div>
+      <pre><span class="lang">bash</span><button class="copy">copy</button><code><span class="tok-k">claude</span> --model fable
+<span class="tok-k">claude</span> --model claude-fable-5</code></pre>
+      <div class="block-label">Details</div>
+      <ul class="details">
+        <li>Full model IDs: <code>claude-fable-5</code> (firstParty, Vertex, Foundry, Gateway), <code>anthropic.claude-fable-5</code> (Bedrock/Mantle)</li>
+        <li>Context window: 64k default output / 128k max — same as Opus 4.8</li>
+        <li>Default effort level: <code>high</code> (same as Opus 4.8)</li>
+        <li>Fable 5 appears at the top of the <code>/model</code> picker for eligible accounts</li>
+        <li>A companion model <code>claude-mythos-5</code> is registered internally for the safety-refusal fallback lane</li>
+        <li>The <code>/model</code> help text now mentions <code>fable</code> as a valid alias alongside <code>opus</code> and <code>sonnet</code></li>
+      </ul>
+      <div class="evidence"><span class="ico">◆</span><div>Search <code>"claude-fable-5"</code> and <code>"Fable 5 · Most capable for your hardest and longest-running tasks"</code></div></div>
+    </article>
+
+    <!-- Fable 5 Env Vars -->
+    <article class="card" id="fable-5-env-vars">
+      <div class="card-top">
+        <h3>Fable 5 Env Vars for Custom Providers <a class="anchor" href="#fable-5-env-vars">#</a></h3>
+        <div class="tags"><span class="tag new">New</span><span class="tag set">Env</span></div>
+      </div>
+      <p class="what">Four new environment variables let BYOC and API-gateway deployments point Claude Code at a custom Fable 5 endpoint, with a fifth for Vertex region overrides.</p>
+      <div class="block-label">Usage</div>
+      <pre><span class="lang">bash</span><button class="copy">copy</button><code><span class="tok-k">export</span> <span class="tok-p">ANTHROPIC_DEFAULT_FABLE_MODEL</span>=my-fable-5-endpoint
+<span class="tok-k">export</span> <span class="tok-p">ANTHROPIC_DEFAULT_FABLE_MODEL_NAME</span>=<span class="tok-s">"My Fable 5"</span>
+<span class="tok-k">export</span> <span class="tok-p">ANTHROPIC_DEFAULT_FABLE_MODEL_DESCRIPTION</span>=<span class="tok-s">"Custom Fable 5 model"</span>
+<span class="tok-k">export</span> <span class="tok-p">ANTHROPIC_DEFAULT_FABLE_MODEL_SUPPORTED_CAPABILITIES</span>=vision,tools
+<span class="tok-k">export</span> <span class="tok-p">VERTEX_REGION_CLAUDE_FABLE_5</span>=us-east5</code></pre>
+      <div class="block-label">Details</div>
+      <ul class="details">
+        <li><code>ANTHROPIC_DEFAULT_FABLE_MODEL</code> — custom Fable 5 model ID; enables the alias and fallback logic even on non-firstParty providers</li>
+        <li><code>ANTHROPIC_DEFAULT_FABLE_MODEL_NAME</code> / <code>_DESCRIPTION</code> — display name and description in the model picker</li>
+        <li><code>ANTHROPIC_DEFAULT_FABLE_MODEL_SUPPORTED_CAPABILITIES</code> — capabilities string for the model</li>
+        <li><code>VERTEX_REGION_CLAUDE_FABLE_5</code> — region override for Vertex AI (same pattern as existing <code>VERTEX_REGION_CLAUDE_*</code> vars)</li>
+        <li>When set on non-firstParty providers, shows a "Custom Fable model" entry in the picker in place of the default Fable 5 entry</li>
+        <li>New fallback hint for absent vars: "To enable automatic fallback on this provider, set <code>ANTHROPIC_DEFAULT_FABLE_MODEL</code> to your Fable 5 model ID and <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code> to your Opus 4.8 model ID."</li>
+      </ul>
+      <div class="evidence"><span class="ico">◆</span><div>Search <code>"ANTHROPIC_DEFAULT_FABLE_MODEL"</code> and <code>"Custom Fable model"</code></div></div>
+    </article>
+
+    <!-- Fable 5 Launch Banner -->
+    <article class="card" id="fable-5-banner">
+      <div class="card-top">
+        <h3>Fable 5 Launch Announcement Banner <a class="anchor" href="#fable-5-banner">#</a></h3>
+        <div class="tags"><span class="tag new">New</span><span class="tag neu">UI</span></div>
+      </div>
+      <p class="what">First-party users who have Fable 5 available see a one-time "Fable 5 is here!" announcement at session start, replacing the old Opus 4.8 launch banner.</p>
+      <div class="block-label">Details</div>
+      <ul class="details">
+        <li>For Fable 5 users: "Fable 5 is here! Our newest model for complex, long-running work"</li>
+        <li>For users with access but not yet on Fable 5: "Meet Fable 5, our newest model for complex, long-running work. Try anytime with /model."</li>
+        <li>If the account uses plan limits with a future end date: "Included in your plan limits until [date], then switch to usage credits to continue."</li>
+        <li>Controlled by the <code>tengu_saffron_lattice</code> feature flag (fields: <code>enabled</code>, <code>planLimitsEndDate</code>, <code>hideRateLimitsDescription</code>)</li>
+        <li>Shown once; suppressed after first view via <code>tengu_fable5_launch_shown</code> telemetry event</li>
+      </ul>
+      <div class="evidence"><span class="ico">◆</span><div>Search <code>"Fable 5 is here!"</code> and <code>"tengu_saffron_lattice"</code></div></div>
+    </article>
+
+    <!-- CLAUDE_CODE_DISABLE_MOUSE -->
+    <article class="card" id="disable-mouse">
+      <div class="card-top">
+        <h3>CLAUDE_CODE_DISABLE_MOUSE <a class="anchor" href="#disable-mouse">#</a></h3>
+        <div class="tags"><span class="tag new">New</span><span class="tag set">Env</span></div>
+      </div>
+      <p class="what">A new environment variable that disables mouse support in the terminal UI — useful in environments where mouse events interfere with other terminal applications or multiplexers.</p>
+      <div class="block-label">Usage</div>
+      <pre><span class="lang">bash</span><button class="copy">copy</button><code><span class="tok-k">export</span> <span class="tok-p">CLAUDE_CODE_DISABLE_MOUSE</span>=<span class="tok-n">1</span>
+<span class="tok-k">claude</span></code></pre>
+      <div class="evidence"><span class="ico">◆</span><div>New <code>rEH()</code> function — search <code>"CLAUDE_CODE_DISABLE_MOUSE"</code></div></div>
+    </article>
+
+    <!-- Model Refusal Fallback SDK Event -->
+    <article class="card" id="refusal-fallback-event">
+      <div class="card-top">
+        <h3>model_refusal_fallback SDK Protocol Event <a class="anchor" href="#refusal-fallback-event">#</a></h3>
+        <div class="tags"><span class="tag new">New</span><span class="tag neu">SDK</span></div>
+      </div>
+      <p class="what">A new <code>model_refusal_fallback</code> system event is emitted over the SDK protocol whenever the primary model returns a safety refusal and the session automatically retries on a fallback model.</p>
+      <div class="block-label">Details</div>
+      <ul class="details">
+        <li>Event fields: <code>trigger: "refusal"</code>, <code>direction: "retry" | "revert" | "sticky"</code>, <code>original_model</code>, <code>fallback_model</code>, <code>request_id</code>, <code>api_refusal_category</code> (e.g. <code>"cyber"</code>, <code>"bio"</code>), <code>api_refusal_explanation</code>, <code>retracted_message_uuids</code></li>
+        <li><code>retracted_message_uuids</code> lists wire UUIDs of messages rolled back by the fallback — SDK consumers should evict these from transcript state on receipt</li>
+        <li>The <code>supersedes</code> field on incoming messages can now include tombstoned <code>tool_result</code> frames from the refused leg, not only assistant frames</li>
+        <li><code>refusalFallbackLaneEnabled</code> and <code>refusalFallbackSettingToggleVisible</code> are now communicated from daemon to main process at startup, making them available to SDK consumers via init</li>
+      </ul>
+      <div class="evidence"><span class="ico">◆</span><div>Search <code>"model_refusal_fallback"</code> and <code>"retracted_message_uuids"</code></div></div>
+    </article>
+
+    <!-- xhigh Effort Warning -->
+    <article class="card" id="xhigh-warning">
+      <div class="card-top">
+        <h3>xhigh Effort Advisory Warning <a class="anchor" href="#xhigh-warning">#</a></h3>
+        <div class="tags"><span class="tag neu">UX</span></div>
+      </div>
+      <p class="what">When a model session is set to <code>xhigh</code> (max) effort, a new advisory is now shown in the model selector: "May use excessive tokens resulting in long response times or overthinking. Use sparingly for the hardest tasks."</p>
+      <div class="evidence"><span class="ico">◆</span><div>Search <code>"May use excessive tokens resulting in long response times or overthinking"</code></div></div>
+    </article>
+
+    <!-- Cleaner Safety Refusal Errors -->
+    <article class="card" id="refusal-error-message">
+      <div class="card-top">
+        <h3>Cleaner Safety Refusal Error Messages <a class="anchor" href="#refusal-error-message">#</a></h3>
+        <div class="tags"><span class="tag neu">UX</span></div>
+      </div>
+      <p class="what">Safety refusal error messages are now consistently worded regardless of category. The new message reads: "[Model] has safety measures that flag messages on most cybersecurity or biology topics. They may flag safe, normal content as well. These measures let us bring you Mythos-level capability in other areas sooner, and we're working to refine them."</p>
+      <div class="evidence"><span class="ico">◆</span><div>Updated refusal error renderer — search <code>"has safety measures that flag messages on most cybersecurity or biology topics"</code></div></div>
+    </article>
+
+    <!-- Model Picker Deduplication -->
+    <article class="card" id="model-picker-dedup">
+      <div class="card-top">
+        <h3>Model Picker Deduplication <a class="anchor" href="#model-picker-dedup">#</a></h3>
+        <div class="tags"><span class="tag neu">Model Picker</span></div>
+      </div>
+      <p class="what">The model option list now de-duplicates entries by value before rendering. Duplicate rows are silently dropped with a warning log entry, and disabled entries are sorted to the bottom of the list after all enabled options.</p>
+      <div class="block-label">Details</div>
+      <ul class="details">
+        <li>Warning on drop: <code>"model options: dropping duplicate row [label] (value [value])"</code></li>
+        <li>Disabled entries are sorted after all enabled options — prevents cluttered pickers when multiple providers register the same model ID</li>
+      </ul>
+      <div class="evidence"><span class="ico">◆</span><div>Search <code>"model options: dropping duplicate row"</code></div></div>
+    </article>
+
+    <!-- Subagent Picker includes Fable -->
+    <article class="card" id="subagent-fable">
+      <div class="card-top">
+        <h3>Subagent Model Picker Includes Fable <a class="anchor" href="#subagent-fable">#</a></h3>
+        <div class="tags"><span class="tag neu">Agents</span></div>
+      </div>
+      <p class="what">The model picker used when configuring subagents (e.g. in the Workflow tool's agent options) now includes a Fable option alongside Sonnet, Opus, and Haiku — allowing subagents to be spawned on Fable 5 when available.</p>
+      <div class="evidence"><span class="ico">◆</span><div>Subagent model list — search <code>"Most capable for your hardest and longest-running tasks"</code> in the subagent picker function</div></div>
+    </article>
+
+    <!-- Fable 5 in System Prompt -->
+    <article class="card" id="system-prompt-fable">
+      <div class="card-top">
+        <h3>Fable 5 in System Prompt Model Guidance <a class="anchor" href="#system-prompt-fable">#</a></h3>
+        <div class="tags"><span class="tag neu">System Prompt</span></div>
+      </div>
+      <p class="what">The system prompt context now mentions Fable 5 when describing available models: "The most recent Claude models are Fable 5 and the Claude 4.X family. Model IDs — Fable 5: '[id]', Opus 4.8: '[id]', Sonnet 4.6: '[id]', Haiku 4.5: '[id]'."</p>
+      <div class="evidence"><span class="ico">◆</span><div>Updated system prompt string — search <code>"The most recent Claude models are Fable 5"</code></div></div>
+    </article>
+
+    <!-- overageInUse -->
+    <article class="card" id="overage-in-use">
+      <div class="card-top">
+        <h3>overageInUse Rate Limit Field <a class="anchor" href="#overage-in-use">#</a></h3>
+        <div class="tags"><span class="tag neu">API</span></div>
+      </div>
+      <p class="what">A new <code>overageInUse</code> boolean is parsed from the <code>anthropic-ratelimit-unified-overage-in-use: true</code> response header. When set, registered overage listeners are notified, enabling the UI to react immediately when Fable 5 usage transitions into the credit-based overage regime.</p>
+      <div class="evidence"><span class="ico">◆</span><div>Header parsing and listener notification — search <code>"anthropic-ratelimit-unified-overage-in-use"</code></div></div>
+    </article>
+
+    <!-- notFound flag -->
+    <article class="card" id="model-not-found">
+      <div class="card-top">
+        <h3>Model Not Found Error Carries notFound Flag <a class="anchor" href="#model-not-found">#</a></h3>
+        <div class="tags"><span class="tag neu">API</span></div>
+      </div>
+      <p class="what">When model validation fails because the model ID was not found (HTTP 404 or message containing "model:"), the returned validation object now includes <code>notFound: true</code> in addition to the error string — allowing callers to distinguish "not found" from other validation failures.</p>
+      <div class="evidence"><span class="ico">◆</span><div>Model validation error handling — search <code>"notFound: !0"</code></div></div>
+    </article>
+
+    <!-- Settings docs updated for Fable -->
+    <article class="card" id="settings-fable-doc">
+      <div class="card-top">
+        <h3>Settings Documentation Updated for Fable <a class="anchor" href="#settings-fable-doc">#</a></h3>
+        <div class="tags"><span class="tag neu">Docs</span></div>
+      </div>
+      <p class="what">The internal settings schema reference (used by the <code>update-config</code> skill and related tooling) now shows <code>fable</code> as a valid model option: <code>"model": "sonnet", // or "fable", "opus", "haiku", full model ID</code>.</p>
+      <div class="evidence"><span class="ico">◆</span><div>Settings schema doc — search <code>"// or \"fable\", \"opus\", \"haiku\""</code></div></div>
+    </article>
+
+    <!-- Effort Flag Passthrough -->
+    <article class="card" id="effort-passthrough">
+      <div class="card-top">
+        <h3>--effort Passthrough Requires All Three Models Launched <a class="anchor" href="#effort-passthrough">#</a></h3>
+        <div class="tags"><span class="tag neu">Agents</span></div>
+      </div>
+      <p class="what">The <code>--effort</code> flag is now passed to subprocesses (headless subagent spawns) only when all three model launch acknowledgements are present: <code>unpinOpus47LaunchEffort</code>, <code>unpinOpus48LaunchEffort</code>, <b>and</b> the new <code>unpinFable5LaunchEffort</code>. Previously only Opus 4.7 and 4.8 were required.</p>
+      <div class="evidence"><span class="ico">◆</span><div>Conditional effort passthrough — search <code>"unpinFable5LaunchEffort"</code></div></div>
+    </article>
+
+    </div><!-- /card-grid -->
+
+    <div class="section-head">
+      <h2>Bug Fixes</h2><div class="ln"></div><span class="ct">4 items</span>
+    </div>
+
+    <div class="card-grid">
+
+    <article class="card" id="bug-tombstone">
+      <div class="card-top">
+        <h3>Server Fallback Tombstone Cancels In-Flight Tool Calls <a class="anchor" href="#bug-tombstone">#</a></h3>
+        <div class="tags"><span class="tag fix">Fix</span></div>
+      </div>
+      <p class="what">When a server-side refusal fallback retracts a tool dispatch mid-flight, tool calls now return a clean cancellation result instead of raising an uncaught exception.</p>
+      <div class="block-label">Details</div>
+      <ul class="details">
+        <li>Cancellation message: "Tool dispatch was retracted by a server fallback; the input may be truncated."</li>
+        <li>The abort signal reason <code>"server-fallback-tombstone"</code> is checked at each phase: validate input, permission, pre-call, and post-call</li>
+      </ul>
+      <div class="evidence"><span class="ico">◆</span><div>Search <code>"Tool dispatch was retracted by a server fallback"</code></div></div>
+    </article>
+
+    <article class="card" id="bug-fable-429">
+      <div class="card-top">
+        <h3>Fable 5 Usage-Credit 429 Errors Handled Correctly <a class="anchor" href="#bug-fable-429">#</a></h3>
+        <div class="tags"><span class="tag fix">Fix</span></div>
+      </div>
+      <p class="what">The retry-on-overload logic now correctly skips retrying 429 responses that contain "usage credits are required" or "extra usage is required" when the overage-disabled reason is <code>fetch_error</code> or <code>org_level_disabled_until</code>, preventing unnecessary retries in permanent overage states.</p>
+      <div class="evidence"><span class="ico">◆</span><div>Search <code>"usage credits are required"</code></div></div>
+    </article>
+
+    <article class="card" id="bug-prompt-history">
+      <div class="card-top">
+        <h3>Session Prompt History No Longer Skips on Forced Persistence <a class="anchor" href="#bug-prompt-history">#</a></h3>
+        <div class="tags"><span class="tag fix">Fix</span></div>
+      </div>
+      <p class="what">The <code>CLAUDE_CODE_FORCE_SESSION_PERSISTENCE</code> env var check was removed from the prompt-history skip condition, fixing a case where history could be skipped unexpectedly when session persistence was forced via env var.</p>
+      <div class="evidence"><span class="ico">◆</span><div>Search <code>"CLAUDE_CODE_FORCE_SESSION_PERSISTENCE"</code></div></div>
+    </article>
+
+    <article class="card" id="bug-mantle-opus">
+      <div class="card-top">
+        <h3>Mantle Provider Uses Opus 4.7 Instead of 4.8 <a class="anchor" href="#bug-mantle-opus">#</a></h3>
+        <div class="tags"><span class="tag fix">Fix</span></div>
+      </div>
+      <p class="what">The default Opus model resolver <code>HT()</code> now returns <code>opus47</code> when the provider is <code>"mantle"</code>, matching the correct model availability on that provider. Previously it could resolve to Opus 4.8 which is not available on Mantle.</p>
+      <div class="evidence"><span class="ico">◆</span><div>Search <code>"r6() === \"mantle\""</code></div></div>
+    </article>
+
+    </div><!-- /card-grid -->
+
+    <footer>
+      <div>Generated from a source-level diff of the published npm package — these notes are reverse-engineered from the bundled CLI, not official release notes.</div>
+      <div class="gen">
+        <div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div>
+        <div><div class="k">Primary diff</div><div class="val">changes/changes-v2.1.170.md (filtered astdiff)</div></div>
+        <div><div class="k">String diff</div><div class="val">changes/string-diff-v2.1.170.txt</div></div>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<button class="totop" id="totop" title="Back to top">&#8593;</button>
+
+<script>
+  document.querySelectorAll('.copy').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const code=btn.parentElement.querySelector('code').innerText;
+      navigator.clipboard.writeText(code).then(()=>{
+        const t=btn.textContent;btn.textContent='copied';btn.classList.add('ok');
+        setTimeout(()=>{btn.textContent=t;btn.classList.remove('ok');},1200);
+      });
+    });
+  });
+
+  const top=document.getElementById('totop');
+  top.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  addEventListener('scroll',()=>top.classList.toggle('show',scrollY>600));
+</script>
+</body>
+</html>

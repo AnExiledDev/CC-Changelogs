@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code — Source-level Changelogs</title>
+<style>
+  :root{
+    --bg:#16140f;--bg-2:#1d1a13;--panel:#211d15;--panel-2:#27221a;
+    --line:#3a3328;--line-soft:#2c2820;
+    --ink:#f3ecdf;--ink-2:#c7bca6;--ink-3:#8f8775;
+    --accent:#d97757;--accent-2:#e89b7f;--accent-ink:#1a120d;
+    --green:#7fae6a;--blue:#7fa8d9;--violet:#b08fd9;--amber:#d9b15a;--red:#d97c7c;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono","Cascadia Code",Consolas,monospace;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --radius:14px;--shadow:0 12px 40px -18px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:
+      radial-gradient(1100px 520px at 82% -8%,rgba(217,119,87,.16),transparent 60%),
+      radial-gradient(900px 480px at 5% 0%,rgba(127,168,217,.08),transparent 55%),
+      var(--bg);
+    color:var(--ink);font-family:var(--sans);line-height:1.6;
+    -webkit-font-smoothing:antialiased;font-size:15px;min-height:100vh;
+  }
+  a{color:var(--accent-2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);
+    color:var(--accent-2);padding:1px 6px;border-radius:5px;border:1px solid var(--line-soft)}
+  ::selection{background:rgba(217,119,87,.32)}
+
+  .wrap{max-width:900px;margin:0 auto;padding:0 36px}
+
+  /* ---------- Header ---------- */
+  header.hero{padding:60px 0 40px;border-bottom:1px solid var(--line-soft)}
+  .eyebrow{display:flex;align-items:center;gap:12px;color:var(--ink-3);
+    font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600}
+  .logo-dot{width:11px;height:11px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%,var(--accent-2),var(--accent));
+    box-shadow:0 0 0 4px rgba(217,119,87,.15)}
+  h1.title{font-size:clamp(28px,4vw,44px);line-height:1.08;margin:18px 0 6px;
+    font-weight:800;letter-spacing:-.02em}
+  h1.title .v{
+    background:linear-gradient(92deg,var(--accent),var(--accent-2));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--ink-2);font-size:15.5px;margin:12px 0 0;max-width:640px}
+
+  /* ---------- List ---------- */
+  main{padding:36px 0 90px}
+
+  .release-list{display:flex;flex-direction:column;gap:16px}
+
+  .release{
+    background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 26px;box-shadow:var(--shadow);
+    transition:border-color .2s;
+    display:block;color:inherit;text-decoration:none;
+  }
+  .release:hover{border-color:#5a5040;text-decoration:none}
+  .release:hover .ver{color:var(--accent-2)}
+
+  .release-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+  .ver{font-size:22px;font-weight:800;letter-spacing:-.02em;
+    color:var(--ink);transition:color .15s;font-family:var(--mono)}
+  .latest-badge{display:inline-flex;align-items:center;
+    background:rgba(217,119,87,.15);border:1px solid rgba(217,119,87,.4);
+    color:var(--accent-2);font-size:10px;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;padding:3px 9px;border-radius:999px;
+    margin-left:12px;vertical-align:middle;font-family:var(--sans)}
+
+  .pill-row{display:flex;flex-wrap:wrap;gap:8px;flex-shrink:0}
+  .pill{display:inline-flex;align-items:center;gap:5px;
+    font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:8px;
+    border:1px solid transparent;white-space:nowrap}
+  .pill.feat{color:var(--accent-2);background:rgba(217,119,87,.1);border-color:rgba(217,119,87,.25)}
+  .pill.fix {color:var(--green);background:rgba(127,174,106,.1);border-color:rgba(127,174,106,.25)}
+  .pill.dev {color:var(--violet);background:rgba(176,143,217,.1);border-color:rgba(176,143,217,.25)}
+  .pill.set {color:var(--blue);background:rgba(127,168,217,.1);border-color:rgba(127,168,217,.25)}
+  .pill .num{font-size:13px}
+
+  .summary{color:var(--ink-2);font-size:14.5px;margin:14px 0 0;line-height:1.65}
+  .summary code{font-size:.82em}
+
+  .open-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;
+    font-size:12.5px;font-weight:600;color:var(--ink-3);letter-spacing:.03em;
+    transition:color .15s}
+  .release:hover .open-link{color:var(--accent-2)}
+
+  /* ---------- Footer ---------- */
+  footer{border-top:1px solid var(--line-soft);padding:28px 0 60px;
+    color:var(--ink-3);font-size:13px;line-height:1.7}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code · Source-level changelogs</div>
+    <h1 class="title"><span class="v">@anthropic-ai/claude-code</span></h1>
+    <p class="sub">Reverse-engineered release notes extracted from published npm packages. Not official Anthropic release notes.</p>
+  </div>
+</header>
+
+<div class="wrap">
+<main>
+  <div class="release-list">
+
+    <!-- v2.1.178 -->
+    <a class="release" href="changelog-v2.1.178.html">
+      <div class="release-top">
+        <div>
+          <span class="ver">v2.1.178</span>
+          <span class="latest-badge">latest</span>
+        </div>
+        <div class="pill-row">
+          <span class="pill feat"><span class="num">18</span> features</span>
+          <span class="pill fix"><span class="num">5</span> fixes</span>
+          <span class="pill set"><span class="num">8</span> env vars</span>
+        </div>
+      </div>
+      <p class="summary">Named-agent swarms replace TeamCreate/TeamDelete — just use <code>Agent</code> with a <code>name</code> now. Also ships: <code>/design-login</code> for design-system OAuth independent of the main session, <code>isolation: "remote"</code> for cloud-hosted subagents, a Fable 5 credits UX overhaul, Foundry capability detection, skill directory scoping, and 8 new env vars.</p>
+      <span class="open-link">Open report →</span>
+    </a>
+
+    <!-- v2.1.177 -->
+    <a class="release" href="changelog-v2.1.177.html">
+      <div class="release-top">
+        <div>
+          <span class="ver">v2.1.177</span>
+        </div>
+        <div class="pill-row">
+          <span class="pill feat"><span class="num">3</span> improvements</span>
+        </div>
+      </div>
+      <p class="summary">Infra patch. Adds server-side model error overrides (<code>tengu-model-error-overrides</code>) so Anthropic can customize error messages and picker hints without a client update. Also restricts the saffron lattice auto-update path to first-party builds.</p>
+      <span class="open-link">Open report →</span>
+    </a>
+
+    <!-- v2.1.176 -->
+    <a class="release" href="changelog-v2.1.176.html">
+      <div class="release-top">
+        <div>
+          <span class="ver">v2.1.176</span>
+        </div>
+        <div class="pill-row">
+          <span class="pill feat"><span class="num">13</span> features</span>
+          <span class="pill fix"><span class="num">5</span> fixes</span>
+        </div>
+      </div>
+      <p class="summary">New <code>footerLinks</code> setting turns regex matches in tool output into clickable REPL footer badges. Projects Tool now surfaces PDFs and file uploads. Also ships: expanded <code>rg</code> flags, a <code>sed</code> static analyzer, tighter <code>rm</code>/<code>rmdir</code> safety, a Notifications settings panel, and explicit fork agent type.</p>
+      <span class="open-link">Open report →</span>
+    </a>
+
+    <!-- v2.1.175 -->
+    <a class="release" href="changelog-v2.1.175.html">
+      <div class="release-top">
+        <div>
+          <span class="ver">v2.1.175</span>
+        </div>
+        <div class="pill-row">
+          <span class="pill feat"><span class="num">8</span> features</span>
+          <span class="pill fix"><span class="num">2</span> fixes</span>
+          <span class="pill set"><span class="num">1</span> env var</span>
+        </div>
+      </div>
+      <p class="summary">Org model allowlist enforcement — admins can now restrict which Claude models users and agents can use via <code>enforceAvailableModels</code>. Blocked model attempts redirect with a clear status-line warning. Also ships <code>CLAUDE_CODE_REMOTE_MEMORY_DIR</code> and sharpened safety message wording.</p>
+      <span class="open-link">Open report →</span>
+    </a>
+
+    <!-- v2.1.174 -->
+    <a class="release" href="changelog-v2.1.174.html">
+      <div class="release-top">
+        <div>
+          <span class="ver">v2.1.174</span>
+        </div>
+        <div class="pill-row">
+          <span class="pill feat"><span class="num">15</span> features</span>
+          <span class="pill fix"><span class="num">4</span> fixes</span>
+          <span class="pill dev"><span class="num">3</span> removed</span>
+        </div>
+      </div>
+      <p class="summary">The new <code>Projects Tool</code> lets Claude Code read and write claude.ai project docs from a session. Also ships: a 10-rule security monitor rewrite, advisor model capability enforcement, Opus 4.6 sunset notifications, and removal of Claude Code Insights.</p>
+      <span class="open-link">Open report →</span>
+    </a>
+
+    <!-- v2.1.173 -->
+    <a class="release" href="changelog-v2.1.173.html">
+      <div class="release-top">
+        <div>
+          <span class="ver">v2.1.173</span>
+        </div>
+        <div class="pill-row">
+          <span class="pill feat"><span class="num">2</span> features</span>
+          <span class="pill fix"><span class="num">1</span> fix</span>
+        </div>
+      </div>
+      <p class="summary">Context-aware safety refusal messages — non-cyber/bio blocks now show a calmer generic message. Also ships: Fable model detection and a Windows sandboxing fix.</p>
+      <span class="open-link">Open report →</span>
+    </a>
+
+    <!-- v2.1.172 -->
+    <a class="release" href="changelog-v2.1.172.html">
+      <div class="release-top">
+        <div><span class="ver">v2.1.172</span></div>
+        <div class="pill-row">
+          <span class="pill feat"><span class="num">21</span> features</span>
+          <span class="pill fix"><span class="num">6</span> fixes</span>
+          <span class="pill set"><span class="num">5</span> flags</span>
+        </div>
+      </div>
+      <p class="summary">The new <code>Artifact</code> tool lets Claude publish HTML and Markdown files to private claude.ai web pages. Also ships: <code>--plugin-dir-no-mcp</code>, targeted ultra auth error messages, a <code>web_fetch</code> URL provenance check, two new env vars, 13 improvements, and 6 bug fixes.</p>
+      <span class="open-link">Open report →</span>
+    </a>
+
+    <!-- v2.1.170 -->
+    <a class="release" href="changelog-v2.1.170.html">
+      <div class="release-top">
+        <div><span class="ver">v2.1.170</span></div>
+        <div class="pill-row">
+          <span class="pill feat"><span class="num">14</span> features</span>
+          <span class="pill fix"><span class="num">4</span> fixes</span>
+          <span class="pill set"><span class="num">6</span> flags</span>
+        </div>
+      </div>
+      <p class="summary">Claude Fable 5 lands as the new highest-tier model with a launch banner, custom-provider env vars, and a <code>fable</code> alias — plus a <code>model_refusal_fallback</code> SDK protocol event, graceful tool-call tombstone cancellation, <code>CLAUDE_CODE_DISABLE_MOUSE</code>, and four bug fixes.</p>
+      <span class="open-link">Open report →</span>
+    </a>
+
+    <!-- v2.1.169 -->
+    <a class="release" href="changelog-v2.1.169.html">
+      <div class="release-top">
+        <div><span class="ver">v2.1.169</span></div>
+        <div class="pill-row">
+          <span class="pill feat"><span class="num">15</span> features</span>
+          <span class="pill fix"><span class="num">2</span> fixes</span>
+          <span class="pill dev"><span class="num">2</span> in-dev</span>
+          <span class="pill set"><span class="num">5</span> flags</span>
+        </div>
+      </div>
+      <p class="summary">A <code>--safe-mode</code> flag for clean-room troubleshooting, the new <code>/design-sync</code> skill, a <code>disableBundledSkills</code> setting, Windows sandbox WFP network filtering, and the completed "remote → cloud session" rename — plus a handful of input and tooling fixes.</p>
+      <span class="open-link">Open report →</span>
+    </a>
+
+  </div>
+</main>
+
+<footer>
+  <div>Generated from source-level diffs of the published npm package — reverse-engineered from the bundled CLI, not official Anthropic release notes.</div>
+</footer>
+</div>
+
+</body>
+</html>

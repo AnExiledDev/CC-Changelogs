@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.175 — Changelog</title>
+<style>
+  :root{
+    --bg:#16140f;--bg-2:#1d1a13;--panel:#211d15;--panel-2:#27221a;
+    --line:#3a3328;--line-soft:#2c2820;
+    --ink:#f3ecdf;--ink-2:#c7bca6;--ink-3:#8f8775;
+    --accent:#d97757;--accent-2:#e89b7f;--accent-ink:#1a120d;
+    --green:#7fae6a;--blue:#7fa8d9;--violet:#b08fd9;--amber:#d9b15a;--red:#d97c7c;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono","Cascadia Code",Consolas,monospace;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --radius:14px;--shadow:0 12px 40px -18px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:
+      radial-gradient(1100px 520px at 82% -8%,rgba(217,119,87,.16),transparent 60%),
+      radial-gradient(900px 480px at 5% 0%,rgba(127,168,217,.08),transparent 55%),
+      var(--bg);
+    color:var(--ink);font-family:var(--sans);line-height:1.6;
+    -webkit-font-smoothing:antialiased;font-size:15px;
+  }
+  a{color:var(--accent-2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.86em}
+  ::selection{background:rgba(217,119,87,.32)}
+
+  .wrap{max-width:1860px;margin:0 auto;padding:0 36px}
+  .card-grid{column-width:400px;column-gap:18px}
+
+  header.hero{padding:60px 0 30px;border-bottom:1px solid var(--line-soft)}
+  .eyebrow{display:flex;align-items:center;gap:12px;color:var(--ink-3);
+    font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600}
+  .logo-dot{width:11px;height:11px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%,var(--accent-2),var(--accent));
+    box-shadow:0 0 0 4px rgba(217,119,87,.15)}
+  h1.title{font-size:clamp(34px,5vw,52px);line-height:1.05;margin:18px 0 6px;
+    font-weight:800;letter-spacing:-.02em}
+  h1.title .v{
+    background:linear-gradient(92deg,var(--accent),var(--accent-2));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--ink-2);max-width:760px;font-size:16.5px;margin:14px 0 0}
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:var(--panel);
+    border:1px solid var(--line);border-radius:999px;padding:6px 13px;
+    font-size:12.5px;color:var(--ink-2)}
+  .chip b{color:var(--ink);font-weight:600}
+  .chip .k{color:var(--ink-3)}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
+  .stat{background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+  .stat .n{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1}
+  .stat .l{color:var(--ink-3);font-size:12px;margin-top:7px;letter-spacing:.04em;text-transform:uppercase}
+  .stat.f .n{color:var(--accent-2)} .stat.b .n{color:var(--red)}
+  .stat.d .n{color:var(--violet)} .stat.s .n{color:var(--blue)}
+
+  main{padding:34px 0 90px;min-width:0}
+  .section-head{display:flex;align-items:center;gap:14px;margin:42px 0 20px}
+  .section-head:first-child{margin-top:8px}
+  .section-head h2{font-size:13px;letter-spacing:.18em;text-transform:uppercase;
+    margin:0;color:var(--ink-2);font-weight:700;white-space:nowrap}
+  .section-head .ln{height:1px;background:var(--line-soft);flex:1}
+  .section-head .ct{color:var(--ink-3);font-size:12px;font-weight:600}
+
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 24px;margin:0 0 18px;box-shadow:var(--shadow);
+    break-inside:avoid;-webkit-column-break-inside:avoid;
+    scroll-margin-top:22px;transition:border-color .2s}
+  .card:hover{border-color:#4b4234}
+  .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+  .card h3{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .card h3 .anchor{color:var(--ink-3);opacity:0;margin-left:8px;font-weight:400;font-size:16px}
+  .card:hover h3 .anchor{opacity:1}
+  .tags{display:flex;flex-wrap:wrap;gap:7px;flex-shrink:0;justify-content:flex-end}
+  .tag{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    padding:4px 9px;border-radius:6px;border:1px solid transparent;white-space:nowrap}
+  .tag.new{color:var(--accent-2);background:rgba(217,119,87,.13);border-color:rgba(217,119,87,.3)}
+  .tag.fix{color:var(--green);background:rgba(127,174,106,.12);border-color:rgba(127,174,106,.3)}
+  .tag.set{color:var(--blue);background:rgba(127,168,217,.12);border-color:rgba(127,168,217,.3)}
+  .tag.neu{color:var(--ink-2);background:var(--panel-2);border-color:var(--line)}
+
+  .what{color:var(--ink);margin:14px 0 0;font-size:15px}
+  .block-label{font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:700;margin:20px 0 9px}
+  ul.details{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+  ul.details li{position:relative;padding-left:22px;color:var(--ink-2);font-size:14.3px}
+  ul.details li::before{content:"";position:absolute;left:4px;top:9px;width:6px;height:6px;
+    border-radius:50%;background:var(--accent);opacity:.85}
+
+  pre{margin:0;background:#100e0a;border:1px solid var(--line-soft);
+    border-radius:11px;overflow:auto;position:relative}
+  pre code{display:block;padding:15px 16px;font-size:12.8px;line-height:1.65;color:#e7dccb}
+  pre .lang{position:absolute;top:8px;right:10px;font-size:10px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--ink-3);font-weight:700}
+
+  .evidence{margin-top:18px;padding-top:14px;border-top:1px solid var(--line-soft);
+    font-size:12.6px;color:var(--ink-3);display:flex;gap:9px;align-items:flex-start}
+  .evidence .ico{color:var(--accent);flex-shrink:0;margin-top:1px}
+  .evidence code{color:var(--ink-2);background:var(--panel-2);
+    padding:1px 5px;border-radius:4px;border:1px solid var(--line-soft)}
+
+  .what code,.details code{background:var(--panel-2);color:var(--accent-2);
+    padding:1px 6px;border-radius:5px;border:1px solid var(--line-soft);font-size:.85em}
+
+  footer{border-top:1px solid var(--line-soft);padding:30px 0 70px;color:var(--ink-3);font-size:13px}
+  footer .gen{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px}
+  footer .gen div{background:var(--panel);border:1px solid var(--line-soft);
+    border-radius:10px;padding:11px 14px}
+  footer .gen .k{color:var(--ink-3);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+  footer .gen .val{color:var(--ink-2);font-family:var(--mono);font-size:12.5px;margin-top:4px;word-break:break-all}
+
+  .totop{position:fixed;right:26px;bottom:26px;width:44px;height:44px;border-radius:50%;
+    background:var(--accent);color:var(--accent-ink);border:none;cursor:pointer;
+    font-size:19px;font-weight:800;box-shadow:var(--shadow);opacity:0;pointer-events:none;
+    transition:opacity .25s,transform .25s;transform:translateY(8px)}
+  .totop.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+
+  @media(max-width:920px){.stats{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){
+    .wrap{padding:0 18px}
+    .card-top{flex-direction:column}
+    .tags{justify-content:flex-start}
+    .stats{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code · Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.175</span></h1>
+    <p class="sub">A comprehensive org model allowlist system — admins can now restrict which Claude models users and agents can access, with clear status-line warnings and inline messages when a model is blocked or redirected. Also adds <code>CLAUDE_CODE_REMOTE_MEMORY_DIR</code> and sharpens safety message wording.</p>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+      <span class="chip"><span class="k">Diff</span> <b>v2.1.174 → v2.1.175</b></span>
+      <span class="chip"><span class="k">Provider</span> <b>claude</b></span>
+      <span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>
+    </div>
+    <div class="stats">
+      <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Improvements</div></div>
+      <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+      <div class="stat d"><div class="n">0</div><div class="l">In Development</div></div>
+      <div class="stat s"><div class="n">1</div><div class="l">New Env Vars</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<main>
+
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div><span class="ct">4 items</span>
+  </div>
+
+  <div class="card-grid">
+
+  <article class="card" id="enforce-available-models">
+    <div class="card-top">
+      <h3>Organization Model Allowlist (<code>enforceAvailableModels</code>) <a class="anchor" href="#enforce-available-models">#</a></h3>
+      <div class="tags"><span class="tag new">New</span><span class="tag neu">Orgs</span></div>
+    </div>
+    <p class="what">Admins can now configure an <code>availableModels</code> allowlist in policy settings to restrict which Claude models users and agents can use. When <code>enforceAvailableModels</code> is <code>true</code> and the list is non-empty, any attempt to use a model outside it is silently redirected to the next allowed model with a warning.</p>
+    <div class="block-label">Details</div>
+    <ul class="details">
+      <li>Controlled via <code>enforceAvailableModels</code> and <code>availableModels</code> in org policy settings</li>
+      <li>If a preferred model (from CLI flag, SDK request, or <code>/model</code> switch) is not in the allowlist, Claude Code falls back to the nearest allowed model</li>
+      <li><code>modelOverrides</code> lets admins map model aliases or families to specific allowed variants</li>
+      <li>Cascade trust: if a policy source exists but fails to load, enforcement is suspended and a warning is logged rather than silently defaulting to less-restricted behavior</li>
+      <li>Plan mode respects the allowlist — if the Opus or Haiku upgrade model is blocked, planning falls back to the resting model with a warning</li>
+      <li>Agent and skill model requests are also checked; blocked models trigger a notification rather than silently using an unauthorized model</li>
+    </ul>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"enforceAvailableModels: a policy source exists but failed to load"</code></div></div>
+  </article>
+
+  <article class="card" id="model-restricted-statusline">
+    <div class="card-top">
+      <h3>Model Restriction Warning in Status Line <a class="anchor" href="#model-restricted-statusline">#</a></h3>
+      <div class="tags"><span class="tag new">New</span><span class="tag neu">UX</span></div>
+    </div>
+    <p class="what">When an org policy forces a different model than you requested, a <code>model-restricted</code> warning now appears in the status line showing both what you asked for and what is actually being used.</p>
+    <div class="block-label">Details</div>
+    <ul class="details">
+      <li>Displayed at the <code>warning</code> tier — higher prominence than informational indicators</li>
+      <li>Replaces the <code>model-source</code> info indicator when a restriction is active — the two never display simultaneously</li>
+      <li>An inline warning message is also emitted at startup when a startup-time restriction is detected</li>
+    </ul>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"model-restricted"</code></div></div>
+  </article>
+
+  <article class="card" id="set-by-org-indicator">
+    <div class="card-top">
+      <h3>"Set by your organization" Model Indicator <a class="anchor" href="#set-by-org-indicator">#</a></h3>
+      <div class="tags"><span class="tag new">New</span><span class="tag neu">UX</span></div>
+    </div>
+    <p class="what">When your active model has been selected or constrained by an org policy, a <code>· Set by your organization</code> suffix now appears in model information displays.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"· Set by your organization"</code></div></div>
+  </article>
+
+  <article class="card" id="remote-memory-dir">
+    <div class="card-top">
+      <h3>CLAUDE_CODE_REMOTE_MEMORY_DIR <a class="anchor" href="#remote-memory-dir">#</a></h3>
+      <div class="tags"><span class="tag new">New</span><span class="tag set">Env</span></div>
+    </div>
+    <p class="what">A new environment variable that overrides the default directory for remote memory storage — useful in containerized or shared environments where memory files should reside at a specific location.</p>
+    <div class="block-label">Usage</div>
+    <pre><span class="lang">bash</span><code>CLAUDE_CODE_REMOTE_MEMORY_DIR=/path/to/memory claude</code></pre>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"CLAUDE_CODE_REMOTE_MEMORY_DIR"</code></div></div>
+  </article>
+
+  </div>
+
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div><span class="ct">4 items</span>
+  </div>
+
+  <div class="card-grid">
+
+  <article class="card" id="agent-model-restricted">
+    <div class="card-top">
+      <h3>Model Restriction Notifications for Agents <a class="anchor" href="#agent-model-restricted">#</a></h3>
+      <div class="tags"><span class="tag neu">Agents</span></div>
+    </div>
+    <p class="what">When an agent or skill requests a model blocked by the allowlist, a medium-priority warning notification now identifies which agent type made the request and what restriction was applied. Previously, blocked model requests could fail silently.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"agent-model-restricted-"</code> in the new <code>onModelRestricted</code> callback</div></div>
+  </article>
+
+  <article class="card" id="sdk-model-allowlist">
+    <div class="card-top">
+      <h3>Safer Model Change Handling in SDK / Remote Sessions <a class="anchor" href="#sdk-model-allowlist">#</a></h3>
+      <div class="tags"><span class="tag neu">SDK</span></div>
+    </div>
+    <p class="what">The <code>set_model</code> and session-initialization code paths now verify model names against the allowlist before applying them. If a model is not allowed, the change is rejected and the user sees an actionable warning instead of the session silently using an unexpected model.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"model-restricted-bridge-"</code> in the updated <code>onSetModel</code> handler</div></div>
+  </article>
+
+  <article class="card" id="available-models-propagation">
+    <div class="card-top">
+      <h3>availableModels Propagated from Policy Tier <a class="anchor" href="#available-models-propagation">#</a></h3>
+      <div class="tags"><span class="tag neu">Orgs</span></div>
+    </div>
+    <p class="what">The policy settings merge now correctly propagates <code>availableModels</code> from the highest-priority policy tier into the merged view used by the allowlist checker. Previously this field was not forwarded through the merge, so enforcement could not see it.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"availableModels: w[0]?.availableModels"</code></div></div>
+  </article>
+
+  <article class="card" id="safety-message-wording">
+    <div class="card-top">
+      <h3>Safety Message Wording Improved <a class="anchor" href="#safety-message-wording">#</a></h3>
+      <div class="tags"><span class="tag neu">UX</span></div>
+    </div>
+    <p class="what">The message shown when a model declines a request due to safety measures now reads "has safety measures that flagged something in this session" — more clearly attributing the behavior to safety systems rather than the model generically.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"has safety measures that flagged something in this session"</code></div></div>
+  </article>
+
+  </div>
+
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div><span class="ct">2 items</span>
+  </div>
+
+  <div class="card-grid">
+
+  <article class="card" id="bug-plan-allowlist">
+    <div class="card-top">
+      <h3>Plan Mode Model Upgrade Now Checks Allowlist <a class="anchor" href="#bug-plan-allowlist">#</a></h3>
+      <div class="tags"><span class="tag fix">Fix</span></div>
+    </div>
+    <p class="what">Plan-mode model selection no longer bypasses the allowlist when upgrading from Haiku or Opus plan models. The upgrade model is now validated and falls back gracefully with a warning rather than attempting to use an unauthorized model.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"Plan mode: the haiku plan upgrade model is not in the availableModels allowlist"</code></div></div>
+  </article>
+
+  <article class="card" id="bug-model-name-matching">
+    <div class="card-top">
+      <h3>Model Name Substring Matching Fixed <a class="anchor" href="#bug-model-name-matching">#</a></h3>
+      <div class="tags"><span class="tag fix">Fix</span></div>
+    </div>
+    <p class="what">Model name matching in the allowlist checker now uses a boundary-aware matcher that requires non-alphanumeric boundaries on both sides of the match, preventing incorrect matches where one model name is a substring of another.</p>
+    <div class="evidence"><span class="ico">◆</span><div>Search <code>"ekK"</code> — the new boundary-aware substring matcher</div></div>
+  </article>
+
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package — these notes are reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+      <div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div>
+      <div><div class="k">Primary diff</div><div class="val">changes/changes-v2.1.175.md (filtered astdiff)</div></div>
+      <div><div class="k">String diff</div><div class="val">changes/string-diff-v2.1.175.txt</div></div>
+    </div>
+  </footer>
+
+</main>
+</div>
+
+<button class="totop" id="totop" title="Back to top">&#8593;</button>
+
+<script>
+  const top=document.getElementById('totop');
+  top.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  addEventListener('scroll',()=>top.classList.toggle('show',scrollY>600));
+</script>
+</body>
+</html>
