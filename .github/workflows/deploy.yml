@@ -1,0 +1,50 @@
+name: Deploy to Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Inject analytics into every page
+        run: |
+          SNIPPET='<script defer src="https://cloud.umami.is/script.js" data-website-id="23990df3-6ce0-4404-9101-7007900fe1d4"></script>'
+          while IFS= read -r -d '' f; do
+            if grep -qi 'cloud.umami.is/script.js' "$f"; then
+              echo "skip (already tagged): $f"
+            elif grep -qi '</head>' "$f"; then
+              sed -i "s#</head>#${SNIPPET}</head>#I" "$f"
+              echo "injected into <head>: $f"
+            else
+              sed -i "0,#<body[^>]*>#s##&${SNIPPET}#I" "$f"
+              echo "injected after <body>: $f"
+            fi
+          done < <(find . -path ./.git -prune -o -name '*.html' -print0)
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
