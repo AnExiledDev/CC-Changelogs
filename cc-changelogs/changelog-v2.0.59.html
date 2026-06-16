@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.59 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.59."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.59</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.59</span></h1>
+<p class="sub">This release introduces a new <strong>Task management system</strong> with tools for creating and tracking work items, adds <strong>teammate mailbox messaging</strong> for inter-agent communication, and includes a <strong>post-compaction feedback survey</strong>. The <code>/migrate-installer</code> command has been removed, and thinking mode support has been extended to claude-opus-4-5.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.58 → v2.0.59</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="task-management-system">
+      <div class="card-top">
+        <h3>Task Management System <a class="anchor" href="#task-management-system">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A complete task tracking system with four new tools for managing work items during coding sessions.</p>
+<p><strong>Tools added:</strong></p>
+<ul><li><code>TaskCreate</code> - Create a new task with subject and description</li><li><code>TaskGet</code> - Retrieve a task by ID with full details</li><li><code>TaskUpdate</code> - Update task properties (subject, description, status, owner, comments, references, blockers)</li><li><code>TaskList</code> - List all tasks with their current status</li></ul>
+<p><strong>How to use:</strong> Tasks are automatically created and managed by Claude during complex multi-step work. Each task has:</p>
+<ul><li>Subject and description</li><li>Status: <code>open</code> or <code>resolved</code></li><li>Optional owner assignment</li><li>Comments with author attribution</li><li>Reference links between tasks</li><li>Blocking/blocked-by relationships</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Tasks are stored in <code>.claude/tasks/</code> directory at <code>tI2()</code> function, line 344419</li><li>Tasks persist across sessions within the same project</li><li>Supports bidirectional task linking via <code>$Y1()</code> function at line 485071</li><li><strong>Evidence</strong>: <code>TaskCreate</code> tool at line 484977, <code>TaskList</code> at line 485460</li></ul>
+    </article>
+    <article class="card" id="teammate-mailbox-messaging">
+      <div class="card-top">
+        <h3>Teammate Mailbox Messaging <a class="anchor" href="#teammate-mailbox-messaging">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A new messaging system allowing Claude agents to send and receive messages between teammates in multi-agent scenarios.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>Mailbox stored at <code>.claude/mailbox</code> (<code>BH5</code> variable at line 344469)</li><li>Messages formatted as <code>&lt;teammate-message teammate_id="..."&gt;</code> (line 344461)</li><li>Supports read/unread tracking with <code>AY2()</code> function at line 344440</li><li>Messages delivered as attachments of type <code>teammate_mailbox</code> (line 345180)</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li><code>vH5()</code> function at line 345163 checks for unread messages</li><li><code>QY2()</code> function at line 344459 formats messages for delivery</li><li><code>eI2()</code> function at line 344437 filters for unread messages only</li><li><strong>Evidence</strong>: New in v2.0.59 - no matches found in v2.0.58</li></ul>
+    </article>
+    <article class="card" id="post-compaction-feedback-survey">
+      <div class="card-top">
+        <h3>Post-Compaction Feedback Survey <a class="anchor" href="#post-compaction-feedback-survey">#</a></h3>
+      </div>
+      <p><strong>What:</strong> After memory compaction events, users can optionally provide feedback on the compaction quality.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Survey message: "How did that compaction go? (optional)" at line 481872</li><li>Analytics event: <code>tengu_post_compact_survey_event</code> at line 477154</li><li>Survey appears after compaction operations complete</li><li>Auto-hides after 3 seconds (<code>oj3 = 3000</code> at line 477153)</li><li>Implemented via <code>V39()</code> hook at line 477101</li><li><strong>Evidence</strong>: Feature completely absent in v2.0.58</li></ul>
+    </article>
+    <article class="card" id="main-thread-agent-definition-support">
+      <div class="card-top">
+        <h3>Main Thread Agent Definition Support <a class="anchor" href="#main-thread-agent-definition-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New architecture allowing main thread agents to provide custom system prompts.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>mainThreadAgentDefinition</code> parameter added to main UI component at line 480951</li><li><code>HJ9()</code> helper function at line 480920 handles system prompt resolution</li><li>Conditionally calls agent's <code>getSystemPrompt()</code> method with tool context</li><li>Enables more flexible agent customization</li><li><strong>Evidence</strong>: 7 occurrences in v2.0.59, zero in v2.0.58</li></ul>
+    </article>
+    <article class="card" id="extended-thinking-mode-for-claude-opus-4-5">
+      <div class="card-top">
+        <h3>Extended Thinking Mode for claude-opus-4-5 <a class="anchor" href="#extended-thinking-mode-for-claude-opus-4-5">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Thinking mode now supports claude-opus-4-5 model via feature flag.</p>
+<p><strong>How it changed:</strong></p>
+<ul><li>Previous: Only claude-sonnet-4-5 had thinking enabled by default</li><li>Now: claude-opus-4-5 can enable thinking via <code>tengu_deep_ocean_current</code> feature flag</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li><code>VrA()</code> function at line 221003-221012 updated with new model check</li><li>Feature flag check: <code>BZ("tengu_deep_ocean_current", "on_by_default", !1)</code> at line 221011</li><li><strong>Evidence</strong>: No <code>deep_ocean_current</code> in v2.0.58, added in v2.0.59</li></ul>
+    </article>
+    <article class="card" id="marketplace-download-with-custom-headers">
+      <div class="card-top">
+        <h3>Marketplace Download with Custom Headers <a class="anchor" href="#marketplace-download-with-custom-headers">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Plugin marketplace downloads now support custom HTTP headers for authentication.</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>c22()</code> function at line 306362 now accepts headers parameter</li><li>Headers are logged (redacted) for debugging: <code>O85()</code> function at line 306357</li><li>Enables private/authenticated marketplace support</li><li><strong>Evidence</strong>: Modified function structure shows headers parameter added</li></ul>
+    </article>
+    <article class="card" id="analytics-sink-architecture">
+      <div class="card-top">
+        <h3>Analytics Sink Architecture <a class="anchor" href="#analytics-sink-architecture">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New analytics event buffering and sink attachment system.</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>Hz0()</code> function at line 2490 attaches analytics sink</li><li><code>GA()</code> function at line 2505 for synchronous events</li><li><code>eu()</code> function at line 2512 for async events</li><li>Events buffered in <code>NFA</code> array until sink attached</li><li>Prevents event loss during initialization</li></ul>
+    </article>
+    <article class="card" id="feedback-survey-type-tracking">
+      <div class="card-top">
+        <h3>Feedback Survey Type Tracking <a class="anchor" href="#feedback-survey-type-tracking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Feedback surveys now track the survey type (session vs post-compact).</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>W39()</code> function at line 476966 adds <code>survey_type</code> parameter to analytics</li><li>Distinguishes between regular session feedback and post-compaction feedback</li><li>Enables better analytics segmentation</li></ul>
+    </article>
+    <article class="card" id="migrate-installer-command-removed">
+      <div class="card-top">
+        <h3><code>/migrate-installer</code> Command Removed <a class="anchor" href="#migrate-installer-command-removed">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The command to migrate from global npm installation to local installation has been removed.</p>
+<p><strong>Previous behavior:</strong></p>
+<ul><li><code>claude migrate-installer</code> would move installation to <code>~/.claude/local</code></li><li>Set up shell aliases automatically</li><li>Removed global npm package</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Command definition removed (was at line 495151 in v2.0.58)</li><li>All 10+ references to <code>migrate-installer</code> removed</li><li>Forced migration flow (<code>PU9()</code> function) also removed</li><li><strong>Evidence</strong>: Present in v2.0.58 at multiple locations, zero matches in v2.0.59</li></ul>
+    </article>
+    <article class="card" id="growthbook-feature-flag-check-removed">
+      <div class="card-top">
+        <h3>GrowthBook Feature Flag Check Removed <a class="anchor" href="#growthbook-feature-flag-check-removed">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The <code>sm1()</code> function for checking <code>CLAUDE_CODE_ENABLE_GROWTHBOOK</code> environment variable was removed.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function was at line 233408 in v2.0.58</li><li>Simplified feature flag initialization flow</li></ul>
+    </article>
+    <article class="card" id="slash-command-ui-components-refactored">
+      <div class="card-top">
+        <h3>Slash Command UI Components Refactored <a class="anchor" href="#slash-command-ui-components-refactored">#</a></h3>
+      </div>
+      <p><strong>What:</strong> <code>/todos</code> and <code>/plan</code> commands converted to use new <code>local-jsx</code> rendering pattern.</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>AD9()</code> component at line 499901 for todos display</li><li><code>wx3()</code> component at line 500269 for plan display</li><li><code>$VA()</code> wrapper component at line 493331 for async rendering</li><li><code>UVA()</code> function at line 493327 for synchronous JSX-to-string conversion</li></ul>
+    </article>
+    <article class="card" id="ctrl-o-expand-hint-extracted">
+      <div class="card-top">
+        <h3>Ctrl+O Expand Hint Extracted <a class="anchor" href="#ctrl-o-expand-hint-extracted">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The "(ctrl+o to expand)" hint is now generated by a dedicated function.</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>keB()</code> function at line 282066 returns the formatted hint</li><li>Previously was an inline string constant <code>rB2</code> at line 303505 in v2.0.58</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.124 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.124."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.124</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.124</span></h1>
+<p class="sub">Version 1.0.124 introduces sandboxed bash mode for enhanced security, protects <code>.git/hooks</code> directories from unauthorized modifications, and adds experimental server-controlled extended thinking capabilities. The API retry mechanism was refactored to provide real-time error feedback through the UI instead of console logging.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.123 → v1.0.124</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">25</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">25 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="sandboxed-bash-mode-sb-sandboxed-bash">
+      <div class="card-top">
+        <h3>Sandboxed Bash Mode (<code>-sb/--sandboxed-bash</code>) <a class="anchor" href="#sandboxed-bash-mode-sb-sandboxed-bash">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A new permission mode that combines sandbox restrictions with automatic command approval for commands that comply with configured filesystem and network policies.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Enable sandboxed bash mode
+claude -sb
+
+# Or with long form
+claude --sandboxed-bash</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Requires a sandbox configuration to be active in your <code>settings.json</code> files</li><li>Only available when <code>sandbox.filesystem</code> or <code>sandbox.network</code> restrictions are configured</li><li>Auto-accepts commands that comply with sandbox policies while rejecting violating commands</li><li>Accessible via keyboard shortcut (cycles through permission modes: default → sandboxBashMode → acceptEdits → plan → bypassPermissions)</li><li><strong>Evidence</strong>: Permission mode added to enum at <code>X41</code> line 352214, mode cycling logic in <code>bFB()</code> at line 427311, validation in <code>Ku2()</code> at line 383783</li></ul>
+    </article>
+    <article class="card" id="git-hooks-protection">
+      <div class="card-top">
+        <h3>Git Hooks Protection <a class="anchor" href="#git-hooks-protection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude Code now protects <code>.git/hooks</code> directories in all git repositories within your workspace, requiring explicit permission before modifying hook scripts.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Scans workspace for all git repositories using <code>.git/HEAD</code> detection</li><li>Automatically adds <code>.git/hooks</code> and <code>.git/config</code> to protected paths list</li><li>Prevents unauthorized modification of pre-commit, post-checkout, and other git hooks</li><li>Complements existing <code>.git/config</code> protection (present since v1.0.86)</li><li><strong>Evidence</strong>: New protection logic in <code>YIA()</code> at lines 363503-363531, filtering <code>.git</code> from recursive scans at line 363462</li></ul>
+    </article>
+    <article class="card" id="server-controlled-extended-thinking-experimental">
+      <div class="card-top">
+        <h3>Server-Controlled Extended Thinking (Experimental) <a class="anchor" href="#server-controlled-extended-thinking-experimental">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Server-side feature flag system that enables automatic extended thinking token allocation for specific users without requiring manual triggers.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New API endpoint <code>/api/oauth/claude_cli/client_data</code> fetches user-specific configuration</li><li>When <code>alwaysThinking</code> is enabled server-side, maximum thinking tokens are automatically allocated</li><li>Thinking blocks are intelligently hidden when auto-enabled unless user explicitly requested thinking</li><li>Does not affect manual thinking triggers or <code>MAX_THINKING_TOKENS</code> environment variable</li><li><strong>Evidence</strong>: Client data API in <code>TWA()</code> at line 361888, token allocation in <code>pT()</code> at line 362093, hiding logic at line 415872</li></ul>
+    </article>
+    <article class="card" id="enhanced-api-error-display">
+      <div class="card-top">
+        <h3>Enhanced API Error Display <a class="anchor" href="#enhanced-api-error-display">#</a></h3>
+      </div>
+      <p><strong>What:</strong> API retry errors now appear as structured messages in the UI instead of console output, providing real-time feedback during retry attempts.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Retry mechanism refactored from async function to async generator that yields error states</li><li>New <code>api_error</code> system message type shows retry countdown, attempt number, and timeout settings</li><li>Error messages include improved timeout descriptions: "Request timed out. Check your internet connection and proxy settings"</li><li>Console logging of retries removed in favor of UI components</li><li><strong>Evidence</strong>: Generator function <code>JY1()</code> at line 394593, error message creator <code>wQB()</code> at line 396886, UI component <code>YYB()</code> at line 415692</li></ul>
+    </article>
+    <article class="card" id="improved-bash-tool-documentation">
+      <div class="card-top">
+        <h3>Improved Bash Tool Documentation <a class="anchor" href="#improved-bash-tool-documentation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The Bash tool now dynamically generates documentation based on active sandbox configuration.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Documentation automatically includes active filesystem and network restrictions</li><li>Shows allowed/denied paths and hosts when sandbox is configured</li><li>Emphasizes <code>/tmp/claude/</code> as the proper temporary directory in sandbox mode</li><li>Provides clear guidance on sandbox violation handling</li><li><strong>Evidence</strong>: Documentation generator <code>ql4()</code> at line 371292, integrated into Bash tool description at line 371437</li></ul>
+    </article>
+    <article class="card" id="permission-prompt-infrastructure">
+      <div class="card-top">
+        <h3>Permission Prompt Infrastructure <a class="anchor" href="#permission-prompt-infrastructure">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Permission prompts now support optional subtitles for displaying additional context.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>subtitle</code> parameter available in permission prompt components</li><li>Subtitle displays next to title in a row layout with truncation support</li><li>Currently unused but provides foundation for future enhancements (e.g., showing file paths)</li><li><strong>Evidence</strong>: Component <code>rz()</code> with subtitle at line 422454, wrapper function <code>fO()</code> with subtitle parameter at line 422836</li></ul>
+    </article>
+    <article class="card" id="extended-thinking-display-enhancements">
+      <div class="card-top">
+        <h3>Extended Thinking Display Enhancements <a class="anchor" href="#extended-thinking-display-enhancements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved visual presentation of thinking blocks with collapsible display option.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New "∴" (therefore) symbol for extended thinking display</li><li>Collapsed view shows "∴ Thinking (ctrl+o to expand)" hint</li><li>Expanded view shows "∴ Thinking…" with full content</li><li>Smart filtering excludes tool result messages from thinking analysis</li><li><strong>Evidence</strong>: Display logic in <code>BYB()</code> at line 414832, message filter <code>FYB()</code> at line 415832</li></ul>
+    </article>
+    <article class="card" id="api-token-counting-simplification">
+      <div class="card-top">
+        <h3>API Token Counting Simplification <a class="anchor" href="#api-token-counting-simplification">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed unnecessary <code>isNonInteractiveSession</code> parameter from token counting functions.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Functions <code>KP2()</code> (now <code>NP2()</code>) and <code>zP2()</code> (now <code>LP2()</code>) simplified</li><li>Token counting no longer varies based on interactive vs non-interactive mode</li><li><strong>Evidence</strong>: Function <code>NP2()</code> at line 377221, function <code>LP2()</code> at line 377245</li></ul>
+    </article>
+    <article class="card" id="retry-logic-refactoring">
+      <div class="card-top">
+        <h3>Retry Logic Refactoring <a class="anchor" href="#retry-logic-refactoring">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Extracted inline retry logic into dedicated helper functions for better maintainability.</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>CQB()</code>: New sleep function with AbortSignal support (line 394549)</li><li><code>OE6()</code>: Extracts retry-after header from API responses (line 394669)</li><li><code>SE6()</code>: Calculates max retries from options or environment variable (line 394738)</li><li>Improves code organization without changing retry behavior</li><li><strong>Evidence</strong>: Sleep function <code>CQB()</code> at line 394549, header extraction <code>OE6()</code> at line 394669</li></ul>
+    </article>
+    <article class="card" id="web-fetch-improvements">
+      <div class="card-top">
+        <h3>Web Fetch Improvements <a class="anchor" href="#web-fetch-improvements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed <code>isNonInteractiveSession</code> parameter from web fetch operations.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>jJB()</code> (now <code>rJB()</code>) simplified to remove session type parameter</li><li>Web fetching behavior now consistent across all session types</li><li><strong>Evidence</strong>: Function <code>rJB()</code> at line 417265</li></ul>
+    </article>
+    <article class="card" id="slash-command-logging">
+      <div class="card-top">
+        <h3>Slash Command Logging <a class="anchor" href="#slash-command-logging">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added debug logging for slash commands included in the SlashCommand tool.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Logs list of available slash commands when generating tool description</li><li>Helps diagnose issues with command availability</li><li><strong>Evidence</strong>: Logging in <code>w4B()</code> at line 413120</li></ul>
+    </article>
+    <article class="card" id="prompt-history-deduplication">
+      <div class="card-top">
+        <h3>Prompt History Deduplication <a class="anchor" href="#prompt-history-deduplication">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Prompt history now deduplicates pasted content to reduce storage usage.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Only stores pasted content &lt;= 1024 characters in history</li><li>Larger pastes are excluded from the history record</li><li><strong>Evidence</strong>: Content filtering in <code>CoQ()</code> at line 361367, size limit <code>KoQ</code> at line 361273</li></ul>
+    </article>
+    <article class="card" id="session-resume-enhancement">
+      <div class="card-top">
+        <h3>Session Resume Enhancement <a class="anchor" href="#session-resume-enhancement">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Session resume now supports loading messages from session history database.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New function <code>sb()</code> can resume from session ID with database lookup</li><li>Converts database message records to internal message format</li><li>Supports resuming with checkpoints and file history snapshots</li><li><strong>Evidence</strong>: Resume function <code>sb()</code> at line 413024, message converter <code>Fk6()</code> at line 413062</li></ul>
+    </article>
+    <article class="card" id="error-categorization-improvement">
+      <div class="card-top">
+        <h3>Error Categorization Improvement <a class="anchor" href="#error-categorization-improvement">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Better distinction between system messages and tool result messages in error categorization.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>cQB()</code> function identifies <code>post_tool_hook_feedback</code> messages</li><li>Function <code>AN6()</code> (formerly <code>TE6()</code>) now correctly categorizes these messages</li><li><strong>Evidence</strong>: Message type checker <code>cQB()</code> at line 396567, categorizer <code>AN6()</code> at line 396395</li></ul>
+    </article>
+    <article class="card" id="boolean-environment-variable-parsing">
+      <div class="card-top">
+        <h3>Boolean Environment Variable Parsing <a class="anchor" href="#boolean-environment-variable-parsing">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved parsing of environment variables to handle boolean types natively.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>aA()</code> (formerly <code>_B()</code>) now accepts boolean values directly</li><li>Previously only handled string values</li><li><strong>Evidence</strong>: Enhanced parser <code>aA()</code> at line 340564</li></ul>
+    </article>
+    <article class="card" id="api-key-retrieval-simplification">
+      <div class="card-top">
+        <h3>API Key Retrieval Simplification <a class="anchor" href="#api-key-retrieval-simplification">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed unnecessary <code>isNonInteractiveSession</code> parameter from API key functions.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>RX()</code> (now <code>PX()</code>) no longer requires session type parameter</li><li>Function <code>QZB()</code> (now <code>CZB()</code>) simplified similarly</li><li><strong>Evidence</strong>: Function <code>PX()</code> at line 440221, function <code>CZB()</code> at line 440217</li></ul>
+    </article>
+    <article class="card" id="client-metadata-collection-update">
+      <div class="card-top">
+        <h3>Client Metadata Collection Update <a class="anchor" href="#client-metadata-collection-update">#</a></h3>
+      </div>
+      <p><strong>What:</strong> OAuth account metadata collection function no longer requires API key parameter.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>AM1()</code> (now <code>CM1()</code>) simplified to remove unused parameter</li><li><strong>Evidence</strong>: Function <code>CM1()</code> at line 368533</li></ul>
+    </article>
+    <article class="card" id="command-chaining-simplification">
+      <div class="card-top">
+        <h3>Command Chaining Simplification <a class="anchor" href="#command-chaining-simplification">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed context parameter from multi-command permission checking.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>Ki4()</code> (now <code>vi4()</code>) and <code>mP2()</code> (now <code>oP2()</code>) no longer require context parameter</li><li><strong>Evidence</strong>: Function <code>vi4()</code> at line 378258, function <code>oP2()</code> at line 371695</li></ul>
+    </article>
+    <article class="card" id="ide-integration-cleanup">
+      <div class="card-top">
+        <h3>IDE Integration Cleanup <a class="anchor" href="#ide-integration-cleanup">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed <code>isNonInteractiveSession</code> parameter from IDE tab management.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>IVB()</code> (now <code>OVB()</code>) simplified to only require tab name and IDE client</li><li><strong>Evidence</strong>: Function <code>OVB()</code> at line 422924</li></ul>
+    </article>
+    <article class="card" id="frequently-modified-files-analysis">
+      <div class="card-top">
+        <h3>Frequently Modified Files Analysis <a class="anchor" href="#frequently-modified-files-analysis">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed session type parameter from git history analysis.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>cV5()</code> (now <code>$F5()</code>) no longer varies behavior by session type</li><li><strong>Evidence</strong>: Function <code>$F5()</code> at line 429518</li></ul>
+    </article>
+    <article class="card" id="command-path-extraction">
+      <div class="card-top">
+        <h3>Command Path Extraction <a class="anchor" href="#command-path-extraction">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Simplified bash command path extraction to remove session type dependency.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>wT2()</code> (now <code>jT2()</code>) no longer requires <code>isNonInteractiveSession</code> parameter</li><li><strong>Evidence</strong>: Function <code>jT2()</code> at line 372008</li></ul>
+    </article>
+    <article class="card" id="notification-system-simplification">
+      <div class="card-top">
+        <h3>Notification System Simplification <a class="anchor" href="#notification-system-simplification">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed notification parameter from status bar component.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>LFB()</code> (now <code>mFB()</code>) simplified status bar rendering</li><li>Notification display logic integrated differently</li><li><strong>Evidence</strong>: Function <code>mFB()</code> at line 427595</li></ul>
+    </article>
+    <article class="card" id="rate-limit-pre-check">
+      <div class="card-top">
+        <h3>Rate Limit Pre-Check <a class="anchor" href="#rate-limit-pre-check">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed the unified rate limit status check function <code>QQB()</code> that was called before each API request.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Previously checked rate limit headers before making requests</li><li>Rate limiting now handled entirely through retry mechanism</li><li><strong>Evidence</strong>: Function <code>QQB()</code> removed from line 394273 in v1.0.123</li></ul>
+    </article>
+    <article class="card" id="github-actions-workflow-template-update">
+      <div class="card-top">
+        <h3>GitHub Actions Workflow Template Update <a class="anchor" href="#github-actions-workflow-template-update">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Minor update to the Claude Code Review GitHub Actions workflow template.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Variable renamed from <code>FZB</code> to <code>OZB</code></li><li>Content remains identical</li><li><strong>Evidence</strong>: Variable <code>OZB</code> at line 407460</li></ul>
+    </article>
+    <article class="card" id="stream-import-removal">
+      <div class="card-top">
+        <h3>Stream Import Removal <a class="anchor" href="#stream-import-removal">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed unused <code>stream</code> module import.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Import statement for OFQ from "stream" removed</li><li>Replaced with more specific <code>PassThrough</code> import from "stream" at line 445118</li><li><strong>Evidence</strong>: Removed import at line 338191 in v1.0.123, new import <code>Lt5</code> at line 445118</li></ul>
+<p><strong>Note:</strong> Many function and variable names changed in this release due to JavaScript minification/bundling. The functionality described above focuses on user-visible changes and meaningful internal improvements rather than cosmetic identifier changes.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

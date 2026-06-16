@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.47 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.47."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.47</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.47</span></h1>
+<p class="sub">This release introduces Remote Control (<code>/remote-control</code>), enabling access to CLI sessions from claude.ai/code or the Claude app. It adds a new <code>--thinking</code> flag with adaptive thinking support for Opus 4.6+, enhanced dangerous command warnings with detailed notes, and the ability to kill background agents via <code>ctrl+f</code>. Plugin security improvements include automatic flagging of delisted plugins.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.45 → v2.1.47</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">16 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="remote-control">
+      <div class="card-top">
+        <h3>Remote Control <a class="anchor" href="#remote-control">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Access your CLI session from the web (claude.ai/code) or the Claude app, continuing conversations across devices.</p>
+<div class="blabel">Usage</div>
+<pre><code>/remote-control</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Opens a secure connection to claude.ai</li><li>Shows "Remote Control active" status in the CLI</li><li>Reconnects automatically if connection drops</li><li>Run <code>/remote-control</code> again to disconnect remote access</li><li>Can be enabled for all sessions or just the current session</li></ul>
+<div class="blabel">Evidence</div>
+<p>Remote Control UI and SSETransport infrastructure (search for <code>"/remote-control"</code>, <code>"Remote Control lets you access"</code>)</p>
+    </article>
+    <article class="card" id="adaptive-thinking-with-thinking-flag">
+      <div class="card-top">
+        <h3>Adaptive Thinking with --thinking Flag <a class="anchor" href="#adaptive-thinking-with-thinking-flag">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>--thinking</code> flag provides semantic control over Claude's thinking/reasoning behavior, replacing the deprecated <code>--max-thinking-tokens</code>.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --thinking enabled   # Claude decides when and how much to think
+claude --thinking disabled  # No extended thinking
+claude --thinking 10000     # Fixed thinking token budget (older models)</code></pre>
+<div class="blabel">Details</div>
+<ul><li>For Opus 4.6+, adaptive mode lets Claude autonomously decide thinking depth</li><li>Takes precedence over the deprecated <code>maxThinkingTokens</code> setting</li><li>The old <code>--max-thinking-tokens</code> flag is now deprecated with guidance to use <code>--thinking</code> instead</li></ul>
+<div class="blabel">Evidence</div>
+<p>Thinking mode options (search for <code>"--thinking &lt;mode&gt;"</code>, <code>"Claude decides when and how much to think (Opus 4.6+)"</code>)</p>
+    </article>
+    <article class="card" id="kill-background-agents">
+      <div class="card-top">
+        <h3>Kill Background Agents <a class="anchor" href="#kill-background-agents">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Quickly terminate all running background agents with a keyboard shortcut.</p>
+<div class="blabel">Usage</div>
+<ul><li>Press <code>ctrl+f</code> once to open search</li><li>Press <code>ctrl+f</code> again to kill all background agents</li></ul>
+<div class="blabel">Details</div>
+<ul><li>New <code>chat:killAgents</code> action bound to double <code>ctrl+f</code></li><li>Shows "All background agents killed" confirmation</li><li>Also available via text commands: "kill agents", "kill all agents"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Agent termination system (search for <code>"All background agents killed"</code>, <code>"chat:killAgents"</code>)</p>
+    </article>
+    <article class="card" id="ssh-connection-configuration">
+      <div class="card-top">
+        <h3>SSH Connection Configuration <a class="anchor" href="#ssh-connection-configuration">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Pre-configured SSH connections for remote environments, typically set by enterprise administrators.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>sshConfigs</code> setting for managed settings</li><li>Supports configuration of:</li><li>SSH host (user@hostname or alias from ~/.ssh/config)</li><li>SSH port (default: 22)</li><li>Display name for the connection</li><li>Path to SSH identity file (private key)</li><li>Unique identifier for matching configs across settings sources</li></ul>
+<div class="blabel">Evidence</div>
+<p>SSH config schema (search for <code>"SSH connection configurations for remote environments"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-dangerous-command-warnings">
+      <div class="card-top">
+        <h3>Enhanced Dangerous Command Warnings <a class="anchor" href="#enhanced-dangerous-command-warnings">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Bash commands that may have destructive effects now show detailed warning notes explaining the potential impact.</p>
+<div class="blabel">Details</div>
+<ul><li>New warning notes for potentially dangerous commands:</li><li><code>Note: may delete Kubernetes resources</code></li><li><code>Note: may delete all rows from a database table</code></li><li><code>Note: may destroy Terraform infrastructure</code></li><li><code>Note: may discard all working tree changes</code></li><li><code>Note: may discard uncommitted changes</code></li><li><code>Note: may drop or truncate database objects</code></li><li><code>Note: may force-delete a branch</code></li><li><code>Note: may force-remove files</code></li><li><code>Note: may overwrite remote history</code></li><li><code>Note: may permanently delete untracked files</code></li><li><code>Note: may permanently remove stashed changes</code></li><li><code>Note: may recursively force-remove files</code></li><li><code>Note: may rewrite the last commit</code></li><li><code>Note: may skip safety hooks</code></li><li>Blocked commands show "Permission for this action was denied by the dangerous action safety classifier"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Warning note strings (search for <code>"Note: may delete"</code>, <code>"dangerous action safety classifier"</code>)</p>
+    </article>
+    <article class="card" id="plugin-security-system">
+      <div class="card-top">
+        <h3>Plugin Security System <a class="anchor" href="#plugin-security-system">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Automatic detection and handling of security-flagged plugins from the official marketplace.</p>
+<div class="blabel">Details</div>
+<ul><li>Fetches security messages from <code>https://raw.githubusercontent.com/anthropics/claude-plugins-official/refs/heads/security/security.json</code></li><li>Auto-uninstalls delisted plugins when <code>autoUninstallDelisted</code> is enabled</li><li>Shows "Plugins flagged. Check /plugins" notification</li><li>New <code>blocklist.json</code> and <code>flagged-plugins.json</code> files for tracking</li><li>"Removed from marketplace" indicator with optional reason</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin security infrastructure (search for <code>"Fetching plugin security messages"</code>, <code>"flagged-plugins.json"</code>)</p>
+    </article>
+    <article class="card" id="version-manager-detection">
+      <div class="card-top">
+        <h3>Version Manager Detection <a class="anchor" href="#version-manager-detection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Automatic detection and logging of asdf and mise version manager installations.</p>
+<div class="blabel">Details</div>
+<ul><li>Logs "Detected asdf installation:" when asdf is found</li><li>Logs "Detected mise installation:" when mise is found</li><li>Helps diagnose shell environment issues</li></ul>
+<div class="blabel">Evidence</div>
+<p>Version manager detection (search for <code>"Detected asdf installation"</code>)</p>
+    </article>
+    <article class="card" id="plugin-settings-from-settings-json">
+      <div class="card-top">
+        <h3>Plugin Settings from settings.json <a class="anchor" href="#plugin-settings-from-settings-json">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Plugins can now load settings from a <code>settings.json</code> file in addition to manifest settings.</p>
+<div class="blabel">Details</div>
+<ul><li>Looks for <code>settings.json</code> in plugin directory</li><li>Falls back to manifest settings if not found</li><li>Settings can specify <code>agent</code> configuration to merge when plugin is enabled</li><li>Logs which settings source was used</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin settings loader (search for <code>"Loaded settings from settings.json for plugin"</code>)</p>
+    </article>
+    <article class="card" id="improved-fast-mode-status-display">
+      <div class="card-top">
+        <h3>Improved Fast Mode Status Display <a class="anchor" href="#improved-fast-mode-status-display">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Better messaging when fast mode encounters issues.</p>
+<div class="blabel">Details</div>
+<ul><li>"Fast mode overloaded and is temporarily unavailable" message</li><li>Shows reset time: "resets in X"</li><li>"· Fast mode ON" indicator</li></ul>
+<div class="blabel">Evidence</div>
+<p>Fast mode messages (search for <code>"Fast mode overloaded"</code>)</p>
+    </article>
+    <article class="card" id="bmp-image-support-in-clipboard">
+      <div class="card-top">
+        <h3>BMP Image Support in Clipboard <a class="anchor" href="#bmp-image-support-in-clipboard">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added BMP format support for clipboard image operations on Linux.</p>
+<div class="blabel">Details</div>
+<ul><li>Now detects <code>image/bmp</code> in clipboard alongside png, jpeg, gif, webp</li><li>Uses <code>wl-paste --type image/bmp</code> or <code>xclip -selection clipboard -t image/bmp</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>BMP handling (search for <code>"image/bmp"</code>)</p>
+    </article>
+    <article class="card" id="warp-terminal-native-shift-enter-support">
+      <div class="card-top">
+        <h3>Warp Terminal Native Shift+Enter Support <a class="anchor" href="#warp-terminal-native-shift-enter-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Warp now supports Shift+Enter natively, removing previous workaround messaging.</p>
+<div class="blabel">Details</div>
+<ul><li>Updated tip: "Note: iTerm2, WezTerm, Ghostty, Kitty, and Warp support Shift+Enter natively."</li><li>Removed previous warnings about Warp not supporting custom Shift+Enter keybindings</li><li>Warp removed from the list of terminals requiring manual configuration</li></ul>
+<div class="blabel">Evidence</div>
+<p>Terminal compatibility notes (search for <code>"Warp support Shift+Enter natively"</code>)</p>
+    </article>
+    <article class="card" id="improved-rename-behavior-setting">
+      <div class="card-top">
+        <h3>Improved /rename Behavior Setting <a class="anchor" href="#improved-rename-behavior-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New setting to control whether <code>/rename</code> updates the terminal tab title.</p>
+<div class="blabel">Details</div>
+<ul><li>Setting: "Whether /rename updates the terminal tab title (defaults to true)"</li><li>Set to false to keep auto-generated topic titles</li><li>Replaces the previous inverse setting behavior</li></ul>
+<div class="blabel">Evidence</div>
+<p>Rename setting (search for <code>"Whether /rename updates the terminal tab title"</code>)</p>
+    </article>
+    <article class="card" id="permission-validation-improvements">
+      <div class="card-top">
+        <h3>Permission Validation Improvements <a class="anchor" href="#permission-validation-improvements">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Invalid permission rules in configuration files are now validated and skipped with warnings.</p>
+<div class="blabel">Details</div>
+<ul><li>Non-string values in permission arrays are removed with warning</li><li>Invalid permission rules show specific error messages</li><li>Logs which file and path contained the invalid rule</li></ul>
+<div class="blabel">Evidence</div>
+<p>Permission validation (search for <code>"Invalid permission rule"</code>, <code>"was skipped"</code>)</p>
+    </article>
+    <article class="card" id="agent-worktree-cleanup">
+      <div class="card-top">
+        <h3>Agent Worktree Cleanup <a class="anchor" href="#agent-worktree-cleanup">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Better management and cleanup of git worktrees created by agents.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects when agent worktree has uncommitted changes: "Agent worktree has changes, keeping:"</li><li>Logs worktree removal: "Removed agent worktree at:"</li><li>Handles branch cleanup failures gracefully</li></ul>
+<div class="blabel">Evidence</div>
+<p>Worktree management (search for <code>"Agent worktree has changes"</code>, <code>"worktreePath:"</code>)</p>
+    </article>
+    <article class="card" id="in-process-chrome-mcp-server">
+      <div class="card-top">
+        <h3>In-Process Chrome MCP Server <a class="anchor" href="#in-process-chrome-mcp-server">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Chrome browser automation MCP server can now run in-process for better performance.</p>
+<div class="blabel">Details</div>
+<ul><li>Logs "In-process Chrome MCP server started" when initialized</li><li>Uses new SSE transport infrastructure</li><li>Cleaner shutdown handling</li></ul>
+<div class="blabel">Evidence</div>
+<p>Chrome MCP server (search for <code>"In-process Chrome MCP server started"</code>)</p>
+    </article>
+    <article class="card" id="pure-javascript-path-conversion-on-windows">
+      <div class="card-top">
+        <h3>Pure JavaScript Path Conversion on Windows <a class="anchor" href="#pure-javascript-path-conversion-on-windows">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Windows path conversion (Unix ↔ Windows) is now done in pure JavaScript, removing the dependency on cygpath.</p>
+<div class="blabel">Details</div>
+<ul><li>Handles <code>/cygdrive/</code> prefix conversion</li><li>Converts forward/backslashes appropriately</li><li>Works with UNC paths (starting with <code>//</code> or <code>\\</code>)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Path conversion logic (search for <code>"/cygdrive/"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed backslash-escaped whitespace warning for commands that could alter command parsing (search for <code>"Command contains backslash-escaped whitespace"</code>)</li><li>Fixed plugin hooks reload to only trigger on actual <code>enabledPlugins</code> changes, not all policySettings changes (search for <code>"Plugin hooks: skipping reload, enabledPlugins unchanged"</code>)</li><li>Fixed hook file reading errors to log properly: "Failed to read hook file" (search for <code>"Failed to read hook file"</code>)</li><li>Added validation for parent directory existence: "Parent directory does not exist or is not accessible:" (search for <code>"Parent directory does not exist"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p><strong>Deprecation</strong>: The <code>--max-thinking-tokens</code> flag is deprecated. Use <code>--thinking &lt;mode&gt;</code> instead for newer models. The flag still works for backward compatibility.</p>
+<p><strong>Removed Features</strong>: Delegate Mode infrastructure has been removed. References to TeammateTool, delegate mode, and team coordination are no longer present in the codebase.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

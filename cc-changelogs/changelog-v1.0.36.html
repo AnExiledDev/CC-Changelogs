@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.36 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.36."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.36</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.36</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.35 → v1.0.36</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.36 Changelog</p>
+    </article>
+    <article class="card" id="web-search-enhancement">
+      <div class="card-top">
+        <h3>Web Search Enhancement <a class="anchor" href="#web-search-enhancement">#</a></h3>
+      </div>
+      <ul><li><strong>Improved date awareness</strong>: Web search now accounts for "Today's date" in the environment context, ensuring searches use current year information rather than outdated dates</li></ul>
+    </article>
+    <article class="card" id="mtls-mutual-tls-support">
+      <div class="card-top">
+        <h3>mTLS (Mutual TLS) Support <a class="anchor" href="#mtls-mutual-tls-support">#</a></h3>
+      </div>
+      <ul><li><strong>Enterprise-grade security</strong>: Added comprehensive support for mutual TLS authentication</li><li><strong>Environment variables</strong> for certificate configuration:</li><li><code>NODE_EXTRA_CA_CERTS</code>: Load custom CA certificates</li><li><code>CLAUDE_CODE_CLIENT_CERT</code>: Specify client certificate</li><li><code>CLAUDE_CODE_CLIENT_KEY</code>: Specify client private key</li><li><code>CLAUDE_CODE_CLIENT_KEY_PASSPHRASE</code>: Optional passphrase for encrypted keys</li><li><strong>Automatic integration</strong>: mTLS certificates are automatically configured for both HTTP clients and proxy connections</li><li><strong>Diagnostic support</strong>: mTLS configuration is now visible in API configuration diagnostics</li></ul>
+    </article>
+    <article class="card" id="enhanced-update-command">
+      <div class="card-top">
+        <h3>Enhanced Update Command <a class="anchor" href="#enhanced-update-command">#</a></h3>
+      </div>
+      <ul><li><strong>Improved diagnostics</strong>: The <code>claude update</code> command now provides detailed installation health information</li><li><strong>Multiple installation detection</strong>: Warns when multiple Claude Code installations are found</li><li><strong>Configuration validation</strong>: Automatically detects and fixes mismatches between actual installation type and configuration</li><li><strong>Better error messages</strong>: More informative warnings with specific fix instructions</li><li><strong>Visual improvements</strong>: Color-coded output (yellow for warnings, green for success, red for errors)</li></ul>
+    </article>
+    <article class="card" id="installation-health-monitoring">
+      <div class="card-top">
+        <h3>Installation Health Monitoring <a class="anchor" href="#installation-health-monitoring">#</a></h3>
+      </div>
+      <ul><li><strong>New health check system</strong>: Detects and reports installation issues including:</li><li>Multiple installations</li><li>Permission problems for auto-updates</li><li>Configuration mismatches</li><li>Global installation update limitations</li></ul>
+    </article>
+    <article class="card" id="token-usage-tracking">
+      <div class="card-top">
+        <h3>Token Usage Tracking <a class="anchor" href="#token-usage-tracking">#</a></h3>
+      </div>
+      <ul><li><strong>Web search metrics</strong>: Added <code>webSearchRequests</code> tracking to model usage statistics</li><li><strong>New helper function</strong>: <code>w8A()</code> for retrieving web search request counts</li></ul>
+    </article>
+    <article class="card" id="oauth-discovery-enhancement">
+      <div class="card-top">
+        <h3>OAuth Discovery Enhancement <a class="anchor" href="#oauth-discovery-enhancement">#</a></h3>
+      </div>
+      <ul><li><strong>Improved well-known endpoint discovery</strong>: Now supports OAuth authorization server metadata at both standard and path-specific locations</li><li><strong>Better error handling</strong>: Gracefully handles 404 responses when searching for OAuth metadata</li></ul>
+    </article>
+    <article class="card" id="security-improvements">
+      <div class="card-top">
+        <h3>Security Improvements <a class="anchor" href="#security-improvements">#</a></h3>
+      </div>
+      <ul><li><strong>Enhanced directory traversal protection</strong>: Updated <code>cd</code> command validation with clearer security messages</li><li><strong>Better path validation</strong>: Improved checking for allowed working directories</li></ul>
+    </article>
+    <article class="card" id="code-editor-integration">
+      <div class="card-top">
+        <h3>Code Editor Integration <a class="anchor" href="#code-editor-integration">#</a></h3>
+      </div>
+      <ul><li><strong>Text truncation</strong>: Selected text from IDE is now truncated to 2000 characters to prevent overwhelming the context</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed configuration storage issue where fallback storage wasn't properly cleaned up after successful primary storage writes</li><li>Improved resource URL validation logic to handle undefined resources correctly</li><li>Fixed image handling in user prompts to process images before other content</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Replaced several utility functions with more efficient implementations using lodash</li><li>Updated proxy agent initialization to support mTLS configurations</li><li>Improved error handling in fetch operations for OAuth discovery</li><li>Added proper TypeScript imports for Node.js stream and process modules</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Developer Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="developer-notes">
+      <p>These changes focus on enterprise security features (mTLS support), improved installation management, and better diagnostic capabilities. The update command now provides a much more informative and user-friendly experience when checking for and installing updates.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

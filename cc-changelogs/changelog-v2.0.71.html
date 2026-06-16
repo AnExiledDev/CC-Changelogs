@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.71 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.71."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.71</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.71</span></h1>
+<p class="sub">This release introduces a new keyboard shortcut (<code>alt+t</code> / <code>option+t</code>) for toggling thinking mode directly from the prompt input, along with improved prompt suggestion handling that allows accepting suggestions by pressing Enter on an empty prompt. The internal MCP SDK has also been upgraded with protocol version 2025-11-25 support.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.70 → v2.0.71</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="thinking-mode-toggle-hotkey">
+      <div class="card-top">
+        <h3>Thinking Mode Toggle Hotkey <a class="anchor" href="#thinking-mode-toggle-hotkey">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New keyboard shortcut to toggle extended thinking mode on/off directly from the prompt input.</p>
+<div class="blabel">Usage</div>
+<p>Press <code>alt+t</code> (or <code>option+t</code> on macOS) while focused on the prompt input to open the thinking toggle picker.</p>
+<div class="blabel">Details</div>
+<ul><li>Opens a dedicated picker UI showing "Enabled" and "Disabled" options</li><li>Displays a warning when changing mid-conversation: "Changing mid-conversation may reduce quality. For best results, set this at the start of a session."</li><li>Logs telemetry event <code>tengu_thinking_toggled_hotkey</code> for tracking usage</li><li>Press <code>Enter</code> to confirm selection, <code>Esc</code> to cancel</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>$r2()</code> at line 464580 (ThinkingPicker component, contains <code>"Toggle thinking mode"</code> and <code>"Enable or disable thinking for this session"</code>) and <code>HsA</code> at line 179809 (hotkey definition, <code>displayText: "alt+t"</code>)</p>
+    </article>
+    <article class="card" id="accept-prompt-suggestion-with-enter">
+      <div class="card-top">
+        <h3>Accept Prompt Suggestion with Enter <a class="anchor" href="#accept-prompt-suggestion-with-enter">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Pressing Enter on an empty prompt input now automatically accepts and submits a visible prompt suggestion.</p>
+<div class="blabel">Usage</div>
+<ol><li>When Claude displays a prompt suggestion (gray placeholder text)</li><li>Press <code>Enter</code> without typing anything</li><li>The suggestion is automatically accepted and submitted</li></ol>
+<div class="blabel">Details</div>
+<ul><li>Only triggers when a prompt suggestion is visible (<code>promptSuggestion.shownAt &gt; 0</code>)</li><li>Calls <code>markAccepted()</code> before submission for telemetry tracking</li><li>Previously, pressing Enter on an empty prompt would do nothing</li></ul>
+<div class="blabel">Evidence</div>
+<p>Submit handler at line 32049-32056 (input handler, checks <code>t.trim() === "" &amp;&amp; JA.promptSuggestion.text &amp;&amp; JA.promptSuggestion.shownAt &gt; 0</code>)</p>
+    </article>
+    <article class="card" id="improved-token-counting-for-custom-system-prompts">
+      <div class="card-top">
+        <h3>Improved Token Counting for Custom System Prompts <a class="anchor" href="#improved-token-counting-for-custom-system-prompts">#</a></h3>
+      </div>
+      <p>The <code>/context</code> command now accurately accounts for custom system prompts and appended system prompts when calculating token usage. Previously, the system prompt token count didn't consider SDK users' custom prompts.</p>
+<div class="blabel">Evidence</div>
+<p><code>NK0()</code> at line 384355 (context calculation, now uses <code>ySA()</code> with <code>customSystemPrompt</code> and <code>appendSystemPrompt</code> parameters)</p>
+    </article>
+    <article class="card" id="enhanced-teleportation-telemetry">
+      <div class="card-top">
+        <h3>Enhanced Teleportation Telemetry <a class="anchor" href="#enhanced-teleportation-telemetry">#</a></h3>
+      </div>
+      <p>Session teleportation (resume from web) now tracks whether the first message after resuming succeeds or fails, helping diagnose issues with session transfers.</p>
+<div class="blabel">Evidence</div>
+<p><code>obA()</code> at line 2424 (sets <code>teleportedSessionInfo.isTeleported</code> and <code>hasLoggedFirstMessage</code>), with events <code>tengu_teleport_first_message_success</code> and <code>tengu_teleport_first_message_error</code></p>
+    </article>
+    <article class="card" id="mcp-sdk-protocol-update">
+      <div class="card-top">
+        <h3>MCP SDK Protocol Update <a class="anchor" href="#mcp-sdk-protocol-update">#</a></h3>
+      </div>
+      <p>The MCP SDK has been updated to support protocol version <code>2025-11-25</code>, with the supported versions list now including: <code>2025-11-25</code>, <code>2025-06-18</code>, <code>2025-03-26</code>, <code>2024-11-05</code>, <code>2024-10-07</code>.</p>
+<div class="blabel">Evidence</div>
+<p><code>jn</code> at line 255378 (protocol version constant <code>"2025-11-25"</code>) and <code>UB1</code> at line 255540 (supported versions array)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

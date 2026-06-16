@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.11 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.11."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.11</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.11</span></h1>
+<p class="sub">Version 2.0.11 introduces support for structured outputs (a new Claude API feature in beta), adds a new Explore agent for faster codebase navigation, and includes various internal improvements and bug fixes.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.10 → v2.0.11</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="structured-outputs-support-beta">
+      <div class="card-top">
+        <h3>Structured Outputs Support (Beta) <a class="anchor" href="#structured-outputs-support-beta">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Support for Claude's new structured outputs API feature via the beta header <code>structured-outputs-2025-09-17</code></p>
+<p><strong>Details:</strong></p>
+<ul><li>Tools can now opt-in to strict schema validation by setting <code>strict: true</code></li><li>When using a model with structured outputs support and tools marked as strict, Claude will enforce exact adherence to the tool's input schema</li><li>Core tools (Bash, Read, Edit, Write) have been updated with <code>strict: true</code> for improved reliability</li><li>Automatically detected via model name containing <code>-structured-</code></li><li><strong>Evidence</strong>: New constant <code>Ey2 = "structured-outputs-2025-09-17"</code> at line 376349 and detection function <code>OV0()</code> at line 376356 in v2.0.11</li></ul>
+    </article>
+    <article class="card" id="explore-agent">
+      <div class="card-top">
+        <h3>Explore Agent <a class="anchor" href="#explore-agent">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New built-in agent specialized for fast codebase exploration and file searching</p>
+<p><strong>When to use:</strong></p>
+<pre><code># Automatically invoked when searching for files or exploring code
+# Fast operations: finding files by patterns, searching code for keywords,
+# answering questions about codebase structure</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Optimized for rapid file pattern matching with Glob</li><li>Powerful regex-based code searching with Grep</li><li>Efficient file reading and bash operations</li><li>Uses the fast Haiku model for quick responses</li><li>Tools available: Glob, Grep, Read, Bash</li><li><strong>Evidence</strong>: New agent definition <code>Ds5</code> at line 428791 in v2.0.11 with <code>agentType: "Explore"</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-marketplace-operations">
+      <div class="card-top">
+        <h3>Enhanced Marketplace Operations <a class="anchor" href="#enhanced-marketplace-operations">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Marketplace git operations now provide progress feedback during cloning and pulling</p>
+<p><strong>Details:</strong></p>
+<ul><li>Progress callbacks report status during <code>git clone</code> and <code>git pull</code> operations</li><li>Better error messages with specific guidance for common failures (connection issues, timeouts, HTTP errors)</li><li>Improved cleanup and error recovery when marketplace operations fail</li><li>More robust handling of corrupted marketplace cache directories</li><li><strong>Evidence</strong>: Functions <code>ky2()</code> and <code>yr4()</code> at lines 377040 and 377088 in v2.0.11 now accept progress callback parameter <code>Q</code></li></ul>
+    </article>
+    <article class="card" id="file-timestamp-checking">
+      <div class="card-top">
+        <h3>File Timestamp Checking <a class="anchor" href="#file-timestamp-checking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> More efficient file modification time checking</p>
+<p><strong>Details:</strong></p>
+<ul><li>Introduced dedicated <code>BK()</code> function for consistent timestamp retrieval</li><li>Replaces inline <code>Math.floor(statSync().mtimeMs)</code> patterns throughout codebase</li><li><strong>Evidence</strong>: New function <code>BK()</code> at line 441199 in v2.0.11</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Removed legacy teleport session validation functions (replaced by Sessions API implementation)</li><li>Simplified agent color assignment logic</li><li>Removed deprecated usage limit message handling code</li><li>Removed unused dynamic config fetching function</li><li>Streamlined sandbox initialization (removed <code>--sandboxed-bash</code> flag logic in favor of settings-based configuration)</li><li>Refactored permission helper functions for better organization</li><li>Removed legacy git default branch detection code</li><li>Improved error formatting for marketplace/plugin operations with structured error types</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

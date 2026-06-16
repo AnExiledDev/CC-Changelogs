@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.125 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.125."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.125</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.125</span></h1>
+<p class="sub">Version 1.0.125 enhances sandbox security and usability with selective command exemptions, improved macOS compatibility for temp folder access, better npm installation detection, and real-time visibility into blocked operations.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.124 → v1.0.125</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">13</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="sandbox-command-exemptions">
+      <div class="card-top">
+        <h3>Sandbox Command Exemptions <a class="anchor" href="#sandbox-command-exemptions">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Configure specific commands to always bypass the sandbox, even when sandbox mode is enabled.</p>
+<p><strong>How to use:</strong> Add an <code>unsandboxedCommands</code> array to your sandbox configuration in <code>.clauderc</code>:</p>
+<pre><code>{
+  &quot;sandbox&quot;: {
+    &quot;unsandboxedCommands&quot;: [&quot;git&quot;, &quot;docker&quot;, &quot;gcloud&quot;, &quot;aws&quot;]
+  }
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Commands in this list will never run in the sandbox environment</li><li>Matching uses smart logic: matches both exact command names and commands with arguments (e.g., <code>"git"</code> matches both <code>git</code> and <code>git push</code>)</li><li>Useful for commands that require unrestricted filesystem or socket access</li><li>Bypasses sandbox restrictions while still enforcing permission checks</li><li><strong>Evidence</strong>: <code>qu2()</code> at line 383844, schema at line 363385, integration in <code>Eu2()</code> at line 383855</li></ul>
+    </article>
+    <article class="card" id="resume-session-at-specific-message">
+      <div class="card-top">
+        <h3>Resume Session at Specific Message <a class="anchor" href="#resume-session-at-specific-message">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Resume a conversation from a specific assistant message instead of from the end.</p>
+<p><strong>How to use:</strong></p>
+<pre><code>claude --resume conversation.jsonl --resume-session-at msg_abc123</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Requires <code>--resume</code> flag to be set</li><li>Provide an assistant message ID to start from that point in the conversation</li><li>Returns error if the specified message ID is not found</li><li>Useful for branching conversations or exploring alternative response paths</li><li><strong>Evidence</strong>: Validation at line 446036, message filtering at line 446470, configuration at line 448508</li></ul>
+    </article>
+    <article class="card" id="sandbox-violation-notifications">
+      <div class="card-top">
+        <h3>Sandbox Violation Notifications <a class="anchor" href="#sandbox-violation-notifications">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Real-time status bar notifications when the sandbox blocks operations.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>Displays "⧈ Sandbox blocked N operation(s) (ctrl+s to see logs)" in the status bar</li><li>Shows count of newly blocked operations</li><li>Auto-hides after 5 seconds</li><li>Press Ctrl+S to view detailed violation logs</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Only appears when sandboxing is enabled</li><li>Provides immediate feedback without interrupting workflow</li><li>Helps diagnose permission issues during development</li><li>Uses existing sandbox violation store infrastructure (added in v1.0.122)</li><li><strong>Evidence</strong>: <code>bMB()</code> component at line 428661, rendered at line 428869</li></ul>
+    </article>
+    <article class="card" id="macos-temp-folder-sandbox-support">
+      <div class="card-top">
+        <h3>macOS Temp Folder Sandbox Support <a class="anchor" href="#macos-temp-folder-sandbox-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatic sandbox permissions for macOS system temp directories.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Detects macOS temp folders at <code>/var/folders/XX/YYYYYYYY/T/</code></li><li>Automatically allows write access to detected temp directories</li><li>Handles both <code>/var/folders/</code> and <code>/private/var/folders/</code> paths (symlink variants)</li><li>Enables seamless screenshot workflows where macOS saves screenshots to temp folders</li><li>No user configuration required - works automatically when <code>TMPDIR</code> environment variable is set</li><li><strong>Evidence</strong>: <code>y19()</code> detection function at line 363940, integrated into <code>j19()</code> at line 363726</li></ul>
+    </article>
+    <article class="card" id="localhost-binding-control">
+      <div class="card-top">
+        <h3>Localhost Binding Control <a class="anchor" href="#localhost-binding-control">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New sandbox configuration option to allow processes to bind to localhost network addresses.</p>
+<p><strong>How to use:</strong></p>
+<pre><code>{
+  &quot;sandbox&quot;: {
+    &quot;network&quot;: {
+      &quot;allowLocalBinding&quot;: true
+    }
+  }
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Defaults to <code>false</code> for security</li><li>When enabled, allows sandboxed processes to:</li><li>Bind to localhost ports</li><li>Accept inbound connections on localhost</li><li>Make outbound connections to localhost</li><li>Useful for development servers, local APIs, and inter-process communication</li><li>Only affects localhost (<code>127.0.0.1</code>), not external network access</li><li><strong>Evidence</strong>: Schema at line 363371, <code>getAllowLocalBinding()</code> export at line 364464, sandbox profile generation at line 363908</li></ul>
+    </article>
+    <article class="card" id="better-npm-global-installation-detection">
+      <div class="card-top">
+        <h3>Better npm Global Installation Detection <a class="anchor" href="#better-npm-global-installation-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced detection of npm global installations using <code>npm config get prefix</code>.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Adds synchronous <code>npm config get prefix</code> command execution as a fallback</li><li>Detects npm installations in custom prefix locations</li><li>More reliable than hardcoded path matching alone</li><li>Handles non-standard npm configurations</li><li>Improves accuracy of installation type reporting and upgrade suggestions</li><li><strong>Evidence</strong>: <code>G$()</code> function at line 375878, specifically lines 375897-375898</li></ul>
+    </article>
+    <article class="card" id="claude-md-flat-display-mode-infrastructure">
+      <div class="card-top">
+        <h3>CLAUDE.md Flat Display Mode (Infrastructure) <a class="anchor" href="#claude-md-flat-display-mode-infrastructure">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Alternative compact display format for CLAUDE.md sources.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Adds <code>flat</code> parameter to CLAUDE.md display component</li><li>When enabled, shows entries inline: <code>user (.claude/CLAUDE.md), project (CLAUDE.md)</code></li><li>Traditional vertical tree view preserved as default</li><li>Infrastructure added but not yet activated in UI</li><li>Prepares for future compact display options in constrained spaces</li><li><strong>Evidence</strong>: <code>n$0({ context, flat })</code> at line 402096, flat rendering at lines 402107-402123</li></ul>
+    </article>
+    <article class="card" id="removed-sandbox-bypass-shortcut">
+      <div class="card-top">
+        <h3>Removed Sandbox Bypass Shortcut <a class="anchor" href="#removed-sandbox-bypass-shortcut">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Eliminated ability to bypass permission checks via sandbox flag.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Previous versions allowed <code>sandbox: true</code> parameter to skip all permission validation</li><li>This escape hatch has been removed for security</li><li>All commands now go through proper read-only and permission validation</li><li>Tightens sandbox security by closing potential bypass mechanism</li><li><strong>Evidence</strong>: Code removed from <code>Uj2()</code> at line 380133 in v1.0.124, absent in <code>Lj2()</code> at line 380187 in v1.0.125</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <p>The following changes are primarily internal refactoring with minimal user impact:</p>
+<ul><li>Added <code>cwd</code> import from <code>node:process</code> (line 357186)</li><li>Added <code>Mi4()</code> helper function (line 377386)</li><li>Added context provider <code>fj7</code> for React components (line 402093)</li><li>Multiple module reorganizations and minifier renamings</li><li>Removed unused stream and process imports</li></ul>
+<p><strong>Note</strong>: Line numbers reference the prettified v1.0.125.js source file for verification purposes.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

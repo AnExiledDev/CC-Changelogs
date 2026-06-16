@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.20 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.20."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.20</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.20</span></h1>
+<p class="sub">Version 2.1.20 introduces a comprehensive keybindings customization system via a new <code>/keybindings</code> skill, adds several new CLI debugging flags (<code>--debug-file</code>, <code>--hard-fail</code>, <code>--who-owns</code>), significantly enhances sandbox security with Unix socket ownership verification, and refactors the teammate messaging system with a new <code>SendMessageTool</code>. The release also removes the git attribution system and improves UI notifications throughout.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.19 → v2.1.20</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">20</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">20 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="keybindings-customization-skill">
+      <div class="card-top">
+        <h3>Keybindings Customization Skill <a class="anchor" href="#keybindings-customization-skill">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>/keybindings</code> skill enables full customization of keyboard shortcuts via <code>~/.claude/keybindings.json</code> configuration file.</p>
+<div class="blabel">Usage</div>
+<pre><code>/keybindings</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Create custom keybindings organized by context (Global, Chat, Autocomplete, etc.)</li><li>Support for chord bindings (multi-keystroke shortcuts like <code>ctrl+k ctrl+s</code>)</li><li>Validation integrated into <code>/doctor</code> command with detailed error/warning messages</li><li>Unbind default shortcuts by setting them to <code>null</code></li><li>Schema validation with JSON Schema support for editor autocomplete</li><li>Documentation at https://code.claude.com/docs/en/keybindings</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill registration at line 748555 (<code>name: "keybindings-help"</code>, contains <code>"Use when the user wants to customize keyboard shortcuts"</code>)</p>
+    </article>
+    <article class="card" id="debug-logging-to-file">
+      <div class="card-top">
+        <h3>Debug Logging to File <a class="anchor" href="#debug-logging-to-file">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>--debug-file</code> CLI flag writes debug logs to a specific file path.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --debug-file /path/to/debug.log
+claude --debug-file=/path/to/debug.log</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Implicitly enables debug mode when specified</li><li>Useful for persistent debugging and troubleshooting</li></ul>
+<div class="blabel">Evidence</div>
+<p>Argument parser at line 2836 (<code>if (K.startsWith("--debug-file="))</code>) and help text at line 577087 (<code>"--debug-file &lt;path&gt;"</code>)</p>
+    </article>
+    <article class="card" id="hard-fail-mode">
+      <div class="card-top">
+        <h3>Hard Fail Mode <a class="anchor" href="#hard-fail-mode">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>--hard-fail</code> CLI flag causes Claude Code to exit immediately on certain errors rather than attempting recovery.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --hard-fail</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Useful for CI/CD pipelines and automated testing</li><li>Ensures failures are detected rather than silently handled</li></ul>
+<div class="blabel">Evidence</div>
+<p>Detection at line 5582 (<code>return process.argv.includes("--hard-fail")</code>)</p>
+    </article>
+    <article class="card" id="package-manager-ownership-detection">
+      <div class="card-top">
+        <h3>Package Manager Ownership Detection <a class="anchor" href="#package-manager-ownership-detection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>--who-owns</code> integration for Alpine Linux (apk) package manager to verify file ownership.</p>
+<div class="blabel">Usage</div>
+<p>Internal feature - automatically used when verifying Claude Code installation on Alpine Linux.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects apk-managed installations with logging: "Detected apk installation: ..."</li><li>Also detects deb, rpm, and pacman installations</li><li>Enables better package manager integration and update guidance</li></ul>
+<div class="blabel">Evidence</div>
+<p>APK query at line 419998 (<code>OP1("apk", ["info", "--who-owns", K]</code>) and detection logs at lines 420004, 420011, 420018, 420025</p>
+    </article>
+    <article class="card" id="sendmessagetool-for-teammate-communication">
+      <div class="card-top">
+        <h3>SendMessageTool for Teammate Communication <a class="anchor" href="#sendmessagetool-for-teammate-communication">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>SendMessageTool</code> replaces previous teammate messaging implementation with clearer protocol separation.</p>
+<div class="blabel">Usage</div>
+<p>Internal tool used by agents in swarm mode.</p>
+<div class="blabel">Details</div>
+<ul><li>Handles message, broadcast, request, and response types</li><li>Protocol subtypes for shutdown and plan approval workflows</li><li>Better error messages for missing parameters</li><li>Improved in-process teammate abort handling</li></ul>
+<div class="blabel">Evidence</div>
+<p>Tool definition at line 448126 (<code>SendMessageTool: () =&gt; tT2</code>) with logging prefix <code>[SendMessageTool]</code> at lines 448249, 448275, 448284</p>
+    </article>
+    <article class="card" id="compact-conversation-keybinding">
+      <div class="card-top">
+        <h3>Compact Conversation Keybinding <a class="anchor" href="#compact-conversation-keybinding">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>ctrl+k ctrl+k</code> chord keybinding to trigger <code>/compact</code> command.</p>
+<div class="blabel">Usage</div>
+<pre><code>ctrl+k ctrl+k</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Quick access to conversation compaction</li><li>Uses the new chord keybinding system</li><li>Replaces removed <code>ctrl+k ctrl+c</code> for <code>/commit</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Keybinding definition at line 486662 (<code>"ctrl+k ctrl+k": "command:compact"</code>)</p>
+    </article>
+    <article class="card" id="newspapering-feature">
+      <div class="card-top">
+        <h3>"Newspapering" Feature <a class="anchor" href="#newspapering-feature">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New feature or mode referenced in codebase (details unclear from minified code).</p>
+<div class="blabel">Usage</div>
+<p>Internal implementation detail.</p>
+<div class="blabel">Evidence</div>
+<p>String literal at line 388067 (<code>"Newspapering"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-sandbox-security">
+      <div class="card-top">
+        <h3>Enhanced Sandbox Security <a class="anchor" href="#enhanced-sandbox-security">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Significantly improved Unix domain socket security with ownership verification and stale socket cleanup.</p>
+<div class="blabel">Details</div>
+<ul><li>Socket directory ownership check: warns if directory owned by different user</li><li>Stale socket cleanup: removes sockets for non-running PIDs</li><li>Better seccomp filter path discovery for global <code>@anthropic-ai/sandbox-runtime</code> installations</li><li>Added <code>.npm-global</code> to seccomp binary search paths</li><li>Improved error messages with actionable installation instructions</li><li>Warning when seccomp binaries unavailable: "[Sandbox Linux] Seccomp binaries not available - unix socket blocking disabled. Install @anthropic-ai/sandbox-runtime globally for full protection."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Socket ownership check at line 523583 (<code>"Socket directory not owned by current user"</code>), stale socket cleanup messages, seccomp search paths at line 95936 (<code>".npm-global"</code>), warning at line 96398</p>
+    </article>
+    <article class="card" id="browser-mcp-accessibility-tree-improvements">
+      <div class="card-top">
+        <h3>Browser MCP Accessibility Tree Improvements <a class="anchor" href="#browser-mcp-accessibility-tree-improvements">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>MCP browser tool's accessibility tree output limit is now configurable.</p>
+<div class="blabel">Details</div>
+<ul><li>Default limit remains 50,000 characters</li><li>New parameter allows setting custom limits for clients that can handle larger outputs</li><li>More flexible description: "Output is limited to 50000 characters by default" (was: "Output is limited to 50000 characters")</li><li>New parameter: "Maximum characters for output (default: 50000). Set to a higher value if your client can handle large outputs."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Description change at line 522359 and parameter at line 522387</p>
+    </article>
+    <article class="card" id="updated-conversation-compaction-notification">
+      <div class="card-top">
+        <h3>Updated Conversation Compaction Notification <a class="anchor" href="#updated-conversation-compaction-notification">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Compaction notification now shows "✻ Conversation compacted" with visual symbol instead of plain text.</p>
+<div class="blabel">Details</div>
+<ul><li>Old: <code>Conversation compacted · {keybinding} for history</code></li><li>New: <code>✻ Conversation compacted ({keybinding} for history)</code></li><li>More visually distinct in transcript</li></ul>
+<div class="blabel">Evidence</div>
+<p>Notification text at line 410281 (<code>"✻ Conversation compacted ("</code>)</p>
+    </article>
+    <article class="card" id="improved-permission-dialog-text">
+      <div class="card-top">
+        <h3>Improved Permission Dialog Text <a class="anchor" href="#improved-permission-dialog-text">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Refined safety check messaging for workspace trust.</p>
+<div class="blabel">Details</div>
+<ul><li>Slightly more concise wording in safety prompt</li><li>Old: "Quick safety check: ... If not, take a moment to review what's in this folder first."</li><li>New: "Quick safety check: ... If not, take a moment to review what"</li><li>Message continues with context about Claude Code's file access capabilities</li></ul>
+<div class="blabel">Evidence</div>
+<p>Safety message at line 570322</p>
+    </article>
+    <article class="card" id="guest-pass-notification-enhancement">
+      <div class="card-top">
+        <h3>Guest Pass Notification Enhancement <a class="anchor" href="#guest-pass-notification-enhancement">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Clearer guest pass sharing notification in UI.</p>
+<div class="blabel">Details</div>
+<ul><li>More prominent formatting: "You have free guest passes to share · /passes"</li><li>Encourages user engagement with referral system</li></ul>
+<div class="blabel">Evidence</div>
+<p>Notification at line 562731</p>
+    </article>
+    <article class="card" id="enhanced-task-and-agent-status-logging">
+      <div class="card-top">
+        <h3>Enhanced Task and Agent Status Logging <a class="anchor" href="#enhanced-task-and-agent-status-logging">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>More detailed logging for task claiming and agent operations.</p>
+<div class="blabel">Details</div>
+<ul><li>New logs: <code>[inProcessRunner] Claimed task #N: {subject}</code></li><li>Task failure logging: <code>[inProcessRunner] Failed to claim task #N</code></li><li>Task list check errors: <code>[inProcessRunner] Error checking task list:</code></li><li>New logs for task assignment and completion</li></ul>
+<div class="blabel">Evidence</div>
+<p>Logs at lines 422622, 522622, 522628 with prefix <code>[inProcessRunner]</code></p>
+    </article>
+    <article class="card" id="layout-engine-identification">
+      <div class="card-top">
+        <h3>Layout Engine Identification <a class="anchor" href="#layout-engine-identification">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Explicit layout engine logging for debugging rendering issues.</p>
+<div class="blabel">Details</div>
+<ul><li>Logs: "Layout engine: yoga" and "[render] initLayout starting/complete"</li><li>Helps diagnose UI rendering problems</li></ul>
+<div class="blabel">Evidence</div>
+<p>Engine log at line 174577, render logs at lines 182436-182438</p>
+    </article>
+    <article class="card" id="message-structure-repair">
+      <div class="card-top">
+        <h3>Message Structure Repair <a class="anchor" href="#message-structure-repair">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Automatic repair of malformed tool result pairings in conversation history.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects and repairs missing <code>tool_result</code> blocks</li><li>Logs: <code>ensureToolResultPairing: repaired missing tool_result blocks (X -&gt; Y messages)</code></li><li>Prevents conversation corruption from improperly paired tool uses</li></ul>
+<div class="blabel">Evidence</div>
+<p>Repair logging at line 469512</p>
+    </article>
+    <article class="card" id="team-workflow-enhancements">
+      <div class="card-top">
+        <h3>Team Workflow Enhancements <a class="anchor" href="#team-workflow-enhancements">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Improved teammate communication and protocol handling.</p>
+<div class="blabel">Details</div>
+<ul><li>Operation descriptions now mention "discoverTeams to list available teams to join"</li><li>Better error messages for missing parameters in teammate operations</li><li>Clearer separation between message types (message, broadcast, request, response)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Operation description updates in SendMessageTool schema, error messages for missing <code>recipient</code>, <code>request_id</code>, etc.</p>
+    </article>
+    <article class="card" id="git-attribution-system">
+      <div class="card-top">
+        <h3>Git Attribution System <a class="anchor" href="#git-attribution-system">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Removed automatic git commit trailer attribution system.</p>
+<div class="blabel">Details</div>
+<ul><li>Removed all "Attribution hook:" logging</li><li>Removed <code>Claude-Generated-By:</code> git trailers</li><li>Removed <code>Claude-Escapes:</code>, <code>Claude-Permission-Prompts:</code>, <code>Claude-Session:</code>, <code>Claude-Steers:</code> trailers</li><li>No longer tracks file contributions or calculates Claude percentage</li><li>Simplifies git workflow and removes potentially confusing commit metadata</li></ul>
+<div class="blabel">Evidence</div>
+<p>All <code>Attribution:</code> and <code>Attribution hook:</code> log strings removed from codebase (verified absent in v2.1.20)</p>
+    </article>
+    <article class="card" id="removed-commit-keybinding">
+      <div class="card-top">
+        <h3>Removed <code>/commit</code> Keybinding <a class="anchor" href="#removed-commit-keybinding">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Removed <code>ctrl+k ctrl+k</code> keybinding for <code>/commit</code> command.</p>
+<div class="blabel">Details</div>
+<ul><li>Previous binding: <code>ctrl+k ctrl+c</code> → <code>/commit</code></li><li>Now unbound by default</li><li>Users can re-add via custom keybindings if desired</li></ul>
+<div class="blabel">Evidence</div>
+<p>Binding <code>"ctrl+k ctrl+c": "command:commit"</code> existed in v2.1.19 line 483280, not present in v2.1.20</p>
+    </article>
+    <article class="card" id="removed-permission-ui-elements">
+      <div class="card-top">
+        <h3>Removed Permission UI Elements <a class="anchor" href="#removed-permission-ui-elements">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Simplified permission request UI removed some verbose text and interactive elements.</p>
+<div class="blabel">Details</div>
+<ul><li>Removed: "Do you trust the files in this folder?"</li><li>Removed: "(shift+↑/↓ to select)" navigation hints</li><li>Removed: Several verbose permission dialog messages</li><li>Streamlined to clearer, more concise safety checks</li></ul>
+<div class="blabel">Evidence</div>
+<p>Strings like "Do you trust the files in this folder?", "shift+↑/↓ to select" removed from v2.1.20</p>
+    </article>
+    <article class="card" id="pr-status-footer-gradual-rollout">
+      <div class="card-top">
+        <h3>PR Status Footer [Gradual Rollout] <a class="anchor" href="#pr-status-footer-gradual-rollout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>GitHub pull request status displayed in footer area.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged behind <code>tengu_pr_status_cli</code></p>
+<div class="blabel">Details</div>
+<ul><li>Settings option: "Show PR status footer" (enabled by default when flag is on)</li><li>Infrastructure exists in settings menu at line 480230</li><li>Will display PR status information in CLI footer when enabled</li></ul>
+<div class="blabel">Evidence</div>
+<p>Feature flag check at line 480226 (<code>i4("tengu_pr_status_cli", !1)</code>) with settings UI at line 480230 (<code>label: "Show PR status footer"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

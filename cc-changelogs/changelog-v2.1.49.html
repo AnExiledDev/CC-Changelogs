@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.49 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.49."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.49</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.49</span></h1>
+<p class="sub">This is a minor maintenance release that temporarily disables HTTP hooks functionality. Users who have configured HTTP hooks in their Claude Code settings will see those hooks return "not yet supported" instead of executing. Bash hooks remain fully functional.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.48 → v2.1.49</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">1</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="http-hooks-temporarily-disabled">
+      <div class="card-top">
+        <h3>HTTP Hooks Temporarily Disabled <a class="anchor" href="#http-hooks-temporarily-disabled">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>HTTP hooks defined in your configuration will no longer execute. Instead, they return immediately with a "HTTP hooks are not yet supported" message.</p>
+<p>Impact:</p>
+<ul><li>If you have configured HTTP hooks (using <code>type: "http"</code> in your hooks configuration), they will not execute in this version</li><li>The hook will be skipped rather than failing the operation—your workflow will continue without the HTTP call</li><li>Bash hooks (<code>type: "bash"</code>) continue to work normally</li></ul>
+<p>Example log output when an HTTP hook is encountered:</p>
+<pre><code>Hooks: skipping HTTP hook https://example.com/hook — HTTP hooks are not yet supported</code></pre>
+<p>Workaround: If you rely on HTTP hooks, you can convert them to bash hooks that use <code>curl</code> to make the HTTP request:</p>
+<pre><code>{
+  &quot;type&quot;: &quot;bash&quot;,
+  &quot;command&quot;: &quot;curl -X POST -H &#x27;Content-Type: application/json&#x27; -d &#x27;$HOOK_PAYLOAD&#x27; https://example.com/hook&quot;
+}</code></pre>
+<div class="blabel">Evidence</div>
+<p>Hook execution skips HTTP hooks with message (search for <code>"HTTP hooks are not yet supported"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>This appears to be a temporary change—the HTTP hook schema and configuration parsing remain intact, only the execution is disabled. The previous implementation supported POST requests with configurable headers and environment variable substitution in header values. This functionality may return in a future release once stability or security concerns are addressed.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

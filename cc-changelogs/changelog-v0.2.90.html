@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.90 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.90."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.90</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.90</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.89 → v0.2.90</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.90 Changelog</p>
+    </article>
+    <article class="card" id="jetbrains-ide-integration-support">
+      <div class="card-top">
+        <h3>JetBrains IDE Integration Support <a class="anchor" href="#jetbrains-ide-integration-support">#</a></h3>
+      </div>
+      <p>Claude Code now supports integration with JetBrains IDEs! This major addition enables users to connect Claude Code with popular JetBrains development environments.</p>
+<p><strong>Supported IDEs:</strong></p>
+<ul><li>PyCharm</li><li>IntelliJ IDEA (Ultimate and Community)</li><li>WebStorm</li><li>PhpStorm</li><li>RubyMine</li><li>CLion</li><li>GoLand</li><li>Rider</li><li>DataGrip</li><li>AppCode</li><li>DataSpell</li><li>Aqua</li><li>Gateway</li><li>Fleet</li><li>Android Studio</li></ul>
+<p><strong>How it works:</strong></p>
+<ul><li>When <code>ENABLE_IDE_INTEGRATION="true"</code> is set, Claude Code can now detect and install the JetBrains plugin</li><li>The plugin (<code>claude-code-jetbrains-plugin</code>) is automatically deployed to the appropriate plugin directories</li><li>Claude Code intelligently detects existing installations and handles version management</li></ul>
+<p><strong>Usage:</strong></p>
+<pre><code># Enable IDE integration
+export ENABLE_IDE_INTEGRATION=&quot;true&quot;
+claude</code></pre>
+    </article>
+    <article class="card" id="tool-permission-system">
+      <div class="card-top">
+        <h3>Tool Permission System <a class="anchor" href="#tool-permission-system">#</a></h3>
+      </div>
+      <p>A new permission prompt system has been introduced for tool usage, providing better control over what actions Claude can perform.</p>
+<p><strong>Key components:</strong></p>
+<ul><li>Tools can now prompt for permission before execution</li><li>Two permission behaviors: <code>allow</code> (with optional input modifications) or <code>deny</code> (with explanation)</li><li>Permission decisions are tracked with detailed reasoning</li></ul>
+<p><strong>Example interaction:</strong> When Claude attempts to use a tool that requires permission, you'll see a prompt asking whether to allow the action. You can:</p>
+<ul><li>Allow the tool to proceed (optionally with modified parameters)</li><li>Deny the tool with a reason</li></ul>
+    </article>
+    <article class="card" id="enhanced-onboarding-flow">
+      <div class="card-top">
+        <h3>Enhanced Onboarding Flow <a class="anchor" href="#enhanced-onboarding-flow">#</a></h3>
+      </div>
+      <p>The onboarding process now returns a boolean indicating whether onboarding was shown, allowing for better flow control in automated scenarios.</p>
+    </article>
+    <article class="card" id="better-ide-detection-logic">
+      <div class="card-top">
+        <h3>Better IDE Detection Logic <a class="anchor" href="#better-ide-detection-logic">#</a></h3>
+      </div>
+      <ul><li>Consolidated IDE detection into a single <code>R86()</code> function for VS Code-like editors</li><li>Added comprehensive JetBrains IDE directory detection across macOS, Windows, and Linux</li><li>Improved plugin version comparison using semantic versioning</li></ul>
+    </article>
+    <article class="card" id="stream-processing-enhancement">
+      <div class="card-top">
+        <h3>Stream Processing Enhancement <a class="anchor" href="#stream-processing-enhancement">#</a></h3>
+      </div>
+      <ul><li>Added <code>PassThrough</code> stream support from Node.js stream module for better data handling</li></ul>
+    </article>
+    <article class="card" id="path-resolution-updates">
+      <div class="card-top">
+        <h3>Path Resolution Updates <a class="anchor" href="#path-resolution-updates">#</a></h3>
+      </div>
+      <ul><li>New path utilities imported: <code>extname</code>, <code>isAbsolute</code>, <code>relative</code>, and <code>resolve</code></li><li>Better handling of absolute vs relative paths</li></ul>
+    </article>
+    <article class="card" id="refactored-functions">
+      <div class="card-top">
+        <h3>Refactored Functions <a class="anchor" href="#refactored-functions">#</a></h3>
+      </div>
+      <ul><li><code>W56()</code> → <code>M86()</code>: IDE connection detection now includes additional safety check for <code>Ib</code> flag</li><li><code>q08()</code> → <code>g08()</code>: Onboarding function now returns boolean to indicate if onboarding was displayed</li></ul>
+    </article>
+    <article class="card" id="removed-functions">
+      <div class="card-top">
+        <h3>Removed Functions <a class="anchor" href="#removed-functions">#</a></h3>
+      </div>
+      <ul><li>Removed separate VS Code/Cursor/Windsurf detection functions in favor of unified approach</li><li>Consolidated extension installation logic</li></ul>
+    </article>
+    <article class="card" id="new-helper-functions">
+      <div class="card-top">
+        <h3>New Helper Functions <a class="anchor" href="#new-helper-functions">#</a></h3>
+      </div>
+      <ul><li><code>qh5()</code>: Finds JetBrains IDE configuration directories</li><li><code>$86()</code>: Locates JetBrains plugin directories</li><li><code>z86()</code>: Extracts plugin version from JAR files</li><li><code>EX1()</code>: Recursively copies directories</li><li><code>RX1()</code>: Recursively removes directories</li><li><code>U86()</code>: Manages JetBrains plugin installation and updates</li><li><code>C86()</code>: Checks if JetBrains plugin is installed</li><li><code>E86()</code>: Unified IDE extension detection</li><li><code>nQ6()</code>: Formats permission prompt results</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential issues with IDE integration when environment flags are not properly set</li><li>Improved error handling in plugin installation processes</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>This version represents a significant expansion in IDE support, moving beyond just VS Code-family editors to include the entire JetBrains ecosystem. The new permission system also provides users with more granular control over tool execution, enhancing security and user confidence when working with Claude Code.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

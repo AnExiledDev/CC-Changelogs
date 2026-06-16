@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.51 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.51."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.51</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.51</span></h1>
+<p class="sub">This release introduces <strong>Opus 4.5 model support</strong> for first-party API users, adds the new <strong>EnterPlanMode tool</strong> enabling Claude to proactively request plan mode, and significantly improves <strong>rate limit warnings</strong> with utilization percentages and smart thresholds. Multiple UX enhancements including grouped agent display and trailing thinking block filtering improve the overall experience.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.50 → v2.0.51</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">11 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="opus-4-5-model-support">
+      <div class="card-top">
+        <h3>Opus 4.5 Model Support <a class="anchor" href="#opus-4-5-model-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Opus 4.5 is now available as the most capable model for complex work, replacing Opus 4.1 as the default for first-party API users.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Select Opus 4.5 via the model command
+/model opus
+
+# Or specify directly
+claude --model opus</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Opus 4.5 becomes the default for Max and Team subscribers using first-party API</li><li>Bedrock/Vertex/Foundry users continue to use Opus 4.1</li><li>Model descriptions updated: "Most capable for complex work"</li><li>One-time migration automatically resets model selection for eligible users</li><li>A notification informs users about Opus 4.5 availability on first use</li><li><strong>Evidence</strong>: Model registry at <code>rcA()</code> line 163104, default logic at <code>QUA()</code> line 224121, selector at <code>rJ6</code> line 224397</li></ul>
+    </article>
+    <article class="card" id="enterplanmode-tool">
+      <div class="card-top">
+        <h3>EnterPlanMode Tool <a class="anchor" href="#enterplanmode-tool">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A new tool that allows Claude to proactively request permission to enter plan mode for complex tasks requiring careful exploration before implementation.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Claude will automatically suggest entering plan mode for complex tasks
+# You&#x27;ll see a prompt: &quot;Enter plan mode?&quot;
+# Press &#x27;y&#x27; to approve or &#x27;n&#x27; to decline</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Requires user approval before entering plan mode</li><li>Designed for tasks with multiple valid approaches, architectural decisions, or unclear requirements</li><li>Includes extensive documentation on when to use vs. not use plan mode</li><li>Cannot be used from agent contexts (main conversation only)</li><li><strong>Evidence</strong>: Tool definition at <code>GRA</code> variable in <code>_50</code> at line 425698, prompt at <code>vb2</code> line 425575</li></ul>
+    </article>
+    <article class="card" id="rate-limit-utilization-warnings">
+      <div class="card-top">
+        <h3>Rate Limit Utilization Warnings <a class="anchor" href="#rate-limit-utilization-warnings">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Rate limit warnings now show exact utilization percentages and use intelligent thresholds based on both token usage and time remaining.</p>
+<p><strong>How it appears:</strong></p>
+<pre><code>75% of 5-hour limit used · resets in 2h
+50% of weekly limit used · resets in 3d</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Shows percentage of limit used instead of generic "Approaching limit" messages</li><li>Smart thresholds: warns at 75%/60%, 50%/35%, 25%/15% (tokens/time) for weekly limits</li><li>5-hour limits now show warnings (previously silent)</li><li>Considers usage rate vs. time remaining in window</li><li><strong>Evidence</strong>: Function <code>N49()</code> at line 467497, threshold config at <code>j$3</code>/<code>S$3</code> line 467531</li></ul>
+    </article>
+    <article class="card" id="grouped-agent-display">
+      <div class="card-top">
+        <h3>Grouped Agent Display <a class="anchor" href="#grouped-agent-display">#</a></h3>
+      </div>
+      <p><strong>What:</strong> When multiple Task agents run simultaneously, the UI now shows a collapsed summary view that can be expanded with ctrl+o.</p>
+<p><strong>How it appears:</strong></p>
+<pre><code>Running 3 agents… (ctrl+o to expand)
+├─ investigator (Check auth flow) · 5 tool uses · 2.3k tokens
+├─ investigator (Find routes) · 3 tool uses · 1.8k tokens
+└─ investigator (Review tests) · 7 tool uses · 3.1k tokens</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Reduces visual clutter when multiple agents run in parallel</li><li>Shows agent type, description, tool use count, and token usage</li><li>Displays "X agents finished" when complete</li><li>Same-type agents show grouped label (e.g., "Running 3 investigator agents…")</li><li><strong>Evidence</strong>: Main renderer <code>i49()</code> at line 469450, item renderer <code>g49()</code> at line 469102</li></ul>
+    </article>
+    <article class="card" id="extra-usage-integration-enhanced">
+      <div class="card-top">
+        <h3>Extra Usage Integration Enhanced <a class="anchor" href="#extra-usage-integration-enhanced">#</a></h3>
+      </div>
+      <p>The extra usage feature now has deeper integration with account state and re-authentication flows.</p>
+<ul><li>Added <code>hasExtraUsageEnabled</code> account property tracked via OAuth</li><li><code>/extra-usage</code> command now triggers re-authentication to sync state</li><li>Pro users with extra usage enabled get access to Opus features</li><li><strong>Evidence</strong>: Account property at <code>DC1()</code> line 67554, API mapping at line 67521</li></ul>
+    </article>
+    <article class="card" id="improved-rate-limit-error-messages">
+      <div class="card-top">
+        <h3>Improved Rate Limit Error Messages <a class="anchor" href="#improved-rate-limit-error-messages">#</a></h3>
+      </div>
+      <p>Rate limit error messages now provide actionable guidance specific to your subscription tier.</p>
+<ul><li>Messages suggest specific actions: <code>/upgrade to Max</code>, <code>turn on /extra-usage</code>, <code>/model opus</code></li><li>Different guidance for Pro, Max, Team, and Enterprise users</li><li>Sonnet weekly limit now has distinct messaging from general weekly limit</li><li><strong>Evidence</strong>: Function <code>YLA()</code> at line 336478</li></ul>
+    </article>
+    <article class="card" id="model-description-updates">
+      <div class="card-top">
+        <h3>Model Description Updates <a class="anchor" href="#model-description-updates">#</a></h3>
+      </div>
+      <ul><li>Sonnet 4.5: "Best for everyday tasks" (was "Smartest model for daily use")</li><li>Opus: "Most capable for complex work"</li><li>Haiku 4.5: "Fastest for quick answers" (was "Fastest model for simple tasks")</li><li>Dynamic pricing display using <code>jc()</code> helper function</li><li><strong>Evidence</strong>: Model options at <code>qh1</code>, <code>kzB</code>, <code>xzB</code> around line 224380</li></ul>
+    </article>
+    <article class="card" id="november-2025-limits-update-notice">
+      <div class="card-top">
+        <h3>November 2025 Limits Update Notice <a class="anchor" href="#november-2025-limits-update-notice">#</a></h3>
+      </div>
+      <p>Max and Team users see an informational notice about limit changes:</p>
+<ul><li>Opus cap removed - can use Opus 4.5 up to overall limit</li><li>Sonnet now has its own separate limit</li><li><strong>Evidence</strong>: Function <code>TN3()</code> at line 477797</li></ul>
+    </article>
+    <article class="card" id="trailing-thinking-block-filtering">
+      <div class="card-top">
+        <h3>Trailing Thinking Block Filtering <a class="anchor" href="#trailing-thinking-block-filtering">#</a></h3>
+      </div>
+      <p>Assistant messages ending with thinking blocks now have those blocks automatically filtered out before display.</p>
+<ul><li>Prevents display of incomplete or dangling thinking blocks</li><li>Logs telemetry about filtered blocks for debugging</li><li>Replaces content with "[No message content]" if all blocks were thinking</li><li><strong>Evidence</strong>: Function <code>GT3()</code> at line 504394, helper <code>oX9()</code> at line 504391</li></ul>
+    </article>
+    <article class="card" id="default-model-logic-for-max-team-users">
+      <div class="card-top">
+        <h3>Default Model Logic for Max/Team Users <a class="anchor" href="#default-model-logic-for-max-team-users">#</a></h3>
+      </div>
+      <p>Max and Team subscribers now default to Opus 4.5 instead of requiring manual model selection.</p>
+<ul><li>First-party API users get Opus 4.5 by default</li><li>Cloud provider (Bedrock/Vertex) users continue with Opus 4.1</li><li>Respects <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code> environment variable override</li><li><strong>Evidence</strong>: Function <code>PnA()</code> at line 224154, <code>QUA()</code> at line 224121</li></ul>
+    </article>
+    <article class="card" id="model-detection-extended">
+      <div class="card-top">
+        <h3>Model Detection Extended <a class="anchor" href="#model-detection-extended">#</a></h3>
+      </div>
+      <p>The model detection functions now correctly recognize Opus 4.5 model IDs.</p>
+<ul><li><code>claude-opus-4-5</code> pattern now properly identified</li><li>Fixes potential issues with model-specific features not activating for Opus 4.5</li><li><strong>Evidence</strong>: Detection at <code>KAB()</code> line 163004, <code>Pw()</code> line 224165</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

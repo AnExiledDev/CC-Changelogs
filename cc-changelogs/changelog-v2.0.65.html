@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.65 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.65."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.65</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.65</span></h1>
+<p class="sub">This release introduces a new <code>/tag</code> command for organizing sessions with searchable labels, a unified <code>TaskOutput</code> tool replacing previous separate agent/bash output tools, and enhanced MCP tool support with deferred loading capabilities for improved token efficiency. It also adds git worktree detection, remote settings synchronization infrastructure, and headless profiling metrics.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.64 → v2.0.65</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">18</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">18 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="session-tagging-with-tag-command">
+      <div class="card-top">
+        <h3>Session Tagging with <code>/tag</code> Command <a class="anchor" href="#session-tagging-with-tag-command">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A new command to add searchable tags to your sessions for better organization and retrieval. <strong>How to use:</strong></p>
+<pre><code>/tag bugfix        # Add tag to current session
+/tag bugfix        # Run again to remove (toggle behavior)
+/tag feature-auth  # Use descriptive names</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Tags appear after the branch name in <code>/resume</code> list</li><li>Tags are searchable with <code>/</code> search functionality</li><li>Running the same tag command again removes the tag (toggle)</li><li><strong>Evidence</strong>: <code>c55()</code> at line 483604, <code>HG0()</code> at line 491331, <code>nh2()</code> at line 491336</li></ul>
+    </article>
+    <article class="card" id="unified-taskoutput-tool">
+      <div class="card-top">
+        <h3>Unified TaskOutput Tool <a class="anchor" href="#unified-taskoutput-tool">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New consolidated tool that retrieves output from any task type (background shells, agents, or remote sessions). <strong>How to use:</strong></p>
+<pre><code># Model uses TaskOutput instead of separate BashOutput/AgentOutputTool
+TaskOutput --task_id &lt;id&gt; --block true --timeout 30000</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Replaces the previous <code>BashOutput</code> and <code>AgentOutputTool</code> with a single unified interface</li><li>Works with local bash tasks, local agents, and remote agent sessions</li><li>Supports blocking and non-blocking retrieval modes</li><li><strong>Evidence</strong>: <code>BH = "TaskOutput"</code> at line 375878, <code>R31</code> tool definition at line 454807</li></ul>
+    </article>
+    <article class="card" id="mcp-tool-deferred-loading">
+      <div class="card-top">
+        <h3>MCP Tool Deferred Loading <a class="anchor" href="#mcp-tool-deferred-loading">#</a></h3>
+      </div>
+      <p><strong>What:</strong> MCP tools can now be loaded on-demand to reduce initial token overhead. <strong>How to use:</strong></p>
+<ul><li>Configure in settings; MCP tools marked for deferred loading won't count against initial token budget</li><li>Tools load when needed during conversation</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>New "MCP tools (deferred)" category shows in <code>/context</code> breakdown</li><li>Deferred tools excluded from main token total until used</li><li><strong>Evidence</strong>: <code>deferredToolTokens: H</code> at line 380202, <code>defer_loading</code> property in <code>fQ1()</code> at line 457318</li></ul>
+    </article>
+    <article class="card" id="git-worktree-detection">
+      <div class="card-top">
+        <h3>Git Worktree Detection <a class="anchor" href="#git-worktree-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude Code now detects and works with git worktrees for multi-branch development workflows. <strong>Details:</strong></p>
+<ul><li>Automatically detects worktree configurations</li><li>Reports worktree paths to session context</li><li>Telemetry event <code>tengu_worktree_detection</code> tracks usage</li><li><strong>Evidence</strong>: <code>worktree</code> parsing logic starting at line 2461</li></ul>
+    </article>
+    <article class="card" id="prompt-suggestions-enhancement">
+      <div class="card-top">
+        <h3>Prompt Suggestions Enhancement <a class="anchor" href="#prompt-suggestions-enhancement">#</a></h3>
+      </div>
+      <p><strong>What:</strong> After task completion, Claude now suggests the next logical prompt based on conversation context. <strong>Details:</strong></p>
+<ul><li>Suggestions appear as placeholder text in input field (press Enter to accept)</li><li>Filters inappropriate suggestions (too long, gratitude responses, etc.)</li><li>Telemetry tracks acceptance rates</li><li><strong>Evidence</strong>: <code>HN2()</code> at line 440590, <code>wN2()</code> at line 441103, <code>_B5()</code> at line 441117</li></ul>
+    </article>
+    <article class="card" id="headless-profiling-system">
+      <div class="card-top">
+        <h3>Headless Profiling System <a class="anchor" href="#headless-profiling-system">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Built-in performance profiling for SDK/headless usage with turn-level metrics. <strong>How to enable:</strong></p>
+<pre><code>export CLAUDE_CODE_PROFILE_STARTUP=1  # Enable verbose logging</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Tracks key checkpoints: system message generation, query start, first response chunk</li><li>Reports metrics via telemetry for 5% of sessions</li><li><strong>Evidence</strong>: <code>e30()</code>, <code>p1A()</code>, <code>A80()</code> functions at lines 445732-445745</li></ul>
+    </article>
+    <article class="card" id="file-suggestion-hook">
+      <div class="card-top">
+        <h3>File Suggestion Hook <a class="anchor" href="#file-suggestion-hook">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Custom hook support for file path suggestions during <code>@</code> mentions. <strong>Details:</strong></p>
+<ul><li>Configure via <code>fileSuggestion</code> in hooks settings</li><li>Supports command-type hooks that receive query context and return file paths</li><li><strong>Evidence</strong>: <code>E60()</code> at line 460683, hook check in <code>dH2()</code> at line 424845</li></ul>
+    </article>
+    <article class="card" id="cli-plugin-management-commands">
+      <div class="card-top">
+        <h3>CLI Plugin Management Commands <a class="anchor" href="#cli-plugin-management-commands">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Full CLI support for plugin enable/disable/update operations. <strong>How to use:</strong></p>
+<pre><code>claude plugin enable &lt;name&gt; --scope user
+claude plugin disable &lt;name&gt; --scope project
+claude plugin update &lt;name&gt; --scope local</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Enable disabled plugins: <code>jRA()</code> at line 451234</li><li>Disable enabled plugins: <code>PRA()</code> at line 451237</li><li>Update specific plugins: <code>SRA()</code> at line 451240</li><li>Supports scope-aware operations (user/project/local)</li><li><strong>Evidence</strong>: <code>Ld2()</code>, <code>Md2()</code>, <code>Od2()</code>, <code>Rd2()</code>, <code>Td2()</code> CLI handlers at lines 497930-498062</li></ul>
+    </article>
+    <article class="card" id="auto-update-installed-marketplaces">
+      <div class="card-top">
+        <h3>Auto-Update Installed Marketplaces <a class="anchor" href="#auto-update-installed-marketplaces">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Background auto-update for installed marketplace plugins. <strong>Details:</strong></p>
+<ul><li>Runs automatically on startup (non-headless mode only)</li><li>Updates each marketplace sequentially with error isolation</li><li><strong>Evidence</strong>: <code>_j2()</code> at line 450763</li></ul>
+    </article>
+    <article class="card" id="teleport-urls">
+      <div class="card-top">
+        <h3>Teleport URLs <a class="anchor" href="#teleport-urls">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Infrastructure for generating session teleport links to claude.ai. <strong>Details:</strong></p>
+<ul><li>Generates URLs in format: <code>https://claude.ai/code/{sessionId}</code></li><li>CLI command format: <code>claude --teleport {sessionId}</code></li><li><strong>Evidence</strong>: <code>TtB()</code> at line 369714, <code>_tB()</code> at line 369717</li></ul>
+    </article>
+    <article class="card" id="task-status-attachments">
+      <div class="card-top">
+        <h3>Task Status Attachments <a class="anchor" href="#task-status-attachments">#</a></h3>
+      </div>
+      <p>Background tasks now include delta summaries in attachments for smoother conversation flow. New function <code>o78()</code> at line 358386 handles task status attachment generation with status, description, and delta summary fields.</p>
+    </article>
+    <article class="card" id="remote-settings-infrastructure">
+      <div class="card-top">
+        <h3>Remote Settings Infrastructure <a class="anchor" href="#remote-settings-infrastructure">#</a></h3>
+      </div>
+      <p>Added framework for enterprise remote settings synchronization including authentication, validation, and local caching. New file <code>remote-settings.json</code> at line 3494 and related authentication handling.</p>
+    </article>
+    <article class="card" id="lsp-tool-position-parameters">
+      <div class="card-top">
+        <h3>LSP Tool Position Parameters <a class="anchor" href="#lsp-tool-position-parameters">#</a></h3>
+      </div>
+      <p>LSP operations now use 1-based line/character positions (matching editor display) instead of 0-indexed. This affects <code>goToDefinition</code>, <code>findReferences</code>, <code>hover</code>, <code>documentSymbol</code>, and <code>workspaceSymbol</code> operations. Evidence: Schema definitions at line 455590.</p>
+    </article>
+    <article class="card" id="settings-source-display">
+      <div class="card-top">
+        <h3>Settings Source Display <a class="anchor" href="#settings-source-display">#</a></h3>
+      </div>
+      <p>New function <code>zy2()</code> at line 462818 provides detailed information about active settings sources, distinguishing between remote and local enterprise managed settings.</p>
+    </article>
+    <article class="card" id="plugin-installation-tracking-v2">
+      <div class="card-top">
+        <h3>Plugin Installation Tracking V2 <a class="anchor" href="#plugin-installation-tracking-v2">#</a></h3>
+      </div>
+      <p>Plugin tracking migrated to v2 format with per-installation metadata including scope, project path, version, and timestamps. Functions <code>Q31()</code> at line 447959 and <code>IM2()</code> at line 447977 handle the new format.</p>
+    </article>
+    <article class="card" id="session-search-improvements">
+      <div class="card-top">
+        <h3>Session Search Improvements <a class="anchor" href="#session-search-improvements">#</a></h3>
+      </div>
+      <p>Sessions can now be searched by tag in addition to content. Function <code>$h()</code> at line 491493 supports multi-path session loading with tag filtering.</p>
+    </article>
+    <article class="card" id="auto-compact-environment-control">
+      <div class="card-top">
+        <h3>Auto-Compact Environment Control <a class="anchor" href="#auto-compact-environment-control">#</a></h3>
+      </div>
+      <p>New <code>DISABLE_COMPACT</code> environment variable allows disabling auto-compact behavior. Function <code>wAA()</code> at line 4001 checks this setting.</p>
+    </article>
+    <article class="card" id="mcp-tool-search-integration">
+      <div class="card-top">
+        <h3>MCP Tool Search Integration <a class="anchor" href="#mcp-tool-search-integration">#</a></h3>
+      </div>
+      <p>New MCP tool discovery tool schema (<code>XwZ</code>, <code>WwZ</code>) at line 456454 enables dynamic MCP tool querying with configurable result limits.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

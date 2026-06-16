@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.73 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.73."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.73</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.73</span></h1>
+<p class="sub">This release introduces a new <code>/skills</code> command for viewing available skills, adds the <code>/theme</code> command as a standalone slash command, expands LSP tool support with call hierarchy features, and includes a "year-end 2025" promotional message about 2x rate limits. The SlashCommand tool has been removed, and prompt suggestion filtering has been significantly improved.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.72 → v2.0.73</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">13</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="skills-command">
+      <div class="card-top">
+        <h3>/skills Command <a class="anchor" href="#skills-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New command to view all available skills and their sources.</p>
+<div class="blabel">Usage</div>
+<pre><code>/skills</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Displays skills grouped by source (policy settings, user settings, project settings, plugins)</li><li>Shows skill names, estimated token counts, and source locations</li><li>Skill locations displayed: <code>~/.claude/skills/</code>, <code>.claude/skills/</code>, or plugin sources</li><li>Skills with <code>user-invocable: false</code> in their frontmatter are now hidden from user invocation</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>YX9()</code> at line 503132 (skills dialog, contains <code>"Skills"</code>, <code>"skill"</code>)</p>
+    </article>
+    <article class="card" id="theme-command-standalone">
+      <div class="card-top">
+        <h3>/theme Command (Standalone) <a class="anchor" href="#theme-command-standalone">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The theme picker is now available as a standalone <code>/theme</code> command.</p>
+<div class="blabel">Usage</div>
+<pre><code>/theme</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Previously only accessible via <code>/settings</code>, now directly invocable</li><li>Allows quick theme changes without navigating through settings</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>FY7()</code> at line 503626 (theme command, contains <code>"theme"</code>, <code>"Theme picker"</code>)</p>
+    </article>
+    <article class="card" id="lsp-call-hierarchy-support">
+      <div class="card-top">
+        <h3>LSP Call Hierarchy Support <a class="anchor" href="#lsp-call-hierarchy-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New LSP operations for exploring function call relationships.</p>
+<div class="blabel">Usage</div>
+<p>The LSP tool now supports three new operations:</p>
+<ul><li><code>prepareCallHierarchy</code>: Get call hierarchy item at a position</li><li><code>incomingCalls</code>: Find all functions/methods that call the function at a position</li><li><code>outgoingCalls</code>: Find all functions/methods called by the function at a position</li></ul>
+<div class="blabel">Details</div>
+<ul><li>Results are grouped by file for easier navigation</li><li>Shows call sites with line numbers</li><li>Useful for understanding code flow and dependencies</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>WL0</code> at line 481308 (LSP tool prompt, contains <code>"prepareCallHierarchy"</code>, <code>"incomingCalls"</code>, <code>"outgoingCalls"</code>)</p>
+    </article>
+    <article class="card" id="year-end-2025-rate-limit-promotion">
+      <div class="card-top">
+        <h3>Year-End 2025 Rate Limit Promotion <a class="anchor" href="#year-end-2025-rate-limit-promotion">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A promotional message announcing 2x higher rate limits through December 31, 2025.</p>
+<div class="blabel">Details</div>
+<ul><li>Displayed via the <code>tengu_year_end_2025_campaign_promo</code> feature flag</li><li>Message: "A gift for you - Your rate limits are 2x higher through 12/31"</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>_q0()</code> at line 464135 (promo message, contains <code>"2x higher"</code>, <code>"12/31"</code>)</p>
+    </article>
+    <article class="card" id="kill-ring-yank-cycling-meta-y">
+      <div class="card-top">
+        <h3>Kill Ring Yank Cycling (Meta-y) <a class="anchor" href="#kill-ring-yank-cycling-meta-y">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added Emacs-style yank cycling with Meta-y to rotate through killed text history.</p>
+<div class="blabel">Usage</div>
+<p>After yanking with Ctrl-y, press Meta-y (Alt-y on most terminals) to cycle through previously killed text.</p>
+<div class="blabel">Details</div>
+<ul><li>Stores up to 10 killed text entries</li><li>Cycles through the kill ring each time Meta-y is pressed</li><li>Follows standard Emacs keybinding conventions</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>BA()</code> function at line 521106 (yank cycling handler, key mapping <code>["y", BA]</code> in Meta handlers)</p>
+    </article>
+    <article class="card" id="slashcommand-tool-removed">
+      <div class="card-top">
+        <h3>SlashCommand Tool Removed <a class="anchor" href="#slashcommand-tool-removed">#</a></h3>
+      </div>
+      <p>The <code>SlashCommand</code> tool has been removed. Slash commands are now invoked directly by the user or through the <code>Skill</code> tool. This simplifies the tool surface and removes redundant functionality.</p>
+<div class="blabel">Evidence</div>
+<p>Removed <code>$S = "SlashCommand"</code> at line 424048, removed <code>ir = { name: $S, ...}</code> tool definition</p>
+    </article>
+    <article class="card" id="prompt-suggestion-filtering-enhanced">
+      <div class="card-top">
+        <h3>Prompt Suggestion Filtering Enhanced <a class="anchor" href="#prompt-suggestion-filtering-enhanced">#</a></h3>
+      </div>
+      <p>Significantly improved filtering of unsuitable prompt suggestions with new rejection criteria:</p>
+<ul><li><strong>Word count limits</strong>: Suggestions must be 2-8 words</li><li><strong>No evaluative phrases</strong>: Filters out "thanks", "looks good", "sounds good", etc.</li><li><strong>No Claude voice</strong>: Rejects suggestions starting with "let me", "I'll", "here's", etc.</li><li><strong>No multiple sentences</strong>: Suggestions with sentence boundaries are rejected</li><li>Added early exit conditions for pending permissions, active elicitations, and plan mode</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>km5()</code> at line 404234 (prompt suggestion filter, contains <code>"claude_voice"</code>, <code>"evaluative"</code>, <code>"too_few_words"</code>)</p>
+    </article>
+    <article class="card" id="claude-3-5-haiku-deprecation-notice">
+      <div class="card-top">
+        <h3>Claude 3.5 Haiku Deprecation Notice <a class="anchor" href="#claude-3-5-haiku-deprecation-notice">#</a></h3>
+      </div>
+      <p>Added deprecation warning for Claude 3.5 Haiku with retirement date of February 19, 2026 (first-party API only).</p>
+<div class="blabel">Evidence</div>
+<p><code>d97</code> at line 476533 (deprecation config, contains <code>"claude-3-5-haiku"</code>, <code>"February 19, 2026"</code>)</p>
+    </article>
+    <article class="card" id="image-cache-with-session-cleanup">
+      <div class="card-top">
+        <h3>Image Cache with Session Cleanup <a class="anchor" href="#image-cache-with-session-cleanup">#</a></h3>
+      </div>
+      <p>Images pasted during a session are now cached to disk for potential later reference, with automatic cleanup of old session image caches.</p>
+<div class="blabel">Evidence</div>
+<p><code>ys2()</code> at line 454701 (image cache cleanup), <code>Rs2 = "image-cache"</code> at line 454721</p>
+    </article>
+    <article class="card" id="mcp-tool-search-feature-flag">
+      <div class="card-top">
+        <h3>MCP Tool Search Feature Flag <a class="anchor" href="#mcp-tool-search-feature-flag">#</a></h3>
+      </div>
+      <p>Tool search for MCP can now be enabled via the <code>tengu_mcp_tool_search</code> feature flag, expanding the tool search functionality to MCP servers.</p>
+<div class="blabel">Evidence</div>
+<p><code>zIA()</code> at line 259974 (tool mode selector, contains <code>'if (aU("tengu_mcp_tool_search", !1)) return "tst"'</code>)</p>
+    </article>
+    <article class="card" id="skills-frontmatter-user-invocable">
+      <div class="card-top">
+        <h3>Skills Frontmatter: user-invocable <a class="anchor" href="#skills-frontmatter-user-invocable">#</a></h3>
+      </div>
+      <p>Skills now support a <code>user-invocable</code> frontmatter field. When set to <code>false</code>, the skill is hidden from user-facing command lists but can still be invoked by the model.</p>
+<div class="blabel">Evidence</div>
+<p><code>BX9()</code> at line 502839 (skill builder, contains <code>"userInvocable"</code>, <code>"user-invocable"</code>)</p>
+    </article>
+    <article class="card" id="improved-team-task-handling-on-teammate-termination">
+      <div class="card-top">
+        <h3>Improved Team Task Handling on Teammate Termination <a class="anchor" href="#improved-team-task-handling-on-teammate-termination">#</a></h3>
+      </div>
+      <p>When a teammate is terminated or shuts down, their open tasks are now properly unassigned and a notification is sent listing the affected tasks for reassignment.</p>
+<div class="blabel">Evidence</div>
+<p><code>a11()</code> at line 207479 (task unassignment handler, contains <code>"was terminated"</code>, <code>"unassigned"</code>)</p>
+    </article>
+    <article class="card" id="deep-search-removed-from-resume-dialog">
+      <div class="card-top">
+        <h3>Deep Search Removed from Resume Dialog <a class="anchor" href="#deep-search-removed-from-resume-dialog">#</a></h3>
+      </div>
+      <p>The "deep search" (<code>:</code> prefix) feature for searching within message content has been removed from the session resume dialog, simplifying the search interface.</p>
+<div class="blabel">Evidence</div>
+<p>Removed <code>tengu_session_deep_search_toggled</code> telemetry event at line 8130</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed hooks from plugins being incorrectly loaded when hooks are restricted by policy (<code>aI7()</code> at line 523289, checks <code>pluginName</code> before including hooks)</li><li>Fixed update command to support installing specific versions via <code>--version</code> flag (<code>LDA()</code> at line 524409, <code>rZA()</code> at line 146572)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The removal of the SlashCommand tool means that models can no longer programmatically invoke slash commands on behalf of users. Skills and custom commands should be invoked directly by users or through the Skill tool for model-initiated invocation.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

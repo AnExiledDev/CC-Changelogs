@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.168 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.168."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.168</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.168</span></h1>
+<p class="sub">This is a small maintenance release built on June 6, 2026. The primary substantive change is the addition of extended thinking budget support for the <code>claude-mythos-preview</code> model family, along with infrastructure pre-registration for two upcoming model families ("fruitcake" and "macaroon"). All other changes are version number propagation across the codebase.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.167 → v2.1.168</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="extended-thinking-budget-for-claude-mythos-preview">
+      <div class="card-top">
+        <h3>Extended Thinking Budget for claude-mythos-preview <a class="anchor" href="#extended-thinking-budget-for-claude-mythos-preview">#</a></h3>
+      </div>
+      <p>Claude Code now enables extended thinking for models in the "mythos" family (such as <code>claude-mythos-preview</code>) where it was previously disabled. Two distinct thinking budget paths are updated:</p>
+<ul><li>The always-disabled thinking path (<code>[false, 0]</code>) now returns <code>[undefined, 2048]</code> for mythos-family models, activating thinking with a 2048-token budget.</li><li>The main thinking configuration path now checks for mythos-family models first and applies a dedicated 2048-token budget constant (<code>Cx4</code>) before falling through to the general thinking settings.</li></ul>
+<p>This means users who have <code>claude-mythos-preview</code> configured as their model will now benefit from extended reasoning where Claude thinks through problems more carefully before responding.</p>
+<div class="blabel">Evidence</div>
+<p>Model family detection uses <code>ZW_ = ["fruitcake", "macaroon", "mythos"]</code> — search for <code>"mythos"</code> in the source; thinking budget is <code>Cx4 = 2048</code> (search for <code>"Cx4 = 2048"</code>).</p>
+    </article>
+    <article class="card" id="new-model-family-codenames-pre-registered">
+      <div class="card-top">
+        <h3>New Model Family Codenames Pre-Registered <a class="anchor" href="#new-model-family-codenames-pre-registered">#</a></h3>
+      </div>
+      <p>Two new model family identifiers, <code>"fruitcake"</code> and <code>"macaroon"</code>, are pre-registered alongside <code>"mythos"</code> in the model-family detection array. These codenames are used by the same thinking-budget routing logic described above, meaning that when models with these internal names ship they will automatically inherit the same 2048-token thinking configuration without requiring a code change.</p>
+<p>No user-facing <code>claude-fruitcake-<em></code> or <code>claude-macaroon-</em></code> models are available yet; this is infrastructure preparation.</p>
+<div class="blabel">Evidence</div>
+<p>New array <code>ZW_ = ["fruitcake", "macaroon", "mythos"]</code> (search for <code>"fruitcake"</code>).</p>
+    </article>
+    <article class="card" id="advisor-model-matching-improved">
+      <div class="card-top">
+        <h3>Advisor Model Matching Improved <a class="anchor" href="#advisor-model-matching-improved">#</a></h3>
+      </div>
+      <p>A new helper function was added that finds which advisor model family a given model name belongs to by doing a case-insensitive substring search against the list of valid advisor model families (<code>["opus", "sonnet"]</code>). This replaces ad-hoc string comparisons and makes error messages for invalid advisor choices more consistent.</p>
+<div class="blabel">Evidence</div>
+<p>New function <code>DxA</code> performs <code>_sH.find((q) =&gt; $.includes(q))</code> where <code>_sH = ["opus", "sonnet"]</code> (search for <code>"cannot be used as an advisor. Valid options"</code>).</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.168.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.168.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

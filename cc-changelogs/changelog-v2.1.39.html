@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.39 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.39."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.39</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.39</span></h1>
+<p class="sub">This release introduces a keyboard shortcut for toggling fast mode, adds an intelligent skill improvement system that learns from user feedback during skill execution, and enhances security checks for git commands in sandboxed environments. Plan mode now supports auto-approval with intervention capability.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.38 → v2.1.39</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="fast-mode-keyboard-toggle">
+      <div class="card-top">
+        <h3>Fast Mode Keyboard Toggle <a class="anchor" href="#fast-mode-keyboard-toggle">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Toggle fast mode directly from the chat interface using a keyboard shortcut.</p>
+<div class="blabel">Usage</div>
+<ul><li>Press <code>Alt+O</code> (or <code>Option+O</code> on macOS) to toggle fast mode on/off</li><li>A visual indicator shows the current fast mode state in the status bar</li></ul>
+<div class="blabel">Details</div>
+<ul><li>Works only when fast mode is available for your account</li><li>Displays "Model set to [model] · Fast mode OFF" when switching models turns off fast mode</li><li>Keybinding identifier: <code>chat:fastMode</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>New keybinding and UI element (search for <code>"chat:fastMode"</code>, <code>"to toggle fast mode"</code>)</p>
+    </article>
+    <article class="card" id="skill-improvement-system">
+      <div class="card-top">
+        <h3>Skill Improvement System <a class="anchor" href="#skill-improvement-system">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now detects preferences and improvements you mention during skill execution and can automatically update skill definitions to remember them for future runs.</p>
+<div class="blabel">Usage</div>
+<p>When running a skill, if you make requests like:</p>
+<ul><li>"Can you also ask me about X?"</li><li>"Please use a more casual tone"</li><li>"Don't do Z next time"</li></ul>
+<p>Claude Code will offer to apply these improvements to the skill definition file.</p>
+<div class="blabel">Details</div>
+<ul><li>Analyzes conversation for generalizable preferences vs one-time requests</li><li>Shows a prompt asking if you want to apply detected improvements</li><li>Updates the <code>SKILL.md</code> file in <code>~/.claude/skills/&lt;skill-name&gt;/</code></li><li>Displays "Skill [name] updated with improvements" when applied</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill improvement detection and application (search for <code>"Skill improvement"</code>, <code>"tengu_skill_improvement_detected"</code>, <code>"updated with improvements"</code>)</p>
+    </article>
+    <article class="card" id="plan-mode-auto-approval-with-intervention">
+      <div class="card-top">
+        <h3>Plan Mode Auto-Approval with Intervention <a class="anchor" href="#plan-mode-auto-approval-with-intervention">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Plan mode can auto-approve after a countdown, with the ability to intervene by pressing any key.</p>
+<div class="blabel">Usage</div>
+<p>When plan mode shows an approval prompt:</p>
+<ul><li>A countdown appears: "Auto-approving in Xs... Press any key to intervene."</li><li>Press any key to stop auto-approval and manually review</li><li>Let the countdown complete to auto-approve</li></ul>
+<div class="blabel">Details</div>
+<ul><li>Also applies to question auto-selection: "Auto-selecting in Xs..."</li><li>Provides a grace period for review while enabling unattended workflows</li></ul>
+<div class="blabel">Evidence</div>
+<p>New auto-approval UI (search for <code>"Auto-approving in"</code>, <code>"Auto-selecting in"</code>, <code>"Press any key to intervene"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-git-security-checks">
+      <div class="card-top">
+        <h3>Enhanced Git Security Checks <a class="anchor" href="#enhanced-git-security-checks">#</a></h3>
+      </div>
+      <p>Additional security validations for git commands when sandbox mode is enabled:</p>
+<ul><li><strong>Compound commands</strong>: Git commands combined with file-creating operations now require explicit permission</li><li><strong>Bare repositories</strong>: Git commands in directories with bare repository structure require permission</li><li><strong>Outside working directory</strong>: Git commands targeting directories outside the original working directory require permission when sandbox is enabled</li></ul>
+<div class="blabel">Evidence</div>
+<p>New security check messages (search for <code>"Compound commands that create git"</code>, <code>"Git commands outside the original working directory"</code>)</p>
+    </article>
+    <article class="card" id="sdk-client-app-identification">
+      <div class="card-top">
+        <h3>SDK Client App Identification <a class="anchor" href="#sdk-client-app-identification">#</a></h3>
+      </div>
+      <p>The SDK now supports a <code>CLAUDE_AGENT_SDK_CLIENT_APP</code> environment variable, allowing client applications built on the SDK to identify themselves in API requests.</p>
+<div class="blabel">Evidence</div>
+<p>New client-app identifier support (search for <code>"client-app/"</code>, <code>"CLAUDE_AGENT_SDK_CLIENT_APP"</code>)</p>
+    </article>
+    <article class="card" id="terminology-update-penguin-mode-fast-mode">
+      <div class="card-top">
+        <h3>Terminology Update: Penguin Mode → Fast Mode <a class="anchor" href="#terminology-update-penguin-mode-fast-mode">#</a></h3>
+      </div>
+      <p>Internal references to "penguin mode" have been renamed to "fast mode" for consistency with user-facing terminology.</p>
+<div class="blabel">Evidence</div>
+<p>Renamed status messages (search for <code>"Org fast mode:"</code> vs old <code>"Org penguin mode:"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-concise-output-mode-feature-flagged">
+      <div class="card-top">
+        <h3>Enhanced Concise Output Mode [Feature-Flagged] <a class="anchor" href="#enhanced-concise-output-mode-feature-flagged">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new system prompt mode that instructs Claude to produce more polished, concise output without filler words or restating what the user said.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_bergotte_lantern</code> (defaults to off)</p>
+<div class="blabel">Details</div>
+<ul><li>When enabled, adds: "Your output to the user should be concise and polished. Avoid using filler words, repetition, or restating what the user has already said..."</li><li>Falls back to "Your responses should be short and concise" when disabled</li><li>Does not apply to code or tool calls</li></ul>
+<div class="blabel">Evidence</div>
+<p>New output style prompt (search for <code>"tengu_bergotte_lantern"</code>, <code>"concise and polished"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

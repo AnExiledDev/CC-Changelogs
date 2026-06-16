@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.77 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.77."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.77</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.77</span></h1>
+<p class="sub">Claude Code 1.0.77 introduces WebSocket support for real-time communication with Claude's SDK servers, enhanced permission explanations that show exactly why actions require confirmation, and improved security with sophisticated shell command escaping to prevent injection attacks.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.76 → v1.0.77</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="websocket-transport-for-sdk-communication">
+      <div class="card-top">
+        <h3>WebSocket Transport for SDK Communication <a class="anchor" href="#websocket-transport-for-sdk-communication">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added support for persistent WebSocket connections as an alternative to stdin/stdout communication <strong>How to use:</strong></p>
+<pre><code># Connect to Claude&#x27;s SDK server with WebSocket
+export CLAUDE_CODE_SESSION_ACCESS_TOKEN=&quot;your-token-here&quot;
+claude --sdk-url=wss://api.claude.ai/sdk/v1/connect \
+       --input-format=stream-json \
+       --output-format=stream-json</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Automatic reconnection with exponential backoff (up to 5 attempts)</li><li>Message buffering during disconnections (1000 message capacity)</li><li>Request replay on reconnection to prevent message loss</li><li>Support for both <code>ws://</code> and <code>wss://</code> protocols with Bearer token authentication</li><li>Enables real-time bidirectional communication for streaming responses</li></ul>
+    </article>
+    <article class="card" id="permission-reasoning-display">
+      <div class="card-top">
+        <h3>Permission Reasoning Display <a class="anchor" href="#permission-reasoning-display">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New UI components that explain exactly why Claude needs permission for specific actions <strong>How to use:</strong> Permission explanations now appear automatically when confirmation is required:</p>
+<pre><code>Permission rule Edit(src/**) requires confirmation for this edit.
+/permissions to update rules
+
+Hook security-check requires confirmation for this command:
+Accessing sensitive configuration files
+/hooks to update</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Shows the specific permission rule or hook that triggered the request</li><li>Provides custom reasoning from hooks when available</li><li>Includes actionable guidance on how to modify permission settings</li><li>Consistent display across all tool types (Edit, Command, WebFetch, etc.)</li></ul>
+    </article>
+    <article class="card" id="advanced-shell-command-escaping">
+      <div class="card-top">
+        <h3>Advanced Shell Command Escaping <a class="anchor" href="#advanced-shell-command-escaping">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Sophisticated detection and escaping of dangerous shell constructs like heredocs and multiline strings <strong>How to use:</strong> This protection is automatic when Claude executes shell commands. It prevents injection attacks in complex scenarios:</p>
+<pre><code># Heredocs are now safely handled
+cat &lt;&lt; EOF
+$(potentially_dangerous_command)
+EOF
+
+# Multiline strings are properly escaped
+echo &#x27;line1
+line2&#x27;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Detects heredoc patterns that could bypass normal escaping</li><li>Identifies multiline strings that might hide malicious commands</li><li>Applies context-aware escaping strategies</li><li>Automatically adds stdin redirection (<code>&lt; /dev/null</code>) to prevent interactive command exploitation</li><li>Protects against arithmetic expansion and nested command substitution attacks</li></ul>
+    </article>
+    <article class="card" id="token-aware-conversation-summarization">
+      <div class="card-top">
+        <h3>Token-Aware Conversation Summarization <a class="anchor" href="#token-aware-conversation-summarization">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Intelligent conversation summarization that respects model token limits <strong>How to use:</strong> Conversation summaries are generated automatically when saving conversations. The system will indicate if summarizing partial conversations:</p>
+<pre><code>Summarizing last 5 of 10 messages (~2500 tokens)</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Dynamically calculates available tokens based on model context window</li><li>Prioritizes recent messages when full conversation exceeds token budget</li><li>Transparently indicates when summaries are based on partial context</li><li>Uses efficient Haiku model with prompt caching for fast summarization</li><li>Generates concise 5-10 word titles for easy conversation browsing</li></ul>
+    </article>
+    <article class="card" id="server-delivered-spinner-tips">
+      <div class="card-top">
+        <h3>Server-Delivered Spinner Tips <a class="anchor" href="#server-delivered-spinner-tips">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Spinner tips are now managed server-side instead of being fetched by the client <strong>Impact:</strong> Eliminates network latency for tip loading, provides more contextual and personalized tips with sophisticated rotation logic to prevent repetition</p>
+    </article>
+    <article class="card" id="simplified-trust-model">
+      <div class="card-top">
+        <h3>Simplified Trust Model <a class="anchor" href="#simplified-trust-model">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Removed separate trust dialogs for hooks and bash commands in favor of unified permission system <strong>Impact:</strong> Cleaner configuration with single trust mechanism, reducing complexity while maintaining security</p>
+    </article>
+    <article class="card" id="enhanced-connection-resilience">
+      <div class="card-top">
+        <h3>Enhanced Connection Resilience <a class="anchor" href="#enhanced-connection-resilience">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> WebSocket transport includes automatic reconnection and message replay capabilities <strong>Impact:</strong> More reliable real-time communication that can survive temporary network disruptions without losing messages or state</p>
+    </article>
+    <article class="card" id="fixed-permission-requests-lacking-context">
+      <div class="card-top">
+        <h3>Fixed: Permission Requests Lacking Context <a class="anchor" href="#fixed-permission-requests-lacking-context">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Users didn't understand why specific actions required permission</li><li><strong>Cause:</strong> Permission system only showed generic confirmation prompts</li><li><strong>Resolution:</strong> Added detailed reasoning display showing exact rules/hooks and custom explanations</li></ul>
+    </article>
+    <article class="card" id="fixed-shell-command-injection-vulnerabilities">
+      <div class="card-top">
+        <h3>Fixed: Shell Command Injection Vulnerabilities <a class="anchor" href="#fixed-shell-command-injection-vulnerabilities">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Complex shell constructs like heredocs could bypass escaping</li><li><strong>Cause:</strong> Standard shell-quote libraries don't handle all edge cases</li><li><strong>Resolution:</strong> Implemented custom pattern detection and multi-layer escaping strategy</li></ul>
+    </article>
+    <article class="card" id="fixed-conversation-summarization-token-overflows">
+      <div class="card-top">
+        <h3>Fixed: Conversation Summarization Token Overflows <a class="anchor" href="#fixed-conversation-summarization-token-overflows">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Long conversations could exceed model token limits during summarization</li><li><strong>Cause:</strong> No token budget management when generating summaries</li><li><strong>Resolution:</strong> Added token-aware truncation that prioritizes recent messages within available budget</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

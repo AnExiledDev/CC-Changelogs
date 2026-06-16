@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.111 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.111."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.111</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.111</span></h1>
+<p class="sub">This release focuses on improving robustness and user experience with enhanced shell command parsing, model validation, and visual feedback for long-running operations. Key improvements include safer shell parsing with error handling, API-based model validation to prevent invalid models, and visual indicators when operations are taking longer than expected.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.110 → v1.0.111</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">21</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">15 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="api-based-model-validation">
+      <div class="card-top">
+        <h3>API-Based Model Validation <a class="anchor" href="#api-based-model-validation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The <code>/model</code> command now validates custom model names by making a test API request before accepting them.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Try setting a custom model - it will be validated first
+/model claude-opus-4-20250514
+
+# If the model doesn&#x27;t exist, you&#x27;ll get an error immediately:
+# &quot;Model &#x27;claude-opus-4-20250514&#x27; not found&quot;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Validation occurs automatically when setting custom models</li><li>Built-in models (sonnet, haiku, opus) bypass validation for faster response</li><li>Validated models are cached to avoid repeated API calls</li><li>Provides specific error messages for model-not-found vs other API errors</li><li><strong>Evidence</strong>: <code>HDB()</code> at line 425289 in v1.0.111.js</li></ul>
+    </article>
+    <article class="card" id="shell-command-error-handling-improvements">
+      <div class="card-top">
+        <h3>Shell Command Error Handling Improvements <a class="anchor" href="#shell-command-error-handling-improvements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Shell command parsing now uses error-safe wrapper functions that gracefully handle malformed commands instead of throwing exceptions.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>vC()</code> function at line 348215 wraps parse operations with try-catch</li><li>New <code>q8()</code> function at line 348265 provides unified quoting with fallback strategies</li><li>New <code>NX9()</code> function at line 348229 handles quote operations with error checking</li><li>Commands with syntax errors now fail gracefully rather than crashing</li><li>Improved handling of complex shell redirections and pipes</li><li><strong>Evidence</strong>: <code>vC()</code>, <code>NX9()</code>, and <code>q8()</code> functions at lines 348215, 348229, and 348265</li></ul>
+    </article>
+    <article class="card" id="stalled-operation-visual-indicator">
+      <div class="card-top">
+        <h3>Stalled Operation Visual Indicator <a class="anchor" href="#stalled-operation-visual-indicator">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The spinner now changes color from blue to orange when operations take longer than 3 seconds, providing visual feedback about potentially stuck processes.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Spinner starts blue during normal operation</li><li>After 3 seconds, gradually transitions to orange over the next 3 seconds</li><li>Fully orange at 6+ seconds to indicate significantly delayed operation</li><li>Smooth color interpolation provides clear visual feedback</li><li>Only affects the spinner appearance, doesn't change functionality</li><li><strong>Evidence</strong>: <code>nE0()</code> at line 402439, color interpolation in <code>cE0()</code> at line 402326 and <code>lE0()</code> at line 402369</li></ul>
+    </article>
+    <article class="card" id="read-file-caching-for-at-mentions">
+      <div class="card-top">
+        <h3>Read File Caching for At-Mentions <a class="anchor" href="#read-file-caching-for-at-mentions">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Files mentioned with <code>@</code> are no longer re-read if they haven't been modified since the last read.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Prevents redundant file reads when the same file is mentioned multiple times</li><li>Checks file modification timestamps before reading</li><li>Returns cached content if file is unchanged</li><li>New <code>already_read_file</code> attachment type (not shown to user)</li><li>Primarily benefits files that were written by Claude during the session</li><li><strong>Evidence</strong>: <code>PE0()</code> at line 398623 with timestamp checking at lines 398630-398649</li></ul>
+    </article>
+    <article class="card" id="environment-variable-whitelist">
+      <div class="card-top">
+        <h3>Environment Variable Whitelist <a class="anchor" href="#environment-variable-whitelist">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Settings files (<code>.claude/settings.json</code> and <code>.claude/settings.local.json</code>) can now only set specific whitelisted environment variables.</p>
+<p><strong>Details:</strong></p>
+<ul><li>45 allowed environment variables including:</li><li>API configuration: <code>ANTHROPIC_API_KEY</code>, <code>ANTHROPIC_MODEL</code></li><li>Feature flags: <code>DISABLE_TELEMETRY</code>, <code>DISABLE_ERROR_REPORTING</code></li><li>Proxy settings: <code>HTTP_PROXY</code>, <code>HTTPS_PROXY</code></li><li>Tool timeouts: <code>BASH_MAX_TIMEOUT_MS</code>, <code>MCP_TIMEOUT</code></li><li>Prevents arbitrary environment variable injection via settings files</li><li>Security enhancement to protect against potential configuration exploits</li><li><strong>Evidence</strong>: <code>YCB</code> Set at lines 427822-427867, <code>WCB()</code> at line 427868</li></ul>
+    </article>
+    <article class="card" id="compact-error-message-clarity">
+      <div class="card-top">
+        <h3>Compact Error Message Clarity <a class="anchor" href="#compact-error-message-clarity">#</a></h3>
+      </div>
+      <p>The error message when conversations become too long now correctly instructs users to press escape twice instead of once:</p>
+<ul><li>Old: "Press esc to go up a few messages and try again"</li><li>New: "Press esc twice to go up a few messages and try again"</li><li><strong>Evidence</strong>: Variable <code>Ks6</code> at line 398957</li></ul>
+    </article>
+    <article class="card" id="memory-management-during-compaction">
+      <div class="card-top">
+        <h3>Memory Management During Compaction <a class="anchor" href="#memory-management-during-compaction">#</a></h3>
+      </div>
+      <p>Enhanced microcompact to clean up cached file data when compacting old tool results, preventing memory accumulation over long sessions.</p>
+<ul><li><strong>Evidence</strong>: <code>av()</code> function at line 399242 with cleanup logic at lines 399328-399344</li></ul>
+    </article>
+    <article class="card" id="user-sentiment-tracking">
+      <div class="card-top">
+        <h3>User Sentiment Tracking <a class="anchor" href="#user-sentiment-tracking">#</a></h3>
+      </div>
+      <p>Added detection for negative sentiment and "keep going" phrases in user prompts for better analytics and potential future UX improvements.</p>
+<ul><li><strong>Evidence</strong>: <code>usB()</code> at line 435565 and <code>msB()</code> at line 435571</li></ul>
+    </article>
+    <article class="card" id="terminal-resume-handling">
+      <div class="card-top">
+        <h3>Terminal Resume Handling <a class="anchor" href="#terminal-resume-handling">#</a></h3>
+      </div>
+      <p>Improved handling of terminal resume after Ctrl+Z by resetting line counts when receiving SIGCONT signal.</p>
+<ul><li><strong>Evidence</strong>: <code>handleResume()</code> in class <code>xU1</code> at line 362978</li></ul>
+    </article>
+    <article class="card" id="session-title-generation">
+      <div class="card-top">
+        <h3>Session Title Generation <a class="anchor" href="#session-title-generation">#</a></h3>
+      </div>
+      <p>Enhanced session title generation to skip slash commands and command output when extracting representative user prompts.</p>
+<ul><li><strong>Evidence</strong>: <code>h55()</code> at line 426021</li></ul>
+    </article>
+    <article class="card" id="model-display-in-transcripts">
+      <div class="card-top">
+        <h3>Model Display in Transcripts <a class="anchor" href="#model-display-in-transcripts">#</a></h3>
+      </div>
+      <p>Transcript mode now displays the model name used for each assistant response.</p>
+<ul><li><strong>Evidence</strong>: <code>WDB()</code> at line 424710</li></ul>
+    </article>
+    <article class="card" id="tool-permission-notification-improvements">
+      <div class="card-top">
+        <h3>Tool Permission Notification Improvements <a class="anchor" href="#tool-permission-notification-improvements">#</a></h3>
+      </div>
+      <p>Enhanced notification messages for tool permission requests to be more descriptive.</p>
+<ul><li><strong>Evidence</strong>: <code>_f5()</code> at line 431409</li></ul>
+    </article>
+    <article class="card" id="tty-detection-improvements">
+      <div class="card-top">
+        <h3>TTY Detection Improvements <a class="anchor" href="#tty-detection-improvements">#</a></h3>
+      </div>
+      <p>Fixed handling of non-TTY environments by checking <code>stdout.isTTY</code> instead of using a global flag, improving compatibility with piped output and CI environments.</p>
+<ul><li><strong>Evidence</strong>: Multiple locations including class <code>xU1</code> at line 361792</li></ul>
+    </article>
+    <article class="card" id="shell-working-directory-persistence">
+      <div class="card-top">
+        <h3>Shell Working Directory Persistence <a class="anchor" href="#shell-working-directory-persistence">#</a></h3>
+      </div>
+      <p>Added option to skip automatic working directory updates for certain shell operations to prevent unintended directory changes.</p>
+<ul><li><strong>Evidence</strong>: <code>uT6()</code> signature change at line 373626 with new parameter at line 373560</li></ul>
+    </article>
+    <article class="card" id="attachment-type-handling">
+      <div class="card-top">
+        <h3>Attachment Type Handling <a class="anchor" href="#attachment-type-handling">#</a></h3>
+      </div>
+      <p>Improved attachment normalization to handle background remote sessions and other new attachment types gracefully.</p>
+<ul><li><strong>Evidence</strong>: <code>rn6()</code> at line 396057 with new cases at lines 402372-402381</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Refactored shell parsing to use centralized wrapper functions for consistency</li><li>Renamed and restructured ink rendering class from <code>A$1</code> to <code>xU1</code></li><li>Improved color application in text rendering with transform-based approach</li><li>Enhanced border rendering to use theme-aware color functions</li><li>Removed unused dependencies (onetime, signal-exit, stream imports)</li><li>Cleaned up unused functions and variables (19 removed total)</li></ul>
+<p><strong>Note:</strong> This changelog focuses on user-visible changes and significant improvements. Many internal refactorings and code reorganizations have been omitted for brevity.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

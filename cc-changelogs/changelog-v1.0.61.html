@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.61 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.61."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.61</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.61</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.60 → v1.0.61</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Enhanced Clipboard Integration for macOS</h4>
+<ul><li><strong>Improved image paste handling</strong>: The CLI now includes better support for pasting images from the clipboard on macOS</li><li><strong>Screenshot detection</strong>: Automatically detects when users paste screenshots (e.g., from macOS screenshot tool) and handles them appropriately</li><li><strong>Clipboard polling</strong>: Added a 50ms polling mechanism to check for clipboard images when paste events are detected</li></ul>
+<h4>Flag Settings Support</h4>
+<ul><li><strong>New settings type</strong>: Added <code>flagSettings</code> as a new configuration type alongside existing settings (userSettings, projectSettings, localSettings, policySettings)</li><li><strong>Flag settings path management</strong>: New functions to get and set the flag settings path:</li></ul>
+<pre><code>  # The CLI now supports flag-based configuration settings
+  # These are separate from user/project/local settings</code></pre>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Better Command Injection Protection</h4>
+<ul><li><strong>Enhanced stdin handling</strong>: Improved protection against command injection by adding <code>&lt; /dev/null</code> to piped commands</li><li><strong>Smart command parsing</strong>: The CLI now intelligently detects pipe operators and adds null input redirection to prevent unintended stdin reading</li><li><strong>Backtick handling</strong>: Special handling for commands containing backticks to ensure proper escaping</li></ul>
+<h4>Symlink Resolution</h4>
+<ul><li><strong>File operations now follow symlinks</strong>: When reading files, the CLI now resolves symlinks and logs when reading through them</li><li><strong>Better error handling</strong>: Gracefully handles cases where symlink resolution fails</li></ul>
+<h4>Installation Detection Improvements</h4>
+<ul><li><strong>Native installation PATH checking</strong>: For native installations, the CLI now checks if <code>~/.local/bin</code> is in your PATH and provides specific instructions if it's missing</li><li><strong>Windows-specific PATH handling</strong>: Added proper path separator handling for Windows environments</li><li><strong>Better diagnostics</strong>: More detailed error messages when installation issues are detected</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <h4>Hook Display Filtering</h4>
+<ul><li><strong>Fixed duplicate hook messages</strong>: Tool progress messages now properly filter out "running_hook" type messages to prevent duplication</li><li><strong>Cleaner output</strong>: Hook status messages are now displayed separately from tool progress</li></ul>
+<h4>Settings File Handling</h4>
+<ul><li><strong>Flag settings exclusion</strong>: The <code>flagSettings</code> type is now properly excluded from certain write operations (similar to <code>policySettings</code>)</li><li><strong>Improved validation</strong>: Better error handling when reading and parsing settings files</li></ul>
+    </article>
+    <article class="card" id="internal-changes">
+      <div class="card-top">
+        <h3>Internal Changes <a class="anchor" href="#internal-changes">#</a></h3>
+      </div>
+      <h4>Code Organization</h4>
+<ul><li><strong>Stream imports consolidated</strong>: Replaced multiple stream imports with PassThrough imports from both <code>node:stream</code> and <code>stream</code></li><li><strong>Function refactoring</strong>: Several internal functions were restructured for better maintainability</li><li><strong>Async operations</strong>: Installation detection functions now use async/await pattern instead of synchronous execution</li></ul>
+<h4>Environment Variable Handling</h4>
+<ul><li><strong>New helper function</strong>: Added <code>X$2()</code> to parse boolean environment variables, recognizing "0", "false", "no", and "off" as false values</li></ul>
+    </article>
+    <article class="card" id="developer-notes">
+      <div class="card-top">
+        <h3>Developer Notes <a class="anchor" href="#developer-notes">#</a></h3>
+      </div>
+      <ul><li>The paste handling mechanism now includes references to whether content was pasted vs typed</li><li>Installation type detection is more robust and provides actionable feedback</li><li>The CLI maintains backward compatibility while adding these new features</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

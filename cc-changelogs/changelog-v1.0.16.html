@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.16 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.16."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.16</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.16</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.15 → v1.0.16</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.16 Changelog</p>
+    </article>
+    <article class="card" id="plan-mode-support">
+      <div class="card-top">
+        <h3>Plan Mode Support <a class="anchor" href="#plan-mode-support">#</a></h3>
+      </div>
+      <ul><li><strong>New <code>ExitPlanMode</code> tool</strong>: Users can now work in a "plan mode" where Claude Code presents implementation plans before executing them. When ready to proceed with coding, this tool prompts the user to exit plan mode.</li><li>Example usage: After Claude Code presents a plan for implementing a feature, it will use this tool to get user approval before proceeding with the actual implementation.</li><li>The plan parameter supports markdown formatting for clear, structured presentations.</li></ul>
+    </article>
+    <article class="card" id="non-interactive-session-support">
+      <div class="card-top">
+        <h3>Non-Interactive Session Support <a class="anchor" href="#non-interactive-session-support">#</a></h3>
+      </div>
+      <ul><li><strong>New session mode detection</strong>: Claude Code can now detect and handle non-interactive sessions differently from interactive ones.</li><li>Two new functions manage this state: <code>z0A()</code> to check if the session is non-interactive, and <code>w0A(A)</code> to set the non-interactive state.</li><li>This affects API key authentication behavior - non-interactive sessions have different authentication requirements.</li></ul>
+    </article>
+    <article class="card" id="authentication-and-api-key-handling">
+      <div class="card-top">
+        <h3>Authentication and API Key Handling <a class="anchor" href="#authentication-and-api-key-handling">#</a></h3>
+      </div>
+      <ul><li><strong>Enhanced API key source detection</strong>: The authentication check now considers whether the API key comes from <code>ANTHROPIC_API_KEY</code> environment variable or the <code>apiKeyHelper</code>.</li><li>The <code>iP()</code> function (formerly <code>BV()</code>) now checks the source of authentication more granularly.</li><li>Non-interactive sessions are handled differently in authentication flows.</li></ul>
+    </article>
+    <article class="card" id="cloud-provider-detection">
+      <div class="card-top">
+        <h3>Cloud Provider Detection <a class="anchor" href="#cloud-provider-detection">#</a></h3>
+      </div>
+      <ul><li><strong>Simplified cloud provider checks</strong>: New <code>Hv()</code> function provides a cleaner way to detect if Claude Code is using AWS Bedrock or Google Vertex AI.</li><li>Returns <code>true</code> if either <code>CLAUDE_CODE_USE_BEDROCK</code> or <code>CLAUDE_CODE_USE_VERTEX</code> environment variables are set.</li></ul>
+    </article>
+    <article class="card" id="token-limits-and-management">
+      <div class="card-top">
+        <h3>Token Limits and Management <a class="anchor" href="#token-limits-and-management">#</a></h3>
+      </div>
+      <ul><li><strong>Updated token limits</strong>:</li><li>Maximum token limit increased from 180,000 to 200,000 tokens</li><li>New 20,000 token threshold introduced for certain operations</li><li>New <code>Ow2()</code> function calculates remaining tokens available in the current context</li></ul>
+    </article>
+    <article class="card" id="performance">
+      <div class="card-top">
+        <h3>Performance <a class="anchor" href="#performance">#</a></h3>
+      </div>
+      <ul><li><strong>Optimized imports</strong>: Streamlined import statements, using more specific imports like <code>{ cwd as dI0 }</code> and <code>{ PassThrough as uK5 }</code> instead of default imports.</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Added new constant <code>po1 = 3000</code> (likely a timeout or delay value)</li><li>Removed unused <code>KfA()</code> function that checked authentication source</li><li>Removed empty object schema <code>q75</code></li><li>Added <code>HA1</code> variable for internal module management</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Breaking Changes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="breaking-changes">
+      <p>None - this version maintains backward compatibility with v1.0.15.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

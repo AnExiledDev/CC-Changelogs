@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.18 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.18."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.18</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.18</span></h1>
+<p class="sub">Version 2.0.18 adds <strong>OpenTelemetry distributed tracing infrastructure</strong> (disabled by default), introduces <strong>settings source restriction</strong> capability for enterprise use cases, and includes a <strong>background task summarization fix</strong> that prevents unnecessary processing.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.17 → v2.0.18</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="opentelemetry-tracing-support-opt-in">
+      <div class="card-top">
+        <h3>OpenTelemetry Tracing Support (Opt-In) <a class="anchor" href="#opentelemetry-tracing-support-opt-in">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Comprehensive distributed tracing infrastructure for monitoring Claude Code's internal operations, API calls, and performance metrics. This feature is <strong>disabled by default</strong> and requires explicit opt-in.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Enable telemetry
+export CLAUDE_CODE_ENABLE_TELEMETRY=true
+
+# Configure where traces are exported (optional)
+export OTEL_TRACES_EXPORTER=console  # or &quot;otlp&quot; for OpenTelemetry collectors
+
+# Privacy controls (optional - both default to redacted)
+export OTEL_LOG_USER_PROMPTS=true     # Log user prompts in traces
+export OTEL_LOG_MODEL_RESPONSE=true   # Log model responses in traces</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Tracks user interactions, LLM API requests/responses, and tool executions</li><li><strong>Privacy-conscious by default</strong>: User prompts and model responses are redacted unless explicitly enabled via <code>OTEL_LOG_USER_PROMPTS</code> and <code>OTEL_LOG_MODEL_RESPONSE</code></li><li>Supports multiple export formats:</li><li><code>console</code> - Output traces to console for debugging</li><li><code>otlp</code> - Export to OpenTelemetry Protocol collectors (supports gRPC, HTTP/JSON, HTTP/Protobuf)</li><li>Records detailed metrics: token counts (input, output, cache read, cache creation), latency, success/failure rates</li><li>Full OpenTelemetry specification compliance with 15+ configuration environment variables</li><li>Configurable sampling strategies via <code>OTEL_TRACES_SAMPLER</code> (defaults to <code>parentbased_always_on</code>)</li><li>Batch span processor with tunable performance parameters</li><li><strong>Evidence</strong>: <code>DiB() at line 2314</code>, <code>JiB() at line 2048</code>, <code>Jb0() at line 2087</code>, <code>cL5() at line 2277</code></li></ul>
+<p><strong>Supported Environment Variables:</strong></p>
+<p><em>Telemetry Control:</em></p>
+<ul><li><code>CLAUDE_CODE_ENABLE_TELEMETRY</code> - Master switch (default: disabled)</li><li><code>OTEL_LOG_USER_PROMPTS</code> - Include user prompts in traces (default: redacted)</li><li><code>OTEL_LOG_MODEL_RESPONSE</code> - Include model responses in traces (default: redacted)</li></ul>
+<p><em>Export Configuration:</em></p>
+<ul><li><code>OTEL_TRACES_EXPORTER</code> - Exporters: "console", "otlp" (comma-separated)</li><li><code>OTEL_EXPORTER_OTLP_TRACES_PROTOCOL</code> - Protocol: "grpc", "http/json", "http/protobuf"</li><li><code>OTEL_EXPORTER_OTLP_PROTOCOL</code> - Default protocol for all signals</li></ul>
+<p><em>Sampling:</em></p>
+<ul><li><code>OTEL_TRACES_SAMPLER</code> - Sampler type (default: "parentbased_always_on")</li><li><code>OTEL_TRACES_SAMPLER_ARG</code> - Sampler configuration (e.g., ratio for TraceIdRatioBased)</li></ul>
+<p><em>Span Limits:</em></p>
+<ul><li><code>OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT</code> - Max attribute value length (unlimited by default)</li><li><code>OTEL_ATTRIBUTE_COUNT_LIMIT</code> - Max attributes per span (default: 128)</li><li><code>OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT</code> - Span-specific attribute value limit</li><li><code>OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT</code> - Span-specific attribute count (default: 128)</li><li><code>OTEL_SPAN_LINK_COUNT_LIMIT</code> - Max links per span (default: 128)</li><li><code>OTEL_SPAN_EVENT_COUNT_LIMIT</code> - Max events per span (default: 128)</li><li><code>OTEL_SPAN_ATTRIBUTE_PER_EVENT_COUNT_LIMIT</code> - Max attributes per event (default: 128)</li><li><code>OTEL_SPAN_ATTRIBUTE_PER_LINK_COUNT_LIMIT</code> - Max attributes per link (default: 128)</li></ul>
+<p><em>Batch Processor:</em></p>
+<ul><li><code>OTEL_BSP_MAX_EXPORT_BATCH_SIZE</code> - Batch size (default: 512)</li><li><code>OTEL_BSP_MAX_QUEUE_SIZE</code> - Queue size (default: 2048)</li><li><code>OTEL_BSP_SCHEDULE_DELAY</code> - Export delay in ms (default: 5000)</li><li><code>OTEL_BSP_EXPORT_TIMEOUT</code> - Timeout in ms (default: 30000)</li></ul>
+    </article>
+    <article class="card" id="settings-source-restriction">
+      <div class="card-top">
+        <h3>Settings Source Restriction <a class="anchor" href="#settings-source-restriction">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New capability to restrict which sources can provide settings, useful for enterprise deployments or security-sensitive environments where configuration should only come from approved sources.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Programmatic API for controlling allowed settings sources</li><li>Likely to be exposed via command-line flags or environment variables in future versions</li><li><strong>Evidence</strong>: <code>s0A() at line 3770</code></li></ul>
+    </article>
+    <article class="card" id="background-task-summarization-guard">
+      <div class="card-top">
+        <h3>Background Task Summarization Guard <a class="anchor" href="#background-task-summarization-guard">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Fixed unnecessary processing when background task summarization is disabled.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added early-return check to skip summarization logic when the feature is disabled</li><li>Prevents wasted CPU cycles and potential side effects</li><li>Improves performance for users who don't use background task features</li><li><strong>Evidence</strong>: Check added in <code>tjQ()</code> function (formerly <code>bRQ</code>)</li></ul>
+    </article>
+    <article class="card" id="skills-display-enhancement">
+      <div class="card-top">
+        <h3>Skills Display Enhancement <a class="anchor" href="#skills-display-enhancement">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Skills now display without the "/" prefix, distinguishing them visually from regular slash commands.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Regular commands: <code>/command-name</code></li><li>Skills: <code>The Skill Name</code> (no "/" prefix)</li><li>Improves UI consistency and helps users understand the difference between commands and skills</li><li><strong>Evidence</strong>: <code>JoB() at line 3143</code> (formerly <code>pnB</code>), checks for "The " prefix</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <p>The following changes have no user-visible impact:</p>
+<ul><li><strong>Import optimizations</strong>: Consolidated imports for better tree-shaking (e.g., <code>import { cwd } from "node:process"</code> instead of importing entire modules)</li><li><strong>Code organization</strong>: 8000+ function and variable renames for improved code maintainability</li><li><strong>Debug logging</strong>: Enhanced logging for command processing and message creation (development-only)</li><li><strong>Shell execution refactoring</strong>: Internal parameter handling improvements</li><li><strong>Skills infrastructure</strong>: Stub implementations added for upcoming skills feature (currently disabled)</li><li><strong>Plan editing UI</strong>: Infrastructure added for future plan editing capability (not yet active)</li><li><strong>Dead code removal</strong>: Removed unused rendering function <code>HqQ</code></li></ul>
+<p><strong>Note for Enterprise Users:</strong> The new telemetry infrastructure provides deep observability into Claude Code's behavior and performance. When enabled, it can help diagnose issues, track API usage patterns, and monitor system health in production deployments. All telemetry respects privacy by default through content redaction controls.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.172 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.172."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.172</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.172</span></h1>
+<p class="sub">Version 2.1.172 ships the Artifact tool — a new capability letting Claude publish HTML and Markdown files to private claude.ai web pages — alongside improved ultra (cloud review) error messages that guide users through auth requirements. The release also renames "Remote Control" status labels to <code>/rc</code>, improves Chrome browser tool loading instructions to emphasize batching, and overhauled the team memory prompt with a clearer two-step save process.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.170 → v2.1.172</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">21</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">6</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="artifact-tool">
+      <div class="card-top">
+        <h3>Artifact Tool <a class="anchor" href="#artifact-tool">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Claude can now render an HTML or Markdown file to a private, shareable web page hosted on claude.ai. The resulting URL can be shared with teammates.</p>
+<div class="blabel">Usage</div>
+<pre><code>Artifact(file_path=&quot;report.html&quot;, favicon=&quot;📊&quot;)
+Artifact(file_path=&quot;notes.md&quot;, favicon=&quot;📝&quot;, label=&quot;v2&quot;)</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Accepts <code>.html</code>, <code>.htm</code>, and <code>.md</code> files; Markdown is converted to styled HTML automatically</li><li>The <code>favicon</code> parameter (required) sets the browser-tab emoji icon — use one or two emoji, no markup</li><li>The optional <code>label</code> parameter provides a human-readable version label shown in the version picker</li><li>The optional <code>url</code> parameter lets Claude redeploy to an existing artifact URL the user provides</li><li>A strict CSP blocks all external resources — inline all CSS/JS and embed assets as data: URIs</li><li>Same file path → same URL on redeploy; different file path → new URL</li><li>Controlled by the <code>CLAUDE_CODE_DISABLE_ARTIFACT</code> environment variable and the <code>disableArtifact</code> setting</li><li>Gated by feature flag <code>tengu_cobalt_plinth</code>; enabled for eligible claude.ai accounts</li></ul>
+<div class="blabel">Evidence</div>
+<p>Artifact tool implementation (search for <code>"Render an HTML or Markdown file to an Artifact"</code> and <code>uAH = "Artifact"</code>)</p>
+    </article>
+    <article class="card" id="plugin-dir-no-mcp-flag">
+      <div class="card-top">
+        <h3>--plugin-dir-no-mcp Flag <a class="anchor" href="#plugin-dir-no-mcp-flag">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>--plugin-dir-no-mcp</code> flag that loads a plugin directory without also reading its <code>.mcp.json</code> file. Useful when the SDK host already owns and manages the plugin's MCP connections.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --plugin-dir-no-mcp &lt;path&gt;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Behaves exactly like <code>--plugin-dir</code> except the engine skips <code>.mcp.json</code> / <code>mcpServers</code> discovery for that plugin</li><li>Equivalent behavior is also available as a setting: <code>noMcp: true</code> in the plugin frontmatter</li><li>Intended for SDK hosts that register MCP servers themselves rather than delegating to the engine</li></ul>
+<div class="blabel">Evidence</div>
+<p>New flag definition and help text (search for <code>"Like --plugin-dir but the engine will not read this plugin's .mcp.json"</code>)</p>
+    </article>
+    <article class="card" id="ultra-cloud-review-improved-auth-error-messages">
+      <div class="card-top">
+        <h3>Ultra (Cloud Review) — Improved Auth Error Messages <a class="anchor" href="#ultra-cloud-review-improved-auth-error-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When ultra (cloud review) is unavailable, Claude Code now surfaces specific, actionable error messages depending on the exact auth state rather than a single generic message.</p>
+<div class="blabel">Details</div>
+<ul><li>API key auth → "ultra (cloud review) requires claude.ai account auth. Unset ANTHROPIC_API_KEY … to use ultra."</li><li>Missing profile scope → "ultra (cloud review) requires a full-scope login token — run <code>claude auth login</code> to use it"</li><li>Not yet in rollout → "ultra (cloud review) isn't enabled for your account yet — run <code>claude auth login</code> to refresh your entitlements"</li><li>Unauthenticated entirely → "ultra (cloud review) requires a claude.ai account — sign in to claude.ai to use it"</li><li>All error messages include a link to <code>https://code.claude.com/docs/en/ultrareview</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Error routing function (search for <code>"ultra (cloud review) requires claude.ai account auth"</code>)</p>
+    </article>
+    <article class="card" id="url-provenance-check-for-web-fetch">
+      <div class="card-top">
+        <h3>URL Provenance Check for web_fetch <a class="anchor" href="#url-provenance-check-for-web-fetch">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p><code>web_fetch</code> now enforces a provenance check — it can only retrieve URLs that appeared in a user message or a prior <code>web_fetch</code> result. Attempts to fetch URLs outside this set present a permission prompt asking the user to approve.</p>
+<div class="blabel">Details</div>
+<ul><li>If the user approves, the fetch proceeds; if denied or timed out, Claude receives an error</li><li>Timeout message: "The permission request for this URL was not answered in time. Ask the user to approve the fetch or include the URL in a message, then try again."</li><li>The error type is <code>PROVENANCE_REQUIRED</code></li><li>Suppressed in bypassPermissions and dontAsk modes</li></ul>
+<div class="blabel">Evidence</div>
+<p>Provenance enforcement and prompt (search for <code>"URL not in provenance set. web_fetch can only retrieve URLs that appeared in a user message"</code>)</p>
+    </article>
+    <article class="card" id="memories-export-route">
+      <div class="card-top">
+        <h3>/memories/export Route <a class="anchor" href="#memories-export-route">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new internal <code>/memories/export</code> route has been registered, enabling memory export functionality.</p>
+<div class="blabel">Evidence</div>
+<p>New constant (search for <code>"/memories/export"</code>)</p>
+    </article>
+    <article class="card" id="showonboardingrolepicker-tool-cowork">
+      <div class="card-top">
+        <h3>ShowOnboardingRolePicker Tool (Cowork) <a class="anchor" href="#showonboardingrolepicker-tool-cowork">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new internal tool for Cowork onboarding that renders an interactive role-picker chip row. Users can tap a chip (e.g. "Legal", "Engineering") to select their role and trigger automatic plugin installation.</p>
+<div class="blabel">Details</div>
+<ul><li>Blocks until the user responds: chip click, free-form text entry, or dismissal</li><li>Returns <code>{"role": "..."}</code> on selection, <code>{"dismissed": true}</code> on cancel, <code>{}</code> on confirm-without-role</li><li>Only enabled in Cowork sessions; not available in normal conversations</li><li>Gated via <code>KOf</code> (Cowork environment check)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Tool definition (search for <code>"Render a clickable role-picker chip row during Cowork onboarding"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-child-session-environment-variable">
+      <div class="card-top">
+        <h3>CLAUDE_CODE_CHILD_SESSION Environment Variable <a class="anchor" href="#claude-code-child-session-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>CLAUDE_CODE_CHILD_SESSION</code> environment variable that marks a session as a child session, suppressing certain persistence behaviors (e.g. session data is not persisted when this is set alongside other child-session conditions).</p>
+<div class="blabel">Evidence</div>
+<p>New env var check (search for <code>"CLAUDE_CODE_CHILD_SESSION"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-skip-plugin-mcp-servers">
+      <div class="card-top">
+        <h3>CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS <a class="anchor" href="#claude-code-skip-plugin-mcp-servers">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new environment variable that, when set, skips MCP server discovery for plugin directories during startup.</p>
+<div class="blabel">Evidence</div>
+<p>Log message (search for <code>"CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS is set"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="remote-control-status-labels-renamed-to-rc">
+      <div class="card-top">
+        <h3>Remote Control Status Labels Renamed to /rc <a class="anchor" href="#remote-control-status-labels-renamed-to-rc">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The status-bar labels for the Remote Control / remote session feature have been shortened from "Remote Control active / connecting / failed / reconnecting" to <code>/rc active</code>, <code>/rc connecting…</code>, <code>/rc failed</code>, <code>/rc reconnecting</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Status label function (search for <code>"/rc active"</code> and <code>"/rc failed"</code>)</p>
+    </article>
+    <article class="card" id="chrome-browser-tools-batch-toolsearch-loading">
+      <div class="card-top">
+        <h3>Chrome Browser Tools: Batch ToolSearch Loading <a class="anchor" href="#chrome-browser-tools-batch-toolsearch-loading">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The Chrome browser automation system prompt now explicitly instructs Claude to load all needed tools in a single <code>ToolSearch</code> call using a comma-separated <code>select:</code> query, rather than one call per tool.</p>
+<div class="blabel">Details</div>
+<ul><li>New guidance: "Do NOT load tools one at a time; each separate ToolSearch call wastes a full round-trip"</li><li>The recommended starter set covers <code>tabs_context_mcp</code>, <code>navigate</code>, <code>computer</code>, <code>read_page</code>, and <code>tabs_create_mcp</code> in one call</li><li>Task-specific extras (recording, forms, console debugging) should be added to that same call when the task obviously needs them</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated browser automation prompt (search for <code>"batch every tool you expect to need into ONE ToolSearch call"</code>)</p>
+    </article>
+    <article class="card" id="team-memory-two-step-save-process-instructions">
+      <div class="card-top">
+        <h3>Team Memory: Two-Step Save Process Instructions <a class="anchor" href="#team-memory-two-step-save-process-instructions">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The team memory system prompt has been overhauled with clearer, step-by-step guidance for saving memories. When using indexed memory, the instructions now explicitly describe a two-step process (write the memory file, then add a pointer to the index).</p>
+<div class="blabel">Details</div>
+<ul><li>Step 1: Write memory to its own file using the frontmatter format</li><li>Step 2: Add a pointer entry (<code>- [Title](file.md) — one-line hook</code>) to the index file</li><li>Index entries are capped at ~150 characters</li><li>Clarified that team memory directories already exist — no need to run <code>mkdir</code></li><li>Read-only sessions now receive: "If the user asks you to remember something, explain that memory is read-only in this session."</li></ul>
+<div class="blabel">Evidence</div>
+<p>New team memory prompt builder (search for <code>"<strong>Step 1</strong> — write the memory to its own file in"</code>)</p>
+    </article>
+    <article class="card" id="aws-region-display-shows-configuration-source">
+      <div class="card-top">
+        <h3>AWS Region Display Shows Configuration Source <a class="anchor" href="#aws-region-display-shows-configuration-source">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The AWS region display in Bedrock configuration now shows where the region came from — environment variable, AWS shared config file, or the built-in default — rather than just the region name.</p>
+<div class="blabel">Details</div>
+<ul><li><code>us-east-1</code> (from environment) → shown as-is</li><li>From <code>~/.aws/config</code> → shown as <code>us-east-1 (from AWS config)</code></li><li>Default fallback → shown as <code>us-east-1 (default — set AWS_REGION or add a region to your AWS config)</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Region source display function (search for <code>"(from AWS config)"</code> and <code>"(default — set AWS_REGION or add a region to your AWS config)"</code>)</p>
+    </article>
+    <article class="card" id="bg-pool-conflict-error-message-improved">
+      <div class="card-top">
+        <h3>--bg / --pool Conflict Error Message Improved <a class="anchor" href="#bg-pool-conflict-error-message-improved">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The error shown when combining <code>--bg</code> with another backend flag now distinguishes between <code>--pool</code> and <code>--cloud</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Using <code>--bg</code> with <code>--pool</code>: "Use <code>claude -p '&lt;task&gt;' --pool &lt;pool_id&gt;</code> directly to start a session on the pool."</li><li>Using <code>--bg</code> with <code>--cloud</code>: "Use <code>claude --cloud '&lt;task&gt;'</code> directly to start a cloud session."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated error message function (search for <code>"--bg and --pool are different backends"</code>)</p>
+    </article>
+    <article class="card" id="help-improve-our-ai-models-renamed">
+      <div class="card-top">
+        <h3>"Help improve our AI models" Renamed <a class="anchor" href="#help-improve-our-ai-models-renamed">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The consent UI string "Help improve Claude" has been renamed to "Help improve our AI models" across all display states (ON, OFF, OFF for domain emails).</p>
+<div class="blabel">Evidence</div>
+<p>String changes (search for <code>"Help improve our AI models"</code> — previously <code>"Help improve Claude"</code>)</p>
+    </article>
+    <article class="card" id="plugin-disuse-tracking">
+      <div class="card-top">
+        <h3>Plugin Disuse Tracking <a class="anchor" href="#plugin-disuse-tracking">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now tracks the last time each plugin was used (<code>lastUsedAt</code> and <code>lastUsedNumStartups</code>). This data enables the tip system to surface a warning when a plugin hasn't been used in a while.</p>
+<div class="blabel">Details</div>
+<ul><li>Tip shown: "You haven't used the [plugin] in a while. It still adds startup and context cost — review it with…"</li><li>Tracks both calendar days and session count since last use</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin usage tracking functions (search for <code>"plugin in a while. It still adds startup and context cost"</code>)</p>
+    </article>
+    <article class="card" id="mcp-oauth-token-clearing-preserve-client-registration">
+      <div class="card-top">
+        <h3>MCP OAuth Token Clearing: Preserve Client Registration <a class="anchor" href="#mcp-oauth-token-clearing-preserve-client-registration">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When clearing MCP OAuth tokens, Claude Code can now optionally preserve the client registration (client ID) while discarding only the access/refresh tokens. This avoids a full re-registration flow when tokens simply need refreshing.</p>
+<div class="blabel">Details</div>
+<ul><li>When <code>preserveClientRegistration: true</code> is passed, only <code>accessToken</code>, <code>refreshToken</code>, <code>expiresAt</code>, and <code>scope</code> are cleared</li><li>Log message: "Cleared stored tokens (preserved client registration)"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated token-clear function (search for <code>"Cleared stored tokens (preserved client registration)"</code>)</p>
+    </article>
+    <article class="card" id="fullscreen-feedback-prompt-simplified">
+      <div class="card-top">
+        <h3>Fullscreen Feedback Prompt Simplified <a class="anchor" href="#fullscreen-feedback-prompt-simplified">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The fullscreen mode exit survey prompt has been simplified. The old prompt included the parenthetical "(optional, Enter to skip)"; the new prompt is more direct.</p>
+<div class="blabel">Evidence</div>
+<p>String change (old: <code>"To help us make fullscreen mode better, what made you switch back? (optional, Enter to skip)"</code> → new: <code>"To help us make fullscreen mode better, what made you switch back?"</code>)</p>
+    </article>
+    <article class="card" id="structured-output-retraction-error-messages">
+      <div class="card-top">
+        <h3>Structured Output Retraction Error Messages <a class="anchor" href="#structured-output-retraction-error-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a model fallback causes structured output to be retracted and no retry succeeds, Claude Code now surfaces a more specific error message instead of the previous "the cloud agent called StructuredOutput but every attempt failed schema validation."</p>
+<p>New message: "the cloud agent called StructuredOutput but no attempt produced a surviving valid output (failed schema validation, or retracted by a model fallback)"</p>
+<div class="blabel">Evidence</div>
+<p>Updated error string (search for <code>"retracted by a model fallback and no retry produced a valid result"</code>)</p>
+    </article>
+    <article class="card" id="subagent-model-allowlist-warning-improved">
+      <div class="card-top">
+        <h3>Subagent Model Allowlist Warning Improved <a class="anchor" href="#subagent-model-allowlist-warning-improved">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a subagent is configured with a model that is not in the <code>availableModels</code> allowlist, the warning message now distinguishes between inheriting the parent model vs. using the default teammate model.</p>
+<div class="blabel">Details</div>
+<ul><li>Subagent case: "Subagent model <code>X</code> is not in the availableModels allowlist; inheriting the parent model instead"</li><li>Teammate case: "Teammate model <code>X</code> is not in the availableModels allowlist; using the default teammate model instead"</li></ul>
+<div class="blabel">Evidence</div>
+<p>New warning functions (search for <code>"Subagent model"</code> and <code>"Teammate model"</code> with allowlist messages)</p>
+    </article>
+    <article class="card" id="trusted-device-error-message-centralized">
+      <div class="card-top">
+        <h3>Trusted Device Error Message Centralized <a class="anchor" href="#trusted-device-error-message-centralized">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The "not enrolled as a trusted device" error message is now generated from a single function, ensuring consistent text: "this device is not enrolled as a trusted device; run /login to enroll".</p>
+<div class="blabel">Evidence</div>
+<p>Centralized message function (search for <code>"this device is not enrolled as a trusted device; run /login to enroll"</code>)</p>
+    </article>
+    <article class="card" id="session-status-update-timestamps">
+      <div class="card-top">
+        <h3>Session Status Update Timestamps <a class="anchor" href="#session-status-update-timestamps">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a session's status changes, a separate <code>statusUpdatedAt</code> timestamp is now recorded alongside the general <code>updatedAt</code> timestamp, enabling more precise tracking of status transition times.</p>
+<div class="blabel">Evidence</div>
+<p>Updated session state function (search for <code>"statusUpdatedAt"</code> alongside <code>"updatedAt"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Deep-link injection guard: <code>--handle-uri</code> invocations with extra arguments after the URI are now rejected with an explanatory message, blocking URI-based argument injection. (search for <code>"claude: rejected deep-link invocation — unexpected arguments after the URI"</code>)</li></ul>
+<ul><li>Artifact upload precondition retry: Uploading an artifact now detects HTTP 412 (create-only precondition failed) and returns a clear message: "upload 412: this version was already written (create-only precondition). Re-run publish to mint a fresh version." (search for <code>"this version was already written (create-only precondition)"</code>)</li></ul>
+<ul><li>Transcript third-party marker filtering: When sharing session history, transcripts containing third-party markers are now silently excluded rather than included verbatim. The raw transcript and recent sessions lists are independently filtered. (search for <code>"rawTranscriptJsonl withheld from session history: contains_3p_transcript_markers"</code>)</li></ul>
+<ul><li>Model <code>[1m]</code> suffix handling made case-insensitive: Functions that strip or normalize the <code>[1m]</code> model suffix now use case-insensitive matching (<code>/\[1m\]/i</code>), preventing edge cases where mixed-case suffixes were not recognized. (search for <code>"/\\[1m\\]/i"</code>)</li></ul>
+<ul><li>Interactive command detection message updated: The message shown when a command appears blocked on an interactive prompt now says "Stop this task" instead of "Kill this task", matching the updated UI terminology. (search for <code>"The command is likely blocked on an interactive prompt. Stop this task"</code>)</li></ul>
+<ul><li>tmux session cleanup label corrected: The worktree cleanup option now reads "Keep worktree, end tmux session" instead of the previous "Keep worktree, kill tmux session". (search for <code>"Keep worktree, end tmux session"</code>)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.172.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.172.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

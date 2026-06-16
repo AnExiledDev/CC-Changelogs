@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.57 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.57."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.57</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.57</span></h1>
+<p class="sub">Version 2.0.57 introduces a new versioned plugin caching system (behind a feature flag), adds guest passes promotional UI to help users discover the sharing feature, and includes important shell execution improvements for reliability and security.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.56 → v2.0.57</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="versioned-plugin-system-experimental">
+      <div class="card-top">
+        <h3>Versioned Plugin System (Experimental) <a class="anchor" href="#versioned-plugin-system-experimental">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A comprehensive plugin versioning and caching system that stores plugins by version in a dedicated cache directory, supporting multiple installation scopes (user/project).</p>
+<p><strong>How to enable:</strong> The feature is controlled by the <code>tengu_enable_versioned_plugins</code> experiment flag.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Plugins are cached at <code>~/.claude/plugins/cache/{scope}/{plugin-name}/{version}/</code></li><li>New V2 file format (<code>installed_plugins_v2.json</code>) supports multiple installations per plugin</li><li>Intelligent component copying analyzes plugin manifests to copy only necessary files</li><li>Version resolution uses manifest version, git SHA (12 chars), npm registry, or timestamp</li><li>Automatic migration from V1 format when enabled</li><li><strong>Evidence</strong>: New functions <code>_lA()</code> at line 165557, <code>klA()</code> at line 165606, <code>pQB()</code> at line 165628, <code>C59()</code> at line 476313</li></ul>
+    </article>
+    <article class="card" id="guest-passes-upsell-banner">
+      <div class="card-top">
+        <h3>Guest Passes Upsell Banner <a class="anchor" href="#guest-passes-upsell-banner">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Promotional UI elements that inform eligible users about their 3 available guest passes for sharing Claude Code.</p>
+<p><strong>How it appears:</strong></p>
+<ul><li>Banner in header showing <code>[✻] [✻] [✻] · 3 guest passes at /passes</code></li><li>Sidebar feed card with styled guest pass promotion</li><li>Only shown to eligible users who haven't visited <code>/passes</code> yet</li><li>Stops showing after 3 impressions</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Uses existing <code>/passes</code> command infrastructure (the command existed in v2.0.56)</li><li>Tracks <code>passesUpsellSeenCount</code> and <code>hasVisitedPasses</code> in persistent state</li><li>Analytics events: <code>tengu_guest_passes_upsell_shown</code>, <code>tengu_guest_passes_visited</code></li><li><strong>Evidence</strong>: New functions <code>E69()</code> at line 474712, <code>O69()</code> at line 474842, <code>HT3()</code> at line 474824, <code>CI1()</code> at line 474832</li></ul>
+    </article>
+    <article class="card" id="shell-extended-glob-disabling">
+      <div class="card-top">
+        <h3>Shell Extended Glob Disabling <a class="anchor" href="#shell-extended-glob-disabling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatically disables extended glob patterns in bash and zsh before executing commands to prevent unexpected shell expansion.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Runs automatically - no user action needed
+# Before your command executes, Claude Code now runs:
+# Bash: shopt -u extglob
+# Zsh: setopt NO_EXTENDED_GLOB</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Prevents patterns like <code>!(pattern)</code>, <code>+(pattern)</code>, <code>*(pattern)</code> from expanding</li><li>Only applies to bash and zsh shells</li><li>Errors are silently suppressed to avoid breaking command execution</li><li><strong>Evidence</strong>: New function <code>NO6()</code> at line 244643, integrated at line 244719</li></ul>
+    </article>
+    <article class="card" id="output-redirection-with-cd-command-protection">
+      <div class="card-top">
+        <h3>Output Redirection with cd Command Protection <a class="anchor" href="#output-redirection-with-cd-command-protection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Commands that combine directory changes (<code>cd</code>) with output redirection (<code>&gt;</code>, <code>&gt;&gt;</code>) now require explicit user approval.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Prevents potential path resolution bypass when final working directory cannot be determined</li><li>Error message: "Commands that change directories and write via output redirection require explicit approval"</li><li>Applies to compound commands like <code>cd /tmp &amp;&amp; echo "data" &gt; file.txt</code></li><li>Single commands without <code>cd</code> or without redirection are unaffected</li><li><strong>Evidence</strong>: Enhanced function <code>j85()</code> at line 310479, new parameter <code>G</code> for cd detection</li></ul>
+    </article>
+    <article class="card" id="removed-init-onboarding-modal">
+      <div class="card-top">
+        <h3>Removed /init Onboarding Modal <a class="anchor" href="#removed-init-onboarding-modal">#</a></h3>
+      </div>
+      <p>The first-run dialog that prompted users to set up CLAUDE.md has been removed. The <code>/init</code> command remains available for manual use.</p>
+<div class="blabel">Evidence</div>
+<p>Removed functions <code>D89()</code> at line 474327, <code>H89()</code> at line 474425, <code>C89()</code> at line 474428 in v2.0.56</p>
+    </article>
+    <article class="card" id="improved-cross-project-conversation-resume-ux">
+      <div class="card-top">
+        <h3>Improved Cross-Project Conversation Resume UX <a class="anchor" href="#improved-cross-project-conversation-resume-ux">#</a></h3>
+      </div>
+      <p>When resuming a conversation from a different directory, the UI now renders a proper React component instead of writing directly to stdout before exit. This provides more reliable message display with a 100ms delay to ensure rendering completes.</p>
+<div class="blabel">Evidence</div>
+<p>New component <code>mb3()</code> at line 519894, state-based rendering at line 519854</p>
+    </article>
+    <article class="card" id="zod-validation-library-upgrade">
+      <div class="card-top">
+        <h3>Zod Validation Library Upgrade <a class="anchor" href="#zod-validation-library-upgrade">#</a></h3>
+      </div>
+      <p>Internal upgrade to a newer version of the Zod schema validation library, including JSON Schema generation improvements and new validation utilities.</p>
+<div class="blabel">Evidence</div>
+<p>New class <code>z50</code> at line 405825, new functions for JSON schema conversion at line 406332</p>
+    </article>
+    <article class="card" id="border-rendering-fix">
+      <div class="card-top">
+        <h3>Border Rendering Fix <a class="anchor" href="#border-rendering-fix">#</a></h3>
+      </div>
+      <p>Fixed potential negative dimension calculation when rendering borders in narrow terminal widths.</p>
+<div class="blabel">Evidence</div>
+<p>Modified function <code>r26()</code> at line 218562, added <code>Math.max(0, ...)</code> for width/height calculations</p>
+    </article>
+    <article class="card" id="remote-session-hydration-improvement">
+      <div class="card-top">
+        <h3>Remote Session Hydration Improvement <a class="anchor" href="#remote-session-hydration-improvement">#</a></h3>
+      </div>
+      <p>Changed timing of remote ingress URL setting during session hydration to occur in a <code>finally</code> block, ensuring it's set even if hydration fails.</p>
+<div class="blabel">Evidence</div>
+<p>Modified function <code>dH9()</code> at line 513155, moved <code>setRemoteIngressUrl</code> to finally block at line 513248</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

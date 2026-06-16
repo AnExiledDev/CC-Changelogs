@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.45 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.45."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.45</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.45</span></h1>
+<p class="sub">Version 2.0.45 adds support for Azure AI Foundry deployments with Azure AD authentication, refactors the image processing system to use pure Sharp implementation for better reliability, and includes numerous internal improvements to terminal handling and error management.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.44 → v2.0.45</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">4</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="azure-ai-foundry-support">
+      <div class="card-top">
+        <h3>Azure AI Foundry Support <a class="anchor" href="#azure-ai-foundry-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude Code now supports connecting to Claude models deployed on Azure AI Foundry with Azure AD token authentication</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Enable Foundry mode
+export CLAUDE_CODE_USE_FOUNDRY=true
+
+# Option 1: Use API key authentication
+export ANTHROPIC_FOUNDRY_API_KEY=your-api-key
+export ANTHROPIC_FOUNDRY_BASE_URL=https://your-resource.services.ai.azure.com/anthropic/
+
+# Option 2: Use resource name (automatically constructs URL)
+export ANTHROPIC_FOUNDRY_RESOURCE=your-resource-name
+
+# Option 3: Use Azure AD authentication (no API key needed)
+# Azure AD token provider is automatically configured</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Supports both API key and Azure AD token provider authentication methods</li><li>Can specify either a full <code>baseURL</code> or a <code>resource</code> name (which constructs the Azure services URL automatically)</li><li>Azure AD authentication uses the <code>https://cognitiveservices.azure.com/.default</code> scope</li><li>For testing/debugging, you can skip authentication with <code>CLAUDE_CODE_SKIP_FOUNDRY_AUTH=true</code></li><li>Foundry deployments are now recognized as a first-party environment alongside standard Anthropic deployments</li><li><strong>Evidence</strong>: <code>dsA class at line 202345</code>, Foundry client initialization in <code>xw() at line 243262</code>, environment detection via <code>j3() at line 86382</code></li></ul>
+    </article>
+    <article class="card" id="experimental-features-flag-check">
+      <div class="card-top">
+        <h3>Experimental Features Flag Check <a class="anchor" href="#experimental-features-flag-check">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New internal function to check if experimental beta features should be enabled based on deployment environment</p>
+<p><strong>Details:</strong></p>
+<ul><li>Experimental features are automatically enabled for <code>firstParty</code> and <code>foundry</code> deployments</li><li>Can be disabled with <code>CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=true</code> environment variable</li><li><strong>Evidence</strong>: <code>mq4() at line 86382</code></li></ul>
+    </article>
+    <article class="card" id="image-processing-system-refactored">
+      <div class="card-top">
+        <h3>Image Processing System Refactored <a class="anchor" href="#image-processing-system-refactored">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Replaced optional native image processor module with pure Sharp-based implementation for more reliable and consistent image handling</p>
+<p><strong>Details:</strong></p>
+<ul><li>Previous versions attempted to use a compiled native module (<code>image-processor.node</code>) with Sharp as a fallback, often showing warnings like "Native image processor not available, falling back to sharp"</li><li>New implementation uses Sharp exclusively with a sophisticated multi-stage compression strategy:</li></ul>
+<ol><li>Multi-scale resizing (100%, 75%, 50%, 25% of original dimensions)</li><li>PNG-specific palette compression (64 colors at 800x800)</li><li>Progressive JPEG quality reduction (starting at quality 50 for 600x600)</li><li>Final fallback (400x400 at quality 20)</li></ol>
+<ul><li>Eliminates dependency on native compilation, improving reliability across different platforms</li><li>More predictable behavior with deterministic compression strategies</li><li><strong>Evidence</strong>: Removed <code>UqQ() at line 280470</code>, <code>$qQ at line 280527</code>, <code>qqQ() at line 280537</code> in v2.0.44; Added <code>K5A() at line 156002</code>, <code>_P8() at line 156053</code>, <code>xP8() at line 156081</code>, <code>vP8() at line 156089</code>, <code>bP8() at line 156097</code> in v2.0.45</li></ul>
+    </article>
+    <article class="card" id="terminal-cursor-movement-enhanced">
+      <div class="card-top">
+        <h3>Terminal Cursor Movement Enhanced <a class="anchor" href="#terminal-cursor-movement-enhanced">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Terminal cursor positioning now uses semantic event types instead of raw ANSI control sequences</p>
+<p><strong>Details:</strong></p>
+<ul><li>Replaced raw stdout strings (like <code>\r</code> for carriage return, <code> \b</code> for wrap handling) with semantic event types</li><li>New event types: <code>resolvePendingWrap</code>, <code>carriageReturn</code>, <code>cursorMove</code></li><li>Supports returning multiple terminal events per transaction for more complex operations</li><li>Improves code maintainability and testability while producing identical terminal output</li><li><strong>Evidence</strong>: Replaced <code>Hk0() at line 77408</code> with <code>Ii0() at line 77184</code>, updated supporting class from <code>zk0</code> to <code>Yi0</code></li></ul>
+    </article>
+    <article class="card" id="model-name-display-for-foundry">
+      <div class="card-top">
+        <h3>Model Name Display for Foundry <a class="anchor" href="#model-name-display-for-foundry">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Model name display logic now recognizes Foundry deployments and adjusts accordingly</p>
+<p><strong>Details:</strong></p>
+<ul><li>Foundry deployments skip the friendly model name display to show raw model identifiers</li><li>Ensures consistent behavior across different deployment environments</li><li><strong>Evidence</strong>: <code>Y6Q() at line 86439</code> includes foundry environment check</li></ul>
+    </article>
+    <article class="card" id="lsp-server-manager-refactored">
+      <div class="card-top">
+        <h3>LSP Server Manager Refactored <a class="anchor" href="#lsp-server-manager-refactored">#</a></h3>
+      </div>
+      <ul><li>Language Server Protocol support remains fully functional with comprehensive code reorganization</li><li>Main manager function renamed and restructured for improved maintainability</li><li>All LSP features (initialization, diagnostics, workspace configuration) preserved</li><li><strong>Evidence</strong>: <code>_MQ() at line 288094</code> renamed to <code>C62() at line 314954</code></li></ul>
+    </article>
+    <article class="card" id="semver-regex-module-relocated">
+      <div class="card-top">
+        <h3>Semver Regex Module Relocated <a class="anchor" href="#semver-regex-module-relocated">#</a></h3>
+      </div>
+      <ul><li>Semantic versioning regex patterns module moved to a different location in the bundled code</li><li>All regex patterns remain functionally identical</li><li>Pure internal refactoring with no user-facing impact</li><li><strong>Evidence</strong>: <code>s0A at line 80963</code> in v2.0.44 moved to <code>Z5A at line 150649</code> in v2.0.45</li></ul>
+    </article>
+    <article class="card" id="dependency-management">
+      <div class="card-top">
+        <h3>Dependency Management <a class="anchor" href="#dependency-management">#</a></h3>
+      </div>
+      <ul><li>Updated @azure/msal-node to v3.8.1</li><li>Updated @azure/msal-common to v15.13.1</li><li>Added support for Azure identity authentication flows</li><li>Internal version identifier updated from 0.68.0 to 0.70.0</li></ul>
+    </article>
+    <article class="card" id="telemetry-server-shutdown">
+      <div class="card-top">
+        <h3>Telemetry Server Shutdown <a class="anchor" href="#telemetry-server-shutdown">#</a></h3>
+      </div>
+      <ul><li>Added graceful shutdown handler for telemetry operations</li><li><strong>Evidence</strong>: <code>wj1() at line 148844</code></li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>️ Technical Notes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-notes">
+      <ul><li>Structural similarity between v2.0.44 and v2.0.45: 89.7%</li><li>Total changes: 1,069 additions, 52 deletions, 24 modifications</li><li>Significant internal variable renaming (9,301 renames) due to minification changes</li><li>No breaking changes to public APIs or command-line interface</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

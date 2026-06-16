@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.77 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.77."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.77</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.77</span></h1>
+<p class="sub">This release renames <code>/fork</code> to <code>/branch</code>, adds <code>/copy N</code> for accessing earlier responses, introduces a comprehensive remote bridge v2 transport layer for Claude Desktop connectivity, adds local model capabilities caching, and includes a significantly expanded multi-phase <code>/init</code> command (behind an environment variable). Under the hood, Axios is upgraded from 1.8.4 to 1.13.4 and many lodash internals have been replaced with lighter native implementations.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.76 → v2.1.77</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">18</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">18 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="branch-command-renamed-from-fork">
+      <div class="card-top">
+        <h3><code>/branch</code> Command (renamed from <code>/fork</code>) <a class="anchor" href="#branch-command-renamed-from-fork">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>/fork</code> command has been renamed to <code>/branch</code> for creating a branched copy of the current conversation. The old <code>/fork</code> name is preserved as an alias for backward compatibility.</p>
+<div class="blabel">Usage</div>
+<pre><code>/branch</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Creates a branch of the current conversation at the current point</li><li>All user-facing text updated: "Forked conversation" → "Branched conversation", "No conversation to fork" → "No conversation to branch"</li><li><code>/fork</code> still works as an alias — no migration needed</li><li>Error messages updated accordingly: "Failed to branch conversation", "No messages to branch"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Slash command definition (search for <code>"Create a branch of the current conversation"</code>) — aliases include <code>"fork"</code> for backward compat</p>
+    </article>
+    <article class="card" id="remote-bridge-v2-transport">
+      <div class="card-top">
+        <h3>Remote Bridge v2 Transport <a class="anchor" href="#remote-bridge-v2-transport">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A complete WebSocket-based remote bridge implementation for connecting Claude Code CLI sessions to Claude Desktop, replacing the older SSE-based transport.</p>
+<div class="blabel">Details</div>
+<ul><li>New WebSocket transport with JWT-based authentication (<code>worker_jwt</code>)</li><li>Automatic JWT refresh on 401 errors with transparent transport rebuilding</li><li>Connection status tracking: "Disconnected", "Reconnecting…" states shown in the UI</li><li>Keep-alive heartbeat for session persistence</li><li>Message batching and history flushing on reconnection</li><li>Session creation via <code>/v1/code/sessions</code> endpoint</li><li>Session archival support</li><li>Gated by <code>tengu_bridge_repl_v2</code> feature flag</li></ul>
+<div class="blabel">Evidence</div>
+<p>Remote bridge session manager (search for <code>"[remote-bridge]"</code>) — 38+ log messages added; feature flag <code>tengu_bridge_repl_v2</code></p>
+    </article>
+    <article class="card" id="model-capabilities-caching">
+      <div class="card-top">
+        <h3>Model Capabilities Caching <a class="anchor" href="#model-capabilities-caching">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Model capability definitions are now cached locally in a <code>model-capabilities.json</code> file, reducing redundant fetches.</p>
+<div class="blabel">Details</div>
+<ul><li>Capabilities are written to disk and reused across sessions</li><li>Cache-change detection skips unnecessary writes: <code>"[modelCapabilities] cache unchanged, skipping write"</code></li><li>Graceful fallback on fetch failure: <code>"[modelCapabilities] fetch failed:"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Cache file handling (search for <code>"model-capabilities.json"</code>)</p>
+    </article>
+    <article class="card" id="sandbox-allowread-setting">
+      <div class="card-top">
+        <h3>Sandbox <code>allowRead</code> Setting <a class="anchor" href="#sandbox-allowread-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>allowRead</code> setting lets administrators re-allow specific read paths within broad <code>denyRead</code> regions, and a new <code>allowManagedReadPathsOnly</code> flag restricts reads to only policy-approved paths.</p>
+<div class="blabel">Details</div>
+<ul><li><code>allowRead</code>: array of paths that take precedence over <code>denyRead</code>, enabling fine-grained "deny broad, allow narrow" patterns</li><li><code>allowManagedReadPathsOnly</code>: boolean in <code>policySettings.sandbox.filesystem</code> — when true, only managed <code>allowRead</code> paths are permitted</li><li>Glob expansion supported for <code>allowRead</code> patterns</li><li>Logging for re-allowed paths within denied regions</li></ul>
+<div class="blabel">Evidence</div>
+<p>Settings schema (search for <code>"Paths to re-allow reading within denied regions"</code>) and policy check (search for <code>"allowManagedReadPathsOnly"</code>)</p>
+    </article>
+    <article class="card" id="plugin-skill-manifest-validation">
+      <div class="card-top">
+        <h3>Plugin/Skill Manifest Validation <a class="anchor" href="#plugin-skill-manifest-validation">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New validation system for skill, agent, and command frontmatter, plus hooks.json schema checking, with clear error and warning messages.</p>
+<div class="blabel">Details</div>
+<ul><li>Validates YAML frontmatter in <code>.claude/skills/</code>, <code>.claude/agents/</code>, <code>.claude/commands/</code> markdown files</li><li>Checks <code>description</code>, <code>name</code>, and <code>allowed-tools</code> field types</li><li>Warns on missing frontmatter or missing description</li><li>Validates <code>hooks.json</code> against the Zod schema</li><li>Enhanced kebab-case enforcement: warns that Claude.ai marketplace sync requires kebab-case names</li><li>Prints validation results with clear indicators for errors and warnings</li></ul>
+<div class="blabel">Evidence</div>
+<p>Frontmatter validator (search for <code>"No frontmatter block found. Add YAML frontmatter"</code>) and allowed-tools check (search for <code>"allowed-tools must be a string or array of strings"</code>)</p>
+    </article>
+    <article class="card" id="update-config-skill">
+      <div class="card-top">
+        <h3><code>update-config</code> Skill <a class="anchor" href="#update-config-skill">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New built-in skill for configuring Claude Code settings via <code>settings.json</code>, with embedded documentation for hooks, permissions, and environment variables.</p>
+<div class="blabel">Details</div>
+<ul><li>Provides guidance for editing <code>.claude/settings.json</code> and <code>.claude/settings.local.json</code></li><li>Includes complete hooks configuration reference with event/matcher tables</li><li>Documents hook construction and verification workflow (7-step process)</li><li>References Full Settings JSON Schema for discoverability</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill definition (search for <code>"update-config"</code>) with hooks documentation (search for <code>"Constructing a Hook"</code>)</p>
+    </article>
+    <article class="card" id="full-settings-json-schema">
+      <div class="card-top">
+        <h3>Full Settings JSON Schema <a class="anchor" href="#full-settings-json-schema">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude can now output the complete JSON schema for all Claude Code settings, making settings discovery easier.</p>
+<div class="blabel">Evidence</div>
+<p>Schema header (search for <code>"## Full Settings JSON Schema"</code>)</p>
+    </article>
+    <article class="card" id="copy-n-copy-earlier-responses">
+      <div class="card-top">
+        <h3><code>/copy N</code> — Copy Earlier Responses <a class="anchor" href="#copy-n-copy-earlier-responses">#</a></h3>
+      </div>
+      <p>The <code>/copy</code> command now accepts an optional numeric argument to copy earlier assistant responses, not just the most recent one.</p>
+<div class="blabel">Usage</div>
+<pre><code>/copy       # copies latest response (same as before)
+/copy 2     # copies second-most-recent response
+/copy 3     # copies third-most-recent response</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Description updated: "Copy Claude's last response to clipboard (or /copy N for the Nth-latest)"</li><li>Validates the argument: shows usage hint for invalid input</li><li>Reports when there aren't enough messages: "Only N assistant messages available to copy"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated command description (search for <code>"or /copy N for the Nth-latest"</code>)</p>
+    </article>
+    <article class="card" id="axios-upgraded-to-1-13-4">
+      <div class="card-top">
+        <h3>Axios Upgraded to 1.13.4 <a class="anchor" href="#axios-upgraded-to-1-13-4">#</a></h3>
+      </div>
+      <p>The bundled Axios HTTP client was upgraded from 1.8.4 to 1.13.4. The AxiosError class has been rewritten from a prototype-based pattern to a native ES class, and the CanceledError similarly uses class inheritance.</p>
+<div class="blabel">Evidence</div>
+<p>Version constant (search for <code>"1.13.4"</code> in the new version vs <code>"1.8.4"</code> in the old)</p>
+    </article>
+    <article class="card" id="lodash-internals-replaced">
+      <div class="card-top">
+        <h3>Lodash Internals Replaced <a class="anchor" href="#lodash-internals-replaced">#</a></h3>
+      </div>
+      <p>Many lodash utility functions (ListCache, Stack, MapCache, Hash, deep clone helpers, typed array checks, key enumeration, etc.) have been removed and replaced with lighter native JavaScript implementations. This reduces bundle size without changing external behavior.</p>
+<div class="blabel">Evidence</div>
+<p>Structural diff shows ~150+ removed lodash functions (ListCache, MapCache, Hash, Stack prototypes, <code>baseClone</code>, <code>baseAssign</code>, <code>baseKeys</code>, etc.)</p>
+    </article>
+    <article class="card" id="agent-resume-via-sendmessage">
+      <div class="card-top">
+        <h3>Agent Resume via <code>SendMessage</code> <a class="anchor" href="#agent-resume-via-sendmessage">#</a></h3>
+      </div>
+      <p>The agent resume mechanism has been updated. Instead of passing a <code>resume</code> parameter with an agent ID, agents are now continued by sending a <code>SendMessage</code> with the agent's ID or name as the <code>to</code> field. The agent resumes with its full context preserved.</p>
+<div class="blabel">Evidence</div>
+<p>New text (search for <code>"with the agent's ID or name as the \</code>to\<code> field"</code>) replacing old <code>resume</code> parameter documentation</p>
+    </article>
+    <article class="card" id="enhanced-init-command-gradual-rollout">
+      <div class="card-top">
+        <h3>Enhanced <code>/init</code> Command [Gradual Rollout] <a class="anchor" href="#enhanced-init-command-gradual-rollout">#</a></h3>
+      </div>
+      <p>The <code>/init</code> command has a significantly expanded multi-phase workflow (gated behind the <code>CLAUDE_CODE_NEW_INIT</code> environment variable):</p>
+<ul><li>Phase 1: Choose between project CLAUDE.md, personal CLAUDE.local.md, or both</li><li>Phase 2: Codebase exploration (build/test commands, frameworks, project structure)</li><li>Phase 3: Gap-fill interview with the user, synthesize proposals for hooks/skills/notes</li><li>Phase 4: Write minimal, high-signal CLAUDE.md</li><li>Phase 5: Write personal CLAUDE.local.md (added to <code>.gitignore</code>)</li><li>Phase 6: Suggest and create skills in <code>.claude/skills/</code></li><li>Phase 7: Suggest optimizations (GitHub CLI, linting, format-on-edit hooks)</li><li>Phase 8: Summary with plugin recommendations (skill-creator, frontend-design, playwright)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Multi-phase flow (search for <code>"Phase 1: Ask what to set up"</code>) and env var gate (search for <code>"CLAUDE_CODE_NEW_INIT"</code>)</p>
+    </article>
+    <article class="card" id="installation-deduplication">
+      <div class="card-top">
+        <h3>Installation Deduplication <a class="anchor" href="#installation-deduplication">#</a></h3>
+      </div>
+      <p>When multiple install requests are triggered concurrently, subsequent calls now join the in-flight installation rather than starting parallel ones.</p>
+<div class="blabel">Evidence</div>
+<p>Dedup logic (search for <code>"installLatest: joining in-flight call"</code>)</p>
+    </article>
+    <article class="card" id="improved-remote-session-status-ui">
+      <div class="card-top">
+        <h3>Improved Remote Session Status UI <a class="anchor" href="#improved-remote-session-status-ui">#</a></h3>
+      </div>
+      <p>The status line now shows connection state for remote sessions ("Disconnected", "Reconnecting…") and displays a count of active background tasks ("N in background").</p>
+<div class="blabel">Evidence</div>
+<p>Status component (search for <code>"Reconnecting"</code> near status rendering) and background count (search for <code>"in background"</code>)</p>
+    </article>
+    <article class="card" id="improved-image-error-messages">
+      <div class="card-top">
+        <h3>Improved Image Error Messages <a class="anchor" href="#improved-image-error-messages">#</a></h3>
+      </div>
+      <p>Empty image files now produce a clearer error: "Image file is empty (0 bytes)" instead of the generic empty-file error.</p>
+<div class="blabel">Evidence</div>
+<p>Error message (search for <code>"Image file is empty (0 bytes)"</code>)</p>
+    </article>
+    <article class="card" id="background-command-output-limits">
+      <div class="card-top">
+        <h3>Background Command Output Limits <a class="anchor" href="#background-command-output-limits">#</a></h3>
+      </div>
+      <p>Background commands that exceed output file size limits are now explicitly killed with a descriptive message.</p>
+<div class="blabel">Evidence</div>
+<p>New message (search for <code>"Background command killed: output file exceeded"</code>)</p>
+    </article>
+    <article class="card" id="remote-control-error-messages-refined">
+      <div class="card-top">
+        <h3>Remote Control Error Messages Refined <a class="anchor" href="#remote-control-error-messages-refined">#</a></h3>
+      </div>
+      <p>Remote control error messages have been simplified and made more concise:</p>
+<ul><li>"Remote Control disabled after repeated failures this session. Restart to retry." → "disabled after repeated failures · restart to retry"</li><li>New: "disabled by your organization's policy" for policy-blocked remote control</li><li>"Connection to server lost" → lowercase "connection to server lost"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated strings in the string diff (search for <code>"disabled after repeated failures · restart to retry"</code>)</p>
+    </article>
+    <article class="card" id="conversation-summary-improvements">
+      <div class="card-top">
+        <h3>Conversation Summary Improvements <a class="anchor" href="#conversation-summary-improvements">#</a></h3>
+      </div>
+      <p>The conversation compaction system now has a separate prompt for summarizing only recent messages when earlier context is retained, avoiding redundant re-summarization of already-kept content.</p>
+<div class="blabel">Evidence</div>
+<p>New partial summary prompt (search for <code>"Your task is to create a detailed summary of the RECENT portion"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential prototype pollution: Properties starting with <code>_PROTO_</code> are now stripped from objects before processing (search for <code>"_PROTO_"</code> in the <code>wE6</code> function)</li><li>Fixed <code>apiKeyHelper</code> error handling: Clearer error messages when API key helper fails or takes too long (search for <code>"apiKeyHelper failed:"</code> and <code>"apiKeyHelper is taking a while"</code>)</li><li>Data URL byte-size estimation now correctly handles percent-encoded base64 padding characters in data URIs (search for <code>Lc1</code> function at line ~37105)</li></ul>
+    </article>
+    <article class="card" id="enhanced-init-multi-phase-flow-in-development">
+      <div class="card-top">
+        <h3>Enhanced <code>/init</code> Multi-Phase Flow [In Development] <a class="anchor" href="#enhanced-init-multi-phase-flow-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">Status</div>
+<p>Gated behind <code>CLAUDE_CODE_NEW_INIT</code> environment variable</p>
+<div class="blabel">What</div>
+<p>The expanded 8-phase <code>/init</code> flow described above is fully implemented but requires setting <code>CLAUDE_CODE_NEW_INIT=1</code> to activate. When unset, the original single-phase <code>/init</code> behavior is used.</p>
+<div class="blabel">Details</div>
+<ul><li>Complete implementation exists including skills setup, hooks creation, and plugin recommendations</li><li>Includes worktree-aware CLAUDE.local.md placement logic</li><li>Skill-creator plugin and frontend-design plugin recommendations baked in</li><li>When enabled, the description changes to: "Initialize new CLAUDE.md file(s) and optional skills/hooks with codebase documentation"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Env var check (search for <code>"CLAUDE_CODE_NEW_INIT"</code>) — when set, activates the <code>QBY</code> prompt template with full Phase 1–8 flow</p>
+    </article>
+    <article class="card" id="remote-bridge-v2-gradual-rollout">
+      <div class="card-top">
+        <h3>Remote Bridge v2 [Gradual Rollout] <a class="anchor" href="#remote-bridge-v2-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">Status</div>
+<p>Feature-flagged under <code>tengu_bridge_repl_v2</code></p>
+<div class="blabel">What</div>
+<p>The WebSocket-based remote bridge described in New Features is gated by a server-controlled feature flag and will roll out gradually.</p>
+<div class="blabel">Evidence</div>
+<p>Feature flag checks (search for <code>"tengu_bridge_repl_v2"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

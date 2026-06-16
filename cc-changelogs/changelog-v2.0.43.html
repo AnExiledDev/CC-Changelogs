@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.43 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.43."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.43</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.43</span></h1>
+<p class="sub">Version 2.0.43 delivers a major internal refactoring of the sandbox subsystem, replacing the previous function-based architecture with a unified manager pattern. This release adds clickable hyperlink support in terminal output, enhances Linux sandboxing with seccomp filtering for Unix socket blocking, and introduces plan mode infrastructure for persistent task planning workflows.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.42 → v2.0.43</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">14 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="clickable-hyperlinks-in-terminal-output">
+      <div class="card-top">
+        <h3>Clickable Hyperlinks in Terminal Output <a class="anchor" href="#clickable-hyperlinks-in-terminal-output">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Terminal output now supports clickable hyperlinks using the OSC 8 escape sequence standard, allowing tools to render URIs that users can click in compatible terminals.</p>
+<p><strong>How to use:</strong> Hyperlinks are automatically rendered when tools generate output with URIs. Compatible terminals (iTerm2, GNOME Terminal, Windows Terminal, etc.) will display these as clickable links.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Screen buffer now tracks hyperlinks via a Map structure (<code>hyperlinks: new Map()</code> at line 76624)</li><li>New functions: <code>Bk0()</code> sets hyperlinks at screen positions (lines 76647-76651), <code>d0A()</code> retrieves them (lines 76652-76656)</li><li><code>DJ1()</code> tracks hyperlink state changes for diff generation (line 77362)</li><li><code>gp9()</code> encodes hyperlinks into ANSI escape sequences (lines 78736-78738)</li><li>Terminal output handler processes hyperlink diff entries (lines 78765-78767)</li><li><strong>Evidence</strong>: <code>Bk0() at line 76647</code>, <code>d0A() at line 76652</code>, <code>DJ1() at line 77362</code>, <code>gp9() at line 78736</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-linux-sandbox-security-with-seccomp-filtering">
+      <div class="card-top">
+        <h3>Enhanced Linux Sandbox Security with Seccomp Filtering <a class="anchor" href="#enhanced-linux-sandbox-security-with-seccomp-filtering">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Linux sandboxing now blocks Unix domain socket creation using Berkeley Packet Filter (BPF) seccomp filters, preventing sandboxed processes from bypassing network restrictions via local sockets.</p>
+<p><strong>How it works:</strong> When network sandboxing is enabled on Linux, Claude Code automatically applies pre-compiled seccomp filters to block <code>socket(AF_UNIX, ...)</code> syscalls.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Architecture-specific (x64/arm64) pre-compiled BPF filters in <code>vendor/seccomp/</code> directories</li><li><code>apply-seccomp</code> binary applies the filters to child processes</li><li>Functions: <code>Q$Q()</code> detects CPU architecture (x64/arm64), <code>Ox1()</code> locates BPF filter files, <code>NiA()</code> finds the apply-seccomp binary</li><li><code>I$Q()</code> retrieves the appropriate seccomp filter for the platform</li><li>Automatic cleanup via <code>dP6()</code> and <code>Rx1()</code> on process exit</li><li>32-bit x86 (ia32) explicitly not supported due to <code>socketcall()</code> syscall complexity (line 1507)</li><li>Fallback: <code>allowAllUnixSockets</code> configuration option to disable seccomp filtering when needed (line 1693)</li><li><strong>Evidence</strong>: <code>Q$Q()</code> at line ~1535, <code>Ox1()</code> for BPF filter location, <code>NiA()</code> for apply-seccomp binary discovery, seccomp integration at lines 1686-1693</li></ul>
+    </article>
+    <article class="card" id="plan-mode-infrastructure">
+      <div class="card-top">
+        <h3>Plan Mode Infrastructure <a class="anchor" href="#plan-mode-infrastructure">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New persistent plan file storage system for task planning workflows, allowing Claude Code to save, retrieve, and track acceptance of execution plans.</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>eO()</code> retrieves the plans directory path</li><li><code>pm()</code> generates plan file paths for specific agents</li><li><code>sx()</code> reads plan file contents</li><li><code>BnA()</code> checks if a plan has been accepted</li><li><code>INQ()</code> and <code>Zy6()</code> manage plan file creation and updates</li><li><code>WNQ()</code> and <code>ETQ()</code> handle tool name overrides in plan context</li><li>Plan files persist across sessions for continuity</li><li><strong>Evidence</strong>: <code>eO()</code>, <code>pm()</code>, <code>sx()</code>, <code>BnA()</code>, <code>INQ()</code>, <code>Zy6()</code> functions added for plan file management</li></ul>
+    </article>
+    <article class="card" id="sandbox-architecture-refactoring">
+      <div class="card-top">
+        <h3>Sandbox Architecture Refactoring <a class="anchor" href="#sandbox-architecture-refactoring">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> The sandbox implementation has been completely restructured from scattered individual functions into a centralized <code>dZ</code> manager object with a cleaner API.</p>
+<p><strong>Details:</strong></p>
+<ul><li><strong>Before</strong>: 41 individual functions (<code>eu()</code>, <code>dm8()</code>, <code>cm8()</code>, <code>gm8()</code>, <code>um8()</code>, <code>mm8()</code>, etc.) handled different sandbox aspects</li><li><strong>After</strong>: Single <code>dZ</code> manager object (lines 277192-277216) with methods: <code>initialize()</code>, <code>isSupportedPlatform()</code>, <code>checkDependencies()</code>, <code>getFsReadConfig()</code>, <code>getFsWriteConfig()</code>, <code>getNetworkRestrictionConfig()</code>, <code>wrapWithSandbox()</code></li><li>Settings getters (<code>Qv1</code>, <code>Iv1</code>, <code>Gv1</code>) now use memoization for better performance (lines 279679-279691)</li><li>New unified initialization via <code>XS6()</code> function (line 279607)</li><li>Clean reset functionality via <code>WS6()</code> (line 279632)</li><li>Public API (<code>DQ</code> object at line 279692) remains unchanged for backward compatibility</li><li>Removed legacy functions from v2.0.42: <code>eu()</code> (line 220098), <code>dm8()</code> (line 220108), <code>cm8()</code> (line 220112), <code>mm8()</code> (line 220052), <code>gm8()</code> and <code>um8()</code> (lines 220040-220051), along with 35+ other sandbox-related functions</li><li><strong>Evidence</strong>: New <code>dZ</code> object at lines 277192-277216, old functions removed from v2.0.42 lines 220040-220112</li></ul>
+    </article>
+    <article class="card" id="enhanced-permission-management">
+      <div class="card-top">
+        <h3>Enhanced Permission Management <a class="anchor" href="#enhanced-permission-management">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Permission checking and configuration validation now uses comprehensive Zod schemas for type safety and validation.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Domain pattern validation with security constraints prevents overly broad network rules</li><li>Filesystem restriction schemas ensure valid path specifications</li><li>Ripgrep configuration validation</li><li>Comprehensive sandbox config validation via <code>c$Q</code> schema system</li><li><code>VqQ()</code> function converts permissions to sandbox config format</li><li>Network permission checking via <code>M$Q()</code> replaces the old <code>CQQ()</code> function</li><li><strong>Evidence</strong>: <code>VqQ()</code> for permission conversion, <code>M$Q()</code> for domain-based network checking, schema validation system <code>c$Q</code></li></ul>
+    </article>
+    <article class="card" id="filesystem-and-network-configuration">
+      <div class="card-top">
+        <h3>Filesystem and Network Configuration <a class="anchor" href="#filesystem-and-network-configuration">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Filesystem and network restriction configuration now uses dedicated getter functions with clearer interfaces.</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>Ij6()</code> retrieves filesystem read configuration</li><li><code>Gj6()</code> retrieves filesystem write configuration</li><li><code>Zj6()</code> retrieves network restriction configuration</li><li><code>P$Q()</code> checks if local binding is allowed</li><li><code>L$Q()</code> retrieves ripgrep-specific configuration</li><li><code>y$Q()</code>, <code>k$Q()</code>, <code>_$Q()</code>, <code>x$Q()</code> get HTTP/SOCKS proxy ports and socket paths</li><li><strong>Evidence</strong>: <code>Ij6()</code>, <code>Gj6()</code>, <code>Zj6()</code>, <code>P$Q()</code>, <code>L$Q()</code> functions for configuration access</li></ul>
+    </article>
+    <article class="card" id="test-infrastructure-enhancement">
+      <div class="card-top">
+        <h3>Test Infrastructure Enhancement <a class="anchor" href="#test-infrastructure-enhancement">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> New fixture-based testing system with caching for improved test reproducibility and performance.</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>Ay6()</code> provides fixture caching mechanism</li><li><code>tqQ()</code> implements token counting with fixture support</li><li>Better test isolation and repeatability</li><li><strong>Evidence</strong>: <code>Ay6()</code> for fixture caching, <code>tqQ()</code> for token counting with fixtures</li></ul>
+    </article>
+    <article class="card" id="session-and-message-handling">
+      <div class="card-top">
+        <h3>Session and Message Handling <a class="anchor" href="#session-and-message-handling">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Enhanced session lifecycle hooks and message tracking capabilities.</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>A22()</code> and <code>WW5()</code> provide session hook registration system</li><li><code>nA0()</code> extracts message/tool/tooluse IDs from messages</li><li><code>Xk2()</code> groups tool uses for grouped rendering</li><li><code>ITQ()</code> renders grouped tool use messages</li><li><code>$RQ()</code> implements rate-limited messaging</li><li><code>WeA()</code> and <code>FeA()</code> track message sources</li><li><strong>Evidence</strong>: <code>A22()</code>, <code>WW5()</code> for session hooks, <code>nA0()</code> for ID extraction, <code>Xk2()</code> for grouping, <code>ITQ()</code> for rendering</li></ul>
+    </article>
+    <article class="card" id="debugging-and-logging">
+      <div class="card-top">
+        <h3>Debugging and Logging <a class="anchor" href="#debugging-and-logging">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> New unified sandbox debug logging function replaces scattered logging calls.</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>LB()</code> function provides centralized sandbox debug logging</li><li>Consistent log format across sandbox operations</li><li>Better troubleshooting capability</li><li><strong>Evidence</strong>: <code>LB()</code> function for sandbox debug logging throughout the new sandbox implementation</li></ul>
+    </article>
+    <article class="card" id="platform-detection">
+      <div class="card-top">
+        <h3>Platform Detection <a class="anchor" href="#platform-detection">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Improved platform detection and validation for sandbox compatibility.</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>ON()</code> detects platform (macOS, Linux, Windows, unknown)</li><li><code>W$Q()</code> checks Linux bwrap/socat availability</li><li><code>Zv1()</code> validates if sandboxing is supported on the current platform</li><li>Better error messages when sandbox dependencies are missing</li><li><strong>Evidence</strong>: <code>ON()</code> for platform detection, <code>W$Q()</code> for Linux dependency checking, <code>Zv1()</code> for support validation</li></ul>
+    </article>
+    <article class="card" id="ripgrep-integration">
+      <div class="card-top">
+        <h3>Ripgrep Integration <a class="anchor" href="#ripgrep-integration">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Better detection and configuration of ripgrep (<code>rg</code>) for code search operations.</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>owQ()</code> checks if ripgrep is available on the system</li><li><code>ziA()</code> provides ripgrep search function with timeout support</li><li>Configurable ripgrep behavior through sandbox configuration</li><li><strong>Evidence</strong>: <code>owQ()</code> for availability check, <code>ziA()</code> for search with timeout</li></ul>
+    </article>
+    <article class="card" id="file-checkpointing">
+      <div class="card-top">
+        <h3>File Checkpointing <a class="anchor" href="#file-checkpointing">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Added ability to check if file checkpointing is enabled.</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>Cc8()</code> function checks file checkpointing configuration</li><li>Supports incremental file state tracking</li><li><strong>Evidence</strong>: <code>Cc8()</code> function for checkpointing status check</li></ul>
+    </article>
+    <article class="card" id="removed-legacy-code">
+      <div class="card-top">
+        <h3>Removed Legacy Code <a class="anchor" href="#removed-legacy-code">#</a></h3>
+      </div>
+      <ul><li>Removed 41 sandbox-related functions from v2.0.42 as part of the architecture refactoring</li><li>Removed old macOS sandbox violation logging functions (<code>hUQ()</code>, <code>YMQ()</code>, <code>im8()</code>, <code>KQQ()</code>, <code>DQQ()</code>, <code>Zj1()</code>)</li><li>Removed old permission rule extraction functions (<code>bdA()</code>, <code>FQQ()</code>, <code>bm8()</code>)</li><li>Removed legacy socat bridge setup function (<code>Tm8()</code>)</li><li>Removed old bwrap command wrapper (<code>AQQ()</code>)</li><li>Cleaned up obsolete imports (<code>stream</code>, <code>node:child_process</code> imports that were no longer needed)</li><li><strong>Evidence</strong>: Functions removed from v2.0.42 lines 154620 (OUB variable), 219367 (Tm8), 219424 (AQQ), 219480 (tP1), 219536 (km8), 219942 (bdA), 219960 (FQQ), 219967 (bm8), 219974 (CQQ), 220040-220051 (gm8/um8), 220052 (mm8), 220098-220114 (eu/dm8/cm8)</li></ul>
+    </article>
+    <article class="card" id="code-quality-improvements">
+      <div class="card-top">
+        <h3>Code Quality Improvements <a class="anchor" href="#code-quality-improvements">#</a></h3>
+      </div>
+      <ul><li>Comprehensive refactoring involved 224 declaration changes (154 additions, 41 deletions, 29 modifications)</li><li>9,192 variable renames (likely from updated minification)</li><li>Structural similarity maintained at 98.4% despite significant refactoring</li><li>Better separation of concerns with centralized manager pattern</li><li>Improved maintainability through reduced function sprawl</li></ul>
+<p><strong>Note on Feature Verification:</strong> All features listed as "new" have been verified to not exist in v2.0.42 by searching both version files. Changes categorized as "improvements" existed in previous versions but have been enhanced or refactored. Line numbers reference the v2.0.43 source file.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

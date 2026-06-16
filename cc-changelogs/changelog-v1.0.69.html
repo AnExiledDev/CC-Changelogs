@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.69 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.69."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.69</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.69</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.68 → v1.0.69</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">15</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">6</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p>Based on my comprehensive analysis of the diff file, here is the detailed changelog for Claude Code v1.0.69:</p>
+<p># Claude Code v1.0.69 Changelog</p>
+    </article>
+    <article class="card" id="1-security-review-command-new">
+      <div class="card-top">
+        <h3>1. <strong>Security Review Command</strong> (New) <a class="anchor" href="#1-security-review-command-new">#</a></h3>
+      </div>
+      <p>A powerful new <code>/security-review</code> command that performs automated security analysis of code changes:</p>
+<p><strong>Usage:</strong></p>
+<pre><code>/security-review</code></pre>
+<p><strong>What it does:</strong></p>
+<ul><li>Analyzes all pending changes on the current branch</li><li>Performs comprehensive security-focused code review</li><li>Identifies potential vulnerabilities including:</li><li>SQL/Command injection</li><li>Authentication &amp; authorization flaws</li><li>Cross-site scripting (XSS)</li><li>Cryptographic weaknesses</li><li>Sensitive data exposure</li><li>Insecure deserialization</li></ul>
+<p><strong>Output:</strong> Generates a detailed markdown report with severity levels (HIGH/MEDIUM/LOW), file locations, exploit scenarios, and specific fix recommendations.</p>
+    </article>
+    <article class="card" id="2-enhanced-background-task-management">
+      <div class="card-top">
+        <h3>2. <strong>Enhanced Background Task Management</strong> <a class="anchor" href="#2-enhanced-background-task-management">#</a></h3>
+      </div>
+      <p>Improved handling of long-running processes with background execution:</p>
+<p><strong>New BashOutput Tool:</strong></p>
+<pre><code># Check output from background shells
+BashOutput bash_1
+
+# Filter output with regex patterns
+BashOutput bash_1 &quot;error|warning&quot;
+
+# List all background shells
+/bashes</code></pre>
+<p><strong>Features:</strong></p>
+<ul><li>Automatic notifications when background tasks complete</li><li>Shows only new output since last check</li><li>Regex filtering support for monitoring specific patterns</li><li>Exit code tracking and completion status</li></ul>
+    </article>
+    <article class="card" id="3-claude-opus-4-1-model-support">
+      <div class="card-top">
+        <h3>3. <strong>Claude Opus 4.1 Model Support</strong> <a class="anchor" href="#3-claude-opus-4-1-model-support">#</a></h3>
+      </div>
+      <p>Added support for the new Claude Opus 4.1 model:</p>
+<ul><li>Model identifier: <code>claude-opus-4-1-20250805</code></li><li>Available across first-party, Bedrock, and Vertex AI platforms</li><li>Enhanced region support with <code>VERTEX_REGION_CLAUDE_4_1_OPUS</code> environment variable</li></ul>
+    </article>
+    <article class="card" id="autocheckpointing-enhancements">
+      <div class="card-top">
+        <h3><strong>Autocheckpointing Enhancements</strong> <a class="anchor" href="#autocheckpointing-enhancements">#</a></h3>
+      </div>
+      <ul><li>Better checkpoint management with improved state handling</li><li>Async initialization for better performance</li><li>Enhanced error recovery and status tracking</li><li>Support for automatic checkpointing on prompts and bash commands</li></ul>
+    </article>
+    <article class="card" id="file-search-improvements">
+      <div class="card-top">
+        <h3><strong>File Search Improvements</strong> <a class="anchor" href="#file-search-improvements">#</a></h3>
+      </div>
+      <ul><li>New <code>ZnB</code> function provides better file search with glob pattern support</li><li>Improved handling of special characters in search patterns</li><li>Better performance for file discovery operations</li></ul>
+    </article>
+    <article class="card" id="shell-execution-enhancements">
+      <div class="card-top">
+        <h3><strong>Shell Execution Enhancements</strong> <a class="anchor" href="#shell-execution-enhancements">#</a></h3>
+      </div>
+      <ul><li>Better cleanup of background processes on exit</li><li>Improved tracking of completed shells for attachment messages</li><li>Enhanced shell output management with proper cleanup</li></ul>
+    </article>
+    <article class="card" id="tool-permission-handling">
+      <div class="card-top">
+        <h3><strong>Tool Permission Handling</strong> <a class="anchor" href="#tool-permission-handling">#</a></h3>
+      </div>
+      <ul><li>Better handling of closed permission streams</li><li>Improved error messages when permission stream is closed</li><li>More robust pending request management</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed issue where input stream closure could leave pending permission requests hanging</li><li>Improved cleanup of background shells on process termination</li><li>Better handling of shell completion status notifications</li><li>Fixed race conditions in background task management</li></ul>
+    </article>
+    <article class="card" id="new-functions-added">
+      <div class="card-top">
+        <h3><strong>New Functions Added:</strong> <a class="anchor" href="#new-functions-added">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <ul><li><code>fnB</code> - Generate timestamped file names for prompts</li><li><code>CP1</code> - Smart string truncation with ellipsis support</li><li><code>iC8</code> - Enhanced attachment processing with background task status</li><li><code>Iz8</code> - Background task status collection</li><li><code>jkB</code> - Dynamic token limit calculation</li><li><code>jyB</code> - Command category detection for analytics</li><li><code>nE8</code> - Check if command is safe to run in background</li><li>Various checkpoint management functions (<code>QiB</code>, <code>ZiB</code>, <code>AiB</code>, <code>DiB</code>)</li></ul>
+    </article>
+    <article class="card" id="removed-functions">
+      <div class="card-top">
+        <h3><strong>Removed Functions:</strong> <a class="anchor" href="#removed-functions">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <ul><li>Removed legacy checkpointing class <code>_A1</code> in favor of new async implementation</li><li>Removed <code>BashOutput</code> tool implementation <code>ylB</code> (replaced with enhanced version)</li><li>Removed various obsolete utility functions</li></ul>
+    </article>
+    <article class="card" id="modified-functions">
+      <div class="card-top">
+        <h3><strong>Modified Functions:</strong> <a class="anchor" href="#modified-functions">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <ul><li>Enhanced <code>hS0</code> class (previously <code>PS0</code>) with better stream closure handling</li><li>Updated model selection logic to support Opus 4.1</li><li>Improved shell management class <code>U01</code> with cleanup on exit</li></ul>
+    </article>
+    <article class="card" id="security-review">
+      <div class="card-top">
+        <h3>Security Review: <a class="anchor" href="#security-review">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <pre><code># After making changes to your code
+/security-review
+# Claude analyzes changes and provides detailed security report</code></pre>
+    </article>
+    <article class="card" id="background-tasks">
+      <div class="card-top">
+        <h3>Background Tasks: <a class="anchor" href="#background-tasks">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <pre><code># Start a long-running process
+Bash npm run build
+
+# Check background tasks
+/bashes
+# Output: bash_1 (running): npm run build
+
+# Monitor output
+BashOutput bash_1
+
+# Filter for errors
+BashOutput bash_1 &quot;error|failed&quot;</code></pre>
+    </article>
+    <article class="card" id="model-selection">
+      <div class="card-top">
+        <h3>Model Selection: <a class="anchor" href="#model-selection">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <pre><code># Use the new Opus 4.1 model
+claude --model claude-opus-4-1-20250805
+
+# Or set via environment
+export ANTHROPIC_MODEL=claude-opus-4-1-20250805</code></pre>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Performance Improvements</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="performance-improvements">
+      <ul><li>Async checkpoint initialization reduces startup time</li><li>Better resource cleanup prevents memory leaks</li><li>Improved background task management reduces CPU usage</li><li>More efficient file search with optimized glob patterns</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Security Enhancements</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="security-enhancements">
+      <ul><li>New security review tool helps identify vulnerabilities early</li><li>Better handling of untrusted input in shell commands</li><li>Improved permission management for tool execution</li><li>Enhanced cleanup of sensitive data in background processes</li></ul>
+<p>This release focuses on security, background task management, and overall stability improvements, making Claude Code more powerful for real-world development workflows.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

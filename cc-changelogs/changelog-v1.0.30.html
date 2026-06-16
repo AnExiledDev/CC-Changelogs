@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.30 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.30."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.30</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.30</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.29 → v1.0.30</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.30 Changelog</p>
+    </article>
+    <article class="card" id="theme-system-overhaul">
+      <div class="card-top">
+        <h3>Theme System Overhaul <a class="anchor" href="#theme-system-overhaul">#</a></h3>
+      </div>
+      <ul><li><strong>New theme management system</strong>: Claude Code now supports dynamic theme switching through a new theme context provider</li><li><strong>New <code>theme</code> command-line argument</strong>: Users can now set the theme when launching Claude Code</li></ul>
+<pre><code>  claude --theme dark
+  claude --theme light</code></pre>
+<ul><li><strong>Live theme switching</strong>: The application now supports changing themes while running, with all components updating in real-time</li></ul>
+    </article>
+    <article class="card" id="enhanced-color-system">
+      <div class="card-top">
+        <h3>Enhanced Color System <a class="anchor" href="#enhanced-color-system">#</a></h3>
+      </div>
+      <ul><li><strong>Simplified color API</strong>: Color properties have been flattened from nested structures (e.g., <code>diff.added</code> → <code>diffAdded</code>)</li><li><strong>New <code>inverseText</code> color</strong>: Added support for inverse text colors that automatically adjust based on the theme</li><li><strong>New <code>P</code> component</strong>: Replaces the <code>S</code> component with a more flexible color system that uses color names instead of direct color values</li></ul>
+    </article>
+    <article class="card" id="transcript-mode-timestamps">
+      <div class="card-top">
+        <h3>Transcript Mode Timestamps <a class="anchor" href="#transcript-mode-timestamps">#</a></h3>
+      </div>
+      <ul><li><strong>New timestamp display</strong>: When in transcript mode, assistant messages now show timestamps in 24-hour format (HH:MM)</li><li><strong>Example</strong>: Assistant responses will show <code>14:35</code> next to messages when transcript mode is enabled</li></ul>
+    </article>
+    <article class="card" id="better-tool-execution-status-colors">
+      <div class="card-top">
+        <h3>Better Tool Execution Status Colors <a class="anchor" href="#better-tool-execution-status-colors">#</a></h3>
+      </div>
+      <ul><li>Tool execution status indicators now use semantic color names instead of hardcoded RGB values</li><li>Status colors are now consistent across all themes:</li><li><code>pending</code>/<code>queued</code>: warning (yellow)</li><li><code>in_progress</code>: permission (blue)</li><li><code>completed</code>: success (green)</li><li><code>failed</code>: error (red)</li><li><code>cancelled</code>: secondaryText (gray)</li><li><code>timed_out</code>: autoAccept (purple)</li></ul>
+    </article>
+    <article class="card" id="cleaner-codebase">
+      <div class="card-top">
+        <h3>Cleaner Codebase <a class="anchor" href="#cleaner-codebase">#</a></h3>
+      </div>
+      <ul><li>Removed unused color conversion functions (<code>LQ</code>, <code>W_2</code>)</li><li>Removed deprecated theme hooks (<code>OP2</code>)</li><li>Consolidated imports and removed duplicate process imports</li><li>Better separation of concerns with dedicated theme management</li></ul>
+    </article>
+    <article class="card" id="dialog-color-consistency">
+      <div class="card-top">
+        <h3>Dialog Color Consistency <a class="anchor" href="#dialog-color-consistency">#</a></h3>
+      </div>
+      <ul><li>Fixed hardcoded colors in various dialogs (bypass permissions, MCP server, external includes)</li><li>All dialogs now properly respect the current theme</li><li>Border colors and text colors in dialogs now use semantic color names</li></ul>
+    </article>
+    <article class="card" id="welcome-message-styling">
+      <div class="card-top">
+        <h3>Welcome Message Styling <a class="anchor" href="#welcome-message-styling">#</a></h3>
+      </div>
+      <ul><li>The welcome message now uses the proper theme-aware color system</li><li>The Claude star icon (<code>✻</code>) properly inherits the claude brand color</li></ul>
+    </article>
+    <article class="card" id="for-theme-plugin-developers">
+      <div class="card-top">
+        <h3>For Theme/Plugin Developers <a class="anchor" href="#for-theme-plugin-developers">#</a></h3>
+      </div>
+      <ul><li>Color object structure has changed - nested <code>diff</code> object properties are now flat</li><li><code>S</code> component replaced with <code>P</code> component - update any custom components</li><li>Direct color value access (e.g., <code>X1().error</code>) replaced with color name strings (e.g., <code>"error"</code>)</li></ul>
+    </article>
+    <article class="card" id="new-theme-context">
+      <div class="card-top">
+        <h3>New Theme Context <a class="anchor" href="#new-theme-context">#</a></h3>
+      </div>
+      <p>The theme system now uses React context for global theme state:</p>
+<pre><code>// Setting theme programmatically
+const [theme, setTheme] = useTheme();
+setTheme(&#x27;dark&#x27;); // or &#x27;light&#x27;, &#x27;system&#x27;, etc.</code></pre>
+    </article>
+    <article class="card" id="color-property-changes">
+      <div class="card-top">
+        <h3>Color Property Changes <a class="anchor" href="#color-property-changes">#</a></h3>
+      </div>
+      <p>Old structure:</p>
+<pre><code>{
+  diff: {
+    added: &quot;rgb(105,219,124)&quot;,
+    removed: &quot;rgb(255,168,180)&quot;
+  }
+}</code></pre>
+<p>New structure:</p>
+<pre><code>{
+  diffAdded: &quot;rgb(105,219,124)&quot;,
+  diffRemoved: &quot;rgb(255,168,180)&quot;
+}</code></pre>
+<p>This release focuses on improving the theming system and user experience with better color management and real-time theme switching capabilities.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

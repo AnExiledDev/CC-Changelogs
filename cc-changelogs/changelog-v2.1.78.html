@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.78 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.78."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.78</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.78</span></h1>
+<p class="sub">This release adds automatic memory consolidation ("auto-dream") as a feature-flagged background capability, introduces persistent data directories for plugins with a new <code>--keep-data</code> uninstall flag, adds a <code>StopFailure</code> hook event for reacting to API errors, and improves sandbox diagnostics with proactive warnings when sandboxing is unavailable. Voice mode on Linux/WSL also receives better hardware detection and clearer error messaging.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.77 → v2.1.78</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">16 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="stopfailure-hook-event">
+      <div class="card-top">
+        <h3>StopFailure Hook Event <a class="anchor" href="#stopfailure-hook-event">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new hook event type that fires when a turn ends due to an API error (rate limit, auth failure, billing error, etc.), distinct from the normal <code>Stop</code> event.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;hooks&quot;: {
+    &quot;StopFailure&quot;: [
+      {
+        &quot;type&quot;: &quot;command&quot;,
+        &quot;command&quot;: &quot;echo &#x27;API error: $CLAUDE_HOOK_ERROR&#x27;&quot;
+      }
+    ]
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Fires instead of <code>Stop</code> when an API error ended the turn</li><li>Fire-and-forget — hook output and exit codes are ignored</li><li>Supports matching on error type: <code>rate_limit</code>, <code>authentication_failed</code>, <code>billing_error</code>, <code>invalid_request</code>, <code>server_error</code>, <code>max_output_tokens</code>, <code>unknown</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Hook event definition (search for <code>"StopFailure"</code>) — added to the hook event schema with <code>matcherMetadata</code> on <code>"error"</code> field</p>
+    </article>
+    <article class="card" id="plugin-persistent-data-directories">
+      <div class="card-top">
+        <h3>Plugin Persistent Data Directories <a class="anchor" href="#plugin-persistent-data-directories">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Plugins now get a dedicated persistent data directory at <code>~/.claude/plugins/data/{id}/</code>, accessible via the <code>CLAUDE_PLUGIN_DATA</code> environment variable and the <code>${CLAUDE_PLUGIN_DATA}</code> template in plugin configs.</p>
+<div class="blabel">Details</div>
+<ul><li>Each plugin receives its own data directory, created automatically</li><li>The directory persists across plugin updates and sessions</li><li>On plugin uninstall, users are prompted: "Delete it along with the plugin?" with the data directory path shown</li><li>Use <code>--keep-data</code> flag with uninstall to preserve the data directory</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin data path helper (search for <code>"CLAUDE_PLUGIN_DATA"</code>) — new env var injected into plugin processes; <code>--keep-data</code> CLI option (search for <code>"--keep-data"</code>)</p>
+    </article>
+    <article class="card" id="sandbox-unavailability-warnings">
+      <div class="card-top">
+        <h3>Sandbox Unavailability Warnings <a class="anchor" href="#sandbox-unavailability-warnings">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now proactively detects when sandboxing is configured but cannot actually run, and displays a clear warning at startup instead of silently falling back.</p>
+<div class="blabel">Details</div>
+<ul><li>Checks for missing dependencies (bubblewrap, socat on Linux; ripgrep), unsupported platforms, and WSL1 incompatibility</li><li>Displays a warning: <code>⚠ Sandbox disabled: {reason}</code> followed by <code>Commands will run WITHOUT sandboxing. Network and filesystem restrictions will NOT be enforced.</code></li><li>The <code>/sandbox</code> diagnostic UI now also shows ripgrep status and uses "seatbelt: built-in (macOS)" labeling on macOS</li></ul>
+<div class="blabel">Evidence</div>
+<p>Sandbox check function (search for <code>"getSandboxUnavailableReason"</code>) and startup warning (search for <code>"Commands will run WITHOUT sandboxing"</code>)</p>
+    </article>
+    <article class="card" id="custom-model-picker-via-environment-variables">
+      <div class="card-top">
+        <h3>Custom Model Picker via Environment Variables <a class="anchor" href="#custom-model-picker-via-environment-variables">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Administrators can inject a custom model option into the model picker via environment variables, useful for enterprise deployments with custom-routed models.</p>
+<div class="blabel">Usage</div>
+<pre><code>export ANTHROPIC_CUSTOM_MODEL_OPTION=&quot;my-custom-model-id&quot;
+export ANTHROPIC_CUSTOM_MODEL_OPTION_NAME=&quot;My Custom Model&quot;
+export ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION=&quot;Custom routed model for our org&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The custom model appears as an additional option in the model selection UI</li><li>If no name is provided, the model ID is used as the label</li><li>If no description is provided, defaults to <code>Custom model ({id})</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Model picker injection (search for <code>"ANTHROPIC_CUSTOM_MODEL_OPTION"</code>)</p>
+    </article>
+    <article class="card" id="monitor-mcp-background-task-type">
+      <div class="card-top">
+        <h3>Monitor MCP Background Task Type <a class="anchor" href="#monitor-mcp-background-task-type">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new background task type <code>monitor_mcp</code> for MCP-based monitors that can run alongside the main conversation.</p>
+<div class="blabel">Details</div>
+<ul><li>Appears in the background tasks panel with status indicators ("done", "unread" for completed but unviewed)</li><li>Displayed as "1 monitor" / "N monitors" in task counts</li></ul>
+<div class="blabel">Evidence</div>
+<p>Task type definition (search for <code>"monitor_mcp"</code>)</p>
+    </article>
+    <article class="card" id="improved-voice-mode-on-linux-wsl">
+      <div class="card-top">
+        <h3>Improved Voice Mode on Linux/WSL <a class="anchor" href="#improved-voice-mode-on-linux-wsl">#</a></h3>
+      </div>
+      <p>Voice mode now probes the <code>arecord</code> audio device before attempting to record on Linux, providing clearer error messages when audio hardware is unavailable. On WSL specifically, the error message now explains WSL2 with WSLg (Windows 11) requirements:</p>
+<p>&gt; Voice mode could not access an audio device in WSL. WSL2 with WSLg (Windows 11) provides audio via PulseAudio — if you are on Windows 10 or WSL1, run Claude Code in native Windows instead.</p>
+<div class="blabel">Evidence</div>
+<p>Audio probe function (search for <code>"arecord probe failed"</code>) and improved WSL message (search for <code>"WSLg"</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-classifier-deny-renamed-to-soft-deny">
+      <div class="card-top">
+        <h3>Auto Mode Classifier: <code>deny</code> Renamed to <code>soft_deny</code> <a class="anchor" href="#auto-mode-classifier-deny-renamed-to-soft-deny">#</a></h3>
+      </div>
+      <p>The auto mode classifier setting field <code>deny</code> has been renamed to <code>soft_deny</code> in the settings schema. This is a semantic clarification — existing <code>deny</code> rules in your config should be updated to <code>soft_deny</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Schema change (search for <code>"soft_deny"</code>)</p>
+    </article>
+    <article class="card" id="transcript-viewer-press-q-to-exit">
+      <div class="card-top">
+        <h3>Transcript Viewer: Press <code>q</code> to Exit <a class="anchor" href="#transcript-viewer-press-q-to-exit">#</a></h3>
+      </div>
+      <p>You can now press <code>q</code> in addition to <code>Escape</code> or <code>Ctrl+C</code> to exit the transcript viewer.</p>
+<div class="blabel">Evidence</div>
+<p>Keybinding addition (search for <code>"transcript:exit"</code>)</p>
+    </article>
+    <article class="card" id="bridge-reconnection-resilience">
+      <div class="card-top">
+        <h3>Bridge Reconnection Resilience <a class="anchor" href="#bridge-reconnection-resilience">#</a></h3>
+      </div>
+      <p>The bridge reconnection logic now handles up to 2 consecutive failed <code>/bridge/reconnect</code> calls before falling through to a fresh session, improving reliability on flaky connections. Empty message arrays from resumed sessions are now also handled gracefully.</p>
+<div class="blabel">Evidence</div>
+<p>Reconnect logic (search for <code>"Next 2 POST /bridge/reconnect"</code>) and empty-session guard (search for <code>"z.messages.length === 0"</code>)</p>
+    </article>
+    <article class="card" id="terminal-mode-reassertion-after-stdin-pause">
+      <div class="card-top">
+        <h3>Terminal Mode Reassertion After Stdin Pause <a class="anchor" href="#terminal-mode-reassertion-after-stdin-pause">#</a></h3>
+      </div>
+      <p>The terminal renderer now re-asserts mouse tracking and raw mode settings when stdin resumes after a gap, preventing issues where terminal state was lost during long idle periods or after backgrounding the process.</p>
+<div class="blabel">Evidence</div>
+<p>Terminal mode fix (search for <code>"reassertTerminalModes"</code>)</p>
+    </article>
+    <article class="card" id="opus-4-6-model-label-updated">
+      <div class="card-top">
+        <h3>Opus 4.6 Model Label Updated <a class="anchor" href="#opus-4-6-model-label-updated">#</a></h3>
+      </div>
+      <p>The model picker label for Opus 4.6 no longer shows the <code>[NEW]</code> tag, reflecting that it's now the established default model.</p>
+<div class="blabel">Evidence</div>
+<p>String change — old: <code>"Opus 4.6 with 1M context [NEW]"</code> → new: <code>"Opus 4.6 with 1M context"</code></p>
+    </article>
+    <article class="card" id="remote-session-credential-persistence">
+      <div class="card-top">
+        <h3>Remote Session Credential Persistence <a class="anchor" href="#remote-session-credential-persistence">#</a></h3>
+      </div>
+      <p>In remote/CCR environments, OAuth tokens and API keys are now persisted to well-known file paths (<code>/home/claude/.claude/remote/.oauth_token</code>, <code>/home/claude/.claude/remote/.api_key</code>) so that subprocesses can access credentials without inheriting file descriptors.</p>
+<div class="blabel">Evidence</div>
+<p>Remote credential paths (search for <code>"/.oauth_token"</code>) and persistence function (search for <code>"Failed to persist"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-extra-metadata-environment-variable">
+      <div class="card-top">
+        <h3><code>CLAUDE_CODE_EXTRA_METADATA</code> Environment Variable <a class="anchor" href="#claude-code-extra-metadata-environment-variable">#</a></h3>
+      </div>
+      <p>A new environment variable that lets you inject additional metadata (as a JSON object) into session telemetry. Useful for enterprise environments that need to tag sessions with org-specific identifiers.</p>
+<div class="blabel">Evidence</div>
+<p>Metadata injection (search for <code>"CLAUDE_CODE_EXTRA_METADATA"</code>)</p>
+    </article>
+    <article class="card" id="sandbox-dependency-check-bare-repo-file-scrubbing">
+      <div class="card-top">
+        <h3>Sandbox Dependency Check: Bare-Repo File Scrubbing <a class="anchor" href="#sandbox-dependency-check-bare-repo-file-scrubbing">#</a></h3>
+      </div>
+      <p>The sandbox initialization now detects and scrubs "planted" bare-repo files (directories like <code>HEAD</code>, <code>objects</code>, <code>refs</code>, etc.) that could be mistakenly treated as git repository internals.</p>
+<div class="blabel">Evidence</div>
+<p>Scrubbing function (search for <code>"scrubbed planted bare-repo file"</code>)</p>
+    </article>
+    <article class="card" id="syntax-highlighting-refactored-to-react-suspense">
+      <div class="card-top">
+        <h3>Syntax Highlighting Refactored to React Suspense <a class="anchor" href="#syntax-highlighting-refactored-to-react-suspense">#</a></h3>
+      </div>
+      <p>Code highlighting for diffs, code blocks, and tool use previews has been refactored to use React Suspense with lazy loading. The highlighter module is loaded asynchronously, showing an unhighlighted fallback until ready. This should improve perceived startup time.</p>
+<div class="blabel">Evidence</div>
+<p>Suspense-based highlighting wrapper (search for <code>"Suspense"</code> near highlight components)</p>
+    </article>
+    <article class="card" id="remote-control-command-availability">
+      <div class="card-top">
+        <h3>Remote Control Command Availability <a class="anchor" href="#remote-control-command-availability">#</a></h3>
+      </div>
+      <p>Commands that aren't usable in Remote Control mode now return a clear message: <code>/{command} isn't available over Remote Control.</code></p>
+<div class="blabel">Evidence</div>
+<p>Availability check (search for <code>"isn't available over Remote Control"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed bridge session resumption failing silently when the resumed session has zero messages — now correctly falls through to a fresh session (search for <code>"z.messages.length === 0"</code>)</li><li>Fixed <code>ANTHROPIC_BETAS</code> environment variable not being applied in all request contexts — the beta header filter was incorrectly gated on a condition that could prevent user-specified betas from being sent (search for <code>"ANTHROPIC_BETAS"</code>)</li><li>Telemetry <code>additional_metadata</code> is now base64-encoded before transmission, fixing potential encoding issues with JSON payloads (search for <code>"base64"</code>)</li></ul>
+    </article>
+    <article class="card" id="auto-dream-automatic-memory-consolidation-in-development">
+      <div class="card-top">
+        <h3>Auto-Dream: Automatic Memory Consolidation [In Development] <a class="anchor" href="#auto-dream-automatic-memory-consolidation-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A background process that automatically reviews recent session transcripts and consolidates insights into your memory files, similar to running a manual memory consolidation pass but triggered automatically.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_onyx_plover</code> — disabled by default (<code>enabled: !1</code>).</p>
+<div class="blabel">Details</div>
+<ul><li>When enabled, triggers after a configurable minimum hours (default: 24h) and minimum sessions (default: 5) since last consolidation</li><li>Uses a <code>.consolidate-lock</code> file with PID-based locking to prevent concurrent consolidation</li><li>Runs as a forked background query with <code>querySource: "auto_dream"</code> that reads session transcripts and updates memory files</li><li>Includes throttling to prevent excessive scanning (minimum gap between scans)</li><li>The dream prompt instructs the model to orient by reading existing memories, gather signal from recent sessions, consolidate into topic files, and prune the index</li><li>Telemetry events: <code>tengu_auto_dream_fired</code>, <code>tengu_auto_dream_completed</code>, <code>tengu_auto_dream_failed</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Dream infrastructure (search for <code>"autoDream"</code>) — gated by <code>tengu_onyx_plover</code> flag (search for <code>"tengu_onyx_plover"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

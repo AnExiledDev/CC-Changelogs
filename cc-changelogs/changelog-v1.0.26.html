@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.26 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.26."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.26</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.26</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.25 → v1.0.26</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="resume-conversation-command">
+      <div class="card-top">
+        <h3>Resume Conversation Command <a class="anchor" href="#resume-conversation-command">#</a></h3>
+      </div>
+      <ul><li>Added new <code>/resume</code> command to restore and continue previous conversations</li><li>When using <code>claude resume</code> or <code>/resume</code>, you'll see a list of your past conversations</li><li>Select a conversation to resume exactly where you left off</li><li>Helpful tip: The CLI will periodically remind you that you can "Run claude --continue or claude --resume to resume a conversation"</li></ul>
+    </article>
+    <article class="card" id="new-interaction-modes">
+      <div class="card-top">
+        <h3>New Interaction Modes <a class="anchor" href="#new-interaction-modes">#</a></h3>
+      </div>
+      <ul><li>Introduced mode cycling for different interaction styles:</li><li><strong>Default mode</strong>: Standard interaction</li><li><strong>Accept Edits mode</strong>: Streamlined mode for accepting file changes</li><li><strong>Plan mode</strong>: For planning complex implementations before coding</li><li><strong>Bypass Permissions mode</strong>: Available when needed for advanced operations</li><li>Modes cycle through in order, returning to default after bypass permissions</li></ul>
+    </article>
+    <article class="card" id="enterprise-and-team-support">
+      <div class="card-top">
+        <h3>Enterprise and Team Support <a class="anchor" href="#enterprise-and-team-support">#</a></h3>
+      </div>
+      <ul><li>Added support for new subscription tiers:</li><li>Claude Enterprise</li><li>Claude Team</li><li>Claude Max (previously supported)</li><li>Claude Pro (previously supported)</li><li>The CLI now properly identifies and displays your subscription type</li></ul>
+    </article>
+    <article class="card" id="ide-extension-auto-updates">
+      <div class="card-top">
+        <h3>IDE Extension Auto-Updates <a class="anchor" href="#ide-extension-auto-updates">#</a></h3>
+      </div>
+      <ul><li>Enhanced automatic updates for VS Code and JetBrains IDE extensions</li><li>Added support for Cursor and Windsurf editors alongside VS Code</li><li>Extensions will automatically upgrade when newer versions are available</li><li>Better error handling and reporting during extension installation</li></ul>
+    </article>
+    <article class="card" id="working-directory-management">
+      <div class="card-top">
+        <h3>Working Directory Management <a class="anchor" href="#working-directory-management">#</a></h3>
+      </div>
+      <ul><li>Improved handling of working directory changes in bash commands</li><li>Added automatic reset to original directory when needed</li><li>Better tracking of directory navigation during sessions</li></ul>
+    </article>
+    <article class="card" id="authentication-updates">
+      <div class="card-top">
+        <h3>Authentication Updates <a class="anchor" href="#authentication-updates">#</a></h3>
+      </div>
+      <ul><li>Refined OAuth token handling for different subscription types</li><li>Improved organization type detection (enterprise, team, max, pro)</li><li>Better error messages for subscription-specific features</li></ul>
+    </article>
+    <article class="card" id="performance">
+      <div class="card-top">
+        <h3>Performance <a class="anchor" href="#performance">#</a></h3>
+      </div>
+      <ul><li>Added streaming support with PassThrough for better real-time responses</li><li>Improved memory management with new buffer limits (10,000 character limit for certain operations)</li><li>More efficient file handling and validation</li></ul>
+    </article>
+    <article class="card" id="error-handling">
+      <div class="card-top">
+        <h3>Error Handling <a class="anchor" href="#error-handling">#</a></h3>
+      </div>
+      <ul><li>Better error reporting for missing plugin directories</li><li>Improved version checking for IDE extensions</li><li>Enhanced validation for JetBrains plugin installations</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed authentication flow for various subscription types</li><li>Resolved issues with mode switching logic</li><li>Corrected plugin installation path detection</li><li>Fixed workspace role permission checks</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>Claude Pro users continue to use Sonnet 4 model (Opus 4 not available for Pro tier)</li><li>The <code>--continue</code> flag is an alias for the new resume functionality</li><li>Extension auto-updates can be controlled via environment variables if needed</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.63 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.63."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.63</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.63</span></h1>
+<p class="sub">This release introduces performance monitoring infrastructure to detect slow filesystem and shell operations, adds automatic retry logic for ripgrep EAGAIN errors, and optimizes settings writes to avoid unnecessary disk I/O.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.62 → v2.0.63</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="slow-operation-detection">
+      <div class="card-top">
+        <h3>Slow Operation Detection <a class="anchor" href="#slow-operation-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New performance monitoring that detects and logs slow filesystem and shell command operations.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>All synchronous filesystem operations (20 in total) are now wrapped with timing instrumentation</li><li>Shell command executions via <code>execSyncWithDefaults</code> are similarly monitored</li><li>Operations exceeding 5ms are logged to debug output with the operation name and duration</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Log format: <code>[SLOW OPERATION DETECTED] fs.readFileSync (12.3ms)</code> or <code>[SLOW OPERATION DETECTED] execSyncWithDefaults (156.7ms): git status...</code></li><li>Monitored fs operations include: <code>existsSync</code>, <code>statSync</code>, <code>readFileSync</code>, <code>writeFileSync</code>, <code>appendFileSync</code>, <code>copyFileSync</code>, <code>unlinkSync</code>, <code>renameSync</code>, <code>readdirSync</code>, <code>mkdirSync</code>, <code>rmdirSync</code>, <code>rmSync</code>, and others</li><li>For shell commands, the first 100 characters of the command are included in the log</li><li>Logs are written to debug output (controlled by <code>CLAUDE_CODE_DEBUG_LOGS_DIR</code> environment variable)</li><li><strong>Evidence:</strong> <code>XX()</code> wrapper function at line 554, threshold <code>Zl2 = 5</code> at line 605, shell monitoring in <code>MG()</code> at line 16934</li></ul>
+    </article>
+    <article class="card" id="ripgrep-eagain-error-auto-retry">
+      <div class="card-top">
+        <h3>Ripgrep EAGAIN Error Auto-Retry <a class="anchor" href="#ripgrep-eagain-error-auto-retry">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatic retry mechanism when ripgrep encounters "Resource temporarily unavailable" (EAGAIN/error 11) errors.</p>
+<p><strong>How it works:</strong> When ripgrep fails with an EAGAIN error (common in high-concurrency environments), Claude Code now:</p>
+<ol><li>Detects the error from stderr output</li><li>Logs a debug message</li><li>Retries the search with single-threaded mode (<code>-j 1</code>)</li><li>Sets a global flag to use single-threaded mode for all subsequent ripgrep calls</li></ol>
+<p><strong>Details:</strong></p>
+<ul><li>Error detection function <code>lJ9()</code> checks for "os error 11" or "Resource temporarily unavailable" strings</li><li>Only retries once to prevent infinite loops</li><li>Telemetry event <code>tengu_ripgrep_eagain_retry</code> is logged when this occurs</li><li><strong>Evidence:</strong> <code>lJ9()</code> function at line 17125, retry logic at lines 17163-17178</li></ul>
+    </article>
+    <article class="card" id="optimized-oauth-account-settings-writes">
+      <div class="card-top">
+        <h3>Optimized OAuth Account Settings Writes <a class="anchor" href="#optimized-oauth-account-settings-writes">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Settings are now only written to disk when OAuth account information actually changes.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>Previously, every call to update OAuth account settings triggered a disk write</li><li>Now, all five account fields (accountUuid, emailAddress, organizationUuid, displayName, hasExtraUsageEnabled) are compared before writing</li><li>If all fields match the existing stored values, the write is skipped</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Reduces unnecessary disk I/O during token refresh operations</li><li>Uses strict equality checks with optional chaining for safety</li><li><strong>Evidence:</strong> <code>HW1()</code> function at line 74155 with comparison at lines 74170-74176, compared to old unconditional <code>G$1()</code> function</li></ul>
+    </article>
+    <article class="card" id="increased-startup-performance-telemetry-sampling">
+      <div class="card-top">
+        <h3>Increased Startup Performance Telemetry Sampling <a class="anchor" href="#increased-startup-performance-telemetry-sampling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Startup performance telemetry sampling rate increased from 0.1% to 0.5% of CLI invocations.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Constant changed from <code>OP9 = 0.001</code> to <code>Xa2 = 0.005</code></li><li>Provides 5x more data points for analyzing real-world startup performance</li><li>Can still be forced on with <code>CLAUDE_CODE_PROFILE_STARTUP=1</code> environment variable</li><li><strong>Evidence:</strong> <code>Xa2 = 0.005</code> at line 2661, sampling logic at line 2674</li></ul>
+    </article>
+    <article class="card" id="registered-hooks-state-management">
+      <div class="card-top">
+        <h3>Registered Hooks State Management <a class="anchor" href="#registered-hooks-state-management">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added functions to get and set registered hooks in the global state.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>kTA()</code> function to set registered hooks (line 2395)</li><li>New <code>vTA()</code> function to get registered hooks (line 2398)</li><li>New <code>jJA()</code> function to access plan slug cache (line 2401)</li><li><strong>Evidence:</strong> Functions at lines 2395-2401</li></ul>
+    </article>
+    <article class="card" id="internal-refactoring">
+      <div class="card-top">
+        <h3>Internal Refactoring <a class="anchor" href="#internal-refactoring">#</a></h3>
+      </div>
+      <ul><li>AWS SDK dependencies restructured with consolidated module patterns</li><li>Import changes for <code>child_process</code> module (now uses named imports for <code>spawn</code> and <code>spawnSync</code>)</li><li>Various internal variable and function renames consistent with minification changes</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

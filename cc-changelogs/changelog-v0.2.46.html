@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.46 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.46."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.46</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.46</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.45 → v0.2.46</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.46 Changelog</p>
+    </article>
+    <article class="card" id="local-installation-support">
+      <div class="card-top">
+        <h3>Local Installation Support <a class="anchor" href="#local-installation-support">#</a></h3>
+      </div>
+      <ul><li><strong>New <code>/migrate-installer</code> command</strong>: Install Claude CLI locally to your home directory (<code>~/.claude/local</code>) to avoid npm permission issues</li><li>Automatically detects if you're running from a local installation</li><li>Provides setup instructions for creating shell aliases when using local installation</li><li>Local installations update differently - use <code>cd ~/.claude/local &amp;&amp; npm update @anthropic-ai/claude-code</code></li></ul>
+    </article>
+    <article class="card" id="api-key-helper">
+      <div class="card-top">
+        <h3>API Key Helper <a class="anchor" href="#api-key-helper">#</a></h3>
+      </div>
+      <ul><li><strong>New <code>apiKeyHelper</code> configuration option</strong>: Specify a command in <code>~/.claude.json</code> that returns your API key</li><li>Useful for retrieving API keys from password managers or other secure storage</li><li>Example: <code>"apiKeyHelper": "op item get 'Anthropic API Key' --fields password"</code></li></ul>
+    </article>
+    <article class="card" id="iterm2-integration-improvements">
+      <div class="card-top">
+        <h3>iTerm2 Integration Improvements <a class="anchor" href="#iterm2-integration-improvements">#</a></h3>
+      </div>
+      <ul><li>Enhanced iTerm2 Shift+Enter key binding installation with automatic backup/restore</li><li>Creates a backup of iTerm2 preferences before making changes</li><li>Automatically restores settings if installation fails</li><li>New recovery functions: <code>vV0()</code> (backup), <code>SV0()</code> (restore), <code>X79()</code> (install with safety)</li></ul>
+    </article>
+    <article class="card" id="enhanced-tool-confirmations">
+      <div class="card-top">
+        <h3>Enhanced Tool Confirmations <a class="anchor" href="#enhanced-tool-confirmations">#</a></h3>
+      </div>
+      <ul><li>Write/Edit file confirmations now include "Yes, and don't ask again this session" option with Shift+Tab shortcut</li><li>More contextual scope descriptions in MCP server confirmations (e.g., "private to you in this project" vs "shared via .mcp.json")</li></ul>
+    </article>
+    <article class="card" id="token-usage-monitoring">
+      <div class="card-top">
+        <h3>Token Usage Monitoring <a class="anchor" href="#token-usage-monitoring">#</a></h3>
+      </div>
+      <ul><li>New token threshold system with warning levels:</li><li>60% usage: Warning threshold</li><li>80% usage: Error threshold</li><li>100% usage: Auto-compact threshold</li><li><code>cE1()</code> function provides detailed usage statistics including percentage remaining</li></ul>
+    </article>
+    <article class="card" id="file-operations">
+      <div class="card-top">
+        <h3>File Operations <a class="anchor" href="#file-operations">#</a></h3>
+      </div>
+      <ul><li>Read tool now explicitly mentions it can display images: "For image files, the tool will display the image for you"</li><li>Added reminder to use <code>ReadNotebook</code> for Jupyter notebook files (.ipynb)</li></ul>
+    </article>
+    <article class="card" id="mcp-model-context-protocol">
+      <div class="card-top">
+        <h3>MCP (Model Context Protocol) <a class="anchor" href="#mcp-model-context-protocol">#</a></h3>
+      </div>
+      <ul><li>Updated server configuration messages to be clearer about scope visibility</li><li>Better formatting of scope descriptions in success messages</li></ul>
+    </article>
+    <article class="card" id="configuration">
+      <div class="card-top">
+        <h3>Configuration <a class="anchor" href="#configuration">#</a></h3>
+      </div>
+      <ul><li>Added <code>env</code> field to configuration defaults for environment variable management</li><li>Expanded allowed configuration keys to include <code>apiKeyHelper</code> and <code>env</code></li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>New utility functions for local installation management: <code>yO2()</code>, <code>OO2()</code>, <code>bb()</code>, <code>YN()</code>, <code>Kv3()</code>, <code>l$1()</code></li><li>Improved shell detection and configuration file handling</li><li>Added robust error handling for API key retrieval</li></ul>
+    </article>
+    <article class="card" id="dependencies">
+      <div class="card-top">
+        <h3>Dependencies <a class="anchor" href="#dependencies">#</a></h3>
+      </div>
+      <ul><li>Updated various import statements for better module organization</li><li>Added new imports for file system operations and process management</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed duplicate permission checking logic in auto-updater</li><li>Improved error messages when API key helper fails</li><li>Better handling of escape key in MCP wizard (now only works in non-welcome/success screens)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Migration Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="migration-notes">
+      <p>If you're experiencing npm permission issues with auto-updates, you can now use the local installation method:</p>
+<ol><li>Run <code>/migrate-installer</code> in Claude Code</li><li>Follow the instructions to set up a shell alias</li><li>Future updates can be done with <code>cd ~/.claude/local &amp;&amp; npm update @anthropic-ai/claude-code</code></li></ol>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

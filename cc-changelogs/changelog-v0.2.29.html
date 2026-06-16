@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.29 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.29."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.29</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.29</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.27 → v0.2.29</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">4</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.29 Changelog</p>
+    </article>
+    <article class="card" id="enhanced-gitignore-support-for-ls-command">
+      <div class="card-top">
+        <h3>Enhanced <code>.gitignore</code> Support for LS Command <a class="anchor" href="#enhanced-gitignore-support-for-ls-command">#</a></h3>
+      </div>
+      <p>The <code>ls</code> command now respects <code>.gitignore</code> patterns when listing files and directories. This provides a cleaner view of your project by automatically filtering out ignored files.</p>
+<p><strong>New parameter</strong>: The <code>ls</code> command now accepts an optional <code>ignore</code> parameter where you can provide an array of glob patterns to exclude from the listing.</p>
+<p><strong>Example usage</strong>:</p>
+<pre><code># List files while respecting .gitignore
+claude ls /path/to/directory
+
+# List files with custom ignore patterns
+claude ls /path/to/directory --ignore &quot;*.tmp&quot; &quot;*.log&quot;</code></pre>
+    </article>
+    <article class="card" id="improved-command-suggestions-ui">
+      <div class="card-top">
+        <h3>Improved Command Suggestions UI <a class="anchor" href="#improved-command-suggestions-ui">#</a></h3>
+      </div>
+      <p>The command suggestion interface has been redesigned to be more responsive and informative:</p>
+<ul><li><strong>Responsive layout</strong>: Command suggestions now adapt to terminal width (switches to vertical layout when terminal width &lt; 80 columns)</li><li><strong>Command aliases</strong>: Now displays command aliases alongside the main command name</li><li><strong>Enhanced descriptions</strong>: Shows argument names for prompt-type commands</li><li><strong>Better visual hierarchy</strong>: Improved spacing and text wrapping for better readability</li></ul>
+    </article>
+    <article class="card" id="vim-mode-indicator">
+      <div class="card-top">
+        <h3>Vim Mode Indicator <a class="anchor" href="#vim-mode-indicator">#</a></h3>
+      </div>
+      <p>For users with Vim as their <code>$EDITOR</code>, Claude Code now displays a <code>-- INSERT --</code> indicator when in insert mode, providing a familiar experience for Vim users.</p>
+    </article>
+    <article class="card" id="tool-comparison-enhancement">
+      <div class="card-top">
+        <h3>Tool Comparison Enhancement <a class="anchor" href="#tool-comparison-enhancement">#</a></h3>
+      </div>
+      <p>The tool comparison logic now supports custom <code>inputsEqual</code> methods for tools, allowing for more sophisticated comparison of tool inputs. This improves the accuracy of determining when tools need to be re-executed.</p>
+    </article>
+    <article class="card" id="file-edit-refactoring">
+      <div class="card-top">
+        <h3>File Edit Refactoring <a class="anchor" href="#file-edit-refactoring">#</a></h3>
+      </div>
+      <p>The file editing logic has been refactored for better maintainability:</p>
+<ul><li>Separated file reading logic into its own function (<code>AY9</code>)</li><li>Improved empty string replacement handling in <code>XY9</code> function</li><li>Cleaner separation of concerns in the <code>Cu</code> (formerly <code>mN1</code>) function</li></ul>
+    </article>
+    <article class="card" id="token-usage-display">
+      <div class="card-top">
+        <h3>Token Usage Display <a class="anchor" href="#token-usage-display">#</a></h3>
+      </div>
+      <p>The token usage display component has been extracted into a reusable component (<code>xR2</code>), making the UI more modular and maintainable.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Version History Update</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="version-history-update">
+      <p>Added changelog entry for v0.2.27 (currently empty, awaiting content).</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-changes">
+      <ul><li>Refactored import statements to use named imports from Node.js built-in modules</li><li>Added new utility functions for better code organization</li><li>Improved error handling in <code>.gitignore</code> parsing</li><li>Enhanced modularity of UI components</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

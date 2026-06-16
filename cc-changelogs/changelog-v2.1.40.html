@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.40 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.40."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.40</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.40</span></h1>
+<p class="sub">This release adds a new <code>claude auth</code> command group for managing authentication, introduces a snippet picker UI with <code>Ctrl+Q</code> for copying code snippets, and adds enterprise model restriction capabilities. The macOS sandbox gains support for TLS certificate verification in Go programs, and the <code>/rename</code> command can now auto-generate session names using LLM.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.39 → v2.1.40</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">21</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">14 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="claude-auth-command-group">
+      <div class="card-top">
+        <h3><code>claude auth</code> Command Group <a class="anchor" href="#claude-auth-command-group">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New CLI subcommands for managing authentication outside interactive mode.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude auth login              # Sign in to your Anthropic account
+claude auth login --email me@example.com  # Pre-populate email on login page
+claude auth login --sso        # Force SSO login flow
+claude auth status             # Show authentication status
+claude auth status --text      # Human-readable output
+claude auth logout             # Log out from your Anthropic account</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Replaces the need to use <code>/login</code> and <code>/logout</code> slash commands</li><li><code>--json</code> flag outputs machine-readable status (default)</li><li><code>--text</code> flag outputs human-readable status</li></ul>
+<div class="blabel">Evidence</div>
+<p>Auth command group (search for <code>"Manage authentication"</code>, <code>"Sign in to your Anthropic account"</code>)</p>
+    </article>
+    <article class="card" id="snippet-picker-ui">
+      <div class="card-top">
+        <h3>Snippet Picker UI <a class="anchor" href="#snippet-picker-ui">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New interface for selecting and copying code snippets from Claude's responses.</p>
+<div class="blabel">Usage</div>
+<ul><li>Press <code>Ctrl+Q</code> to open the snippet picker</li><li>Select from multiple snippets when available</li><li>Status bar shows snippet count: "ctrl+q to copy · N snippets"</li></ul>
+<div class="blabel">Details</div>
+<ul><li>Keybinding changed from <code>Ctrl+Y</code> (copy single) to <code>Ctrl+Q</code> (picker)</li><li>Works with SSH sessions</li><li>Displays "Select a snippet to copy:" when multiple snippets exist</li></ul>
+<div class="blabel">Evidence</div>
+<p>Snippet picker keybinding (search for <code>"chat:snippetPicker"</code>, <code>"ctrl+q to copy"</code>)</p>
+    </article>
+    <article class="card" id="enterprise-model-allowlist">
+      <div class="card-top">
+        <h3>Enterprise Model Allowlist <a class="anchor" href="#enterprise-model-allowlist">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Administrators can restrict which models users can select.</p>
+<div class="blabel">Usage</div>
+<p>Configure in managed settings:</p>
+<pre><code>{
+  &quot;availableModels&quot;: [&quot;opus&quot;, &quot;sonnet-4&quot;]
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Accepts family aliases ("opus" allows any opus version)</li><li>Accepts version prefixes ("opus-4-5" allows only that version)</li><li>Accepts full model IDs</li><li>Empty array restricts to default model only</li><li>Clear error messages when restricted: "Model 'X' is not available. Your organization restricts model selection."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Model allowlist setting (search for <code>"Allowlist of models that users can select"</code>, <code>"restricts model selection"</code>)</p>
+    </article>
+    <article class="card" id="nested-session-detection">
+      <div class="card-top">
+        <h3>Nested Session Detection <a class="anchor" href="#nested-session-detection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Prevents launching Claude Code inside another Claude Code session.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects when running inside an existing Claude Code session</li><li>Displays clear error explaining the issue</li><li>Provides bypass instructions via <code>CLAUDECODE</code> environment variable</li></ul>
+<div class="blabel">Evidence</div>
+<p>Nested session check (search for <code>"cannot be launched inside another Claude Code session"</code>)</p>
+    </article>
+    <article class="card" id="llm-generated-session-names">
+      <div class="card-top">
+        <h3>LLM-Generated Session Names <a class="anchor" href="#llm-generated-session-names">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p><code>/rename</code> can now auto-generate kebab-case session names from conversation context.</p>
+<div class="blabel">Usage</div>
+<pre><code>/rename          # Auto-generates name from conversation
+/rename my-name  # Still accepts manual names</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Generates 2-4 word kebab-case names (e.g., "fix-login-bug", "add-auth-feature")</li><li>Shows "Could not generate a name: no conversation context yet" if no messages exist</li><li>Falls back to manual name requirement if generation fails</li></ul>
+<div class="blabel">Evidence</div>
+<p>LLM name generation (search for <code>"Generate a short kebab-case name"</code>, <code>"no conversation context yet"</code>)</p>
+    </article>
+    <article class="card" id="streaming-idle-timeout">
+      <div class="card-top">
+        <h3>Streaming Idle Timeout <a class="anchor" href="#streaming-idle-timeout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Streams now abort automatically if no data is received for extended periods.</p>
+<div class="blabel">Details</div>
+<ul><li>Warning logged when stream is idle</li><li>Automatic abort after configurable timeout</li><li>Throws "Stream idle timeout - no chunks received" error</li></ul>
+<div class="blabel">Evidence</div>
+<p>Idle timeout handling (search for <code>"Streaming idle timeout"</code>, <code>"no chunks received"</code>)</p>
+    </article>
+    <article class="card" id="macos-sandbox-tls-certificate-verification">
+      <div class="card-top">
+        <h3>macOS Sandbox: TLS Certificate Verification <a class="anchor" href="#macos-sandbox-tls-certificate-verification">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New setting to allow Go programs to verify TLS certificates via trustd agent.</p>
+<div class="blabel">Usage</div>
+<p>Configure in sandbox settings:</p>
+<pre><code>{
+  &quot;enableWeakerNetworkIsolation&quot;: true
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Required for Go programs (gh, gcloud, terraform, kubectl) using MITM proxies with custom CAs</li><li>Enables access to <code>com.apple.trustd.agent</code> mach service</li><li>Security trade-off: Opens potential data exfiltration vector through trustd</li></ul>
+<div class="blabel">Evidence</div>
+<p>Trustd agent setting (search for <code>"Enable weaker network isolation"</code>, <code>"com.apple.trustd.agent"</code>)</p>
+    </article>
+    <article class="card" id="expanded-network-binding-in-sandbox">
+      <div class="card-top">
+        <h3>Expanded Network Binding in Sandbox <a class="anchor" href="#expanded-network-binding-in-sandbox">#</a></h3>
+      </div>
+      <p>Network sandbox rules now allow binding to all interfaces (<code><em>:</em></code>) instead of just localhost.</p>
+<div class="blabel">Evidence</div>
+<p>Network rules (search for <code>'(allow network-bind (local ip "<em>:</em>"))'</code>)</p>
+    </article>
+    <article class="card" id="linux-sandbox-improvements">
+      <div class="card-top">
+        <h3>Linux Sandbox Improvements <a class="anchor" href="#linux-sandbox-improvements">#</a></h3>
+      </div>
+      <ul><li>Glob patterns are now expanded for deny paths on Linux</li><li>Better handling of symlink-based deny path attacks (mounts <code>/dev/null</code>)</li><li>Cleanup of bwrap mount points after sandbox teardown</li><li>More nuanced logging for skipped deny paths</li></ul>
+<div class="blabel">Evidence</div>
+<p>Linux sandbox improvements (search for <code>"Cleaned up bwrap mount point"</code>, <code>"Expanded glob pattern"</code>, <code>"Mounted /dev/null"</code>)</p>
+    </article>
+    <article class="card" id="improved-model-error-messages">
+      <div class="card-top">
+        <h3>Improved Model Error Messages <a class="anchor" href="#improved-model-error-messages">#</a></h3>
+      </div>
+      <p>Error messages now suggest alternative models when the selected model fails:</p>
+<ul><li>429 errors suggest switching to a fallback model</li><li>404 errors indicate model availability issues and suggest alternatives</li></ul>
+<div class="blabel">Evidence</div>
+<p>Model error handling (search for <code>"to switch to"</code>, <code>"to pick a different model"</code>)</p>
+    </article>
+    <article class="card" id="better-file-type-detection-for-read-tool">
+      <div class="card-top">
+        <h3>Better File Type Detection for Read Tool <a class="anchor" href="#better-file-type-detection-for-read-tool">#</a></h3>
+      </div>
+      <p>The Read tool now properly rejects special files (devices, pipes, sockets) with clear error messages.</p>
+<div class="blabel">Evidence</div>
+<p>File type check (search for <code>"not a regular file (it may be a device, pipe, or socket)"</code>)</p>
+    </article>
+    <article class="card" id="team-plan-auto-approval">
+      <div class="card-top">
+        <h3>Team Plan Auto-Approval <a class="anchor" href="#team-plan-auto-approval">#</a></h3>
+      </div>
+      <p>When running as a team member, pending plan approval requests from teammates can be auto-approved based on team context.</p>
+<div class="blabel">Evidence</div>
+<p>Auto-approval logging (search for <code>"Auto-approved plan from"</code>, <code>"auto-approving"</code>)</p>
+    </article>
+    <article class="card" id="vs-code-connection-indicator">
+      <div class="card-top">
+        <h3>VS Code Connection Indicator <a class="anchor" href="#vs-code-connection-indicator">#</a></h3>
+      </div>
+      <p>New notification when only one Claude Code instance can connect to VS Code at a time.</p>
+<div class="blabel">Evidence</div>
+<p>Connection note (search for <code>"Only one Claude Code instance can be connected to VS Code"</code>)</p>
+    </article>
+    <article class="card" id="bypass-permissions-migration">
+      <div class="card-top">
+        <h3>Bypass Permissions Migration <a class="anchor" href="#bypass-permissions-migration">#</a></h3>
+      </div>
+      <p>Automatic migration from <code>bypassPermissionsModeAccepted</code> to <code>skipDangerousModePermissionPrompt</code> setting.</p>
+<div class="blabel">Evidence</div>
+<p>Migration code (search for <code>"tengu_migrate_bypass_permissions_accepted"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed read tool to reject special file types (devices, pipes, sockets) instead of hanging (search for <code>"not a regular file"</code>)</li><li>Improved memory learning prompt to be more specific about saving corrections and preferences (search for <code>"consider saving that to memory"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes (Not User-Facing)</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes-not-user-facing">
+      <p>The following changes are internal and do not affect user behavior:</p>
+<ul><li>Removed <code>fine-grained-tool-streaming-2025-05-14</code> beta header</li><li>Removed cache marker fallback logging ("No stable tool found for cache marker")</li><li>Removed "IDE disconnected" status indicator</li><li>Removed proxy server reconnection logging</li><li>Removed "Team/Task files are allowed for writing" logging</li><li>Added maxVersion capping for auto-updater</li><li>Improved interrupt handling with stream mode logging</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

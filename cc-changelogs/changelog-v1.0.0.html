@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.0 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.0."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.0</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.0</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.126 → v1.0.0</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-models">
+      <div class="card-top">
+        <h3>New Models <a class="anchor" href="#new-models">#</a></h3>
+      </div>
+      <h4>Claude Opus 4</h4>
+<ul><li><strong>NEW</strong>: Introduced Claude Opus 4 model for complex tasks</li><li>Available across all providers:</li><li>First-party API: <code>claude-opus-4-20250514</code></li><li>AWS Bedrock: <code>us.anthropic.claude-opus-4-20250514-v1:0</code></li><li>Google Vertex: <code>claude-opus-4@20250514</code></li><li>Pricing: $15/$75 per million tokens</li><li>Access Opus using <code>/model opus</code> command</li></ul>
+<h4>Claude Sonnet 4</h4>
+<ul><li><strong>NEW</strong>: Introduced Claude Sonnet 4 as the new default model for daily use</li><li>Available across all providers:</li><li>First-party API: <code>claude-sonnet-4-20250514</code></li><li>AWS Bedrock: <code>us.anthropic.claude-sonnet-4-20250514-v1:0</code></li><li>Google Vertex: <code>claude-sonnet-4@20250514</code></li><li>Claude Sonnet 3.7 remains available for AWS Bedrock users</li></ul>
+    </article>
+    <article class="card" id="user-facing-features">
+      <div class="card-top">
+        <h3>User-Facing Features <a class="anchor" href="#user-facing-features">#</a></h3>
+      </div>
+      <h4>Model Selection Improvements</h4>
+<ul><li>Enhanced <code>/model</code> command with better model descriptions:</li><li><strong>Opus</strong>: "Claude Opus 4 for complex tasks"</li><li><strong>Sonnet</strong>: "Claude Sonnet 4 for daily use"</li><li>Model selection now accepts both "sonnet" and "opus" as valid options</li><li>Improved model display showing "Claude Sonnet 4" or "Claude Sonnet 3.7" based on your provider</li></ul>
+<h4>Enhanced Error Handling</h4>
+<ul><li><strong>NEW</strong>: Smart fallback for rate-limited users when Opus experiences high load</li><li>New error message: "Opus is experiencing high load, please use /model to switch to Sonnet"</li><li>Improved handling of repeated 529 (overloaded) errors with clearer guidance</li></ul>
+<h4>Visual Improvements</h4>
+<ul><li><strong>NEW</strong>: Enhanced splash screen with Claude ASCII art (3 different variations based on terminal size)</li><li><strong>NEW</strong>: Setup warnings dialog for potential configuration issues</li><li>Shows clear warnings with actionable instructions</li><li>Press Enter to continue anyway or Ctrl+C to exit and fix issues</li></ul>
+    </article>
+    <article class="card" id="cli-improvements">
+      <div class="card-top">
+        <h3>CLI Improvements <a class="anchor" href="#cli-improvements">#</a></h3>
+      </div>
+      <h4>Better IDE Integration</h4>
+<ul><li>Removed <code>ENABLE_IDE_INTEGRATION</code> environment variable requirement</li><li>IDE integration now works automatically when supported IDEs are detected</li><li>Improved VS Code and JetBrains plugin installation flow</li></ul>
+<h4>Performance &amp; Reliability</h4>
+<ul><li>Removed the experimental batch tool execution feature (<code>Call</code> tool)</li><li>Streamlined tool execution for better reliability</li><li>Improved handling of unified rate limits with automatic fallback</li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <h4>Model Architecture</h4>
+<ul><li>Added support for "interleaved-thinking-2025-05-14" capability</li><li>Enhanced model selection logic with provider-specific defaults</li><li>Improved model availability detection based on user permissions</li></ul>
+<h4>Error Recovery</h4>
+<ul><li>Better handling of OAuth token revocation</li><li>Improved credit balance error messages</li><li>Enhanced prompt length error handling</li></ul>
+    </article>
+    <article class="card" id="removed-features">
+      <div class="card-top">
+        <h3>Removed Features <a class="anchor" href="#removed-features">#</a></h3>
+      </div>
+      <ul><li>Removed placeholder model used for testing</li><li>Removed batch tool execution (<code>mX1</code>/batch tool)</li><li>Removed several internal helper functions for cleaner codebase</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed duplicate model selection issues</li><li>Improved error handling for overloaded servers</li><li>Better handling of rate limit resets with unified fallback</li></ul>
+    </article>
+    <article class="card" id="setting-models">
+      <div class="card-top">
+        <h3>Setting Models <a class="anchor" href="#setting-models">#</a></h3>
+      </div>
+      <pre><code># Use the new Opus model for complex tasks
+/model opus
+
+# Switch back to Sonnet for daily use
+/model sonnet
+
+# Check current model
+/model</code></pre>
+    </article>
+    <article class="card" id="handling-rate-limits">
+      <div class="card-top">
+        <h3>Handling Rate Limits <a class="anchor" href="#handling-rate-limits">#</a></h3>
+      </div>
+      <p>When you encounter rate limits with Opus during high load periods, Claude Code will now suggest switching to Sonnet automatically with a clear message.</p>
+    </article>
+    <article class="card" id="visual-experience">
+      <div class="card-top">
+        <h3>Visual Experience <a class="anchor" href="#visual-experience">#</a></h3>
+      </div>
+      <p>The new splash screen adapts to your terminal size, showing different Claude ASCII art based on available space, creating a more polished first-run experience.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

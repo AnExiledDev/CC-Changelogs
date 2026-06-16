@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.5 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.5."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.5</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.5</span></h1>
+<p class="sub">Version 2.0.5 adds extended thinking support for Claude Sonnet 4.5, allowing users to enable transparent reasoning via environment variables or configuration settings. This release also improves session persistence with deduplication and refines internal error handling.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.3 → v2.0.5</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="extended-thinking-support-for-sonnet-4-5">
+      <div class="card-top">
+        <h3>Extended Thinking Support for Sonnet 4.5 <a class="anchor" href="#extended-thinking-support-for-sonnet-4-5">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude Code now supports extended thinking mode when using Claude Sonnet 4.5, enabling more transparent reasoning for complex tasks.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Enable thinking via environment variable
+MAX_THINKING_TOKENS=10000 claude
+
+# Or configure in your settings file
+# Set alwaysThinkingEnabled: true in your Claude Code settings</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Only available when using Claude Sonnet 4.5 model</li><li>Can be controlled via <code>MAX_THINKING_TOKENS</code> environment variable (set to any positive integer to enable)</li><li>Can be configured permanently via <code>alwaysThinkingEnabled</code> in settings</li><li>Subject to Statsig feature gate <code>thinking_on_default</code> for gradual rollout</li><li>Provides visible reasoning steps during Claude's problem-solving process</li><li><strong>Evidence</strong>: <code>hL1() at line 364041</code> in v2.0.5</li></ul>
+    </article>
+    <article class="card" id="session-persistence-deduplication">
+      <div class="card-top">
+        <h3>Session Persistence Deduplication <a class="anchor" href="#session-persistence-deduplication">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Session entries are now deduplicated before persistence, preventing redundant API calls when the same conversation entry is encountered multiple times.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Uses UUID tracking to identify already-persisted entries</li><li>Reduces unnecessary backend calls and potential conflicts</li><li>Improves overall session handling performance</li><li><strong>Evidence</strong>: <code>K8B() at line 397234</code> in v2.0.5, modified from <code>QPB()</code> at line 23491 in v2.0.3</li></ul>
+    </article>
+    <article class="card" id="refined-tool-execution-messaging">
+      <div class="card-top">
+        <h3>Refined Tool Execution Messaging <a class="anchor" href="#refined-tool-execution-messaging">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Internal tool descriptions now emphasize "batch" execution rather than "parallel" execution, providing more accurate guidance for Claude's behavior.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Updated Glob tool description from "in parallel" to "as a batch"</li><li>Better reflects the actual execution model of tool calls</li><li>Improves Claude's understanding of how multiple tool calls are processed</li><li><strong>Evidence</strong>: Glob tool description at line 12298 in v2.0.5</li></ul>
+    </article>
+    <article class="card" id="removed-obsolete-tool-concurrency-error">
+      <div class="card-top">
+        <h3>Removed Obsolete Tool Concurrency Error <a class="anchor" href="#removed-obsolete-tool-concurrency-error">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Eliminated the "tool use concurrency issues" error message that instructed users to run <code>/rewind</code> to recover conversations.</p>
+<p><strong>Details:</strong></p>
+<ul><li>The underlying API error condition (400 status for tool_use without tool_result blocks) is no longer expected</li><li>Suggests server-side fix has been implemented</li><li>Users will no longer encounter this specific error message</li><li><strong>Evidence</strong>: Error handling removed from <code>fk1()</code> at lines 23711-23720 in v2.0.3</li></ul>
+    </article>
+    <article class="card" id="aws-credential-handling-simplified">
+      <div class="card-top">
+        <h3>AWS Credential Handling Simplified <a class="anchor" href="#aws-credential-handling-simplified">#</a></h3>
+      </div>
+      <p>Removed workspace trust validation checks from AWS credential export and refresh functions, suggesting the security model has evolved to handle trust validation elsewhere in the codebase.</p>
+<div class="blabel">Evidence</div>
+<p><code>gH5() at line 23918</code> in v2.0.5, modified from <code>oH5()</code> at lines 23868-23876 in v2.0.3</p>
+    </article>
+    <article class="card" id="mcp-tool-token-instrumentation">
+      <div class="card-top">
+        <h3>MCP Tool Token Instrumentation <a class="anchor" href="#mcp-tool-token-instrumentation">#</a></h3>
+      </div>
+      <p>Added telemetry for Model Context Protocol (MCP) tool usage, tracking both tool count and token consumption for optimization purposes.</p>
+<div class="blabel">Evidence</div>
+<p>Token counting instrumentation at lines 446832-446838, new error code <code>Dn0 = 278</code> at line 339997 in v2.0.5</p>
+    </article>
+    <article class="card" id="oauth-profile-fetching-streamlined">
+      <div class="card-top">
+        <h3>OAuth Profile Fetching Streamlined <a class="anchor" href="#oauth-profile-fetching-streamlined">#</a></h3>
+      </div>
+      <p>Removed extraction of <code>billingType</code> field from OAuth profile responses, as this field is no longer needed.</p>
+<div class="blabel">Evidence</div>
+<p><code>QN0()</code> at line 23631 in v2.0.3, field extraction removed in v2.0.5</p>
+    </article>
+    <article class="card" id="code-modernization">
+      <div class="card-top">
+        <h3>Code Modernization <a class="anchor" href="#code-modernization">#</a></h3>
+      </div>
+      <ul><li>Removed unused <code>stream</code> module import</li><li>Updated to use ES6 import for <code>cwd()</code> from <code>node:process</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Stream import removed from line 338164 in v2.0.3; <code>cwd</code> import added at line 12278 in v2.0.5</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

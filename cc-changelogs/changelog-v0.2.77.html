@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.77 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.77."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.77</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.77</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.76 → v0.2.77</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.77 Changelog</p>
+    </article>
+    <article class="card" id="enhanced-ide-selection-integration">
+      <div class="card-top">
+        <h3>Enhanced IDE Selection Integration <a class="anchor" href="#enhanced-ide-selection-integration">#</a></h3>
+      </div>
+      <p>The IDE integration now supports a new <strong>"Add to Prompt"</strong> capability. When working with code selections from your IDE:</p>
+<ul><li><strong>Automatic prompt insertion</strong>: IDE selections can now be automatically added to your prompt input with the new <code>addToPrompt</code> parameter</li><li><strong>Improved selection handling</strong>: The system now distinguishes between viewing selections and actively including them in prompts</li></ul>
+<p><strong>Example usage</strong>: When you select code in your IDE and trigger the "Add to Prompt" action, the selected code will be automatically inserted at your cursor position in the Claude Code prompt, formatted with file context.</p>
+    </article>
+    <article class="card" id="sse-ide-connection-type">
+      <div class="card-top">
+        <h3>SSE IDE Connection Type <a class="anchor" href="#sse-ide-connection-type">#</a></h3>
+      </div>
+      <p>Added support for Server-Sent Events (SSE) based IDE connections:</p>
+<pre><code>{
+  type: &quot;sse-ide&quot;,
+  url: &quot;https://your-ide-endpoint.com/sse&quot;
+}</code></pre>
+<p>This enables real-time communication with IDEs that support SSE protocols.</p>
+    </article>
+    <article class="card" id="file-watching-and-change-detection">
+      <div class="card-top">
+        <h3>File Watching and Change Detection <a class="anchor" href="#file-watching-and-change-detection">#</a></h3>
+      </div>
+      <p>Claude Code now actively monitors files you've previously read and notifies you of changes:</p>
+<ul><li><strong>Automatic change detection</strong>: Files you've read are tracked with timestamps</li><li><strong>Smart diff display</strong>: When a watched file changes, Claude shows only the modified portions with context</li><li><strong>Performance optimization</strong>: File change checks are batched and run asynchronously</li></ul>
+<p><strong>Example</strong>: If you read a file and later it's modified externally, Claude will show:</p>
+<pre><code>File edited: /path/to/file.js
+[Shows relevant changes with line numbers]</code></pre>
+    </article>
+    <article class="card" id="enhanced-file-context-handling">
+      <div class="card-top">
+        <h3>Enhanced File Context Handling <a class="anchor" href="#enhanced-file-context-handling">#</a></h3>
+      </div>
+      <p>Improved how file mentions and contexts are processed:</p>
+<ul><li>Files mentioned in prompts now include a <code>mode</code> field to distinguish between new file references (<code>mode: "new"</code>) and edited files (<code>mode: "edited"</code>)</li><li>Better tracking of file states for more accurate context management</li></ul>
+    </article>
+    <article class="card" id="refined-selection-text-formatting">
+      <div class="card-top">
+        <h3>Refined Selection Text Formatting <a class="anchor" href="#refined-selection-text-formatting">#</a></h3>
+      </div>
+      <p>When IDE selections are auto-included in prompts, the formatting has been improved:</p>
+<ul><li>Selections with file context: <code>"The current selection is in [filename]:\n[selected code]"</code></li><li>Selections without file context: <code>"The current selection is:\n[selected code]"</code></li><li>File-only context: <code>"Currently viewing [filename]"</code></li></ul>
+    </article>
+    <article class="card" id="import-optimizations">
+      <div class="card-top">
+        <h3>Import Optimizations <a class="anchor" href="#import-optimizations">#</a></h3>
+      </div>
+      <ul><li>Replaced full module imports with targeted imports for better performance:</li><li><code>import { PassThrough as nu9 } from "stream"</code> instead of <code>import rz9 from "stream"</code></li><li><code>import { cwd as _e0 } from "node:process"</code> instead of <code>import xT2 from "node:process"</code></li></ul>
+    </article>
+    <article class="card" id="code-architecture">
+      <div class="card-top">
+        <h3>Code Architecture <a class="anchor" href="#code-architecture">#</a></h3>
+      </div>
+      <ul><li>New function <code>iR2</code> coordinates both new file extractions and file change detection</li><li>New function <code>v63</code> specifically handles watched file change detection</li><li>Improved separation of concerns between different file handling modes</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential issues with file state management by using more specific property names (<code>readFileState</code> instead of <code>readFileTimestamps</code>)</li><li>Improved error handling for file stat operations when checking for changes</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Breaking Changes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="breaking-changes">
+      <p>None - This version maintains backward compatibility with existing workflows.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

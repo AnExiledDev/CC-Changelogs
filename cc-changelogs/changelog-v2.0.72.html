@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.72 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.72."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.72</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.72</span></h1>
+<p class="sub">This release adds a new <code>/mobile</code> command with QR codes to download the Claude mobile app, improves file indexing performance using <code>git ls-files</code>, introduces session indexing for faster conversation loading, and enhances multi-agent team workflows with improved teammate lifecycle management. The TodoWrite tool now shows a deprecation notice pointing to the new task management tools.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.71 → v2.0.72</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">16 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="mobile-command-mobile-app-qr-codes">
+      <div class="card-top">
+        <h3><code>/mobile</code> Command - Mobile App QR Codes <a class="anchor" href="#mobile-command-mobile-app-qr-codes">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new slash command that displays QR codes for downloading the Claude mobile app.</p>
+<div class="blabel">Usage</div>
+<pre><code>/mobile</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Shows a QR code that links to the iOS App Store or Google Play Store</li><li>Use Tab or arrow keys to switch between iOS and Android</li><li>Press Escape or 'q' to close</li><li>Aliases: <code>/ios</code>, <code>/android</code></li></ul>
+<div class="blabel">Evidence</div>
+<p><code>s77()</code> at line 500313 (contains <code>"Show QR code to download the Claude mobile app"</code>, <code>mO0</code> object with App Store/Play Store URLs)</p>
+    </article>
+    <article class="card" id="session-indexing-gradual-rollout">
+      <div class="card-top">
+        <h3>Session Indexing [Gradual Rollout] <a class="anchor" href="#session-indexing-gradual-rollout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new session indexing system that caches conversation metadata for faster session loading.</p>
+<div class="blabel">Details</div>
+<ul><li>Creates a <code>sessions-index.json</code> file that caches session metadata</li><li>Enables faster loading of conversation history without parsing all JSONL files</li><li>Tracks session ID, message count, timestamps, branch info, and tags</li><li>Feature-flagged behind <code>tengu_session_index</code></li></ul>
+<div class="blabel">Evidence</div>
+<p><code>icB()</code> at line 274892 (contains <code>"sessions-index.json"</code>, <code>tengu_session_index</code> flag check via <code>Vm1()</code>)</p>
+    </article>
+    <article class="card" id="tool-search-beta-support">
+      <div class="card-top">
+        <h3>Tool Search Beta Support <a class="anchor" href="#tool-search-beta-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Adds the <code>tool-search-tool-2025-10-19</code> beta header for Vertex and Bedrock providers.</p>
+<div class="blabel">Details</div>
+<ul><li>New beta feature flag added to the list of Claude betas</li><li>Provider-specific version selection (different identifier for Vertex/Bedrock)</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>L4Q()</code> at line 64075 (contains <code>"tool-search-tool-2025-10-19"</code> beta string, checks <code>l4()</code> for provider)</p>
+    </article>
+    <article class="card" id="marketplace-blocklist-support">
+      <div class="card-top">
+        <h3>Marketplace Blocklist Support <a class="anchor" href="#marketplace-blocklist-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Administrators can now block specific marketplace sources via policy settings.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>blockedMarketplaces</code> policy setting to prevent installation from specific sources</li><li>Supports blocking by source type: <code>github</code>, <code>git</code>, <code>url</code>, <code>npm</code>, <code>file</code>, <code>directory</code></li><li>Matches GitHub repos, git URLs, npm packages, and local paths</li><li>Cross-format matching (e.g., SSH and HTTPS GitHub URLs treated as equivalent)</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>njA()</code> at line 279108 (contains <code>"blockedMarketplaces"</code>, <code>tU3()</code> for source matching logic)</p>
+    </article>
+    <article class="card" id="file-indexing-with-git-ls-files">
+      <div class="card-top">
+        <h3>File Indexing with <code>git ls-files</code> <a class="anchor" href="#file-indexing-with-git-ls-files">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>File indexing now uses <code>git ls-files</code> for significantly faster project file discovery in git repositories.</p>
+<div class="blabel">Details</div>
+<ul><li>Uses <code>git ls-files --recurse-submodules</code> for tracked files</li><li>Background fetches untracked files with <code>git ls-files --others</code></li><li>Falls back to ripgrep for non-git directories</li><li>Respects <code>.ignore</code> and <code>.rgignore</code> files</li><li>Caches results per working directory</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>fs5()</code> at line 447111 (contains <code>"git ls-files"</code>, <code>"getFilesUsingGit"</code> log messages, fallback to ripgrep)</p>
+    </article>
+    <article class="card" id="todowrite-deprecation-notice">
+      <div class="card-top">
+        <h3>TodoWrite Deprecation Notice <a class="anchor" href="#todowrite-deprecation-notice">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The TodoWrite tool now displays a deprecation notice recommending the new task management tools.</p>
+<div class="blabel">Details</div>
+<ul><li>Notice appears when using TodoWrite in team/multi-agent contexts</li><li>Recommends: TaskCreate, TaskGet, TaskUpdate, TaskList</li><li>The new tools support team collaboration, task dependencies, and persistent storage</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Uj8</code> at line 190520 (contains <code>"DEPRECATED"</code>, lists <code>TaskCreate</code>, <code>TaskGet</code>, <code>TaskUpdate</code>, <code>TaskList</code>)</p>
+    </article>
+    <article class="card" id="stable-channel-downgrade-dialog">
+      <div class="card-top">
+        <h3>Stable Channel Downgrade Dialog <a class="anchor" href="#stable-channel-downgrade-dialog">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When switching from beta/preview to stable channel, users now see a dialog if the stable version is older.</p>
+<div class="blabel">Details</div>
+<ul><li>Prompts when stable version is lower than current version</li><li>Options: "Allow downgrade to stable version" or "Stay on current version until stable catches up"</li><li>Prevents accidental version downgrades</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>L59()</code> at line 489041 (contains <code>"Switch to Stable Channel"</code>, <code>"Allow downgrade to stable version"</code>)</p>
+    </article>
+    <article class="card" id="settings-error-dialog">
+      <div class="card-top">
+        <h3>Settings Error Dialog <a class="anchor" href="#settings-error-dialog">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new interactive dialog when settings files contain parse errors.</p>
+<div class="blabel">Details</div>
+<ul><li>Shows which settings files have errors</li><li>Warns that files with errors are skipped entirely</li><li>Options: "Exit and fix manually" or "Continue without these settings"</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>ZK7()</code> at line 530828 (contains <code>"Settings Error"</code>, <code>"Files with errors are skipped entirely"</code>)</p>
+    </article>
+    <article class="card" id="teammate-lifecycle-improvements">
+      <div class="card-top">
+        <h3>Teammate Lifecycle Improvements <a class="anchor" href="#teammate-lifecycle-improvements">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Better handling of teammate termination and task reassignment in multi-agent workflows.</p>
+<div class="blabel">Details</div>
+<ul><li>When a teammate is terminated, open tasks assigned to them are automatically unassigned</li><li>Leader receives notification with list of unassigned tasks</li><li>Team-wide permission paths now propagate to teammates on initialization</li><li>Teammates send idle notifications to leader when their Stop hook fires</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>De2()</code> at line 465299 (contains <code>"teammate_terminated"</code>, task unassignment logic), <code>ZJ1()</code> at line 389847 (contains <code>"TeammateInit"</code>, <code>"teamAllowedPaths"</code>)</p>
+    </article>
+    <article class="card" id="invoked-skills-context">
+      <div class="card-top">
+        <h3>Invoked Skills Context <a class="anchor" href="#invoked-skills-context">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Skills invoked during a session are now tracked and can be included in system context.</p>
+<div class="blabel">Details</div>
+<ul><li>Tracks skill name, path, content, and invocation time</li><li>New <code>invoked_skills</code> message type for system context</li><li>Skills sorted by most recent invocation</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>N65()</code> at line 377668 (contains <code>"invoked_skills"</code>, <code>BS0()</code> for skill tracking), <code>QS0()</code> at line 2443 (skill registration)</p>
+    </article>
+    <article class="card" id="enhanced-dom-event-system">
+      <div class="card-top">
+        <h3>Enhanced DOM Event System <a class="anchor" href="#enhanced-dom-event-system">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Internal Ink rendering now uses a proper DOM event system with capturing and bubbling phases.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>Dg</code> base event class with full event phase support</li><li>Keyboard events (<code>PsA</code>), focus events (<code>pZA</code>), paste events (<code>qc1</code>), resize events (<code>Rc1</code>)</li><li>Proper event propagation with <code>stopPropagation()</code> and <code>stopImmediatePropagation()</code></li><li><code>eventTargetId</code> attribute tracking for event dispatch</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Dg</code> class at line 169824, <code>Hg()</code> at line 169805 (event dispatch), <code>K$8()</code> at line 169776 (path building with capturing/bubbling)</p>
+    </article>
+    <article class="card" id="tool-reference-filtering">
+      <div class="card-top">
+        <h3>Tool Reference Filtering <a class="anchor" href="#tool-reference-filtering">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Tool references in conversation history are now filtered when the referenced tool is no longer available.</p>
+<div class="blabel">Details</div>
+<ul><li>Prevents errors when resuming sessions after tools have been removed</li><li>Logs warning when filtering out unavailable tool references</li><li>Replaces empty results with placeholder text</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>p97()</code> at line 483382 (contains <code>"Filtering out tool_reference for unavailable tool"</code>)</p>
+    </article>
+    <article class="card" id="shell-cwd-reset-warning-parsing">
+      <div class="card-top">
+        <h3>Shell CWD Reset Warning Parsing <a class="anchor" href="#shell-cwd-reset-warning-parsing">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Shell output now properly parses and extracts CWD reset warnings.</p>
+<div class="blabel">Details</div>
+<ul><li>Extracts "Shell cwd was reset to ..." messages from stderr</li><li>Separates warning from actual error output for cleaner display</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>f17()</code> at line 460046 (contains <code>cwdResetWarning</code>, regex <code>Ks2</code> for <code>"Shell cwd was reset to"</code>)</p>
+    </article>
+    <article class="card" id="bash-command-prefix-stripping">
+      <div class="card-top">
+        <h3>Bash Command Prefix Stripping <a class="anchor" href="#bash-command-prefix-stripping">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Bash tool now strips common command prefixes when analyzing commands.</p>
+<div class="blabel">Details</div>
+<ul><li>Strips: <code>timeout</code>, <code>time</code>, <code>nice -n</code>, <code>nohup</code> prefixes</li><li>Helps with command pattern matching and analysis</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>oO2()</code> at line 397353 (regex patterns for <code>timeout</code>, <code>time</code>, <code>nice</code>, <code>nohup</code>)</p>
+    </article>
+    <article class="card" id="minimum-version-enforcement">
+      <div class="card-top">
+        <h3>Minimum Version Enforcement <a class="anchor" href="#minimum-version-enforcement">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Updates can now be blocked if they would install a version below the configured minimum.</p>
+<div class="blabel">Details</div>
+<ul><li>Checks <code>minimumVersion</code> from version info before updating</li><li>Logs skip message when update would go below minimum</li><li>Helps prevent accidental downgrades in managed environments</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>SHA()</code> at line 523149 (contains <code>"minimumVersion"</code>, <code>"Skipping update to"</code>, <code>"below minimumVersion"</code>)</p>
+    </article>
+    <article class="card" id="btw-side-questions-in-development">
+      <div class="card-top">
+        <h3>BTW Side Questions [In Development] <a class="anchor" href="#btw-side-questions-in-development">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Quick side questions that fork a conversation without using the main context.</p>
+<div class="blabel">Status</div>
+<p>Stubbed - regex exists but parser always returns <code>{ isBtw: !1 }</code></p>
+<div class="blabel">Details</div>
+<ul><li>Intended syntax: Start message with "btw" to ask a quick question</li><li>Would create a forked conversation for the side question</li><li>Side questions cannot use tools</li><li>UI component exists with "btw" label and "Answering..." spinner</li><li>Full infrastructure exists but <code>vK1()</code> returns false</li></ul>
+<p>Orphaned Tip: ⚠️ Users may see: "Start with 'btw' to ask a quick side question without interrupting Claude's current work" - but the feature doesn't work yet.</p>
+<div class="blabel">Evidence</div>
+<p><code>vK1()</code> at line 451168 (returns <code>{ isBtw: !1, question: "" }</code>), <code>Ze5</code> regex at line 451196 (<code>/^btw\b/gi</code>), tip definition at line 472886 (<code>id: "btw-side-question"</code>, <code>isRelevant: !0</code> - always shows)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed escaping of parentheses in tool rule content (<code>mJ7()</code>, <code>dJ7()</code>, <code>cM()</code> at line 519380 - proper handling of <code>\(</code> and <code>\)</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The new task management tools (TaskCreate, TaskGet, TaskUpdate, TaskList) are designed for multi-agent team workflows. If you're using TodoWrite in a team context, consider migrating to the new tools for better collaboration support.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

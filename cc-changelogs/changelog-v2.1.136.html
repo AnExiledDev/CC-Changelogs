@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.136 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.136."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.136</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">codex &middot; gpt-5.5</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.136</span></h1>
+<p class="sub">Claude Code 2.1.136 adds admin-controlled managed settings helpers, a new <code>autoMode.hard_deny</code> rule category, and gradual-rollout routine notifications. It also improves MCP configuration compatibility, <code>--worktree</code> failure messages, WSL image paste support, and PowerShell safety checks.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.133 → v2.1.136</b></span><span class="chip"><span class="k">Provider</span> <b>codex</b></span><span class="chip"><span class="k">Model</span> <b>gpt-5.5</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enterprise-managed-settings-helper">
+      <div class="card-top">
+        <h3>Enterprise Managed Settings Helper <a class="anchor" href="#enterprise-managed-settings-helper">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Organizations can now configure an admin-controlled helper executable that computes managed settings at startup.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;policyHelper&quot;: {
+    &quot;path&quot;: &quot;/usr/local/bin/claude-policy-helper&quot;,
+    &quot;timeoutMs&quot;: 5000,
+    &quot;refreshIntervalMs&quot;: 60000
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The helper is honored only from admin-controlled policy sources.</li><li>It can return <code>managedSettings</code>, <code>claudeMd</code>, and <code>appendSystemPrompt</code>.</li><li>Claude Code validates the helper path, rejects non-absolute paths, and can refresh the helper output periodically.</li><li>If refresh fails, Claude Code retains the current policy instead of dropping managed settings.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Managed settings helper schema and runtime execution (search for <code>"policyHelper"</code> and <code>"Executable that computes managed settings at startup. Honored only from admin-controlled policy sources."</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-hard-deny-rules">
+      <div class="card-top">
+        <h3>Auto Mode Hard-Deny Rules <a class="anchor" href="#auto-mode-hard-deny-rules">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Auto mode custom rules now distinguish soft blocks from hard security blocks.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;autoMode&quot;: {
+    &quot;allow&quot;: [&quot;$defaults&quot;],
+    &quot;soft_deny&quot;: [&quot;$defaults&quot;],
+    &quot;hard_deny&quot;: [
+      &quot;$defaults&quot;,
+      &quot;Never send secrets to external endpoints&quot;
+    ],
+    &quot;environment&quot;: [&quot;$defaults&quot;]
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>soft_deny</code> is now described as destructive or irreversible behavior that clear user intent can authorize.</li><li><code>hard_deny</code> is new and covers security-boundary actions that user intent does not clear.</li><li><code>claude auto-mode defaults</code>, <code>claude auto-mode config</code>, and <code>claude auto-mode critique</code> now understand all four categories: <code>allow</code>, <code>soft_deny</code>, <code>hard_deny</code>, and <code>environment</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Auto mode schema and CLI output now include <code>hard_deny</code> (search for <code>"Rules for the auto mode classifier HARD BLOCK section"</code> and <code>"autoMode.{allow, soft_deny, hard_deny, environment}"</code>)</p>
+    </article>
+    <article class="card" id="routine-fired-notifications-gradual-rollout">
+      <div class="card-top">
+        <h3>Routine Fired Notifications [Gradual Rollout] <a class="anchor" href="#routine-fired-notifications-gradual-rollout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code can now notify you when remote routines have run.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When enabled, Claude Code checks Claude routine trigger state and shows a notification such as a routine name or “routines ran”.</li><li>Notifications link back to <code>/code/routines</code>.</li><li>This is gated by remote-session support and a feature flag, so not all users will see it immediately.</li><li>Organizations can disable routine dispatch through policy.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Routine trigger notification path (search for <code>"routine-fired"</code>, <code>"/code/routines"</code>, and <code>"Routines are disabled by your organization's policy."</code>)</p>
+    </article>
+    <article class="card" id="mcp-server-config-compatibility">
+      <div class="card-top">
+        <h3>MCP Server Config Compatibility <a class="anchor" href="#mcp-server-config-compatibility">#</a></h3>
+      </div>
+      <p>Claude Code now accepts <code>streamable-http</code> as an MCP transport alias for HTTP and gives clearer errors for invalid MCP server types.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;mcpServers&quot;: {
+    &quot;example&quot;: {
+      &quot;type&quot;: &quot;streamable-http&quot;,
+      &quot;url&quot;: &quot;https://example.com/mcp&quot;
+    }
+  }
+}</code></pre>
+<div class="blabel">Evidence</div>
+<p>MCP transport normalization and validation (search for <code>"streamable-http"</code> and <code>"Valid types are: stdio, sse, http (or streamable-http), ws, sdk"</code>)</p>
+    </article>
+    <article class="card" id="safer-mcp-client-secret-storage">
+      <div class="card-top">
+        <h3>Safer MCP Client Secret Storage <a class="anchor" href="#safer-mcp-client-secret-storage">#</a></h3>
+      </div>
+      <p>When adding HTTP/SSE MCP servers with <code>--client-secret</code>, Claude Code now preserves the server config even if secure storage is unavailable, then tells you how to retry secret storage.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude mcp add --transport http my-server https://example.com/mcp --client-id abc --client-secret</code></pre>
+<div class="blabel">Evidence</div>
+<p>MCP add fallback warning (search for <code>"Server added, but the client secret could not be stored"</code>)</p>
+    </article>
+    <article class="card" id="clearer-worktree-setup-failures">
+      <div class="card-top">
+        <h3>Clearer Worktree Setup Failures <a class="anchor" href="#clearer-worktree-setup-failures">#</a></h3>
+      </div>
+      <p><code>--worktree</code> now gives more actionable errors when workspace trust has not been accepted, when a worktree branch is already checked out elsewhere, or when a stale worktree directory blocks reuse.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --worktree feature-name</code></pre>
+<div class="blabel">Evidence</div>
+<p>Worktree diagnostics (search for <code>"Workspace trust not yet accepted. Run \</code>claude\<code> once in this directory and accept the trust dialog, then retry with --worktree."</code> and <code>"is already checked out in a worktree at"</code>)</p>
+    </article>
+    <article class="card" id="wsl-clipboard-image-paste">
+      <div class="card-top">
+        <h3>WSL Clipboard Image Paste <a class="anchor" href="#wsl-clipboard-image-paste">#</a></h3>
+      </div>
+      <p>Claude Code can now fall back to Windows PowerShell from WSL when checking or saving image clipboard contents.</p>
+<div class="blabel">Evidence</div>
+<p>WSL clipboard fallback to Windows PowerShell (search for <code>"powershell.exe)"</code> and <code>"Get-Clipboard -Format Image"</code>)</p>
+    </article>
+    <article class="card" id="broader-effort-max-documentation">
+      <div class="card-top">
+        <h3>Broader <code>/effort max</code> Documentation <a class="anchor" href="#broader-effort-max-documentation">#</a></h3>
+      </div>
+      <p>The <code>/effort</code> help text now documents <code>max</code> as available for Opus 4.6/4.7 and Sonnet 4.6, instead of only Opus 4.6/4.7.</p>
+<div class="blabel">Usage</div>
+<pre><code>/effort max</code></pre>
+<div class="blabel">Evidence</div>
+<p>Effort help text (search for <code>"Opus 4.6/4.7, Sonnet 4.6"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed <code>--worktree</code> starting before workspace trust is accepted, replacing a later failure with a direct trust message. Evidence: trust gate added before worktree creation (search for <code>"Workspace trust not yet accepted"</code>)</li></ul>
+<ul><li>Improved PowerShell 5.1 command safety detection for cwd-first command shadowing. Evidence: new warning for commands that create a file which shadows a later command (search for <code>"Windows PowerShell 5.1 cwd-first resolution"</code>)</li></ul>
+<ul><li>Improved PowerShell validation around runtime-resolved Unicode codepoint escapes. Evidence: new classifier message (search for <code>"PowerShell \</code>u{HEX} codepoint escape is runtime-resolved and cannot be statically validated."`)</li></ul>
+<ul><li>Fixed bare Git repository detection to recognize <code>.git</code> files that contain <code>gitdir:</code> and avoid misclassifying linked worktrees or nested repositories. Evidence: updated Git structure detection (search for <code>"gitdir:"</code>)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">codex · gpt-5.5</div></div><div><div class="k">Primary diff</div><div class="val">archive/claude-code/changes/changes-v2.1.136.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive/claude-code/changes/string-diff-v2.1.136.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

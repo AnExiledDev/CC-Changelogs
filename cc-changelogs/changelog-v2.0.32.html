@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.32 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.32."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.32</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.32</span></h1>
+<p class="sub">Version 2.0.32 delivers significant performance improvements with optimized terminal rendering that eliminates flicker, introduces an automated tool execution API for building agentic workflows, and enhances the user feedback system for better accuracy. The release also removes seasonal Halloween content and adds helpful UI hints for users with 1M context access.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.31 → v2.0.32</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="automated-tool-execution-api-betatoolrunner">
+      <div class="card-top">
+        <h3>Automated Tool Execution API (BetaToolRunner) <a class="anchor" href="#automated-tool-execution-api-betatoolrunner">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A new <code>toolRunner()</code> method in the Messages API that automatically executes tools in an agentic loop, eliminating the need to manually handle tool_use/tool_result message cycles.</p>
+<p><strong>How to use:</strong></p>
+<pre><code>const runner = client.beta.messages.toolRunner({
+  model: &quot;claude-sonnet-4-20250514&quot;,
+  max_tokens: 1024,
+  max_iterations: 10, // Limit agentic loops
+  tools: [
+    {
+      name: &quot;get_weather&quot;,
+      run: async (input) =&gt; {
+        // Your tool implementation
+        return &quot;Sunny, 72°F&quot;;
+      }
+    }
+  ],
+  messages: [{ role: &quot;user&quot;, content: &quot;What&#x27;s the weather?&quot; }]
+});
+
+// Stream each iteration
+for await (const messageStream of runner) {
+  // Handle streaming response
+}
+
+// Or wait for completion
+const finalMessage = await runner.done();</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Automatically detects <code>tool_use</code> blocks in assistant responses and executes matching tools</li><li>Supports both streaming and non-streaming modes</li><li>Configurable iteration limits via <code>max_iterations</code> parameter</li><li>Tools must implement a <code>run()</code> method that returns results</li><li>Optional <code>parse()</code> method for input validation/transformation</li><li>Returns properly formatted <code>tool_result</code> messages with error handling</li><li>Can be controlled manually via <code>generateToolResponse()</code> and <code>pushMessages()</code> methods</li><li><strong>Evidence</strong>: Class <code>TYA</code> at line 82603, function <code>bh9()</code> at line 82564, variable <code>uZ1</code> at line 82604, new <code>toolRunner()</code> method at line 82828</li></ul>
+    </article>
+    <article class="card" id="stickers-command">
+      <div class="card-top">
+        <h3>/stickers Command <a class="anchor" href="#stickers-command">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New slash command to order official Claude Code stickers</p>
+<p><strong>How to use:</strong></p>
+<pre><code>/stickers</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Opens browser to https://www.stickermule.com/claudecode</li><li>Falls back to displaying URL if browser open fails</li><li>Available in all contexts (always enabled, not hidden)</li><li>Does not support non-interactive mode</li><li><strong>Evidence</strong>: Variable <code>$d2</code> at line 463792</li></ul>
+    </article>
+    <article class="card" id="enhanced-context-window-hints">
+      <div class="card-top">
+        <h3>Enhanced Context Window Hints <a class="anchor" href="#enhanced-context-window-hints">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatic notifications when users with Sonnet 1M access approach context limits</p>
+<p><strong>How to use:</strong> These hints appear automatically when relevant:</p>
+<pre><code># Warning when context is full:
+Run /compact or /model sonnet[1m] to continue
+
+# Tip after compaction:
+Tip: You have access to Sonnet 1M with 5x more context</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Only shown to users with 1M context access (controlled via access check)</li><li>Highlights the 5x context multiplier benefit</li><li>Integrated into warning and tip notification system</li><li>Improves discoverability of the 1M context feature</li><li><strong>Evidence</strong>: Functions <code>Wh6()</code> at line 317408 and <code>p8A()</code> at line 317415</li></ul>
+    </article>
+    <article class="card" id="optimized-terminal-rendering">
+      <div class="card-top">
+        <h3>Optimized Terminal Rendering <a class="anchor" href="#optimized-terminal-rendering">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New screen diffing algorithm that only updates changed characters instead of clearing and re-rendering the entire terminal, eliminating flicker and improving performance.</p>
+<p><strong>How it works:</strong> The renderer now:</p>
+<ol><li>Compares previous and current screen buffers character-by-character</li><li>Only updates positions where content changed</li><li>Manages cursor movement efficiently during incremental updates</li><li>Falls back to full re-render only when screen dimensions change</li></ol>
+<p><strong>Details:</strong></p>
+<ul><li>Significantly reduces terminal flicker during updates</li><li>Improves performance for large terminal windows</li><li>Better user experience during streaming responses</li><li>Implements transaction-based cursor management for atomic updates</li><li><strong>Evidence</strong>: Functions <code>qRA()</code> at line 70135, <code>uR0()</code> at line 70140, <code>mR0()</code> at line 70379, class <code>dR0</code> at line 70395</li></ul>
+    </article>
+    <article class="card" id="feedback-survey-system-refinements">
+      <div class="card-top">
+        <h3>Feedback Survey System Refinements <a class="anchor" href="#feedback-survey-system-refinements">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> The in-app feedback survey mechanism was refactored for improved accuracy and maintainability</p>
+<p><strong>Key improvements:</strong></p>
+<ul><li>Switched from tracking user message counts to tracking actual submission counts, preventing inconsistencies from message editing or restoration</li><li>Moved survey-specific state from mixed local/global storage to centralized app-level state management</li><li>Simplified conditional logic with early returns for better maintainability</li><li>Adjusted triggering configuration:</li><li>Enabled for all models (was disabled by default)</li><li>Reduced probability from 100% to 0.5% when conditions are met</li><li>Reduced turn requirement between surveys from 15 to 10</li><li>Effectively disabled global cooldown (increased from 1 hour to ~1157 days)</li><li>Removed per-conversation cooldown (30 minutes)</li></ul>
+<p><strong>Net effect:</strong> Surveys appear less frequently but with more accurate tracking across sessions</p>
+<div class="blabel">Evidence</div>
+<p>Function <code>Ky2()</code> at line 445844 (renamed from <code>mS2</code>), configuration <code>ku5</code> at line 445950, state structure at line 298044</p>
+    </article>
+    <article class="card" id="import-optimizations">
+      <div class="card-top">
+        <h3>Import Optimizations <a class="anchor" href="#import-optimizations">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Consolidated and reorganized import statements for better tree-shaking and bundle size optimization</p>
+<p><strong>Changes:</strong></p>
+<ul><li>Replaced <code>import We from "stream"</code> with <code>import { PassThrough as sr5 } from "stream"</code> at line 482663</li><li>Replaced <code>import XI1 from "node:child_process"</code> with <code>import { execSync as l6Q, spawn as yd8 } from "node:child_process"</code> at line 249497</li><li>Replaced <code>import _P9 from "node:os"</code> with <code>import { homedir as Wo5 } from "node:os"</code> at line 484356</li><li>Added <code>import { cwd as XT0 } from "node:process"</code> at line 70828</li><li>Added <code>import { join as Dn2, basename as Pr5 } from "path"</code> at line 481476</li></ul>
+<div class="blabel">Evidence</div>
+<p>Diff lines 10-21 (removed) and 534-537, 955-958, 1093-1096, 1105-1112 (added)</p>
+    </article>
+    <article class="card" id="initialization-flow-enhancement">
+      <div class="card-top">
+        <h3>Initialization Flow Enhancement <a class="anchor" href="#initialization-flow-enhancement">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> The SDK initialization function now sends authentication status after successful initialization when in headless mode</p>
+<p><strong>Details:</strong></p>
+<ul><li>After initialization completes, checks for ongoing authentication</li><li>Sends <code>auth_status</code> event with authentication state, output, and error information</li><li>Only triggers in headless/non-interactive contexts (parameter <code>J</code> must be true)</li><li>Helps SDKs and automation tools track authentication progress</li><li><strong>Evidence</strong>: Function <code>Go5()</code> (renamed from <code>kr5</code>) at line 483837, lines 1288-1301 show the new auth status emission</li></ul>
+    </article>
+    <article class="card" id="helper-utility-functions">
+      <div class="card-top">
+        <h3>Helper Utility Functions <a class="anchor" href="#helper-utility-functions">#</a></h3>
+      </div>
+      <p>Several new utility functions were added to improve code organization:</p>
+<ul><li><code>yn1()</code> at line 416368: Enhanced slice function with offset support (replaces <code>Fn1()</code>)</li><li><code>kn1()</code> at line 416372: Relative path calculator that returns absolute path if result would escape working directory</li><li><code>_n1()</code> at line 416377: Formats limit/offset parameters for display</li><li><code>Sb5()</code> at line 430186: Reads <code>CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY</code> environment variable with default value of 10</li><li><code>YuA()</code> at line 207879: Strips <code>&lt;sandbox_violations&gt;</code> tags from content using regex</li><li><code>dS2()</code> at line 470949: Comparison function for checking if one value exceeds another in a specific context</li></ul>
+    </article>
+    <article class="card" id="state-management-updates">
+      <div class="card-top">
+        <h3>State Management Updates <a class="anchor" href="#state-management-updates">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Added <code>feedbackSurvey</code> object to app-level state structure</p>
+<p><strong>New state fields:</strong></p>
+<pre><code>feedbackSurvey: {
+  timeLastShown: null,
+  submitCountAtLastAppearance: null
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Persists survey appearance timing and submission count</li><li>Enables accurate rate limiting across sessions</li><li>Synced to global settings via state change handler</li><li><strong>Evidence</strong>: State structure at line 298044, sync handler in <code>Wb()</code> (renamed from <code>Bb</code>) at line 482021</li></ul>
+    </article>
+    <article class="card" id="message-selection-after-restoration">
+      <div class="card-top">
+        <h3>Message Selection After Restoration <a class="anchor" href="#message-selection-after-restoration">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Fixed message selection index calculation after restoring previous conversations</p>
+<p><strong>Details:</strong></p>
+<ul><li>Removed logic that attempted to find the previously selected message by ID after restoration</li><li>Now resets to first message (index 0) when message list changes</li><li>Prevents out-of-bounds errors when message IDs don't match after restoration</li><li><strong>Evidence</strong>: Function <code>w11()</code> at line 439713 (simplified from <code>I11()</code> at line 439313)</li></ul>
+    </article>
+    <article class="card" id="seasonal-content-removal">
+      <div class="card-top">
+        <h3>Seasonal Content Removal <a class="anchor" href="#seasonal-content-removal">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed Halloween-themed ASCII art mascot variants</p>
+<p><strong>Details:</strong></p>
+<ul><li>Removed functions: <code>do1()</code>, <code>cg5()</code>, <code>pg5()</code>, <code>ig5()</code>, <code>ag5()</code></li><li>Removed feature flag check: <code>tengu_halloween</code></li><li>Removed environment variable check: <code>CLAUDE_CODE_FORCE_HALLOWEEN</code></li><li>Simplified mascot rendering to single implementation (function <code>Ft1()</code> at line 444608)</li><li>The Halloween mascots featured witch hats with green decoration that were displayed during October/November 2024</li><li><strong>Evidence</strong>: Diff lines 222-416 (removed functions), new simplified function at line 444608</li></ul>
+    </article>
+    <article class="card" id="prompt-template-consolidation">
+      <div class="card-top">
+        <h3>Prompt Template Consolidation <a class="anchor" href="#prompt-template-consolidation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Consolidated prompt template definitions into reusable variable references</p>
+<p><strong>Details:</strong></p>
+<ul><li>TodoWrite tool description moved to variable <code>HoB</code>/<code>DoB</code> at line 205368</li><li>ExitPlanMode tool description moved to variable <code>DR2</code>/<code>KR2</code> at line 434031</li><li>Reduces duplication and makes prompt updates easier to maintain</li><li><strong>Evidence</strong>: Variables removed from v2.0.31 lines 205049-220 and 433633-253, re-added as variables in v2.0.32</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Version Information</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="version-information">
+      <ul><li><strong>SDK Version:</strong> Updated from 0.60.0 to 0.66.0</li><li><strong>Variable <code>Dh</code> at line 81689</strong></li></ul>
+    </article>
+    <article class="card" id="constants-added">
+      <div class="card-top">
+        <h3>Constants Added <a class="anchor" href="#constants-added">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li><code>Mk0</code> at line 83970: <code>"\n\nHuman:"</code> prompt separator</li><li><code>Ok0</code> at line 83971: <code>"\n\nAssistant:"</code> prompt separator</li></ul>
+    </article>
+    <article class="card" id="module-initialization">
+      <div class="card-top">
+        <h3>Module Initialization <a class="anchor" href="#module-initialization">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li><code>b10</code> at line 481665: New initialization block for path-related utilities</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

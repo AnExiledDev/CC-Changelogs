@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.104 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.104."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.104</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.104</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.103 → v0.2.104</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.104 Changelog</p>
+    </article>
+    <article class="card" id="web-search-integration">
+      <div class="card-top">
+        <h3>Web Search Integration <a class="anchor" href="#web-search-integration">#</a></h3>
+      </div>
+      <ul><li><strong>New <code>/websearch</code> command</strong>: Search the web directly from Claude Code</li><li>Domain filtering supported with <code>--allowed-domains</code> and <code>--blocked-domains</code> flags</li><li>Returns formatted search results with titles and URLs</li><li>Limited to 8 searches per conversation</li><li>Currently available in the US only</li></ul>
+<div class="blabel">Example usage</div>
+<pre><code>  /websearch &quot;latest React 19 features&quot;
+  /websearch &quot;Python async best practices&quot; --allowed-domains=python.org,realpython.com</code></pre>
+    </article>
+    <article class="card" id="enhanced-ide-integration">
+      <div class="card-top">
+        <h3>️ Enhanced IDE Integration <a class="anchor" href="#enhanced-ide-integration">#</a></h3>
+      </div>
+      <ul><li><strong>New <code>/ide</code> command</strong>: Manage IDE connections and integrations</li><li>Connect to VS Code, Cursor, or other supported IDEs with Claude Code extensions</li><li>View connection status and available IDEs</li><li>Disconnect from current IDE</li></ul>
+<div class="blabel">Example usage</div>
+<pre><code>  /ide  # Opens IDE selection interface</code></pre>
+    </article>
+    <article class="card" id="database-status-monitoring">
+      <div class="card-top">
+        <h3>Database Status Monitoring <a class="anchor" href="#database-status-monitoring">#</a></h3>
+      </div>
+      <ul><li>Added database health checks to system diagnostics</li><li>Database availability now shown in status displays</li><li>Warning when database is unavailable (affects continue/resume features)</li></ul>
+    </article>
+    <article class="card" id="token-usage-tracking">
+      <div class="card-top">
+        <h3>Token Usage Tracking <a class="anchor" href="#token-usage-tracking">#</a></h3>
+      </div>
+      <ul><li>Enhanced token counting with cache-aware metrics</li><li>Track cache read tokens separately</li><li>Track cache creation tokens</li><li>Better cost estimation with unknown model handling</li><li>Last interaction time tracking</li></ul>
+    </article>
+    <article class="card" id="authentication-improvements">
+      <div class="card-top">
+        <h3>Authentication Improvements <a class="anchor" href="#authentication-improvements">#</a></h3>
+      </div>
+      <ul><li>Improved token refresh mechanism with file locking</li><li>Prevents race conditions during concurrent refresh attempts</li><li>Automatic retry with exponential backoff</li><li>Better error handling for locked resources</li></ul>
+    </article>
+    <article class="card" id="memory-management">
+      <div class="card-top">
+        <h3>Memory Management <a class="anchor" href="#memory-management">#</a></h3>
+      </div>
+      <ul><li>New memory size warnings:</li><li>Warning threshold at 92% of limit (previously 95%)</li><li>Large file detection for memory items exceeding threshold</li><li>ULTRACLAUDE.md file size monitoring (warns if &gt; 1000 chars)</li></ul>
+    </article>
+    <article class="card" id="system-status-display">
+      <div class="card-top">
+        <h3>️ System Status Display <a class="anchor" href="#system-status-display">#</a></h3>
+      </div>
+      <ul><li>Enhanced startup diagnostics showing:</li><li>Working directory information</li><li>Memory usage with specific file warnings</li><li>IDE connection status</li><li>Database availability</li></ul>
+    </article>
+    <article class="card" id="dependencies">
+      <div class="card-top">
+        <h3>Dependencies <a class="anchor" href="#dependencies">#</a></h3>
+      </div>
+      <ul><li>Added <code>graceful-fs</code> for improved file system operations</li><li>Added <code>proper-lockfile</code> for concurrent access control</li><li>Added <code>retry</code> for robust operation retries</li><li>Added <code>signal-exit</code> for better process cleanup</li></ul>
+    </article>
+    <article class="card" id="internal-improvements">
+      <div class="card-top">
+        <h3>Internal Improvements <a class="anchor" href="#internal-improvements">#</a></h3>
+      </div>
+      <ul><li>Better error handling for file system operations</li><li>Improved retry logic for transient failures</li><li>Enhanced process signal handling</li><li>More robust file locking mechanisms</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed duplicate comment issue in generated code</li><li>Improved handling of file system errors (EMFILE, ENFILE)</li><li>Better cleanup on process exit</li><li>Fixed race conditions in token refresh</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Beta Features</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="beta-features">
+      <ul><li>Support for custom betas via <code>ANTHROPIC_BETAS</code> environment variable</li><li>Comma-separated list of beta feature flags</li><li>Example: <code>ANTHROPIC_BETAS=feature1,feature2</code></li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

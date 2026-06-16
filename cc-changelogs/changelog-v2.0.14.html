@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.14 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.14."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.14</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.14</span></h1>
+<p class="sub">This release focuses on improving the plugin installation experience with a streamlined UI, better executable file validation, and enhanced directory path handling across different platforms.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.13 → v2.0.14</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="platform-aware-user-directory-detection">
+      <div class="card-top">
+        <h3>Platform-Aware User Directory Detection <a class="anchor" href="#platform-aware-user-directory-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added cross-platform support for detecting standard user directories (Desktop, Documents, Downloads) with platform-specific environment variable handling.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>Windows: Uses <code>USERPROFILE</code> environment variable</li><li>Linux/WSL: Respects XDG directory specifications (<code>XDG_DESKTOP_DIR</code>, <code>XDG_DOCUMENTS_DIR</code>, <code>XDG_DOWNLOAD_DIR</code>)</li><li>macOS: Uses standard home directory paths</li><li>Unknown platforms: Falls back to default paths with a warning</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Automatically detects the operating system and applies appropriate path resolution</li><li>Provides directory categorization to identify if a path is "home", "desktop", "documents", "downloads", or "other"</li><li><strong>Evidence</strong>: <code>Im1() at line 301093</code> and <code>Yi0() at line 455838</code> in v2.0.14</li></ul>
+    </article>
+    <article class="card" id="improved-executable-file-validation">
+      <div class="card-top">
+        <h3>Improved Executable File Validation <a class="anchor" href="#improved-executable-file-validation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced executable file checking to exclude zero-byte files</p>
+<p><strong>How it works:</strong> The executable validation now explicitly rejects empty files that previously might have been incorrectly considered valid executables.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Checks <code>file.size === 0</code> before attempting to verify execute permissions</li><li>Prevents false positives when scanning for executable files</li><li>More robust validation for system compatibility checks</li><li><strong>Evidence</strong>: <code>MB1() at line 280658</code> - added <code>Q.size === 0</code> check</li></ul>
+    </article>
+    <article class="card" id="simplified-plugin-installation-ui">
+      <div class="card-top">
+        <h3>Simplified Plugin Installation UI <a class="anchor" href="#simplified-plugin-installation-ui">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Streamlined the plugin installation workflow by removing the "Mark for installation" option from the plugin details screen</p>
+<p><strong>Changes:</strong></p>
+<ul><li>Removed "Mark for installation" / "Unmark for installation" toggle from plugin details view</li><li>Simplified to direct "Install now" action</li><li>Selection/deselection still available in the plugin list view using spacebar</li><li>Cleaner, more focused plugin details interface</li></ul>
+<div class="evidence-label">Evidence</div>
+<ul><li>v2.0.13: Had "Mark for installation" option at line 438131 and dynamic "Unmark for installation" at line 438286</li><li>v2.0.14: Option removed from <code>rUQ()</code> function - not found in new version</li></ul>
+    </article>
+    <article class="card" id="enhanced-plugin-list-visual-polish">
+      <div class="card-top">
+        <h3>Enhanced Plugin List Visual Polish <a class="anchor" href="#enhanced-plugin-list-visual-polish">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Multiple UI refinements to improve the plugin installation experience</p>
+<p><strong>Changes:</strong></p>
+<ul><li>Title capitalization: Changed "Select Marketplace" to "Select marketplace" for consistency</li><li>Title capitalization: Changed "Install Plugins" to "Install plugins" for consistency</li><li>Icon change: Replaced "arrowRight" (→) with "pointerSmall" (›) for better visual hierarchy</li><li>Selection indicator: Changed from "play" (▶) to "radioOn" (◉) for selected plugins</li><li>Improved spacing and alignment in plugin lists</li></ul>
+<div class="evidence-label">Evidence</div>
+<ul><li>Title changes at lines 438189/438215 (v2.0.13) vs 438265/438291 (v2.0.14)</li><li>Icon changes visible in diff at lines showing <code>M0.pointerSmall</code> vs <code>q0.arrowRight</code> and <code>M0.radioOn</code> vs <code>q0.play</code></li></ul>
+    </article>
+    <article class="card" id="optimized-terminal-rendering">
+      <div class="card-top">
+        <h3>Optimized Terminal Rendering <a class="anchor" href="#optimized-terminal-rendering">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Internal refactoring of cursor visibility tracking for more efficient terminal rendering</p>
+<p><strong>Details:</strong></p>
+<ul><li>Replaced manual <code>hasHiddenCursor</code> state tracking with dynamic <code>cursorVisible</code> checks</li><li>More precise cursor state management based on actual frame visibility</li><li>Changed from <code>resetLineCount()</code> to more comprehensive <code>reset()</code> method</li><li>Internal optimization with no user-visible behavior changes</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>n90</code> class at line 69693, <code>renderEfficiently()</code> method shows cursor visibility logic</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <p>The following changes are internal refactorings with no direct user impact:</p>
+<ul><li>Updated import statements for better module organization</li><li>Variable renaming throughout the codebase (standard minification pattern changes)</li><li>Added <code>bH1 = "AgentOutputTool"</code> string constant at line 433177 (no functional change)</li><li>Added helper functions <code>QF8()</code> and <code>ZF8()</code> for plugin UI rendering logic</li></ul>
+<p><strong>Migration Notes:</strong> No breaking changes. All existing workflows continue to work as before.</p>
+<p><strong>Installation:</strong> Update using your package manager: <code>npm install -g @anthropic-ai/claude-code@2.0.14</code></p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

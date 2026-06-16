@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.117 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.117."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.117</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.117</span></h1>
+<p class="sub">This release introduces the <code>/fork</code> command for spawning background agents that inherit the full conversation context, a team artifacts discovery system that notifies you about new skills and commands from teammates, and one-time scheduled remote agent execution (<code>run_once_at</code>). It also includes significant security hardening (path traversal detection, version string validation, stricter git reflog safety, <code>cd</code> multi-argument validation), a terminology rename from "triggers" to "routines" for scheduled agents, removal of the <code>/mode</code> and <code>/autocompact</code> interactive commands, and updated model deprecation tracking with remapping for Opus 4, Opus 4.1, and Sonnet 4.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.116 → v2.1.117</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">27</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">8</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">24 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="fork-command">
+      <div class="card-top">
+        <h3>/fork Command <a class="anchor" href="#fork-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Spawn a background agent fork that inherits the full conversation context and executes a specific directive independently.</p>
+<div class="blabel">Usage</div>
+<pre><code>/fork &lt;directive&gt;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The fork receives the parent conversation's full history as read-only reference context</li><li>Each fork executes ONE directive, then stops — it is not a continuation of the parent</li><li>Fork prompts should be specific directives about what to do, not descriptions of the situation</li><li>The fork agent name is auto-generated from the first few words of the directive</li><li>Requires at least one conversation turn before forking (you'll see "Cannot fork before the first conversation turn" if attempted too early)</li><li>Controlled by the <code>tengu_copper_fox</code> feature flag or <code>CLAUDE_CODE_FORK_SUBAGENT</code> environment variable</li></ul>
+<div class="blabel">Evidence</div>
+<p>Fork command handler (search for <code>"Usage: /fork"</code>) — <code>mp1</code> at line ~548474; fork spawner <code>_n7</code> at line ~548333</p>
+    </article>
+    <article class="card" id="team-artifacts-discovery">
+      <div class="card-top">
+        <h3>Team Artifacts Discovery <a class="anchor" href="#team-artifacts-discovery">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Automatically detects new skills and commands added by teammates to the project's <code>.claude/skills/</code> and <code>.claude/commands/</code> directories within the last 7 days and surfaces them as notifications.</p>
+<div class="blabel">Details</div>
+<ul><li>Queries git history (<code>git log --since=7.days --diff-filter=A</code>) to find recently added team artifacts</li><li>Filters out artifacts authored by the current user (using git email)</li><li>Displays notification like "New from your team: /my-skill (Alice), /deploy-cmd (Bob)"</li><li>Tracks seen artifacts in user config to avoid repeated notifications</li><li>Shows author attribution for each discovered artifact</li></ul>
+<div class="blabel">Evidence</div>
+<p>Team artifacts discovery system (search for <code>"New from your team:"</code>) — <code>sr$</code> at line ~389663, <code>x97</code> at line ~389651</p>
+    </article>
+    <article class="card" id="one-time-scheduled-remote-agent-execution">
+      <div class="card-top">
+        <h3>One-Time Scheduled Remote Agent Execution <a class="anchor" href="#one-time-scheduled-remote-agent-execution">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>/schedule</code> command (previously <code>/trigger</code>) now supports one-time execution at a specific time in addition to recurring cron schedules.</p>
+<div class="blabel">Usage</div>
+<pre><code>/schedule  (then specify run_once_at instead of cron_expression)</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Use <code>"run_once_at": "YYYY-MM-DDTHH:MM:SSZ"</code> (RFC 3339 UTC) instead of a cron expression</li><li>The timestamp must be in the future</li><li>When the user specifies a local time, the agent converts it to UTC and confirms</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schedule system prompt changes (search for <code>"run_once_at"</code>) and description update: <code>"or once at a specific time."</code> — <code>$J7</code> at line ~428477</p>
+    </article>
+    <article class="card" id="deeper-reasoning-display-for-effort-parameter">
+      <div class="card-top">
+        <h3>Deeper Reasoning Display for Effort Parameter <a class="anchor" href="#deeper-reasoning-display-for-effort-parameter">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When deeper reasoning is requested for a turn (effort level <code>xhigh</code>, Opus 4.7 only), a visible notification now appears in the conversation.</p>
+<div class="blabel">Details</div>
+<ul><li>Displays "Deeper reasoning requested for this turn" when the effort parameter triggers enhanced reasoning</li><li>This is part of the effort parameter support that allows users to control adaptive reasoning depth</li></ul>
+<div class="blabel">Evidence</div>
+<p>Effort notification display (search for <code>"Deeper reasoning requested for this turn"</code>) at line ~596751</p>
+    </article>
+    <article class="card" id="model-deprecation-remapping-system">
+      <div class="card-top">
+        <h3>Model Deprecation Remapping System <a class="anchor" href="#model-deprecation-remapping-system">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Expanded model deprecation tracking with retirement dates and automatic remapping guidance for deprecated models.</p>
+<div class="blabel">Details</div>
+<ul><li>New entries for Claude Opus 4 (retiring June 15, 2026 on first-party), Claude Opus 4.1, and Claude Sonnet 4 (retiring June 15, 2026 on first-party)</li><li>Models with <code>remappedTo</code> field tell users what replacement to use (e.g., Opus 4 and 4.1 remap to "the latest Opus")</li><li>Replaces the older deprecation table that only covered Claude 3 Opus, Claude 3.7 Sonnet, and Claude 3.5 Haiku</li><li>The system displays warnings via <code>addNotification</code> when a model is approaching retirement</li></ul>
+<div class="blabel">Evidence</div>
+<p>Model deprecation table with <code>remappedTo</code> field (search for <code>"remappedTo"</code>) — <code>Vq8</code> at line ~544460</p>
+    </article>
+    <article class="card" id="model-source-indicator-in-status">
+      <div class="card-top">
+        <h3>Model Source Indicator in Status <a class="anchor" href="#model-source-indicator-in-status">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The status line now shows where your active model setting originates when it comes from project settings or managed (enterprise) settings.</p>
+<div class="blabel">Details</div>
+<ul><li>Displays "(from managed settings)" when the model is pinned by enterprise policy</li><li>Displays "(from [project settings path])" when set in project-level configuration</li><li>Omitted when using the default model or when overridden via <code>ANTHROPIC_MODEL</code> env var</li><li>Also shows "· /model to change" hint alongside the model name</li></ul>
+<div class="blabel">Evidence</div>
+<p>Model source label generator (search for <code>"(from managed settings)"</code>) — <code>aN8</code> at line ~108402</p>
+    </article>
+    <article class="card" id="remote-file-suggestions-via-rpc">
+      <div class="card-top">
+        <h3>Remote File Suggestions via RPC <a class="anchor" href="#remote-file-suggestions-via-rpc">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>In remote sessions, file suggestions are now fetched from the remote host via an RPC call instead of being computed locally.</p>
+<div class="blabel">Details</div>
+<ul><li>Sends a <code>file_suggestions</code> control request to the remote session manager</li><li>Falls back gracefully if the RPC fails, returning an empty suggestion list</li><li>Only activates when <code>u6()</code> returns true (remote workspace mode)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Remote file suggestions RPC (search for <code>"file_suggestions"</code>) — <code>JW1</code> at line ~474645</p>
+    </article>
+    <article class="card" id="remote-context-usage-display">
+      <div class="card-top">
+        <h3>Remote Context Usage Display <a class="anchor" href="#remote-context-usage-display">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>/context</code> command now works in remote sessions by fetching context usage data from the remote host via RPC.</p>
+<div class="blabel">Details</div>
+<ul><li>In remote mode, sends a <code>get_context_usage</code> control request to the remote agent</li><li>Displays the response using the same UI component as local mode (with <code>isRemote: true</code> flag)</li><li>Falls back to a user-friendly error message if the remote fetch fails</li></ul>
+<div class="blabel">Evidence</div>
+<p>Remote context handler (search for <code>"get_context_usage"</code>) — <code>q01</code> at line ~485532</p>
+    </article>
+    <article class="card" id="terminology-change-triggers-renamed-to-routines">
+      <div class="card-top">
+        <h3>Terminology Change: "Triggers" Renamed to "Routines" <a class="anchor" href="#terminology-change-triggers-renamed-to-routines">#</a></h3>
+      </div>
+      <p>The scheduled remote agents feature has been renamed from "triggers" to "routines" throughout the CLI. All user-facing text, help descriptions, and command references now use the "routines" terminology. For example:</p>
+<ul><li>"manage scheduled remote agent triggers" → "manage scheduled remote agent routines"</li><li>"Connected connectors (available for triggers)" → "Connected connectors (available for routines)"</li><li>"Create, update, list, or run scheduled remote agents (triggers)" → "Create, update, list, or run scheduled remote agents (routines) on a cron schedule or once at a specific time"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Description string change (search for <code>"manage scheduled remote agent routines"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-git-command-safety-validation">
+      <div class="card-top">
+        <h3>Enhanced Git Command Safety Validation <a class="anchor" href="#enhanced-git-command-safety-validation">#</a></h3>
+      </div>
+      <p>The git reflog command now has stricter safety validation:</p>
+<ul><li>Explicitly whitelists only "show" and "list" as safe subcommands</li><li>Blocks "expire", "delete", "exists", "drop", and "write" as dangerous (previously only blocked "expire", "delete", "exists")</li><li>Any unrecognized first argument that isn't a flag is treated as potentially dangerous</li></ul>
+<div class="blabel">Evidence</div>
+<p>Git reflog safety callback (search for <code>"expire", "delete", "exists", "drop", "write"</code>) in the git command validator</p>
+    </article>
+    <article class="card" id="path-traversal-detection-for-shell-commands">
+      <div class="card-top">
+        <h3>Path Traversal Detection for Shell Commands <a class="anchor" href="#path-traversal-detection-for-shell-commands">#</a></h3>
+      </div>
+      <p>A new security check prevents path traversal attacks in shell write/create operations. Paths containing <code>..</code> after a directory segment (which may follow a symlink outside the working directory) are now rejected.</p>
+<div class="blabel">Evidence</div>
+<p>Path traversal validator (search for <code>"Path contains '..' traversal"</code>) — <code>U19</code> at line ~212741</p>
+    </article>
+    <article class="card" id="version-string-validation">
+      <div class="card-top">
+        <h3>Version String Validation <a class="anchor" href="#version-string-validation">#</a></h3>
+      </div>
+      <p>Version strings are now validated against path-unsafe characters and traversal patterns. Strings that don't match <code>^[a-zA-Z0-9._+-]+$</code> or contain <code>..</code> are rejected with clear error messages.</p>
+<div class="blabel">Evidence</div>
+<p>Version string validation (search for <code>"Invalid version string"</code>) — <code>sq6</code> at line ~351290</p>
+    </article>
+    <article class="card" id="cd-with-multiple-directory-arguments-requires-approval">
+      <div class="card-top">
+        <h3><code>cd</code> with Multiple Directory Arguments Requires Approval <a class="anchor" href="#cd-with-multiple-directory-arguments-requires-approval">#</a></h3>
+      </div>
+      <p>Zsh's <code>cd OLD NEW</code> form (which substitutes OLD→NEW in <code>$PWD</code>) now requires manual approval because the target path cannot be statically validated. This prevents potentially unexpected directory changes.</p>
+<div class="blabel">Evidence</div>
+<p>cd safety check (search for <code>"cd with two or more directory arguments"</code>) at line ~303589</p>
+    </article>
+    <article class="card" id="file-command-removed-from-shell-allowlist">
+      <div class="card-top">
+        <h3><code>file</code> Command Removed from Shell Allowlist <a class="anchor" href="#file-command-removed-from-shell-allowlist">#</a></h3>
+      </div>
+      <p>The <code>file</code> system command (with its various flags like <code>--brief</code>, <code>--mime</code>, <code>--dereference</code>, etc.) has been removed from the automatic shell command allowlist. This means <code>file</code> invocations will now go through the normal permission flow.</p>
+<div class="blabel">Evidence</div>
+<p>Removed <code>file</code> command and its <code>safeFlags</code> from allowlist (removed strings include <code>"--dereference"</code>, <code>"--extension"</code>, <code>"--mime-encoding"</code>, <code>"--mime-type"</code>)</p>
+    </article>
+    <article class="card" id="advisor-tool-marked-as-experimental">
+      <div class="card-top">
+        <h3>Advisor Tool Marked as Experimental <a class="anchor" href="#advisor-tool-marked-as-experimental">#</a></h3>
+      </div>
+      <p>The Advisor Tool configuration dialog title has been updated from "Advisor Tool" to "Advisor Tool (Experimental)" to better communicate its maturity status. A link to the blog post about the advisor strategy is now included.</p>
+<div class="blabel">Evidence</div>
+<p>Updated title (search for <code>"Advisor Tool (Experimental)"</code>) at line ~543011; blog link <code>"https://claude.com/blog/the-advisor-strategy"</code> at line ~543061</p>
+    </article>
+    <article class="card" id="plugin-installation-duplicate-detection">
+      <div class="card-top">
+        <h3>Plugin Installation Duplicate Detection <a class="anchor" href="#plugin-installation-duplicate-detection">#</a></h3>
+      </div>
+      <p>Plugin installation now checks if a plugin is already installed before attempting reinstallation. If a plugin with the same name and scope already exists, a clear message is shown: <code>Plugin '&lt;name&gt;' is already installed (scope: &lt;scope&gt;)</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Plugin duplicate check (search for <code>"is already installed"</code>) — <code>CLK</code> at line ~229155</p>
+    </article>
+    <article class="card" id="enterprise-policy-enforcement-for-marketplace-sources">
+      <div class="card-top">
+        <h3>Enterprise Policy Enforcement for Marketplace Sources <a class="anchor" href="#enterprise-policy-enforcement-for-marketplace-sources">#</a></h3>
+      </div>
+      <p>Marketplace sources blocked by enterprise policy are now explicitly skipped during bulk refresh and plugin operations, with warning messages like "Skipping policy-blocked marketplace '&lt;name&gt;'".</p>
+<div class="blabel">Evidence</div>
+<p>Policy enforcement check (search for <code>"Skipping policy-blocked marketplace"</code>)</p>
+    </article>
+    <article class="card" id="improved-plugin-dependency-error-messages">
+      <div class="card-top">
+        <h3>Improved Plugin Dependency Error Messages <a class="anchor" href="#improved-plugin-dependency-error-messages">#</a></h3>
+      </div>
+      <p>When a plugin dependency can't be resolved, the error message now includes a specific install command and marketplace information: <code>not installed — run "claude plugin install &lt;name&gt;"</code> instead of the previous generic "not found in any configured marketplace".</p>
+<div class="blabel">Evidence</div>
+<p>Enhanced error message (search for <code>"not installed — run"</code>)</p>
+    </article>
+    <article class="card" id="auto-compact-window-message-improvement">
+      <div class="card-top">
+        <h3>Auto-Compact Window Message Improvement <a class="anchor" href="#auto-compact-window-message-improvement">#</a></h3>
+      </div>
+      <p>The auto-compact notification now shows "compacted at the auto window" with a clearer reference to the <code>autoCompactWindow</code> setting in <code>settings.json</code>, replacing the previous more verbose messaging.</p>
+<div class="blabel">Evidence</div>
+<p>Updated compact message (search for <code>"compacted at the auto window"</code>)</p>
+    </article>
+    <article class="card" id="managed-settings-model-pin-visibility">
+      <div class="card-top">
+        <h3>Managed Settings Model Pin Visibility <a class="anchor" href="#managed-settings-model-pin-visibility">#</a></h3>
+      </div>
+      <p>When a model is pinned by managed (enterprise) settings or project settings, the <code>/model</code> command now shows where the pin comes from and how to override it locally. Messages like "Managed settings pin [model] — that applies on restart" and "Also saved to [local settings] to override the pin" help users understand the configuration hierarchy.</p>
+<div class="blabel">Evidence</div>
+<p>Model pin messaging (search for <code>"Managed settings pin"</code>) — <code>Fx1</code> at line ~542813</p>
+    </article>
+    <article class="card" id="bridge-authentication-debug-info">
+      <div class="card-top">
+        <h3>Bridge Authentication Debug Info <a class="anchor" href="#bridge-authentication-debug-info">#</a></h3>
+      </div>
+      <p>A new <code>respawn</code> CLI command integrates bridge authentication debugging, providing detailed auth state information for troubleshooting remote session connections. The debug output includes OAuth token status, API key presence, scopes, and third-party provider configuration.</p>
+<div class="blabel">Evidence</div>
+<p>Auth debug info (search for <code>"[debug] Remote Control auth state:"</code>) — <code>hI9</code> at line ~548456</p>
+    </article>
+    <article class="card" id="agent-frontmatter-type-support">
+      <div class="card-top">
+        <h3>Agent Frontmatter Type Support <a class="anchor" href="#agent-frontmatter-type-support">#</a></h3>
+      </div>
+      <p>Agent-scoped configuration is now recognized as a distinct source type, showing "Agent config (from agent frontmatter)" in configuration source displays. This supports agent-scoped MCP servers and other per-agent customization.</p>
+<div class="blabel">Evidence</div>
+<p>Agent config source label (search for <code>"Agent config (from agent frontmatter)"</code>)</p>
+    </article>
+    <article class="card" id="standardized-error-and-empty-state-components">
+      <div class="card-top">
+        <h3>Standardized Error and Empty State Components <a class="anchor" href="#standardized-error-and-empty-state-components">#</a></h3>
+      </div>
+      <p>Error displays across the CLI have been systematically refactored to use a dedicated <code>A7</code> error component and <code>L4</code> empty-state component, replacing ad-hoc inline styling. This provides more consistent visual treatment of errors and empty states throughout the UI.</p>
+<div class="blabel">Evidence</div>
+<p>New <code>A7</code> error component (search for <code>"color: \"error\""</code> in component definition) at line ~198548</p>
+    </article>
+    <article class="card" id="confirmation-dialog-simplification">
+      <div class="card-top">
+        <h3>Confirmation Dialog Simplification <a class="anchor" href="#confirmation-dialog-simplification">#</a></h3>
+      </div>
+      <p>Multiple confirmation dialogs (folder trust, API key, agent deletion, exit) have been refactored from dropdown-style selectors to simpler yes/no confirmation dialogs with explicit confirm/cancel labels.</p>
+<div class="blabel">Evidence</div>
+<p>New confirmation dialog component <code>m_</code> at line ~302036</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed git sha parameter injection by adding input validation that rejects sha values starting with "-" (search for <code>"Invalid sha"</code>)</li><li>Fixed git clone argument injection by adding <code>--</code> separator to prevent URL and ref arguments from being interpreted as flags (search for <code>"A.push('--', H, $)"</code>)</li><li>Fixed git remote HEAD reference validation to verify that detected references actually exist before using them (search for <code>"refs/heads/"</code> in remote HEAD check)</li><li>Fixed cache directory path sanitization to prevent <code>.</code> and <code>..</code> from being used as path components (search for <code>"z === \".\" || z === \"..\""</code>)</li><li>Fixed cursor state display logic to properly update cursor state instead of only handling specific opposite-pair transitions (cursor state handling)</li><li>Fixed damage rectangle merging to properly expand bounds in all directions when new damage extends beyond existing bounds</li><li>Added <code>--</code> argument separator in <code>sed</code> safety validation to prevent sed expression injection attacks (search for <code>"aI9"</code> — new sed expression extractor at line ~303347)</li><li>Fixed handling of broken symlinks during directory copy operations, now skips them with a warning (search for <code>"copyDir: skipping broken symlink"</code>)</li><li>Fixed symlink escape detection during directory copy to prevent following symlinks outside the source tree (search for <code>"copyDir: skipping symlink escaping source tree"</code>)</li></ul>
+    </article>
+    <article class="card" id="mode-command">
+      <div class="card-top">
+        <h3>/mode Command <a class="anchor" href="#mode-command">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The <code>/mode</code> command for interactively changing permission modes has been removed. Users should use the local TUI (shift+tab) to change permission modes instead.</p>
+<div class="blabel">Evidence</div>
+<p>Removed command registration (search for <code>name: "mode"</code> in old version at line ~544018)</p>
+    </article>
+    <article class="card" id="autocompact-interactive-dialog">
+      <div class="card-top">
+        <h3>/autocompact Interactive Dialog <a class="anchor" href="#autocompact-interactive-dialog">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The <code>/autocompact</code> interactive dialog (with up/down arrow selection of compact window sizes and the "Long context that holds up" marketing copy) has been removed. Auto-compact window configuration is now done exclusively through <code>settings.json</code> (<code>autoCompactWindow</code> key) or the <code>CLAUDE_CODE_AUTO_COMPACT_WINDOW</code> environment variable.</p>
+<div class="blabel">Evidence</div>
+<p>Removed dialog component <code>vP1</code> and command registration <code>aT7</code> from old version</p>
+    </article>
+    <article class="card" id="files-command">
+      <div class="card-top">
+        <h3>/files Command <a class="anchor" href="#files-command">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The <code>/files</code> command that listed all files currently in context has been removed.</p>
+<div class="blabel">Evidence</div>
+<p>Removed command (search for <code>"List all files currently in context"</code> in old version at line ~534335)</p>
+    </article>
+    <article class="card" id="stop-hook-command">
+      <div class="card-top">
+        <h3>Stop Hook Command <a class="anchor" href="#stop-hook-command">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The interactive <code>/stop</code> hook command for setting session-only stopping conditions has been removed. The underlying stop hook system still functions (hooks configured via other means continue to work), but the interactive prompt-based UI for creating them is gone.</p>
+<div class="blabel">Evidence</div>
+<p>Removed <code>kF7</code> stop hook editor component and <code>zR1</code> command handler from old version</p>
+    </article>
+    <article class="card" id="runtime-verification-embedded-skill">
+      <div class="card-top">
+        <h3>Runtime Verification Embedded Skill <a class="anchor" href="#runtime-verification-embedded-skill">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The embedded <code>runtime-verification</code> skill documentation (~700 lines of verification guides with CLI and server examples) has been removed from the CLI bundle. This skill may still be available through other distribution channels.</p>
+<div class="blabel">Evidence</div>
+<p>Removed <code>o54</code> runtime verification content and associated example files <code>jA4</code>, <code>XA4</code> from old version</p>
+    </article>
+    <article class="card" id="team-artifacts-hint-system-gradual-rollout">
+      <div class="card-top">
+        <h3>Team Artifacts Hint System [Gradual Rollout] <a class="anchor" href="#team-artifacts-hint-system-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A hint/warmup feature that proactively notifies users about new team artifacts (skills and commands) discovered in the project.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged behind <code>tengu_tussock_oriole</code> (defaults to <code>!1</code> / false).</p>
+<div class="blabel">Details</div>
+<ul><li>The team artifacts discovery system (described above) is fully implemented</li><li>The proactive hint/tip that would surface discoveries during session warmup is gated</li><li>When enabled, it would show team artifact notifications during the hint cycle</li></ul>
+<div class="blabel">Evidence</div>
+<p>Feature gate check <code>h$("tengu_tussock_oriole", !1)</code> at line ~607799 (search for <code>"tengu_tussock_oriole"</code>)</p>
+    </article>
+    <article class="card" id="session-resume-notification-gradual-rollout">
+      <div class="card-top">
+        <h3>Session Resume Notification [Gradual Rollout] <a class="anchor" href="#session-resume-notification-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A notification system that would alert users when resuming a session after a period of inactivity.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged behind <code>tengu_gleaming_fair</code> (defaults to <code>!1</code> / false).</p>
+<div class="blabel">Details</div>
+<ul><li>Evaluates elapsed time since last activity to determine if a resume notification should appear</li><li>Also checks the <code>CLAUDE_CODE_RESUME_SESSION</code> environment variable</li><li>Infrastructure exists but the flag gates activation</li></ul>
+<div class="blabel">Evidence</div>
+<p>Feature gate (search for <code>"tengu_gleaming_fair"</code>) — <code>$s7</code> resume notification evaluator</p>
+    </article>
+    <article class="card" id="fork-subagent-feature-gate-gradual-rollout">
+      <div class="card-top">
+        <h3>Fork Subagent Feature Gate [Gradual Rollout] <a class="anchor" href="#fork-subagent-feature-gate-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>/fork</code> command's availability is additionally controlled by a server-side feature flag.</p>
+<div class="blabel">Status</div>
+<p>Gated by <code>tengu_copper_fox</code> flag (defaults to <code>!1</code>), but can be overridden with <code>CLAUDE_CODE_FORK_SUBAGENT</code> environment variable.</p>
+<div class="blabel">Details</div>
+<ul><li>When the flag is disabled and the env var is not set, the fork tool is not loaded</li><li>Setting <code>CLAUDE_CODE_FORK_SUBAGENT=1</code> provides a local override</li></ul>
+<div class="blabel">Evidence</div>
+<p>Fork feature gate (search for <code>"tengu_copper_fox"</code>) — <code>MG</code> at line ~381717</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The rename from "triggers" to "routines" affects help text, command descriptions, and scheduled task references. If you have scripts or documentation referencing "triggers", update them to use "routines".</li><li>The removal of <code>/mode</code>, <code>/autocompact</code>, and <code>/files</code> commands simplifies the slash command surface. Auto-compact configuration moves to settings files; permission mode changes move to the TUI (shift+tab).</li><li>The <code>file</code> system command removal from the allowlist means any <code>file</code> invocations in automated workflows may now prompt for approval.</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

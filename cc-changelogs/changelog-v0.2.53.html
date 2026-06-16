@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.53 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.53."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.53</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.53</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.52 → v0.2.53</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">4</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.53 Changelog</p>
+    </article>
+    <article class="card" id="web-fetch-tool">
+      <div class="card-top">
+        <h3>Web Fetch Tool <a class="anchor" href="#web-fetch-tool">#</a></h3>
+      </div>
+      <ul><li><strong>New capability</strong>: Claude can now view URLs that you paste into the conversation</li><li>Simply paste a URL and Claude will fetch and analyze the content</li><li>Improved handling of URL redirects with better host validation</li></ul>
+    </article>
+    <article class="card" id="background-task-management">
+      <div class="card-top">
+        <h3>Background Task Management <a class="anchor" href="#background-task-management">#</a></h3>
+      </div>
+      <ul><li><strong>New <code>/tasks</code> command</strong>: View and manage long-running background tasks</li><li>Press <code>↓</code> key to quickly view running tasks from the main prompt</li><li>Tasks show real-time status updates and unread output indicators</li><li>Kill background tasks with <code>/tasks kill &lt;task_id&gt;</code></li><li>Retrieve task output with <code>/tasks output &lt;task_id&gt;</code></li></ul>
+    </article>
+    <article class="card" id="terminal-app-integration-macos">
+      <div class="card-top">
+        <h3>Terminal.app Integration (macOS) <a class="anchor" href="#terminal-app-integration-macos">#</a></h3>
+      </div>
+      <ul><li>Automatic setup for Option as Meta key in Terminal.app</li><li>Creates backup of Terminal preferences before making changes</li><li>Restores settings automatically if setup is interrupted</li><li>New setup process similar to existing iTerm2 integration</li></ul>
+    </article>
+    <article class="card" id="mcp-server-setup">
+      <div class="card-top">
+        <h3>MCP Server Setup <a class="anchor" href="#mcp-server-setup">#</a></h3>
+      </div>
+      <ul><li>Simplified command input: Now accepts full command with arguments and environment variables in a single step</li><li>Smart parsing of commands like <code>API_KEY=abc123 NODE_ENV=dev node server.js</code></li><li>Reduced setup steps from 6 to 4 for faster configuration</li><li>Better examples and guidance for complex commands with quotes</li></ul>
+    </article>
+    <article class="card" id="user-experience">
+      <div class="card-top">
+        <h3>User Experience <a class="anchor" href="#user-experience">#</a></h3>
+      </div>
+      <ul><li>Added visual indicator for number of running background tasks in the prompt</li><li>New <code>hasSeenTasksHint</code> preference to track if user has been shown task shortcuts</li><li>Improved handling of backslash+return key combination tracking</li></ul>
+    </article>
+    <article class="card" id="image-detection">
+      <div class="card-top">
+        <h3>Image Detection <a class="anchor" href="#image-detection">#</a></h3>
+      </div>
+      <ul><li>Fixed JPEG file extension detection</li><li>Changed from checking <code>.jpg</code> to properly checking both <code>jpg</code> and <code>jpeg</code> extensions (without dots)</li><li>Ensures proper handling of all JPEG image files</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-changes">
+      <ul><li>Updated to version 0.2.53</li><li>Added comprehensive changelog parsing functionality</li><li>Improved URL validation to prevent redirect attacks</li><li>Better error handling for Terminal.app preference modifications</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

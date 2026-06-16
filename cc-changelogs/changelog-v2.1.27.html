@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.27 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.27."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.27</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.27</span></h1>
+<p class="sub">This release adds the <code>--from-pr</code> flag for resuming sessions linked to pull requests, introduces PDF page rendering via poppler-utils (<code>pdftoppm</code>), and adds OSC52 clipboard support for SSH sessions. The multi-agent team UI gets significantly enhanced with structured status messages and agent lifecycle indicators. Under the hood, the Sentry error tracking SDK and localForage dependencies have been completely removed.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.26 → v2.1.27</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">11 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="from-pr-flag-for-pr-linked-session-resume">
+      <div class="card-top">
+        <h3><code>--from-pr</code> Flag for PR-Linked Session Resume <a class="anchor" href="#from-pr-flag-for-pr-linked-session-resume">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Resume a previous Claude Code session that was linked to a specific pull request, by PR number or URL.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --from-pr 123
+claude --from-pr https://github.com/owner/repo/pull/123
+claude --from-pr          # opens interactive picker
+claude --from-pr &quot;search&quot; # opens picker filtered by search term</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Accepts a PR number, a full PR URL, or no value (opens an interactive picker)</li><li>When passed a string that is not a number/URL, it filters the picker by that search term</li><li>Works alongside existing <code>--resume</code> and <code>--continue</code> session management flags</li></ul>
+<div class="blabel">Evidence</div>
+<p>CLI option definition (search for <code>"--from-pr [value]"</code>)</p>
+    </article>
+    <article class="card" id="pdf-page-rendering-via-poppler-utils">
+      <div class="card-top">
+        <h3>PDF Page Rendering via poppler-utils <a class="anchor" href="#pdf-page-rendering-via-poppler-utils">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code can now render PDF pages as JPEG images using <code>pdftoppm</code> from poppler-utils, enabling visual analysis of PDF content beyond text extraction.</p>
+<div class="blabel">Details</div>
+<ul><li>Uses <code>pdftoppm</code> to convert PDF pages to JPEG images at 100 DPI</li><li>Requires poppler-utils to be installed (<code>brew install poppler</code> on macOS, <code>apt-get install poppler-utils</code> on Linux)</li><li>Provides detailed error handling for: password-protected PDFs, corrupted/invalid files, oversized files, and missing pdftoppm</li><li>Falls back gracefully with a clear install instruction message when poppler-utils is not available</li><li>Separate size limits for text extraction vs page rendering</li><li>Tracked via <code>tengu_pdf_page_extraction</code> telemetry</li></ul>
+<div class="blabel">Evidence</div>
+<p>PDF page rendering function (search for <code>"pdftoppm is not installed. Install poppler-utils"</code>)</p>
+    </article>
+    <article class="card" id="osc52-clipboard-support-for-ssh-sessions">
+      <div class="card-top">
+        <h3>OSC52 Clipboard Support for SSH Sessions <a class="anchor" href="#osc52-clipboard-support-for-ssh-sessions">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Clipboard copy now works over SSH connections using the OSC52 escape sequence protocol, supported by modern terminal emulators.</p>
+<div class="blabel">Details</div>
+<ul><li>Automatically detects SSH sessions and attempts OSC52-based clipboard copy</li><li>Supported terminals include: iTerm2, Kitty, Ghostty, WezTerm, Alacritty</li><li>For tmux users, requires <code>set-clipboard</code> to be enabled and <code>allow-passthrough</code> to be on</li><li>Provides a clear error message listing compatible terminals when OSC52 fails</li><li>Replaces the old generic platform-specific error message with SSH-aware guidance</li></ul>
+<div class="blabel">Evidence</div>
+<p>SSH clipboard error message (search for <code>"clipboard access requires a terminal that supports OSC52"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-multi-agent-team-ui">
+      <div class="card-top">
+        <h3>Enhanced Multi-Agent Team UI <a class="anchor" href="#enhanced-multi-agent-team-ui">#</a></h3>
+      </div>
+      <p>The multi-agent/team system receives significant UI improvements with structured status messages and lifecycle indicators.</p>
+<p><strong>New status indicators</strong>:</p>
+<ul><li><code>Agent idle</code> / <code>Agent idle - Task X completed</code> status display for idle agents</li><li><code>1 agent spawned</code> / <code>N agents spawned</code> notifications when teammates are created</li><li><code>1 agent shut down</code> / <code>N agents shut down</code> notifications when teammates exit</li><li><code>Created team</code> display when a new team is initialized</li></ul>
+<p><strong>Structured message formatting</strong>:</p>
+<ul><li><code>[Shutdown Request from X]</code> - when an agent requests another to shut down</li><li><code>[Shutdown Approved] X is now exiting</code> - when shutdown is accepted</li><li><code>[Shutdown Rejected] X: reason</code> - when shutdown is declined</li><li><code>[Join Request] name wants to join</code> - when an agent requests to join a team</li><li><code>[Join Approved] You are now name in team</code> - when join is accepted</li><li><code>[Join Rejected] reason</code> - when join is declined</li><li><code>[Task Assigned] #id - subject</code> - when a task is assigned to an agent</li><li><code>[Plan Approval Request from X]</code> - when plan review is requested</li><li><code>[Plan Approved] You can now proceed with implementation</code> - when plan is approved</li><li><code>[Plan Rejected] feedback</code> - when plan is rejected with feedback</li></ul>
+<div class="blabel">Evidence</div>
+<p>Agent idle status (search for <code>"Agent idle"</code>) and spawn notifications (search for <code>"1 agent spawned"</code>)</p>
+    </article>
+    <article class="card" id="improved-authentication-error-messages">
+      <div class="card-top">
+        <h3>Improved Authentication Error Messages <a class="anchor" href="#improved-authentication-error-messages">#</a></h3>
+      </div>
+      <p>Authentication failures now provide more specific messages distinguishing between account-level and organization-level access issues.</p>
+<ul><li>"Your account does not have access to Claude. Please login again or contact your administrator."</li><li>"Your organization does not have access to Claude. Please login again or contact your administrator."</li></ul>
+<p>These are more informative than the previous generic "Your account does not have access to Claude Code. Please run /login." message.</p>
+<div class="blabel">Evidence</div>
+<p>Account access error messages (search for <code>"Your account does not have access to Claude. Please login again"</code>)</p>
+    </article>
+    <article class="card" id="improved-transcript-jsonl-file-validation">
+      <div class="card-top">
+        <h3>Improved Transcript/JSONL File Validation <a class="anchor" href="#improved-transcript-jsonl-file-validation">#</a></h3>
+      </div>
+      <p>Reading transcript files now provides clearer error messages when files are malformed:</p>
+<ul><li>"No messages found in JSONL file" - when JSONL file parses but contains no messages</li><li>"No valid conversation chain found in JSONL file" - when messages exist but no valid chain can be reconstructed</li><li>"Invalid JSON in transcript file" - when JSON parsing fails</li><li>"Transcript messages must be an array" / "Transcript must be an array of messages or an object with a messages array" - format validation</li></ul>
+<div class="blabel">Evidence</div>
+<p>JSONL validation (search for <code>"No messages found in JSONL file"</code>)</p>
+    </article>
+    <article class="card" id="space-key-dismisses-notifications">
+      <div class="card-top">
+        <h3>Space Key Dismisses Notifications <a class="anchor" href="#space-key-dismisses-notifications">#</a></h3>
+      </div>
+      <p>The notification dismiss prompt now accepts Space in addition to Enter and Escape, changing from "Press Enter or Escape to dismiss" to "Press Space, Enter, or Escape to dismiss".</p>
+<div class="blabel">Evidence</div>
+<p>Dismiss prompt text (search for <code>"Press Space, Enter, or Escape to dismiss"</code>)</p>
+    </article>
+    <article class="card" id="tool-error-categorization">
+      <div class="card-top">
+        <h3>Tool Error Categorization <a class="anchor" href="#tool-error-categorization">#</a></h3>
+      </div>
+      <p>Tool execution failures now provide more specific error messages distinguishing between different failure types:</p>
+<ul><li><code>tool input error:</code> for input validation failures</li><li><code>tool validation error:</code> for custom validation failures</li><li><code>tool permission denied</code> for rejected tool calls</li><li><code>tool error (Nms):</code> for runtime errors with execution timing</li></ul>
+<div class="blabel">Evidence</div>
+<p>Tool error messages (search for <code>"tool input error"</code> and <code>"tool validation error"</code>)</p>
+    </article>
+    <article class="card" id="penguin-theme-colors">
+      <div class="card-top">
+        <h3>"Penguin" Theme Colors <a class="anchor" href="#penguin-theme-colors">#</a></h3>
+      </div>
+      <p>New color variants added for UI theming:</p>
+<ul><li>Light themes: <code>rgb(15,144,127)</code> / <code>rgb(55,184,167)</code> shimmer</li><li>Dark themes: <code>rgb(47,176,159)</code> / <code>rgb(87,206,189)</code> shimmer</li></ul>
+<div class="blabel">Evidence</div>
+<p>Theme color definitions (search for <code>"penguin"</code>)</p>
+    </article>
+    <article class="card" id="multi-file-patch-validation">
+      <div class="card-top">
+        <h3>Multi-File Patch Validation <a class="anchor" href="#multi-file-patch-validation">#</a></h3>
+      </div>
+      <p>Better error message when attempting to create patches without file headers:</p>
+<ul><li>"Cannot omit file headers on a multi-file patch. (The result would be unparseable; how would a tool trying to apply the patch know which changes are to which file?)"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Diff formatter validation (search for <code>"Cannot omit file headers on a multi-file patch"</code>)</p>
+    </article>
+    <article class="card" id="dependency-cleanup-sentry-and-localforage-removed">
+      <div class="card-top">
+        <h3>Dependency Cleanup: Sentry and localForage Removed <a class="anchor" href="#dependency-cleanup-sentry-and-localforage-removed">#</a></h3>
+      </div>
+      <p>Two significant third-party dependencies have been removed from the bundle:</p>
+<ul><li><strong>Sentry SDK</strong> (v7.120.3): The entire Sentry error tracking infrastructure has been removed. The old version contained 179 references to Sentry including DSN configuration, error capture, transaction tracing, and browser/Node integrations. The new version has zero Sentry code (only a reference in an MCP setup example).</li><li><strong>localForage</strong>: The browser-compatible storage library has been completely removed (previously 7 references).</li></ul>
+<p>This reduces bundle size and removes third-party error telemetry from the CLI.</p>
+<div class="blabel">Evidence</div>
+<p>Sentry DSN was at <code>"https://e531a1d9ec1de9064fae9d4affb0b0f4@o1158394.ingest.us.sentry.io/..."</code> in v2.1.26, absent in v2.1.27. Search for <code>"sentry"</code> or <code>"localforage"</code> in both versions to confirm removal.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

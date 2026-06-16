@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.104 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.104."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.104</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.104</span></h1>
+<p class="sub">This is a focused reliability release that adds byte-level stream idle timeout detection to catch stalled API connections more quickly. It also includes a minor refinement to the internal system prompt heading for clarity.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.101 → v2.1.104</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">2</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="byte-level-stream-idle-timeout-detection">
+      <div class="card-top">
+        <h3>Byte-level stream idle timeout detection <a class="anchor" href="#byte-level-stream-idle-timeout-detection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>API streaming responses are now monitored at the byte level for idle connections, catching stalled streams that the existing chunk-level timeout might miss.</p>
+<div class="blabel">Details</div>
+<ul><li>A new <code>StreamIdleTimeoutError</code> class and <code>TransformStream</code> wrapper monitor the raw byte stream from the API. If no bytes arrive within the timeout window, the stream is aborted and retried.</li><li>The timeout is controlled by the existing <code>CLAUDE_STREAM_IDLE_TIMEOUT_MS</code> environment variable (default: 90 seconds, minimum: 15 seconds).</li><li>This is layered on top of the pre-existing chunk-level idle timeout, providing defense-in-depth: the byte-level check catches low-level TCP stalls, while the chunk-level check handles higher-level protocol issues.</li><li>Error reporting is now more granular — when a stream times out after receiving partial data, the error message distinguishes "Stream idle timeout - partial response received" from "Stream idle timeout - no chunks received", which should improve diagnostics.</li><li>Only applies to first-party and Anthropic AWS streaming connections (SSE <code>text/event-stream</code> responses).</li></ul>
+<div class="blabel">Usage</div>
+<pre><code># Override the default 90s idle timeout (minimum 15s)
+CLAUDE_STREAM_IDLE_TIMEOUT_MS=60000 claude</code></pre>
+<div class="blabel">Evidence</div>
+<p>New <code>StreamIdleTimeoutError</code> class (search for <code>"stream idle: no bytes for"</code>) and TransformStream wrapper in fetch middleware (search for <code>"Streaming idle timeout (byte-level)"</code>)</p>
+    </article>
+    <article class="card" id="refined-system-prompt-for-text-output-guidelines">
+      <div class="card-top">
+        <h3>Refined system prompt for text output guidelines <a class="anchor" href="#refined-system-prompt-for-text-output-guidelines">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The internal system prompt section heading "Communication style" was renamed to "Text output (does not apply to tool calls)" to clarify that the communication guidelines apply only to text output shown to the user.</p>
+<div class="blabel">Details</div>
+<ul><li>The body of the prompt is unchanged — the same guidance about brief updates, no narration, and clear communication still applies.</li><li>The heading clarification may result in slightly improved model behavior when making tool calls, as the model has a clearer signal that the style guidelines do not constrain tool call formatting.</li><li>This prompt is only active for Opus 4.6 sessions with the <code>quiet_salted_ember</code> flag enabled.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Heading change from <code>"# Communication style"</code> to <code>"# Text output (does not apply to tool calls)"</code> (search for <code>"Text output (does not apply to tool calls)"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

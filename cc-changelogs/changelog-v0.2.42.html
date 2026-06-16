@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.42 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.42."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.42</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.42</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.41 → v0.2.42</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.42 Changelog</p>
+    </article>
+    <article class="card" id="batch-tool-execution-call-tool">
+      <div class="card-top">
+        <h3>Batch Tool Execution (Call Tool) <a class="anchor" href="#batch-tool-execution-call-tool">#</a></h3>
+      </div>
+      <p>A powerful new tool that allows executing multiple tools in a single request for improved performance:</p>
+<ul><li><strong>Tool Name</strong>: <code>BatchTool</code> (displayed as "Call" to users)</li><li><strong>Purpose</strong>: Run multiple independent tool operations at once to reduce context usage and latency</li><li><strong>Execution</strong>: Tools are executed in parallel when possible, otherwise serially</li><li><strong>Usage Example</strong>:</li></ul>
+<pre><code>  claude&gt; /call
+  {
+    &quot;invocations&quot;: [
+      {
+        &quot;tool_name&quot;: &quot;Bash&quot;,
+        &quot;input&quot;: {
+          &quot;command&quot;: &quot;git blame src/foo.ts&quot;
+        }
+      },
+      {
+        &quot;tool_name&quot;: &quot;Glob&quot;, 
+        &quot;input&quot;: {
+          &quot;pattern&quot;: &quot;**/*.ts&quot;
+        }
+      },
+      {
+        &quot;tool_name&quot;: &quot;Grep&quot;,
+        &quot;input&quot;: {
+          &quot;pattern&quot;: &quot;function&quot;,
+          &quot;include&quot;: &quot;*.ts&quot;
+        }
+      }
+    ]
+  }</code></pre>
+    </article>
+    <article class="card" id="mcp-server-timeout-configuration">
+      <div class="card-top">
+        <h3>MCP Server Timeout Configuration <a class="anchor" href="#mcp-server-timeout-configuration">#</a></h3>
+      </div>
+      <ul><li><strong>New Environment Variable</strong>: <code>MCP_TIMEOUT</code></li><li><strong>Default</strong>: 5000ms (5 seconds)</li><li><strong>Usage</strong>: Set custom timeout for MCP server operations</li></ul>
+<pre><code>  MCP_TIMEOUT=10000 claude  # Set 10 second timeout</code></pre>
+<ul><li><strong>Benefit</strong>: Allows users to adjust timeout for slower MCP servers</li></ul>
+    </article>
+    <article class="card" id="non-blocking-mcp-server-startup">
+      <div class="card-top">
+        <h3>Non-Blocking MCP Server Startup <a class="anchor" href="#non-blocking-mcp-server-startup">#</a></h3>
+      </div>
+      <ul><li>MCP server initialization no longer blocks the application from starting</li><li>Improves startup time when MCP servers are slow to initialize</li><li>Application becomes responsive immediately while MCP servers load in background</li></ul>
+    </article>
+    <article class="card" id="enhanced-help-mode">
+      <div class="card-top">
+        <h3>Enhanced Help Mode <a class="anchor" href="#enhanced-help-mode">#</a></h3>
+      </div>
+      <ul><li>New help display showing keyboard shortcuts when help is open</li><li>Displays:</li><li><code>! for bash mode</code> - Quick access to bash command mode</li><li><code>/ for commands</code> - Access slash commands</li><li>Platform-specific newline instructions:</li><li>Mac with Karabiner: <code>shift + ⏎ for newline</code></li><li>Terminal supporting backslash: <code>\⏎ for newline</code></li><li>Default: <code>Backslash (\) + Return (⏎) for newline</code></li></ul>
+    </article>
+    <article class="card" id="webfetch-security-enhancement">
+      <div class="card-top">
+        <h3>WebFetch Security Enhancement <a class="anchor" href="#webfetch-security-enhancement">#</a></h3>
+      </div>
+      <ul><li>Updated security requirement: URLs must be provided directly by the user (removed "in the current or a previous message" qualifier)</li><li>Strengthens security by requiring explicit user-provided URLs</li></ul>
+    </article>
+    <article class="card" id="http-request-handling">
+      <div class="card-top">
+        <h3>HTTP Request Handling <a class="anchor" href="#http-request-handling">#</a></h3>
+      </div>
+      <ul><li>Switched from native <code>fetch</code> to axios for better control</li><li>Added proper redirect handling with <code>maxRedirects: 0</code></li><li>Improved error messages with HTTP status codes</li><li>Better content length limiting with <code>maxContentLength</code></li></ul>
+    </article>
+    <article class="card" id="release-notes-update">
+      <div class="card-top">
+        <h3>Release Notes Update <a class="anchor" href="#release-notes-update">#</a></h3>
+      </div>
+      <ul><li>Added v0.2.41 release notes documenting:</li><li>MCP server startup timeout configuration via MCP_TIMEOUT</li><li>Non-blocking MCP server startup behavior</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>Renamed internal functions and variables for consistency</li><li>Improved stream handling using named imports</li><li>Better error handling in HTTP requests</li><li>Enhanced batch tool execution with proper progress tracking and error aggregation</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

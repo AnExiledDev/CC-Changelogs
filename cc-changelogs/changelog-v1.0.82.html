@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.82 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.82."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.82</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.82</span></h1>
+<p class="sub">Version 1.0.82 introduces real-time validation for Claude Code settings files, simplifies the permission system by removing complex shortcuts, and adds internal infrastructure for upcoming beta features. This is primarily a quality and stability release focused on preventing configuration errors.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.81 → v1.0.82</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="settings-file-validation">
+      <div class="card-top">
+        <h3>Settings File Validation <a class="anchor" href="#settings-file-validation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Real-time validation when editing <code>.claude/settings.json</code> and <code>.claude/settings.local.json</code> files <strong>How to use:</strong></p>
+<pre><code># When you edit a settings file with invalid JSON or schema
+claude edit .claude/settings.json
+# If the edit would create invalid settings, you&#x27;ll see:
+# &quot;Claude Code settings.json validation failed after edit&quot;
+# followed by specific errors and the full schema</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Validates JSON syntax before applying edits</li><li>Checks against the official Claude Code settings schema</li><li>Shows specific field paths and error messages when validation fails</li><li>Provides the complete schema reference for troubleshooting</li><li>Prevents invalid configurations from being saved</li></ul>
+    </article>
+    <article class="card" id="simplified-permission-system">
+      <div class="card-top">
+        <h3>Simplified Permission System <a class="anchor" href="#simplified-permission-system">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Removed complex permission shortcuts and modes <strong>Previous behavior:</strong> Had "accept-project" mode and shift+a keyboard shortcut for batch permissions <strong>New behavior:</strong> Streamlined to three clear options: accept-once, accept-session, or reject <strong>Impact:</strong> Clearer and more predictable permission handling without confusing shortcuts</p>
+    </article>
+    <article class="card" id="beta-feature-infrastructure">
+      <div class="card-top">
+        <h3>Beta Feature Infrastructure <a class="anchor" href="#beta-feature-infrastructure">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Added internal filtering for experimental features <strong>Previous behavior:</strong> All experimental features handled uniformly <strong>New behavior:</strong> Special handling for "interleaved-thinking-2025-05-14" and "context-1m-2025-08-07" features <strong>Impact:</strong> Prepares for controlled rollout of beta features (not yet user-accessible)</p>
+    </article>
+    <article class="card" id="input-context-preservation">
+      <div class="card-top">
+        <h3>Input Context Preservation <a class="anchor" href="#input-context-preservation">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Enhanced command processing to preserve preceding input blocks <strong>Previous behavior:</strong> Commands might lose context from previous interactions <strong>New behavior:</strong> Better preservation of conversation context when executing commands <strong>Impact:</strong> More consistent behavior when using commands in longer conversations</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

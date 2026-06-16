@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.11 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.11."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.11</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.11</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.10 → v1.0.11</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">4</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.11 Changelog</p>
+    </article>
+    <article class="card" id="enhanced-mcp-oauth-authentication">
+      <div class="card-top">
+        <h3>Enhanced MCP OAuth Authentication <a class="anchor" href="#enhanced-mcp-oauth-authentication">#</a></h3>
+      </div>
+      <ul><li><strong>Interactive MCP authentication flow</strong>: The <code>/mcp</code> command now provides an interactive interface for authenticating with MCP servers that support OAuth</li><li>Navigate through MCP servers using arrow keys</li><li>Press Enter to manage authentication for SSE-type servers</li><li>Options to authenticate, re-authenticate, or clear existing authentication</li><li>Example: Run <code>/mcp</code>, use arrow keys to select a server, press Enter to authenticate</li></ul>
+    </article>
+    <article class="card" id="new-upgrade-command">
+      <div class="card-top">
+        <h3>New <code>/upgrade</code> Command <a class="anchor" href="#new-upgrade-command">#</a></h3>
+      </div>
+      <ul><li>Added <code>/upgrade</code> command for Max subscription enrollment</li><li>Automatically opens the upgrade page in your browser</li><li>Streamlines the login process after upgrading</li><li>Example: <code>/upgrade</code> - Opens claude.ai/upgrade/max and prompts for login</li></ul>
+    </article>
+    <article class="card" id="improved-authentication-handling">
+      <div class="card-top">
+        <h3>Improved Authentication Handling <a class="anchor" href="#improved-authentication-handling">#</a></h3>
+      </div>
+      <ul><li><strong>Multi-source authentication detection</strong>: Better handling of authentication conflicts</li><li>Detects when multiple authentication methods are configured (e.g., ANTHROPIC_AUTH_TOKEN vs claude.ai login)</li><li>Shows clear warnings about which authentication source is being used</li><li>Provides instructions for resolving conflicts</li></ul>
+    </article>
+    <article class="card" id="subscription-recommendations">
+      <div class="card-top">
+        <h3>Subscription Recommendations <a class="anchor" href="#subscription-recommendations">#</a></h3>
+      </div>
+      <ul><li><strong>Personalized subscription suggestions</strong>: Claude Code now shows targeted subscription recommendations based on your organization's settings</li><li>Recommendations for Pro, Max 5x ($100/mo), and Max 20x ($200/mo) plans</li><li>Smart display logic that limits how often recommendations are shown</li><li>Example output:</li></ul>
+<pre><code>    With the $100/mo Max plan, use Sonnet 4 as your daily driver with predictable pricing. • /upgrade to sign up</code></pre>
+    </article>
+    <article class="card" id="performance-enhancements">
+      <div class="card-top">
+        <h3>Performance Enhancements <a class="anchor" href="#performance-enhancements">#</a></h3>
+      </div>
+      <ul><li><strong>File reading cache</strong>: Implemented a smart caching system for file reads</li><li>Caches up to 1000 files with automatic eviction</li><li>Tracks file modification times to ensure cache validity</li><li>Significantly improves performance when repeatedly accessing the same files</li></ul>
+    </article>
+    <article class="card" id="wsl-networking-support">
+      <div class="card-top">
+        <h3>WSL Networking Support <a class="anchor" href="#wsl-networking-support">#</a></h3>
+      </div>
+      <ul><li><strong>Improved WSL host detection</strong>: Better support for Windows Subsystem for Linux environments</li><li>Automatically detects the correct host IP in WSL environments</li><li>Falls back gracefully when detection fails</li><li>Respects <code>CLAUDE_CODE_IDE_HOST_OVERRIDE</code> environment variable</li></ul>
+    </article>
+    <article class="card" id="oauth-port-management">
+      <div class="card-top">
+        <h3>OAuth Port Management <a class="anchor" href="#oauth-port-management">#</a></h3>
+      </div>
+      <ul><li><strong>Dynamic port allocation</strong>: OAuth authentication now uses dynamic port allocation</li><li>Tries random ports in the 45000-45999 range</li><li>Falls back to port 45123 if needed</li><li>Prevents port conflicts during authentication</li></ul>
+    </article>
+    <article class="card" id="opus-4-limitation-for-claude-pro-users">
+      <div class="card-top">
+        <h3>Opus 4 Limitation for Claude Pro Users <a class="anchor" href="#opus-4-limitation-for-claude-pro-users">#</a></h3>
+      </div>
+      <ul><li>Claude Pro users are now restricted from using Opus 4 models in Claude Code</li><li>Attempting to set model to Opus 4 will show:</li></ul>
+<pre><code>  Invalid model. Claude Pro users are not currently able to use Opus 4 in Claude Code. The current model is now Sonnet 4.</code></pre>
+<ul><li>This encourages Pro users to upgrade to Max plans for Opus 4 access</li></ul>
+    </article>
+    <article class="card" id="enhanced-error-messages">
+      <div class="card-top">
+        <h3>Enhanced Error Messages <a class="anchor" href="#enhanced-error-messages">#</a></h3>
+      </div>
+      <ul><li>More specific error messages for API key issues</li><li>Differentiates between external API key errors and managed API key errors</li><li>Example: "Invalid API key · Fix external API key" vs "Invalid API key · Fix managed API key"</li></ul>
+    </article>
+    <article class="card" id="better-visual-feedback">
+      <div class="card-top">
+        <h3>Better Visual Feedback <a class="anchor" href="#better-visual-feedback">#</a></h3>
+      </div>
+      <ul><li>New system message formatting for better visibility</li><li>Improved notebook cell editing rejection messages with syntax highlighting</li><li>Enhanced MCP server status display with color-coded connection states</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed duplicate imports and variable declarations</li><li>Removed obsolete telemetry functions</li><li>Cleaned up unused authentication state management code</li><li>Improved error handling in OAuth token revocation</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-changes">
+      <ul><li>Migrated from synchronous to asynchronous file reading patterns</li><li>Improved module organization with better separation of concerns</li><li>Enhanced TypeScript/JavaScript interoperability</li><li>Better handling of Node.js stream APIs</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.24 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.24."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.24</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.24</span></h1>
+<p class="sub">Version 2.0.24 introduces intelligent auto-approval for sandboxed bash commands, increases Haiku 4.5's output capacity from 8K to 32K tokens, and adds experimental model default configurations for Pro plan users. The release also includes keyboard event propagation control for better UI interactivity and several optimizations for SDK usage.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.23 → v2.0.24</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="auto-allow-bash-commands-in-sandbox-mode">
+      <div class="card-top">
+        <h3>Auto-Allow Bash Commands in Sandbox Mode <a class="anchor" href="#auto-allow-bash-commands-in-sandbox-mode">#</a></h3>
+      </div>
+      <p><strong>What:</strong> When sandboxing is enabled and you're in "accept edits" mode, safe bash commands now execute automatically without permission prompts.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Enable the sandbox with auto-allow feature
+claude --configure
+# Select &quot;Sandbox BashTool, with auto-allow in accept edits mode&quot;
+
+# Now when you ask Claude to create files/directories, commands like
+# mkdir, touch, mv, cp execute automatically when sandboxed</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Only activates when all conditions are met: sandbox enabled, auto-allow feature enabled, command is sandboxable, and user is in "acceptEdits" mode</li><li>Safe commands like <code>mkdir</code>, <code>touch</code>, <code>rm</code>, <code>rmdir</code>, <code>mv</code>, <code>cp</code>, <code>sed</code> are pre-approved in acceptEdits mode</li><li>User-defined deny/ask rules are still respected</li><li>Commands can be excluded via <code>sandbox.excludedCommands</code> configuration</li><li>Falls back to standard permission prompting if conditions aren't met</li><li><strong>Evidence</strong>: <code>hL0()</code> function at lines 206586-206604 and <code>TN6()</code> decision logic at line 206562 in pretty-v2.0.24.js</li></ul>
+    </article>
+    <article class="card" id="keyboard-event-propagation-control">
+      <div class="card-top">
+        <h3>Keyboard Event Propagation Control <a class="anchor" href="#keyboard-event-propagation-control">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Keyboard event handlers can now stop event propagation to other handlers using <code>event.stopImmediatePropagation()</code>.</p>
+<p><strong>How to use:</strong></p>
+<pre><code>// For developers building on Claude Code&#x27;s UI framework
+useInput((input, key, event) =&gt; {
+  if (input === &#x27;q&#x27; &amp;&amp; shouldQuit) {
+    event.stopImmediatePropagation();  // Prevent other handlers from running
+    handleQuit();
+  }
+});</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Third parameter added to keyboard event handlers containing the event object</li><li>Enables priority-based event handling for modal dialogs, focus management, and vim-mode implementations</li><li>Backward compatible - existing handlers with 2 parameters continue to work</li><li>Implements DOM-style event propagation patterns</li><li><strong>Evidence</strong>: New <code>VO1</code> event class at line 71066, <code>B11</code> base class with <code>stopImmediatePropagation()</code> at line 69922, and updated callback signature in <code>QT9()</code> at line 71693 in pretty-v2.0.24.js</li></ul>
+    </article>
+    <article class="card" id="automatic-aws-credential-initialization-for-bedrock">
+      <div class="card-top">
+        <h3>Automatic AWS Credential Initialization for Bedrock <a class="anchor" href="#automatic-aws-credential-initialization-for-bedrock">#</a></h3>
+      </div>
+      <p><strong>What:</strong> When using AWS Bedrock, credentials are now validated and refreshed automatically at startup.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Configure custom AWS auth commands in ~/.claude.json
+{
+  &quot;awsAuthRefresh&quot;: &quot;aws sso login --profile my-profile&quot;,
+  &quot;awsCredentialExport&quot;: &quot;aws configure export-credentials --profile my-profile&quot;
+}
+
+# Or skip auto-initialization if not needed
+export CLAUDE_CODE_SKIP_BEDROCK_AUTH=1
+claude</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Runs at startup when <code>CLAUDE_CODE_USE_BEDROCK</code> is set and <code>CLAUDE_CODE_SKIP_BEDROCK_AUTH</code> is not set</li><li>First attempts standard AWS SDK authentication via STS GetCallerIdentity</li><li>Falls back to custom <code>awsAuthRefresh</code> or <code>awsCredentialExport</code> commands if needed</li><li>Includes workspace trust checks before executing custom commands</li><li>Provides visual authentication feedback</li><li><strong>Evidence</strong>: New <code>uhQ()</code> initialization function at line 465179, called during startup at line 475285 in pretty-v2.0.24.js</li></ul>
+    </article>
+    <article class="card" id="increased-haiku-4-5-output-capacity">
+      <div class="card-top">
+        <h3>Increased Haiku 4.5 Output Capacity <a class="anchor" href="#increased-haiku-4-5-output-capacity">#</a></h3>
+      </div>
+      <p>Haiku 4.5 (<code>claude-haiku-4-5-20251001</code>) can now generate responses up to 32,000 tokens instead of being capped at 8,192 tokens. Claude 3.5 Haiku remains at 8,192 tokens.</p>
+<div class="blabel">Evidence</div>
+<p>Removed <code>if (A.includes("haiku")) return 8192;</code> from <code>ox0()</code> function at line 458119 in pretty-v2.0.24.js</p>
+    </article>
+    <article class="card" id="optimized-sdk-performance">
+      <div class="card-top">
+        <h3>Optimized SDK Performance <a class="anchor" href="#optimized-sdk-performance">#</a></h3>
+      </div>
+      <p>Changelog fetching is now skipped in non-interactive sessions (SDK usage, <code>--print</code> mode, non-TTY environments), reducing unnecessary network traffic during programmatic usage.</p>
+<div class="blabel">Evidence</div>
+<p>Added <code>if (I3()) return;</code> check in <code>zc0()</code> function at line 392135 in pretty-v2.0.24.js</p>
+    </article>
+    <article class="card" id="enhanced-glob-pattern-support-in-sandbox-configuration">
+      <div class="card-top">
+        <h3>Enhanced Glob Pattern Support in Sandbox Configuration <a class="anchor" href="#enhanced-glob-pattern-support-in-sandbox-configuration">#</a></h3>
+      </div>
+      <p>Path resolution now correctly handles glob patterns (<code>*</code>, <code>?</code>, <code>[</code>, <code>]</code>) in sandbox file access rules, preventing errors when specifying pattern-based access controls.</p>
+<div class="blabel">Evidence</div>
+<p>New <code>XP()</code> glob detector at line 206943 and early-return check in <code>IP()</code> at line 206957 in pretty-v2.0.24.js</p>
+    </article>
+    <article class="card" id="experimental-model-defaults-for-pro-plan">
+      <div class="card-top">
+        <h3>Experimental Model Defaults for Pro Plan <a class="anchor" href="#experimental-model-defaults-for-pro-plan">#</a></h3>
+      </div>
+      <p>Pro plan users may be assigned to experiments that change default model selection:</p>
+<ul><li><strong>Haiku default</strong>: Some Pro users may see Haiku 4.5 as default instead of Sonnet 4.5 (cost optimization)</li><li><strong>Sonnet 1M default</strong>: Users with 1M context access may default to Sonnet 4.5 [1M] instead of [200K]</li></ul>
+<p>These are A/B tests controlled by feature flags and not visible to all users.</p>
+<div class="blabel">Evidence</div>
+<p>New functions <code>r_1()</code> at line 144169 and <code>QH0()</code> at line 144180 in pretty-v2.0.24.js</p>
+    </article>
+    <article class="card" id="enhanced-error-diagnostics">
+      <div class="card-top">
+        <h3>Enhanced Error Diagnostics <a class="anchor" href="#enhanced-error-diagnostics">#</a></h3>
+      </div>
+      <p>Added telemetry for tool_use/tool_result mismatch errors to help engineers debug message normalization issues. This internal tracking does not affect user experience but helps improve reliability.</p>
+<div class="blabel">Evidence</div>
+<p>New <code>Uw6()</code> diagnostic function at line 203566 in pretty-v2.0.24.js</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

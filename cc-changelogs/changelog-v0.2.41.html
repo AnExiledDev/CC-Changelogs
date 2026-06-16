@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.41 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.41."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.41</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.41</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.40 → v0.2.41</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>MCP (Model Context Protocol) Status Command</h4>
+<ul><li><strong>New command</strong>: <code>/mcp</code> - Shows the connection status of all configured MCP servers</li><li>Displays a formatted list of MCP servers with their connection states:</li><li><strong>connected</strong> (green) - Successfully connected to the server</li><li><strong>connecting…</strong> (yellow) - Connection in progress</li><li><strong>failed</strong> (red) - Connection failed</li><li>Includes debug mode support with <code>--mcp-debug</code> flag for inline error logs</li><li>Shows log file location for troubleshooting failed connections</li></ul>
+<p>Example output:</p>
+<pre><code>MCP Server Status
+
+• server1: connected
+• server2: connecting…
+• server3: failed
+
+Run claude with --mcp-debug to see error logs inline, or view log files in: /path/to/logs</code></pre>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Enhanced MCP Integration</h4>
+<ul><li>Improved MCP server connection handling with better error reporting</li><li>Added connection timeout configuration (5 seconds default)</li><li>MCP tools and prompts now have an <code>isMcp: true</code> property for better identification</li><li>Better separation of MCP client state management</li></ul>
+<h4>Logging Infrastructure</h4>
+<ul><li>New <code>baseLogs()</code> function added to the logging system for accessing the base log directory</li><li>Enhanced MCP-specific logging with dedicated log files per server</li></ul>
+<h4>Memory Management</h4>
+<ul><li>Added telemetry events for memory undo operations:</li><li><code>tengu_memory_undo_attempt</code> - Tracks when undo is attempted</li><li><code>tengu_memory_undo_success</code> - Tracks successful undo operations</li><li><code>tengu_memory_undo_failure</code> - Tracks failed undo operations</li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <h4>Refactored MCP Architecture</h4>
+<ul><li>Replaced monolithic MCP initialization with a more modular approach:</li><li>New <code>cS1()</code> function for parallel MCP server connections</li><li>New <code>zx2()</code> function for aggregating MCP resources</li><li>New <code>Qx2()</code> React hook for managing MCP state in the UI</li><li>Improved error handling with per-server error isolation</li><li>Better separation of concerns between connection, tool discovery, and prompt discovery</li></ul>
+<h4>Performance Optimizations</h4>
+<ul><li>Changed from SHA-256 web crypto API to Node.js native crypto module for hash operations</li><li>More efficient stream handling with direct <code>Readable</code> imports</li><li>Improved memoization for tool and command lists with new <code>gl2()</code> and <code>Ul2()</code> utility functions</li></ul>
+<h4>Code Quality</h4>
+<ul><li>Better TypeScript/Zod schema validation for MCP server configurations</li><li>Cleaner import organization and dependency management</li><li>More consistent error messaging and logging patterns</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed potential race conditions in MCP server connection initialization</li><li>Improved error handling for failed MCP server connections</li><li>Better cleanup of timeouts in connection handling</li></ul>
+    </article>
+    <article class="card" id="breaking-changes">
+      <div class="card-top">
+        <h3>Breaking Changes <a class="anchor" href="#breaking-changes">#</a></h3>
+      </div>
+      <p>None - This release maintains backward compatibility with existing configurations and APIs.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

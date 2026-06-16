@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.78 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.78."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.78</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.78</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.77 → v0.2.78</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">4</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.78 Changelog</p>
+    </article>
+    <article class="card" id="oauth-token-refresh-support">
+      <div class="card-top">
+        <h3>OAuth Token Refresh Support <a class="anchor" href="#oauth-token-refresh-support">#</a></h3>
+      </div>
+      <ul><li><strong>Added automatic OAuth token refresh functionality</strong> for MCP (Model Context Protocol) connections</li><li>When an OAuth access token expires, Claude Code will now automatically attempt to refresh it using the refresh token</li><li>This prevents authentication interruptions during long sessions</li><li>Usage: This happens automatically in the background when using MCP servers that require OAuth authentication</li></ul>
+    </article>
+    <article class="card" id="configurable-telemetry-settings">
+      <div class="card-top">
+        <h3>Configurable Telemetry Settings <a class="anchor" href="#configurable-telemetry-settings">#</a></h3>
+      </div>
+      <ul><li><strong>New environment variables for controlling telemetry data collection</strong>:</li><li><code>OTEL_METRICS_INCLUDE_SESSION_ID</code> (default: true) - Controls whether session IDs are included in metrics</li><li><code>OTEL_METRICS_INCLUDE_VERSION</code> (default: false) - Controls whether the app version is included in metrics</li><li><code>OTEL_METRICS_INCLUDE_ACCOUNT_UUID</code> (default: true) - Controls whether account UUIDs are included in metrics</li></ul>
+<div class="blabel">Example usage</div>
+<pre><code>  # Disable session ID tracking
+  OTEL_METRICS_INCLUDE_SESSION_ID=false claude
+  
+  # Enable version tracking
+  OTEL_METRICS_INCLUDE_VERSION=true claude</code></pre>
+    </article>
+    <article class="card" id="enhanced-oauth-infrastructure">
+      <div class="card-top">
+        <h3>Enhanced OAuth Infrastructure <a class="anchor" href="#enhanced-oauth-infrastructure">#</a></h3>
+      </div>
+      <ul><li>Added OAuth authorization server metadata discovery following the <code>.well-known/oauth-authorization-server</code> specification</li><li>Improved error handling for OAuth token refresh failures with detailed error messages</li><li>Added fallback OAuth configuration for servers that don't support metadata discovery</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>Refined import statements to use more specific imports (e.g., <code>import { PassThrough as ou9 } from "stream"</code> instead of importing the entire stream module)</li><li>Added proper process imports using the <code>node:</code> prefix convention</li></ul>
+    </article>
+    <article class="card" id="oauth-token-management">
+      <div class="card-top">
+        <h3>OAuth Token Management <a class="anchor" href="#oauth-token-management">#</a></h3>
+      </div>
+      <ul><li>Fixed potential issues with expired OAuth tokens by implementing proper refresh logic</li><li>Added validation to ensure refresh tokens are only used when available</li><li>Improved error recovery when token refresh fails</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Added constant <code>LI3 = 60000</code> (60 seconds timeout value)</li><li>Updated MCP protocol version to "2024-11-05"</li><li>Version bump to 0.2.78</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Details</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-details">
+      <p>The OAuth token refresh implementation includes:</p>
+<ul><li>Automatic detection of expired tokens based on <code>expiresAt</code> timestamp</li><li>Support for OAuth 2.0 refresh token grant type</li><li>Proper handling of client credentials (client_id and client_secret)</li><li>Telemetry events for tracking refresh success/failure rates</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

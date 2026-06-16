@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.81 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.81."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.81</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.81</span></h1>
+<p class="sub">Claude Code v1.0.81 introduces a powerful plugin system for extending functionality through custom commands and agents, improves concurrent query handling to prevent race conditions, and adds enhanced telemetry for better usage insights.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.80 → v1.0.81</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="plugin-system-experimental">
+      <div class="card-top">
+        <h3>Plugin System (Experimental) <a class="anchor" href="#plugin-system-experimental">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Complete plugin framework for extending Claude Code with custom commands, agents, and hooks <strong>How to use:</strong></p>
+<pre><code># Enable plugin system (currently requires environment variable)
+export ENABLE_PLUGINS=1
+claude
+
+# Plugins are loaded from ~/.claude/plugins/repos/
+# Structure: ~/.claude/plugins/repos/owner/repo/</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Supports three types of extensions: commands, agents, and hooks</li><li>Git-based distribution with automatic updates via <code>git pull --ff-only</code></li><li>Plugin manifest format (<code>plugin.json</code>) with name, version, description, and author metadata</li><li>Commands and agents are namespaced (e.g., <code>pluginName:commandName</code>)</li><li>Individual plugins can be enabled/disabled per repository</li><li>Supports <code>${CLAUDE_PLUGIN_ROOT}</code> variable for referencing plugin files</li><li>Currently disabled by default - requires <code>ENABLE_PLUGINS</code> environment variable</li></ul>
+    </article>
+    <article class="card" id="prompt-caching-infrastructure-disabled">
+      <div class="card-top">
+        <h3>Prompt Caching Infrastructure (Disabled) <a class="anchor" href="#prompt-caching-infrastructure-disabled">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Infrastructure for caching API prompts to local JSON files <strong>Details:</strong></p>
+<ul><li>Saves prompts to <code>.claude-cache/prompts/{sessionId}/{timestamp}.json</code></li><li>Currently disabled via hardcoded flag - likely for future release</li><li>Captures complete prompt data including tools, system prompts, and messages</li><li>Silent error handling to prevent interruption of normal operations</li></ul>
+    </article>
+    <article class="card" id="enhanced-concurrent-query-handling">
+      <div class="card-top">
+        <h3>Enhanced Concurrent Query Handling <a class="anchor" href="#enhanced-concurrent-query-handling">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Concurrent queries are now blocked with user feedback instead of causing undefined behavior <strong>Impact:</strong> Prevents race conditions and provides clear messaging when users submit queries too quickly. Shows "Previous query still processing. Please try again." warning message.</p>
+    </article>
+    <article class="card" id="output-style-management">
+      <div class="card-top">
+        <h3>Output Style Management <a class="anchor" href="#output-style-management">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Automatic cache refresh when output styles are created or modified <strong>Impact:</strong> New output styles are immediately available without requiring a restart. The output-style-setup agent now includes a callback that clears the style cache after successful operations.</p>
+    </article>
+    <article class="card" id="improved-telemetry">
+      <div class="card-top">
+        <h3>Improved Telemetry <a class="anchor" href="#improved-telemetry">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Added categorization for agent and output style usage tracking <strong>Impact:</strong> Better insights into feature usage patterns with categories like:</p>
+<ul><li><code>agent:default</code>, <code>agent:custom</code>, <code>agent:{agentType}</code> for agent usage</li><li><code>outputStyle:default</code>, <code>outputStyle:custom</code>, <code>outputStyle:{styleName}</code> for output styles</li></ul>
+    </article>
+    <article class="card" id="plugin-agent-discovery">
+      <div class="card-top">
+        <h3>Plugin Agent Discovery <a class="anchor" href="#plugin-agent-discovery">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Agent discovery now supports plugin-provided agents in addition to built-in and custom agents <strong>Impact:</strong> Plugin agents appear seamlessly integrated in the agent list with "Plugin: {pluginName}" attribution</p>
+    </article>
+    <article class="card" id="fixed-concurrent-query-race-condition">
+      <div class="card-top">
+        <h3>Fixed: Concurrent Query Race Condition <a class="anchor" href="#fixed-concurrent-query-race-condition">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Users could submit multiple queries simultaneously, causing unpredictable behavior</li><li><strong>Cause:</strong> Previous implementation only logged telemetry without preventing concurrent execution</li><li><strong>Resolution:</strong> Now blocks concurrent queries with proper mutex protection and user feedback</li></ul>
+    </article>
+    <article class="card" id="fixed-output-style-cache-staleness">
+      <div class="card-top">
+        <h3>Fixed: Output Style Cache Staleness <a class="anchor" href="#fixed-output-style-cache-staleness">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Newly created output styles weren't immediately available</li><li><strong>Cause:</strong> Output style cache wasn't cleared after modifications</li><li><strong>Resolution:</strong> Added callback mechanism to clear cache after output-style-setup agent completes</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

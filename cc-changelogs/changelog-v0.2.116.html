@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.116 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.116."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.116</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.116</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.115 → v0.2.116</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Enhanced IDE Integration</h4>
+<ul><li><strong>New WebSocket IDE Transport</strong>: Added support for WebSocket-based IDE connections, enabling more robust communication with IDEs like JetBrains</li><li><strong>Improved IDE Connection Management</strong>: Better handling of IDE connections with automatic reconnection and timeout management</li><li><strong>IDE Extension Installation</strong>: Enhanced automatic installation of IDE extensions with version checking and compatibility validation</li></ul>
+<h4>Configuration &amp; Management</h4>
+<ul><li><strong>Cleanup Period Configuration</strong>: New <code>cleanupPeriodDays</code> setting in managed settings to control how long logs and project data are retained (default: 30 days)</li></ul>
+<pre><code>  {
+    &quot;cleanupPeriodDays&quot;: 30
+  }</code></pre>
+<ul><li><strong>Automatic Log Cleanup</strong>: Claude Code now automatically cleans up old log files and project data based on the configured cleanup period</li><li><strong>Enhanced Environment Control</strong>: New <code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code> environment variable to disable telemetry, auto-updates, and error reporting</li></ul>
+<h4>API Key Management</h4>
+<ul><li><strong>API Key Helper TTL</strong>: New <code>CLAUDE_CODE_API_KEY_HELPER_TTL_MS</code> environment variable to control API key caching duration</li><li><strong>Better Authentication Handling</strong>: Improved handling of 401 authentication errors with automatic cache clearing</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Tool Enhancements</h4>
+<ul><li><strong>Better Tool Descriptions</strong>: Enhanced descriptions for Glob and Grep tools with clearer guidance on when to use each tool</li><li><strong>Multi-Edit Tool</strong>: Improved documentation emphasizing preference for MultiEdit over single Edit operations</li><li><strong>Thinking Display</strong>: Enhanced visual presentation of Claude's thinking process with better formatting and borders</li></ul>
+<h4>Error Handling &amp; Reliability</h4>
+<ul><li><strong>Retry Logic</strong>: Improved retry mechanism that handles authentication failures by refreshing credentials</li><li><strong>Error Reporting</strong>: Added protection against recursive error reporting with a flag to prevent infinite loops</li><li><strong>Better Error Messages</strong>: More descriptive error messages for IDE integration failures</li></ul>
+<h4>️ Project Management</h4>
+<ul><li><strong>Project Directory Structure</strong>: New project storage location at <code>/projects</code> for better organization</li><li><strong>Environment Detection</strong>: Added functions to detect production vs development environments</li><li><strong>External vs Internal Classification</strong>: New system to classify whether code is running externally or internally</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li><strong>Fixed GitHub Actions Workflow</strong>: Updated workflow to properly handle issue titles containing @claude mentions</li><li><strong>Fixed IDE Connection Status</strong>: More accurate reporting of IDE connection status in the UI</li><li><strong>Fixed Cleanup Logic</strong>: Proper handling of empty directories during cleanup operations</li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <ul><li><strong>Removed Legacy Functions</strong>: Cleaned up unused functions related to sandbox execution and old configuration paths</li><li><strong>Streamlined Imports</strong>: Consolidated and optimized module imports</li><li><strong>Code Organization</strong>: Better separation of concerns with dedicated functions for environment detection and configuration management</li></ul>
+    </article>
+    <article class="card" id="breaking-changes">
+      <div class="card-top">
+        <h3>Breaking Changes <a class="anchor" href="#breaking-changes">#</a></h3>
+      </div>
+      <p>None - This release maintains backward compatibility with existing configurations and workflows.</p>
+    </article>
+    <article class="card" id="notes-for-users">
+      <div class="card-top">
+        <h3>Notes for Users <a class="anchor" href="#notes-for-users">#</a></h3>
+      </div>
+      <ul><li>If you're using IDE integration, you may need to restart your IDE after updating to ensure proper connection</li><li>The new cleanup feature will automatically remove logs older than 30 days by default. Adjust <code>cleanupPeriodDays</code> in managed settings if you need different retention</li><li>For environments with restricted network access, use <code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code> to disable all non-essential network requests</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

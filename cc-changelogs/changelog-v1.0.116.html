@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.116 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.116."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.116</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.116</span></h1>
+<p class="sub">Version 1.0.116 introduces reverse search history (Ctrl+R) for the interactive prompt, refactors the sandbox system with a centralized manager and flexible security policies, and adds support for environment-specific OAuth credentials to prevent developers from accidentally overwriting production tokens.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.115 → v1.0.116</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="reverse-search-history-ctrl-r">
+      <div class="card-top">
+        <h3>Reverse Search History (Ctrl+R) <a class="anchor" href="#reverse-search-history-ctrl-r">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Interactive command history search similar to bash's reverse-i-search</p>
+<p><strong>How to use:</strong></p>
+<pre><code># In the interactive prompt, press Ctrl+R
+# Type your search query - matches appear from command history
+# Press Ctrl+R again to cycle through matches
+# Press Enter to execute, Escape/Tab to accept without executing</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Displays "bck-i-search: " prompt when active</li><li>Shows "failing bck-i-search: " when no matches found</li><li>Searches through full command history including pasted content</li><li>Ctrl+C cancels and restores previous input</li><li><strong>Evidence</strong>: <code>YNB() at line 429227</code>, <code>ZW5() at line 429311</code></li></ul>
+    </article>
+    <article class="card" id="environment-specific-oauth-credentials">
+      <div class="card-top">
+        <h3>Environment-Specific OAuth Credentials <a class="anchor" href="#environment-specific-oauth-credentials">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Separate OAuth credential storage for local development vs production</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Production credentials (default)
+# Stored in: ~/.claude.json
+
+# Local development credentials
+export USE_LOCAL_OAUTH=1
+# Stored in: ~/.claude-local-oauth.json</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Prevents accidentally overwriting production OAuth tokens during development</li><li>Separate keychain entries: "Claude Code" vs "Claude Code-local-oauth"</li><li>Configuration files: <code>.claude.json</code> (prod) or <code>.claude-local-oauth.json</code> (local)</li><li>Infrastructure for staging environment included but not yet active</li><li><strong>Evidence</strong>: <code>Uo1() at line 339682</code>, <code>KZ9() at line 339686</code>, <code>uJ() at line 339696</code></li></ul>
+    </article>
+    <article class="card" id="network-permission-session-memory">
+      <div class="card-top">
+        <h3>Network Permission Session Memory <a class="anchor" href="#network-permission-session-memory">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Remember network access decisions for the current session</p>
+<p><strong>How to use:</strong></p>
+<pre><code># When prompted for network access outside sandbox:
+# - &quot;Yes&quot; - Allow once
+# - &quot;Yes, and allow accessing host:port for this session&quot; - Remember for session
+# - &quot;No, and disable accessing host:port for this session&quot; - Block for session</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Reduces repetitive permission prompts for trusted hosts</li><li>Session-scoped - resets when Claude Code restarts</li><li>Works with sandbox network restrictions</li><li><strong>Evidence</strong>: <code>pNB() at line 431799</code>, <code>Bx6() at line 374794</code></li></ul>
+    </article>
+    <article class="card" id="sessions-api-integration-feature-flagged">
+      <div class="card-top">
+        <h3>Sessions API Integration (Feature-Flagged) <a class="anchor" href="#sessions-api-integration-feature-flagged">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New backend API for fetching session events and metadata</p>
+<p><strong>Details:</strong></p>
+<ul><li>Currently disabled by feature flag (<code>YD1()</code> returns false)</li><li>Uses <code>/v1/sessions/</code> endpoints instead of <code>/api/oauth/</code></li><li>Supports fetching session events for replay capability</li><li>New data structure with <code>session_context.sources</code> and <code>session_context.outcomes</code></li><li>Will enable enhanced teleport functionality when activated</li><li><strong>Evidence</strong>: <code>P55() at line 413749</code>, <code>S55() at line 413999</code>, <code>j55() at line 413991</code></li></ul>
+    </article>
+    <article class="card" id="refactored-sandbox-system">
+      <div class="card-top">
+        <h3>Refactored Sandbox System <a class="anchor" href="#refactored-sandbox-system">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Complete architectural overhaul of the sandboxing implementation</p>
+<p><strong>Key Changes:</strong></p>
+<ul><li>Centralized sandbox manager with clean API (<code>hV</code> object at line 374998)</li><li>New configuration model: <code>allowAllExcept</code> (blacklist) vs <code>denyAllExcept</code> (whitelist)</li><li>Network deny-lists alongside allow-lists for more granular control</li><li>macOS sandbox profiles now use deny-by-default security model</li><li>Recommended defaults for common development tools (npm, cargo, yarn, etc.)</li><li>Dynamic permission callbacks for interactive network access control</li><li><strong>Evidence</strong>: <code>wBB() at line 374755</code>, <code>Zx6() at line 374844</code>, <code>DBB() at line 374642</code></li></ul>
+<p><strong>Migration Notes:</strong></p>
+<ul><li>Existing sandbox configurations continue to work</li><li>New <code>includeRecommendedDefaults</code> option automatically allows access to common tools</li><li>Deny-by-default macOS profiles are more secure but may require configuration updates</li></ul>
+    </article>
+    <article class="card" id="enhanced-model-validation-errors">
+      <div class="card-top">
+        <h3>Enhanced Model Validation Errors <a class="anchor" href="#enhanced-model-validation-errors">#</a></h3>
+      </div>
+      <p><strong>What:</strong> More specific error messages when model validation fails</p>
+<p><strong>Details:</strong></p>
+<ul><li>Distinguishes between "model not found", "authentication failed", and "network error"</li><li>Provides actionable error messages instead of generic failures</li><li>Better parsing of API error responses</li><li><strong>Evidence</strong>: <code>yJ5() at line 436574</code></li></ul>
+    </article>
+    <article class="card" id="optimized-editor-selection">
+      <div class="card-top">
+        <h3>Optimized Editor Selection <a class="anchor" href="#optimized-editor-selection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Editor detection is now memoized for better performance</p>
+<p><strong>Details:</strong></p>
+<ul><li>Checks <code>VISUAL</code> and <code>EDITOR</code> environment variables</li><li>Falls back to ["code", "vi", "nano"] in order</li><li>Result is cached to avoid repeated filesystem checks</li><li><strong>Evidence</strong>: <code>Cf1 at line 404874</code> (previously <code>Jf1() at line 404673</code> in v1.0.115)</li></ul>
+    </article>
+    <article class="card" id="improved-session-resume-messages">
+      <div class="card-top">
+        <h3>Improved Session Resume Messages <a class="anchor" href="#improved-session-resume-messages">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Better error handling for session resume operations</p>
+<p><strong>Details:</strong></p>
+<ul><li>Shows "Session resumed" (info) on success</li><li>Shows "Session resumed without branch: [error]" (warning) on partial failure</li><li>Uses formatted error messages when available</li><li><strong>Evidence</strong>: <code>bzB() at line 413552</code> (previously <code>o65() at line 413908</code> in v1.0.115)</li></ul>
+    </article>
+    <article class="card" id="sandbox-configuration-deep-cloning">
+      <div class="card-top">
+        <h3>Sandbox Configuration Deep Cloning <a class="anchor" href="#sandbox-configuration-deep-cloning">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Prevents mutation of original sandbox configuration</p>
+<p><strong>Details:</strong></p>
+<ul><li>Uses deep clone when processing sandbox config</li><li>Prevents unexpected side effects when adding recommended defaults</li><li><strong>Evidence</strong>: <code>EBB.cloneDeep(A) at line 374849</code> in <code>Zx6()</code></li></ul>
+    </article>
+    <article class="card" id="renamed-functions-and-variables">
+      <div class="card-top">
+        <h3>Renamed Functions and Variables <a class="anchor" href="#renamed-functions-and-variables">#</a></h3>
+      </div>
+      <ul><li>OAuth config selector: <code>D6()</code> → <code>L4()</code></li><li>Config file path: <code>bJ()</code> → <code>uJ()</code></li><li>OAuth configs: <code>HS9</code> → <code>pPA</code>, <code>DS9</code> → <code>gS9</code>, <code>fPA</code> → <code>iPA</code></li><li>Sandbox functions: <code>GBB()</code> → <code>wBB()</code>, <code>JBB()</code> → <code>Zx6()</code>, <code>FBB()</code> → <code>Ix6()</code></li><li>Linux wrapper: <code>YBB()</code> → <code>zBB()</code></li></ul>
+    </article>
+    <article class="card" id="refactored-session-memory">
+      <div class="card-top">
+        <h3>Refactored Session Memory <a class="anchor" href="#refactored-session-memory">#</a></h3>
+      </div>
+      <ul><li>Session memory config: <code>bd5()</code> → <code>cp5 object</code></li><li>Session memory processor: <code>_$3</code> → <code>E_3</code></li><li>Now uses agent definition pattern for consistency</li></ul>
+    </article>
+    <article class="card" id="oauth-configuration-structure">
+      <div class="card-top">
+        <h3>OAuth Configuration Structure <a class="anchor" href="#oauth-configuration-structure">#</a></h3>
+      </div>
+      <ul><li>Added <code>OAUTH_FILE_SUFFIX</code> field to all OAuth configs</li><li>Production: <code>OAUTH_FILE_SUFFIX: ""</code></li><li>Local: <code>OAUTH_FILE_SUFFIX: "-local-oauth"</code></li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The Sessions API integration is implemented but disabled by feature flag</li><li>Sandbox recommended defaults include paths for npm, yarn, pnpm, cargo, rustup, homebrew</li><li>Environment-specific OAuth credentials prevent common development workflow issues</li><li>Reverse search history uses React hooks for state management in the terminal UI</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

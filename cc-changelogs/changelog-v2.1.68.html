@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.68 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.68."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.68</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.68</span></h1>
+<p class="sub">This release re-enables the "ultrathink" keyword as a way to boost reasoning effort to high for the current turn, complete with a new rainbow shimmer visual effect. It also adds a <code>CLAUDE_CODE_DISABLE_LEGACY_MODEL_REMAP</code> environment variable to let users opt out of automatic model remapping to Opus 4.6, and introduces a redesigned server-controlled effort selection dialog.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.67 → v2.1.68</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="ultrathink-keyword-re-enabled-as-effort-boost">
+      <div class="card-top">
+        <h3>Ultrathink keyword re-enabled as effort boost <a class="anchor" href="#ultrathink-keyword-re-enabled-as-effort-boost">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Typing "ultrathink" in a message now sets reasoning effort to "high" for that turn. In the previous version, ultrathink was deprecated and showed a dismissive message — it now has real functionality again.</p>
+<div class="blabel">Usage</div>
+<pre><code>ultrathink about the architecture of this codebase and suggest improvements</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When "ultrathink" appears anywhere in your message, effort is automatically set to high for that turn</li><li>A notification briefly displays: "Effort set to high for this turn"</li><li>The word "ultrathink" is rendered with a rainbow color shimmer effect in the terminal (cycling through red, orange, yellow, green, blue, indigo, and violet)</li><li>Controlled by the <code>tengu_turtle_carbon</code> feature flag (defaults to enabled)</li><li>Replaces the old "Ultrathink no longer does anything. Thinking budget is now max by default." deprecation message</li></ul>
+<div class="blabel">Evidence</div>
+<p>Ultrathink effort injection (search for <code>"ultrathink_effort"</code>) — <code>rqY()</code> at line ~290076 checks <code>jd()</code> (<code>"tengu_turtle_carbon"</code>) and <code>Vf7()</code> (<code>/\bultrathink\b/i</code>)</p>
+    </article>
+    <article class="card" id="legacy-model-remap-opt-out">
+      <div class="card-top">
+        <h3>Legacy model remap opt-out <a class="anchor" href="#legacy-model-remap-opt-out">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Users who were automatically migrated from legacy Opus models to Opus 4.6 can now opt out by setting an environment variable.</p>
+<div class="blabel">Usage</div>
+<pre><code>export CLAUDE_CODE_DISABLE_LEGACY_MODEL_REMAP=1</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When your model is auto-remapped to Opus 4.6, the notification now reads: "Model updated to Opus 4.6 · Set CLAUDE_CODE_DISABLE_LEGACY_MODEL_REMAP=1 to opt out"</li><li>The notification displays for 8 seconds (up from 3) when the opt-out message is shown, giving you time to read the instructions</li><li>Setting the environment variable to <code>1</code> disables the automatic model remapping entirely</li><li>The remap behavior is also gated by the <code>tengu_grey_wool</code> feature flag (defaults to enabled)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Model remap opt-out (search for <code>"CLAUDE_CODE_DISABLE_LEGACY_MODEL_REMAP"</code>) — <code>gy1()</code> at line ~535228</p>
+    </article>
+    <article class="card" id="effort-selection-dialog-redesigned">
+      <div class="card-top">
+        <h3>Effort selection dialog redesigned <a class="anchor" href="#effort-selection-dialog-redesigned">#</a></h3>
+      </div>
+      <p>The effort callout dialog for Opus 4.6 users has been redesigned with server-configurable content and a simplified option set.</p>
+<div class="blabel">Details</div>
+<ul><li>Dialog title and description are now fetched from the server (via <code>tengu_grey_step2</code> feature flag) instead of being hardcoded</li><li>Options are simplified to three clear choices:</li><li>"Use medium effort (recommended)"</li><li>"Use high effort"</li><li>"Use low effort" (new — previously only medium and high were offered)</li><li>Removed verbose per-option descriptions and the "(current)" suffix labeling</li><li>Uses a separate dismiss state (<code>effortCalloutV2Dismissed</code>) so users who dismissed the old dialog may see the new one</li></ul>
+<div class="blabel">Evidence</div>
+<p>Server-controlled effort dialog (search for <code>"tengu_grey_step2"</code>) — <code>zb6()</code> at line ~162660, dialog at <code>ohq()</code> line ~588325</p>
+    </article>
+    <article class="card" id="removed-silent-medium-effort-auto-migration">
+      <div class="card-top">
+        <h3>Removed silent medium-effort auto-migration <a class="anchor" href="#removed-silent-medium-effort-auto-migration">#</a></h3>
+      </div>
+      <p>The automatic migration that silently set Opus 4.6 effort to "medium" has been removed.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously, on startup, the app would set <code>opus46EffortMediumMigrationTimestamp</code> and briefly flash "Opus 4.6 effort updated to medium"</li><li>This silent migration has been completely removed — effort is no longer changed behind the scenes</li><li>Default effort for Opus 4.6 is now determined by feature flags (<code>tengu_quartz_falcon</code>, <code>tengu_grey_step2</code>) rather than a one-time migration</li></ul>
+<div class="blabel">Evidence</div>
+<p>Removed migration function (search for <code>"opus46EffortMediumMigrationTimestamp"</code> — present in v2.1.67, absent in v2.1.68)</p>
+    </article>
+    <article class="card" id="server-controlled-effort-dialog-gradual-rollout">
+      <div class="card-top">
+        <h3>Server-controlled effort dialog [Gradual Rollout] <a class="anchor" href="#server-controlled-effort-dialog-gradual-rollout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The redesigned effort dialog described above is gated behind the <code>tengu_grey_step2</code> feature flag, which defaults to <code>{ enabled: false }</code>.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged (disabled by default, server-controlled rollout)</p>
+<div class="blabel">Details</div>
+<ul><li>The <code>tengu_grey_step2</code> flag controls whether the dialog appears and provides its title and description text</li><li>A separate <code>tengu_quartz_falcon</code> flag also influences the default effort level for Opus 4.6</li><li>First-party users who previously dismissed the old effort dialog won't see the new one until <code>tengu_grey_step2</code> is enabled server-side</li><li>API users (<code>By()</code> or <code>wb6()</code>) can also be enrolled via the same flag</li></ul>
+<div class="blabel">Evidence</div>
+<p>Dialog visibility (search for <code>"effortCalloutV2Dismissed"</code>) — <code>zIq()</code> at line ~588370 checks <code>zb6().enabled</code></p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

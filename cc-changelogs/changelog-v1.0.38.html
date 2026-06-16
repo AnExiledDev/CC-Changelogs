@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.38 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.38."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.38</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.38</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.37 → v1.0.38</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="major-features">
+      <div class="card-top">
+        <h3>Major Features <a class="anchor" href="#major-features">#</a></h3>
+      </div>
+      <h4>Hook System (New)</h4>
+<ul><li><strong>Pre/Post Tool Hooks</strong>: Execute custom commands before and after tool operations</li><li><code>PreToolUse</code> - Run commands before tools execute (e.g., validation, logging)</li><li><code>PostToolUse</code> - Run commands after tools complete (e.g., notifications, cleanup)</li><li><code>Stop</code> - Execute commands when Claude stops responding</li><li><code>Notification</code> - Trigger commands for system notifications</li><li><strong>Hook Configuration</strong>: Configure hooks with matchers to target specific tools or patterns</li><li>Support for regex and pipe-separated matchers</li><li>Hooks can approve/block operations or provide feedback</li><li>JSON output parsing for structured hook responses</li><li>60-second timeout with automatic cancellation</li></ul>
+<h4>Enhanced Search Tool (Grep)</h4>
+<ul><li><strong>New Grep Tool</strong>: Powerful search based on ripgrep with advanced features</li><li>Multiple output modes: <code>content</code>, <code>files_with_matches</code>, <code>count</code></li><li>Context lines support with <code>-A</code>, <code>-B</code>, <code>-C</code> flags</li><li>Line numbers with <code>-n</code> flag</li><li>Case-insensitive search with <code>-i</code> flag</li><li>File type filtering with <code>type</code> parameter</li><li>Glob pattern support for file filtering</li><li><strong>Multiline mode</strong>: Search across line boundaries with <code>multiline: true</code></li><li>Head limit to control output size</li><li>Optimized for correct permissions and file access</li><li>Never invokes <code>grep</code> or <code>rg</code> as bash commands directly</li></ul>
+    </article>
+    <article class="card" id="new-commands-features">
+      <div class="card-top">
+        <h3>New Commands &amp; Features <a class="anchor" href="#new-commands-features">#</a></h3>
+      </div>
+      <h4>Memory Management</h4>
+<ul><li>Enhanced memory system with support for adding memories to specific files</li><li>Memory updates preserve existing content and structure</li><li>Automatic section detection for organized memory storage</li></ul>
+<h4>️ Terminal Integration</h4>
+<ul><li><strong>Ghostty Terminal Support</strong>: Added configuration for Shift+Enter keybinding</li><li>Improved terminal setup for multiple environments</li><li>Better handling of paste operations with image detection</li></ul>
+<h4>️ IDE Detection</h4>
+<ul><li>Automatic detection of JetBrains IDEs when launched from within them</li><li>Supports: PyCharm, IntelliJ, WebStorm, PhpStorm, RubyMine, CLion, GoLand, Rider, DataGrip, AppCode, DataSpell, Aqua, Gateway, Fleet</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Security &amp; Privacy</h4>
+<ul><li>Enhanced API key redaction in logs</li><li>Support for AWS, GCP, and generic API key patterns</li><li>Better handling of authorization tokens and service accounts</li></ul>
+<h4>Performance &amp; Reliability</h4>
+<ul><li>Improved proxy configuration with AWS SDK</li><li>Better handling of aborted operations in hooks</li><li>Enhanced error messages for hook failures</li><li>Optimized file search with modification time sorting</li></ul>
+<h4>UI/UX Enhancements</h4>
+<ul><li>Visual indication when hooks are running</li><li>Better feedback for blocked operations</li><li>Improved diff view for file edits</li><li>Enhanced paste detection with visual feedback</li></ul>
+    </article>
+    <article class="card" id="technical-updates">
+      <div class="card-top">
+        <h3>Technical Updates <a class="anchor" href="#technical-updates">#</a></h3>
+      </div>
+      <ul><li>Updated dependencies and imports</li><li>Improved TypeScript/JavaScript parsing</li><li>Better handling of multiline patterns in search</li><li>Enhanced abort signal propagation</li><li>Optimized memory usage for large file operations</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed duplicate comment issues</li><li>Improved error handling in hook execution</li><li>Better cleanup of resources on exit</li><li>Fixed terminal focus detection issues</li><li>Resolved paste operation edge cases</li></ul>
+    </article>
+    <article class="card" id="breaking-changes">
+      <div class="card-top">
+        <h3>Breaking Changes <a class="anchor" href="#breaking-changes">#</a></h3>
+      </div>
+      <p>None - This release maintains backward compatibility with existing configurations and workflows.</p>
+    </article>
+    <article class="card" id="configuration">
+      <div class="card-top">
+        <h3>Configuration <a class="anchor" href="#configuration">#</a></h3>
+      </div>
+      <p>New hook configuration example:</p>
+<pre><code>// Configure hooks in settings
+{
+  &quot;hooks&quot;: {
+    &quot;PreToolUse&quot;: [
+      {
+        &quot;matcher&quot;: &quot;file_edit|str_replace&quot;,
+        &quot;hooks&quot;: [
+          {
+            &quot;type&quot;: &quot;command&quot;,
+            &quot;command&quot;: &quot;echo &#x27;About to edit a file&#x27; | tee -a /tmp/claude.log&quot;
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+<p>New Grep tool usage examples:</p>
+<pre><code># Search for function definitions
+claude&gt; Search for &quot;function.*Error&quot; in all JavaScript files
+
+# Multiline search for struct definitions
+claude&gt; Search for struct definitions with a &quot;field&quot; property using multiline mode
+
+# Count occurrences with context
+claude&gt; Count how many times &quot;TODO&quot; appears in the codebase with 2 lines of context</code></pre>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

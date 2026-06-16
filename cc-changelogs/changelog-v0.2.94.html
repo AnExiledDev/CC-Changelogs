@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.94 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.94."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.94</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.94</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.93 → v0.2.94</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.94 Changelog</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Import Optimizations</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="import-optimizations">
+      <p>This release focuses on optimizing module imports for better performance and cleaner code structure.</p>
+    </article>
+    <article class="card" id="changes">
+      <div class="card-top">
+        <h3>Changes <a class="anchor" href="#changes">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <h4><strong>Improved Import Specificity</strong></h4>
+<p>The CLI now uses more targeted imports instead of importing entire modules:</p>
+<ul><li><strong>Process Module</strong>: Instead of importing the entire <code>node:process</code> module, the CLI now imports only the <code>cwd</code> function directly:</li></ul>
+<pre><code>  // Before: import YP6 from &quot;node:process&quot;
+  // After:  import { cwd as Ti0 } from &quot;node:process&quot;</code></pre>
+<p>This change reduces memory footprint by only loading the specific functionality needed for getting the current working directory.</p>
+<ul><li><strong>Stream Module</strong>: Similarly, the stream module import has been optimized to import only the <code>PassThrough</code> class:</li></ul>
+<pre><code>  // Before: import Uz4 from &quot;stream&quot;
+  // After:  import { PassThrough as MW8 } from &quot;stream&quot;</code></pre>
+<p>The <code>PassThrough</code> stream is used internally for piping data between different parts of the CLI without transformation.</p>
+    </article>
+    <article class="card" id="technical-details">
+      <div class="card-top">
+        <h3>Technical Details <a class="anchor" href="#technical-details">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li><strong>Bundle Size</strong>: These targeted imports help reduce the overall bundle size and improve startup performance</li><li><strong>No Functional Changes</strong>: This update maintains 100% structural similarity with the previous version - all functionality remains identical</li><li><strong>Internal Refactoring</strong>: 138 internal variable renames were performed as part of the build process (standard minification behavior)</li></ul>
+    </article>
+    <article class="card" id="summary">
+      <div class="card-top">
+        <h3>Summary <a class="anchor" href="#summary">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Version 0.2.94 is a performance-focused release that optimizes how the CLI loads Node.js built-in modules. Users won't notice any behavioral changes, but the CLI should have slightly improved startup times and reduced memory usage due to more efficient module loading.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

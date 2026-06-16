@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.42 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.42."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.42</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.42</span></h1>
+<p class="sub">Version 2.0.42 introduces bidirectional LSP communication support, enhanced GitHub authentication, and improved LSP workspace initialization. The LSP system can now respond to server requests (not just send them), GitHub CLI authentication is more robust with JSON output parsing, and LSP servers receive proper workspace context from initialization.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.41 → v2.0.42</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">16 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="lsp-request-handler-support">
+      <div class="card-top">
+        <h3>LSP Request Handler Support <a class="anchor" href="#lsp-request-handler-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> LSP servers can now send requests back to Claude Code and receive responses, enabling full bidirectional communication required by the LSP protocol.</p>
+<p><strong>How it works:</strong> The LSP client now supports <code>onRequest()</code> to handle incoming requests from language servers, complementing the existing <code>onNotification()</code> for one-way messages. This enables proper LSP protocol compliance.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added <code>onRequest()</code> method to LSP client wrapper at <code>y$Q() at line 283672</code></li><li>Implemented request handler queueing system (variable <code>X = []</code> at line 283555) for handlers registered before connection establishment</li><li>Exposed <code>onRequest</code> in high-level LSP server API at <code>x$Q() at line 283868</code></li><li>Immediately utilized to handle <code>workspace/configuration</code> requests at line 286293, returning <code>null</code> for all configuration items (safe default)</li><li><strong>Evidence</strong>: <code>y$Q() at line 283547-283803</code> (new LSP client), <code>x$Q() at line 283893</code> (exposed API)</li></ul>
+<p><strong>Why it matters:</strong> Many LSP servers (TypeScript, Python, etc.) require clients to respond to <code>workspace/configuration</code> requests during initialization. Without this, some language servers may fail to initialize properly or operate with reduced functionality.</p>
+    </article>
+    <article class="card" id="github-app-installation-validation">
+      <div class="card-top">
+        <h3>GitHub App Installation Validation <a class="anchor" href="#github-app-installation-validation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Background tasks now verify that the Claude GitHub app is installed on the repository before allowing execution.</p>
+<p><strong>How to use:</strong> When initiating background tasks in a GitHub repository, Claude Code automatically checks if the Claude app is installed. If not, you'll receive a clear error message with installation link.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New validation function <code>KT2()</code> at line 426828 checks app installation via API endpoint <code>/api/oauth/organizations/{orgId}/code/repos/{owner}/{repo}</code></li><li>GitHub repository detection function <code>Fb()</code> at line 426624 extracts owner/repo from git remote URL</li><li>Added fourth validation check to background task prerequisites (alongside login, remote environment, and git repo checks) in <code>TT2() at line 427717</code></li><li>New error type <code>github_app_not_installed</code> with user-friendly message and installation link at line 427972</li><li><strong>Evidence</strong>: <code>KT2() at line 426828</code>, <code>TT2() at line 427717</code>, <code>Fb() at line 426624</code></li></ul>
+<p><strong>Why it matters:</strong> Ensures background tasks have proper GitHub integration permissions before execution, preventing mysterious failures when app permissions are missing.</p>
+    </article>
+    <article class="card" id="enhanced-github-authentication-detection">
+      <div class="card-top">
+        <h3>Enhanced GitHub Authentication Detection <a class="anchor" href="#enhanced-github-authentication-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> GitHub CLI authentication detection now uses JSON output parsing for more reliable credential extraction.</p>
+<p><strong>How it works:</strong> The <code>gh auth status</code> command is now called with <code>--active --json hosts</code> flags, parsing structured JSON instead of text output. This improves reliability across different <code>gh</code> CLI versions and configurations.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New function <code>Xi5()</code> at line 426046 uses <code>gh auth status --active --json hosts</code> for structured output</li><li>Parses JSON response to extract <code>hosts</code> object and active account login</li><li>Handles multiple GitHub hosts (github.com, Enterprise instances) by iterating through host entries</li><li>Replaces old shell parsing approach that used <code>sh -c "gh auth status 2&gt;&amp;1 | head -n 1"</code> and regex matching</li><li><strong>Evidence</strong>: <code>Xi5() at line 426046-426076</code></li></ul>
+<p><strong>Why it matters:</strong> More robust GitHub authentication detection prevents false negatives and works consistently across different GitHub CLI versions and Enterprise configurations.</p>
+    </article>
+    <article class="card" id="git-user-email-detection">
+      <div class="card-top">
+        <h3>Git User Email Detection <a class="anchor" href="#git-user-email-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added function to retrieve git user email from git configuration.</p>
+<p><strong>How to use:</strong> Automatically detects <code>git config user.email</code> value when linking VCS accounts.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New function <code>Wi5()</code> at line 426065 executes <code>git config --get user.email</code></li><li>Integrated with VCS account linking in <code>QT2()</code> at line 426023, now includes <code>git_user_email</code> field</li><li>Used to associate git commits with Claude Code user accounts</li><li><strong>Evidence</strong>: <code>Wi5() at line 426065</code>, <code>QT2() at line 426023</code></li></ul>
+    </article>
+    <article class="card" id="lsp-workspace-initialization">
+      <div class="card-top">
+        <h3>LSP Workspace Initialization <a class="anchor" href="#lsp-workspace-initialization">#</a></h3>
+      </div>
+      <p><strong>What:</strong> LSP servers now receive proper workspace root information during initialization instead of null values.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Changed <code>rootPath</code> from <code>null</code> to actual workspace folder path in LSP initialize request at <code>x$Q() at line 283755</code></li><li>Changed <code>rootUri</code> from <code>null</code> to <code>file://</code> URI of workspace folder at line 283756</li><li>Improves backward compatibility with LSP servers that rely on deprecated <code>rootPath</code>/<code>rootUri</code> fields</li><li><strong>Evidence</strong>: <code>x$Q() at line 283750-283756</code></li></ul>
+<p><strong>Why it matters:</strong> Some language servers use the deprecated <code>rootPath</code> and <code>rootUri</code> fields for workspace detection. Providing actual values instead of <code>null</code> improves compatibility with older LSP implementations.</p>
+    </article>
+    <article class="card" id="settings-update-error-handling">
+      <div class="card-top">
+        <h3>Settings Update Error Handling <a class="anchor" href="#settings-update-error-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Plugin enable/disable operations now properly propagate errors to callers.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>sQ0()</code> at line 489317 now captures and throws errors from <code>B2()</code> settings update</li><li>Added error destructuring: <code>let { error: Z } = B2("userSettings", { enabledPlugins: G })</code></li><li>Throws error if settings update fails: <code>if (Z) throw Z;</code></li><li><strong>Evidence</strong>: <code>sQ0() at line 489317-489323</code></li></ul>
+<p><strong>Why it matters:</strong> Previously, settings update failures could be silently ignored. Now callers can properly handle and report errors when plugin state changes fail.</p>
+    </article>
+    <article class="card" id="plugin-hook-filtering">
+      <div class="card-top">
+        <h3>Plugin Hook Filtering <a class="anchor" href="#plugin-hook-filtering">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Function-type hooks are now filtered out when serializing plugin hooks.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>Er2()</code> at line 472146 adds <code>.filter((Q) =&gt; Q.type !== "function")</code> to hook serialization</li><li>Prevents function-type hooks from being included in serialized plugin configurations</li><li><strong>Evidence</strong>: <code>Er2() at line 472146-472151</code></li></ul>
+<p><strong>Why it matters:</strong> Function-type hooks cannot be serialized to JSON, so filtering them prevents serialization errors.</p>
+    </article>
+    <article class="card" id="hook-type-handling">
+      <div class="card-top">
+        <h3>Hook Type Handling <a class="anchor" href="#hook-type-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Hook execution now handles multiple hook types including callback and function types.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Updated <code>vz()</code> function at line 472202 to handle four hook types: command, prompt, callback, and function</li><li>Function <code>PBI()</code> at line 473700 executes function-type hooks with proper timeout and abort signal handling</li><li>Callback hook execution in <code>jBI()</code> at line 473754 simplified with cleaner abort handling</li><li><strong>Evidence</strong>: <code>vz() at line 472202</code>, <code>PBI() at line 473700</code>, <code>jBI() at line 473754</code></li></ul>
+    </article>
+    <article class="card" id="lsp-definition-result-normalization">
+      <div class="card-top">
+        <h3>LSP Definition Result Normalization <a class="anchor" href="#lsp-definition-result-normalization">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Go-to-definition results are now normalized to handle both Location and LocationLink formats.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New helper functions <code>Ih2()</code> at line 441143 and <code>Qh2()</code> at line 441140 detect and convert LocationLink format</li><li>Function <code>ds5()</code> at line 441543 normalizes LocationLink to Location format</li><li>Updated <code>Yh2()</code> at line 441146 to handle mixed result arrays with both formats</li><li><strong>Evidence</strong>: <code>Ih2() at line 441143</code>, <code>Qh2() at line 441140</code>, <code>ds5() at line 441543</code>, <code>Yh2() at line 441146</code></li></ul>
+<p><strong>Why it matters:</strong> LSP spec allows servers to return either Location or LocationLink for definitions. Normalization ensures consistent handling regardless of format.</p>
+    </article>
+    <article class="card" id="hook-matching-logic">
+      <div class="card-top">
+        <h3>Hook Matching Logic <a class="anchor" href="#hook-matching-logic">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Hook matching now considers both matcher name and hook event when finding applicable hooks.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>Hr2()</code> at line 472167 updated to match hooks by matcher name first, then by hook criteria</li><li>Supports empty matcher string for wildcard matching</li><li>Returns full hook entry (not just <code>onMatch</code> callback) for more context</li><li><strong>Evidence</strong>: <code>Hr2() at line 472167-472185</code></li></ul>
+    </article>
+    <article class="card" id="mcp-configuration-lookup">
+      <div class="card-top">
+        <h3>MCP Configuration Lookup <a class="anchor" href="#mcp-configuration-lookup">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added helper functions for looking up MCP server configurations and resources by normalized names.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>Te2()</code> at line 495603 retrieves MCP server config by name with fallback to normalized name</li><li>Function <code>Pe2()</code> at line 495609 retrieves MCP resources by name with normalized name fallback</li><li>Handles case-insensitive lookups via <code>normalizedNames</code> mapping</li><li><strong>Evidence</strong>: <code>Te2() at line 495603</code>, <code>Pe2() at line 495609</code></li></ul>
+    </article>
+    <article class="card" id="environment-variable-telemetry">
+      <div class="card-top">
+        <h3>Environment Variable Telemetry <a class="anchor" href="#environment-variable-telemetry">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added <code>claude_code_container_id</code> to telemetry payload when running in containerized environments.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>Wp2()</code> at line 450308 now includes <code>claudeCodeContainerId</code> in telemetry</li><li>Mapped to <code>claude_code_container_id</code> field at line 450398</li><li>Sourced from <code>CLAUDE_CODE_CONTAINER_ID</code> environment variable</li><li><strong>Evidence</strong>: <code>Wp2() at line 450398-450399</code></li></ul>
+    </article>
+    <article class="card" id="bash-command-execution-in-plugins">
+      <div class="card-top">
+        <h3>Bash Command Execution in Plugins <a class="anchor" href="#bash-command-execution-in-plugins">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Simplified plugin bash command execution by removing plugin root directory injection.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>cc()</code> at line 432214 no longer wraps commands with <code>An5()</code> to inject <code>CLAUDE_PLUGIN_ROOT</code></li><li>Commands now execute directly without environment variable manipulation</li><li><strong>Evidence</strong>: <code>cc() at line 432214-432236</code></li></ul>
+    </article>
+    <article class="card" id="callback-hook-abort-handling">
+      <div class="card-top">
+        <h3>Callback Hook Abort Handling <a class="anchor" href="#callback-hook-abort-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved abort signal handling in callback hooks to prevent unhandled promise rejections.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>jBI()</code> at line 473754 simplified to let errors propagate naturally</li><li>Removed try-catch block that was catching and converting abort errors</li><li>Abort signals now handled by upstream code</li><li><strong>Evidence</strong>: <code>jBI() at line 473754-473794</code></li></ul>
+    </article>
+    <article class="card" id="import-reorganization">
+      <div class="card-top">
+        <h3>Import Reorganization <a class="anchor" href="#import-reorganization">#</a></h3>
+      </div>
+      <ul><li>Consolidated <code>node:process</code> imports: Added <code>cwd as Xy0</code> at line 77734</li><li>Consolidated <code>node:stream</code> imports: Added <code>Readable as Hs9</code> at line 87712</li><li>Split <code>node:child_process</code> imports: Added <code>execSync as $UQ, spawn as eR6</code> at line 279661</li><li>Reorganized <code>node:path</code> imports: Changed to <code>posix as O9I, win32 as VQ0</code> at line 482076</li><li>Added specific imports: <code>join as K19, basename as w8I</code> from path at line 489603</li><li>Added <code>PassThrough as p8I</code> from stream at line 490866</li><li>Added <code>homedir as G6I</code> from node:os at line 492712</li></ul>
+    </article>
+    <article class="card" id="variable-renaming-minification">
+      <div class="card-top">
+        <h3>Variable Renaming (Minification) <a class="anchor" href="#variable-renaming-minification">#</a></h3>
+      </div>
+      <p>Multiple variables renamed due to code minification:</p>
+<ul><li><code>Ev0</code> → <code>OUB</code> (TodoWrite tool description)</li><li><code>JLQ</code> → <code>y$Q</code> (LSP client wrapper)</li><li><code>cl5</code> → <code>Xi5</code> (GitHub auth detection)</li><li><code>An5</code> → (removed, plugin env wrapper)</li><li><code>Pi2</code> → <code>Er2</code> (plugin hook serializer)</li><li><code>Dt</code> → <code>vz</code> (hook type extractor)</li><li><code>FLQ</code> → <code>x$Q</code> (LSP server manager)</li><li><code>WT2</code> → <code>QT2</code> (VCS account linker)</li><li><code>aQ0</code> → <code>sQ0</code> (plugin enabler)</li><li><code>_T2</code> → <code>TT2</code> (background task validator)</li><li><code>$BI</code> → <code>jBI</code> (callback hook executor)</li><li><code>Qh2</code> → <code>Yh2</code> (definition result formatter)</li><li>Various function identifiers changed due to obfuscation</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

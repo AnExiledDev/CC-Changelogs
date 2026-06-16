@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.3 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.3."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.3</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.3</span></h1>
+<p class="sub">This release introduces a customizable keybindings system, allowing users to remap keyboard shortcuts via <code>~/.claude/keybindings.json</code>. The notification system was refactored with better terminal-specific handlers. The permission explainer UI was enhanced with a <code>Ctrl+E</code> shortcut to toggle explanations, and the <code>/doctor</code> command now reports unreachable permission rules. The Task* tools (TaskCreate, TaskGet, TaskUpdate, TaskList) were removed in favor of the simpler TodoWrite system.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.2 → v2.1.3</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="custom-keybindings-support">
+      <div class="card-top">
+        <h3>Custom Keybindings Support <a class="anchor" href="#custom-keybindings-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Configure custom keyboard shortcuts via a JSON file in your Claude config directory.</p>
+<div class="blabel">Usage</div>
+<p>Create <code>~/.claude/keybindings.json</code> with your custom mappings:</p>
+<pre><code>[
+  {
+    &quot;context&quot;: &quot;Chat&quot;,
+    &quot;bindings&quot;: {
+      &quot;ctrl+k&quot;: &quot;chat:submit&quot;,
+      &quot;ctrl+l&quot;: null
+    }
+  }
+]</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Supports contexts: <code>Global</code>, <code>Chat</code>, <code>Autocomplete</code>, <code>Confirmation</code>, <code>Transcript</code>, <code>HistorySearch</code>, <code>Task</code>, <code>ThemePicker</code>, <code>Help</code></li><li>Set a binding to <code>null</code> to disable it</li><li>File is hot-reloaded on changes—no restart required</li><li>Invalid keybindings show warnings via notifications, with details available in <code>/doctor</code></li><li>Reserved keys (<code>ctrl+c</code>, <code>ctrl+d</code>) cannot be remapped</li><li>Validation warns about OS-specific conflicts (e.g., <code>cmd+c</code> on macOS)</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>TJ()</code> at line 358886 (<code>KeybindingSetup</code> component, initializes with <code>"[keybindings] KeybindingSetup initialized"</code>), <code>Q_A()</code> at line 213102 (returns <code>keybindings.json</code> path), <code>g_5()</code> at line 358862 (displays <code>"keybinding-config-warning"</code> notifications)</p>
+    </article>
+    <article class="card" id="permission-explainer-keyboard-shortcut">
+      <div class="card-top">
+        <h3>Permission Explainer Keyboard Shortcut <a class="anchor" href="#permission-explainer-keyboard-shortcut">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Press <code>Ctrl+E</code> during permission prompts to toggle an AI-generated explanation of what the command does and its risk level.</p>
+<div class="blabel">Usage</div>
+<p>When Claude asks for permission to run a command, press <code>Ctrl+E</code> to see:</p>
+<ul><li>What the command does (explanation)</li><li>Why Claude is running it (reasoning)</li><li>Potential risks with severity level (LOW/MEDIUM/HIGH)</li></ul>
+<div class="blabel">Details</div>
+<ul><li>Explanations are generated on-demand using a fast model</li><li>Toggle the explanation panel on/off with <code>Ctrl+E</code></li><li>Risk levels: LOW (safe dev workflows), MEDIUM (recoverable changes), HIGH (dangerous/irreversible)</li><li>Only appears when the permission explainer feature flag is enabled</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>hg2()</code> at line 417649 (checks <code>X.ctrl &amp;&amp; J === "e"</code>, calls <code>tengu_permission_explainer_shortcut_used</code>), <code>gg2()</code> at line 417666 (renders <code>"ctrl+e to "</code> + <code>"hide"</code> or <code>"explain"</code>), <code>wc5()</code> at line 417675 (displays explanation with <code>riskLevel</code>)</p>
+    </article>
+    <article class="card" id="unreachable-permission-rules-detection">
+      <div class="card-top">
+        <h3>Unreachable Permission Rules Detection <a class="anchor" href="#unreachable-permission-rules-detection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>/doctor</code> command now detects and displays permission rules that will never be applied due to being shadowed by broader rules.</p>
+<div class="blabel">Usage</div>
+<pre><code>/doctor</code></pre>
+<p>Look for the "Unreachable Rules" section showing:</p>
+<ul><li>Which rules are shadowed</li><li>Which broader rule is shadowing them</li><li>How to fix the configuration</li></ul>
+<div class="blabel">Details</div>
+<ul><li>Detects allow rules shadowed by ask rules</li><li>Detects allow rules shadowed by deny rules</li><li>Shows the source of conflicting rules (project settings, policy, etc.)</li><li>Provides specific fix suggestions</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>xKA()</code> at line 302515 (checks for <code>shadowedBy</code> and builds unreachable rules list), <code>jg2()</code> at line 416765 (renders <code>"Unreachable Rules"</code> UI component with <code>shadowType</code> of <code>"ask"</code> or <code>"deny"</code>)</p>
+    </article>
+    <article class="card" id="refactored-notification-system">
+      <div class="card-top">
+        <h3>Refactored Notification System <a class="anchor" href="#refactored-notification-system">#</a></h3>
+      </div>
+      <p>The terminal notification system was refactored with cleaner abstractions. Notifications now use dedicated handler functions (<code>sendITerm2</code>, <code>sendKitty</code>, <code>sendGhostty</code>, <code>sendBell</code>) instead of inline escape sequences, making the code more maintainable and easier to extend.</p>
+<div class="blabel">Evidence</div>
+<p><code>gd()</code> at line 367233 (new notification dispatcher using <code>FT5</code>), <code>FT5()</code> at line 367243 (notification router with <code>B.sendITerm2(Q)</code>, <code>B.sendKitty(...)</code>, etc.), <code>HT5()</code> at line 367266 (auto-detection handler)</p>
+    </article>
+    <article class="card" id="enhanced-remember-skill">
+      <div class="card-top">
+        <h3>Enhanced Remember Skill <a class="anchor" href="#enhanced-remember-skill">#</a></h3>
+      </div>
+      <p>The <code>/remember</code> skill now has clearer instructions about evidence thresholds—patterns must appear in 2+ sessions before being added to memory. This prevents one-off items from polluting project memory.</p>
+<div class="blabel">Evidence</div>
+<p><code>Iq7</code> variable at line 530741 (contains <code>"Evidence Threshold (2+ Sessions Required)"</code> and <code>"Only extract themes and patterns that appear in 2 or more sessions"</code>)</p>
+    </article>
+    <article class="card" id="todo-system-migration">
+      <div class="card-top">
+        <h3>Todo System Migration <a class="anchor" href="#todo-system-migration">#</a></h3>
+      </div>
+      <p>Automatic migration from the old todo system (v1) to the new task system (v2) when upgrading. Existing todos are preserved and converted to the new format.</p>
+<div class="blabel">Evidence</div>
+<p><code>fG0()</code> at line 284033 (contains <code>"[Todo Migration] Migrating"</code> and <code>"Successfully migrated"</code>)</p>
+    </article>
+    <article class="card" id="dynamic-keybinding-display">
+      <div class="card-top">
+        <h3>Dynamic Keybinding Display <a class="anchor" href="#dynamic-keybinding-display">#</a></h3>
+      </div>
+      <p>Keyboard shortcut hints throughout the UI now reflect custom keybindings. If you remap <code>ctrl+o</code>, hints will show your custom binding instead of the default.</p>
+<div class="blabel">Evidence</div>
+<p><code>g4()</code> at line 213290 (resolves display text for action/context, logs <code>"tengu_keybinding_fallback_used"</code> when falling back), <code>gq()</code> at line 213305 (similar resolution function), <code>iP()</code> at line 282054 (uses <code>g4("app:toggleTranscript", "Global", "ctrl+o")</code>)</p>
+    </article>
+    <article class="card" id="task-tools-removed">
+      <div class="card-top">
+        <h3>Task* Tools Removed <a class="anchor" href="#task-tools-removed">#</a></h3>
+      </div>
+      <p>The <code>TaskCreate</code>, <code>TaskGet</code>, <code>TaskUpdate</code>, and <code>TaskList</code> tools have been removed. These were a more complex team collaboration-oriented task system that has been superseded by the simpler <code>TodoWrite</code> tool.</p>
+<div class="blabel">Details</div>
+<ul><li><code>TodoWrite</code> continues to work for tracking todos during sessions</li><li>Old todos are automatically migrated to the new system</li><li>Team collaboration features are no longer available through these tools</li></ul>
+<div class="blabel">Evidence</div>
+<p>Diff shows 23 occurrences of TaskCreate/TaskGet/TaskUpdate/TaskList in v2.1.2, reduced to 2 in v2.1.3 (legacy references only)</p>
+    </article>
+    <article class="card" id="incremental-tui-tengu-sumi">
+      <div class="card-top">
+        <h3>Incremental TUI (tengu_sumi) <a class="anchor" href="#incremental-tui-tengu-sumi">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>An experimental incremental terminal UI rendering system.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_sumi</code></p>
+<div class="blabel">Details</div>
+<ul><li>Controlled by <code>ENABLE_INCREMENTAL_TUI</code> environment variable or <code>tengu_sumi</code> feature flag</li><li>Infrastructure is in place but gated</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Sz()</code> at line (contains <code>dX(process.env.ENABLE_INCREMENTAL_TUI)</code> and <code>y8("tengu_sumi")</code>)</p>
+    </article>
+    <article class="card" id="scratch-feature-tengu-scratch">
+      <div class="card-top">
+        <h3>Scratch Feature (tengu_scratch) <a class="anchor" href="#scratch-feature-tengu-scratch">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Purpose unclear from code, but infrastructure exists for a "scratch" feature.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_scratch</code></p>
+<div class="blabel">Evidence</div>
+<p><code>gzA()</code> at line 526466 (returns <code>y8("tengu_scratch")</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

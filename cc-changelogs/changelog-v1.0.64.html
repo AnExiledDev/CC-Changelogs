@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.64 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.64."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.64</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.64</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.63 → v1.0.64</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Agent Model Configuration</h4>
+<ul><li><strong>Configurable AI models for agents</strong>: Agents can now specify which Claude model they should use (Sonnet, Opus, or Haiku)</li><li><strong>"Inherit" model option</strong>: Agents can inherit the model from the parent conversation, allowing for flexible model usage</li><li><strong>Environment variable override</strong>: New <code>CLAUDE_CODE_SUBAGENT_MODEL</code> environment variable to globally override agent model selection</li></ul>
+<pre><code>  export CLAUDE_CODE_SUBAGENT_MODEL=haiku
+  claude # All agents will use Haiku regardless of their configuration</code></pre>
+<h4>️ Enhanced Agent Management</h4>
+<ul><li><strong>Edit Model option</strong>: New menu option "Edit model" when managing agents through the interactive UI</li><li><strong>Model validation</strong>: Agent files now validate model specifications against allowed values (sonnet, opus, haiku, inherit)</li><li><strong>Agent file model syntax</strong>: Agents can specify their model in the frontmatter:</li></ul>
+<pre><code>  name: my-agent
+  description: Description of what this agent does
+  model: opus  # New field
+  tools: [Read, Write, Bash]</code></pre>
+<h4>MCP (Model Context Protocol) Improvements</h4>
+<ul><li><strong>Resource management</strong>: Better handling of MCP resources with proper cleanup and state management</li><li><strong>Tool namespacing</strong>: MCP tools are now properly namespaced with <code>mcp__&lt;server-name&gt;__</code> prefix for better organization</li><li><strong>Connection stability</strong>: Improved reconnection logic for SSE (Server-Sent Events) based MCP connections</li></ul>
+<h4>Status Hook Integration</h4>
+<ul><li><strong>External status monitoring</strong>: New internal status hook system for external tools to monitor Claude Code's status</li><li><strong>JSON-based status communication</strong>: Status information can be passed to external commands via JSON</li><li><strong>Configurable timeout</strong>: Status hook operations have a 5-second default timeout</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>UI/UX Enhancements</h4>
+<ul><li><strong>Model display in agent info</strong>: Agent model selection is now displayed in the agent information</li><li><strong>Better model descriptions</strong>: Clear descriptions for each model option:</li><li>Sonnet: "Balanced performance - best for most agents"</li><li>Opus: "Most capable for complex reasoning tasks"</li><li>Haiku: "Fast and efficient for simple tasks"</li><li>Inherit: "Use the same model as the main conversation"</li></ul>
+<h4>Bug Fixes</h4>
+<ul><li><strong>Removed duplicate MCP management code</strong>: Cleaned up redundant MCP server management implementation</li><li><strong>Fixed agent file path handling</strong>: Improved path resolution for agent files across different locations</li><li><strong>Better error messages</strong>: More descriptive error messages for invalid agent configurations</li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <h4>️ Architecture</h4>
+<ul><li><strong>Modular agent system</strong>: Agents now have a more structured configuration with model preferences</li><li><strong>Improved type safety</strong>: Better validation of agent properties including model selection</li><li><strong>Resource cleanup</strong>: Proper cleanup of MCP resources when connections are terminated</li></ul>
+<h4>Compatibility</h4>
+<ul><li><strong>Backward compatible</strong>: Existing agents without model specifications default to Sonnet</li><li><strong>Survey system</strong>: Added force display option via <code>CLAUDE_FORCE_DISPLAY_SURVEY</code> environment variable for testing</li></ul>
+    </article>
+    <article class="card" id="usage-examples">
+      <div class="card-top">
+        <h3>Usage Examples <a class="anchor" href="#usage-examples">#</a></h3>
+      </div>
+      <p><strong>Creating an agent with a specific model:</strong></p>
+<pre><code># In your .claude/agents/fast-analyzer.md
+name: fast-analyzer
+description: Quick code analysis using Haiku for speed
+model: haiku
+tools: [Read, Grep, Glob]
+
+Your agent prompt here...</code></pre>
+<p><strong>Using the inherit model option:</strong></p>
+<pre><code># If you&#x27;re using Opus in your main conversation
+claude --model opus
+
+# This agent will also use Opus when called
+name: inherit-example
+description: Uses the same model as the parent conversation
+model: inherit
+tools: [*]</code></pre>
+<p><strong>Global model override:</strong></p>
+<pre><code># Force all agents to use Haiku for faster responses
+export CLAUDE_CODE_SUBAGENT_MODEL=haiku
+claude</code></pre>
+<p>This update focuses on giving users more control over agent behavior through model selection, improving the MCP integration, and enhancing the overall agent management experience.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

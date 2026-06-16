@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.23 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.23."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.23</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.23</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.22 → v1.0.23</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>🆕 Add Directory Command (<code>/add-dir</code>)</h4>
+<p>A new command has been added to dynamically add working directories during your session:</p>
+<pre><code>/add-dir &lt;path&gt;</code></pre>
+<p><strong>Usage Examples:</strong></p>
+<ul><li><code>/add-dir ../my-project</code> - Adds a relative path as a working directory</li><li><code>/add-dir /home/user/projects</code> - Adds an absolute path as a working directory</li></ul>
+<p><strong>Features:</strong></p>
+<ul><li>Validates that the path exists and is a directory</li><li>Prevents adding directories that are already accessible within existing working directories</li><li>Provides helpful error messages if you accidentally specify a file instead of a directory</li></ul>
+<h4>Enhanced MCP Server Management UI</h4>
+<p>The MCP (Model Context Protocol) server management interface has been completely redesigned with improved visual indicators:</p>
+<ul><li><strong>Connection Status Icons</strong>:</li><li>✓ Connected (green checkmark)</li><li>○ Connecting... (gray radio button)</li><li>▲ Disconnected/Needs authentication (yellow warning triangle)</li><li>✗ Failed (red cross)</li></ul>
+<ul><li><strong>Server Capabilities Display</strong>: Shows available capabilities (tools, resources, prompts) for each server</li></ul>
+<ul><li><strong>Streamlined Authentication Flow</strong>:</li><li>Automatic authentication prompts when needed</li><li>Re-authentication and clear authentication options</li><li>Better error handling and status feedback</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Native Binary Installation</h4>
+<ul><li>Switched from npm-based installation to direct binary downloads from Google Cloud Storage</li><li>Improved platform detection supporting Windows (x64), macOS (x64/arm64), and Linux (x64/arm64)</li><li>Added checksum verification for downloaded binaries</li><li>More reliable update mechanism with atomic symlink updates</li></ul>
+<h4>File Reading Enhancements</h4>
+<ul><li>New token-based limits for file reading with clearer error messages</li><li><code>MaxFileReadTokenExceededError</code> class provides specific token count information</li><li>Better handling of large files with more informative error messages suggesting use of offset/limit parameters</li></ul>
+<h4>Hook System Extensions</h4>
+<ul><li>Added new hook types: <code>PreToolUse</code>, <code>PostToolUse</code>, and <code>Notification</code></li><li>Improved hook matching and filtering capabilities</li><li>Better integration with MCP tool filtering</li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <ul><li>Added <code>fine-grained-tool-streaming-2025-05-14</code> feature flag</li><li>Improved stream handling with <code>PassThrough</code> streams</li><li>Enhanced caching mechanisms for MCP client connections</li><li>Better error handling for architecture-specific installations</li><li>Removed legacy migration code for home directory configurations</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed symlink creation issues with atomic operations to prevent corruption</li><li>Improved error handling for unsupported architectures</li><li>Better cleanup of temporary files during installation</li><li>Enhanced validation for directory operations</li></ul>
+    </article>
+    <article class="card" id="breaking-changes">
+      <div class="card-top">
+        <h3>Breaking Changes <a class="anchor" href="#breaking-changes">#</a></h3>
+      </div>
+      <ul><li>The native installer no longer uses npm packages (<code>@anthropic-ai/claude-cli-native-*</code>)</li><li>Direct binary downloads are now used instead, which may affect custom installation scripts</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

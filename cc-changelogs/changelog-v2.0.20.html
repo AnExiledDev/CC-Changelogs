@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.20 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.20."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.20</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.20</span></h1>
+<p class="sub">Version 2.0.20 brings significant improvements to plugin management, hook execution visibility, and CLI automation capabilities. The most notable additions include new CLI commands for managing plugins (<code>install</code>, <code>uninstall</code>, <code>enable</code>, <code>disable</code>), full implementation of the Skill tool for executing skills directly from conversations, and enhanced real-time feedback during hook execution with detailed progress tracking.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.19 → v2.0.20</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">21</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">11 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="plugin-management-cli-commands">
+      <div class="card-top">
+        <h3>Plugin Management CLI Commands <a class="anchor" href="#plugin-management-cli-commands">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Four new commands for managing plugins directly from the command line</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Install a plugin from a marketplace
+claude plugin install &lt;plugin-name&gt;
+claude plugin install &lt;plugin-name&gt;@&lt;marketplace&gt;
+
+# Uninstall a plugin
+claude plugin uninstall &lt;plugin-name&gt;
+
+# Enable a previously disabled plugin
+claude plugin enable &lt;plugin-name&gt;
+
+# Disable an installed plugin
+claude plugin disable &lt;plugin-name&gt;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Commands support aliases: <code>install</code> → <code>i</code>, <code>uninstall</code> → <code>remove</code></li><li>Installation automatically searches configured marketplaces</li><li>Telemetry tracks CLI plugin operations separately from UI operations</li><li><strong>Evidence</strong>: <code>zSQ()</code> at line 465305, <code>CSQ()</code> at line 465337, <code>USQ()</code> at line 465355, <code>$SQ()</code> at line 465370</li></ul>
+    </article>
+    <article class="card" id="skill-tool-full-implementation">
+      <div class="card-top">
+        <h3>Skill Tool (Full Implementation) <a class="anchor" href="#skill-tool-full-implementation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Complete implementation of the Skill tool, enabling Claude to execute skills and commands directly during conversations (previously existed only as a stub)</p>
+<p><strong>How to use:</strong> Skills are invoked automatically by Claude when appropriate, or you can configure permission rules:</p>
+<pre><code># In .claude/settings.local.json
+{
+  &quot;permissions&quot;: {
+    &quot;allow&quot;: {
+      &quot;Skill&quot;: [&quot;pdf&quot;, &quot;xlsx&quot;, &quot;custom-skill:*&quot;]
+    }
+  }
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Supports both mode commands (high-priority) and regular skills</li><li>Includes intelligent token budgeting (15,000 character default via <code>SLASH_COMMAND_TOOL_CHAR_BUDGET</code>)</li><li>Permission system with wildcard patterns (e.g., <code>skill-name:*</code>)</li><li>Skills are categorized by source: project, user, plugin, or managed</li><li>Mode commands receive priority and full token allocation</li><li><strong>Evidence</strong>: <code>Mo1</code> initialization at line 429046, <code>W$Q()</code> prompt generator at line 428983, <code>nw</code> variable at line 428903</li></ul>
+    </article>
+    <article class="card" id="hook-execution-progress-display">
+      <div class="card-top">
+        <h3>Hook Execution Progress Display <a class="anchor" href="#hook-execution-progress-display">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Real-time visual feedback showing hook execution progress during tool operations</p>
+<p><strong>How to use:</strong> Progress appears automatically when hooks are running:</p>
+<pre><code>Running PreToolUse hooks… (3/5 done)
+  · pre-validate: npm run lint
+  · security-check: ./scripts/check-secrets.sh
+  · backup: git stash</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Shows hook event name (e.g., "PreToolUse", "PostToolUse")</li><li>Displays progress counter when multiple hooks run</li><li>Verbose mode shows individual hook names and commands being executed</li><li>Progress UI disappears when all hooks complete</li><li><strong>Evidence</strong>: <code>mi1()</code> at line 366839, <code>LR5()</code> at line 366871, <code>CoB()</code> at line 455699, <code>UoB()</code> at line 455708, <code>n48()</code> at line 384434</li></ul>
+    </article>
+    <article class="card" id="context-usage-markdown-export">
+      <div class="card-top">
+        <h3>Context Usage Markdown Export <a class="anchor" href="#context-usage-markdown-export">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Export detailed context usage statistics as markdown tables for non-interactive sessions</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Run context command in non-interactive mode
+claude --output text context
+
+# Output includes markdown tables:
+# - Categories (with tokens and percentages)
+# - MCP Tools
+# - Custom Agents
+# - Memory Files
+# - SlashCommand Tool statistics</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Token counts formatted for readability (e.g., "1.5k" instead of "1500")</li><li>Includes model information and total usage percentage</li><li>Shows free space and autocompact buffer separately</li><li>Agent sources identified (Built-in, Project, User, Local, Flag, Policy, Plugin)</li><li><strong>Evidence</strong>: <code>Ma6()</code> at line 301494, <code>rk()</code> token formatter at line 301491</li></ul>
+    </article>
+    <article class="card" id="project-level-mcp-server-configuration">
+      <div class="card-top">
+        <h3>Project-Level MCP Server Configuration <a class="anchor" href="#project-level-mcp-server-configuration">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Refactored project MCP server configuration loading into a dedicated function with enhanced scope handling</p>
+<p><strong>How to use:</strong> Create <code>.mcp.json</code> in your project root:</p>
+<pre><code>{
+  &quot;mcpServers&quot;: {
+    &quot;project-server&quot;: {
+      &quot;command&quot;: &quot;node&quot;,
+      &quot;args&quot;: [&quot;./server.js&quot;]
+    }
+  }
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Dedicated function for loading project MCP configuration</li><li>Proper error collection and reporting</li><li>Supports environment variable expansion</li><li>Explicitly scoped as "project" configuration</li><li><strong>Evidence</strong>: <code>dR0()</code> at line 280421</li></ul>
+    </article>
+    <article class="card" id="configurable-autocompact-threshold">
+      <div class="card-top">
+        <h3>Configurable Autocompact Threshold <a class="anchor" href="#configurable-autocompact-threshold">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Override the default autocompact threshold using an environment variable</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Set autocompact to trigger at 75% of context capacity
+export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=75
+claude
+
+# Or inline
+CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=90 claude</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Accepts percentage values from 1-100</li><li>Falls back to default if invalid value provided</li><li>Provides more control over memory management</li><li>Useful for balancing context usage vs. compaction frequency</li><li><strong>Evidence</strong>: <code>Gn6()</code> at line 296137</li></ul>
+    </article>
+    <article class="card" id="github-action-entrypoint-detection">
+      <div class="card-top">
+        <h3>GitHub Action Entrypoint Detection <a class="anchor" href="#github-action-entrypoint-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatic detection when Claude Code runs as a GitHub Action</p>
+<p><strong>How to use:</strong> Set the environment variable in your GitHub workflow:</p>
+<pre><code>- name: Run Claude Code
+  env:
+    CLAUDE_CODE_ACTION: true
+  run: claude -p &quot;Review this PR&quot;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Accepts flexible values: "1", "true", "yes", "on" (case-insensitive)</li><li>Sets entrypoint to "claude-code-github-action" for proper telemetry</li><li>Enables GitHub Action-specific behavior and logging</li><li><strong>Evidence</strong>: <code>yT8()</code> at line 469210, <code>jA()</code> validation at line 3336</li></ul>
+    </article>
+    <article class="card" id="enhanced-bash-security-checks">
+      <div class="card-top">
+        <h3>Enhanced Bash Security Checks <a class="anchor" href="#enhanced-bash-security-checks">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved detection of backtick command substitution with escape-aware parsing</p>
+<p><strong>Details:</strong></p>
+<ul><li>Dedicated <code>CV6()</code> function properly handles escaped characters</li><li>Backtick checks now execute before other pattern matching</li><li>More accurate detection prevents false positives from escaped backticks</li><li><strong>Evidence</strong>: <code>CV6()</code> at line 205030, <code>RV6()</code> at line 205296</li></ul>
+    </article>
+    <article class="card" id="terminal-output-performance">
+      <div class="card-top">
+        <h3>Terminal Output Performance <a class="anchor" href="#terminal-output-performance">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Optimized terminal rendering with synchronized updates</p>
+<p><strong>Details:</strong></p>
+<ul><li>Reduced function complexity in <code>d50()</code> at line 71278 (previously <code>U50()</code>)</li><li>Removed separate stderr handling for improved performance</li><li>Simplified output buffering logic</li><li>All output now uses synchronized update sequences</li></ul>
+    </article>
+    <article class="card" id="autocompact-function-signature">
+      <div class="card-top">
+        <h3>Autocompact Function Signature <a class="anchor" href="#autocompact-function-signature">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Simplified autocompact summary function parameters</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added <code>hasAppendSystemPrompt</code> parameter to <code>pi0()</code> at line 434307 (previously <code>Ei0()</code>)</li><li>Better context awareness during compaction operations</li><li>More precise token counting for system prompts</li></ul>
+    </article>
+    <article class="card" id="permission-checking-function">
+      <div class="card-top">
+        <h3>Permission Checking Function <a class="anchor" href="#permission-checking-function">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced tool permission checking with additional context parameter</p>
+<p><strong>Details:</strong></p>
+<ul><li>Updated <code>_M()</code> permission checker at line 458051 (previously <code>wM()</code>)</li><li>Added fourth parameter for improved context handling</li><li>More robust permission decision-making</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Removed stub Skill tool implementation (<code>ld0</code> at v2.0.19:410872)</li><li>Removed deprecated hook progress renderer (<code>aO5</code> at v2.0.19:366835, <code>sO5</code> at v2.0.19:366851)</li><li>Removed unused clear terminal function (<code>ji2</code> at v2.0.19:208933)</li><li>Removed empty placeholder functions (<code>RLQ</code>, <code>LRQ</code>, <code>eOQ</code>)</li><li>Added PassThrough stream import for improved stream handling</li><li>Added execSync and spawn imports for child process management</li><li>Refactored Skills loading with enabled state check (function <code>tw8()</code> at line 450050)</li><li>Added helper functions for plugin name parsing and matching (<code>HSQ()</code> at line 465275, <code>ms0()</code> at line 465282, <code>us0()</code> at line 465264)</li><li>Added error handler <code>Ue1()</code> at line 465298 for plugin CLI operations</li><li>Multiple variable initializations refactored for improved lazy loading</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

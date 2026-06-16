@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.56 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.56."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.56</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.56</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.55 → v1.0.56</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features-and-improvements">
+      <div class="card-top">
+        <h3>New Features and Improvements <a class="anchor" href="#new-features-and-improvements">#</a></h3>
+      </div>
+      <h4>Enhanced AWS SDK Integration</h4>
+<ul><li><strong>New AWS authentication schemes</strong>: Added support for multiple authentication methods including SigV4, SigV4A, and bearer token authentication</li><li><strong>Improved credential providers</strong>:</li><li>Added HTTP credential provider for containerized environments (ECS/EKS)</li><li>Enhanced SSO credential provider with automatic token refresh</li><li>Added support for environment variable-based credentials with account ID and credential scope</li><li><strong>New authentication configuration</strong>: Users can now specify authentication scheme preferences via:</li><li>Environment variable: <code>AWS_AUTH_SCHEME_PREFERENCE</code></li><li>Config file setting: <code>auth_scheme_preference</code></li><li>Bearer tokens: <code>AWS_BEARER_TOKEN_&lt;SERVICE_NAME&gt;</code></li></ul>
+<h4>Protocol and Serialization Enhancements</h4>
+<ul><li><strong>Added comprehensive protocol support</strong>:</li><li>AWS JSON RPC (1.0 and 1.1)</li><li>AWS Query protocol</li><li>AWS EC2 Query protocol</li><li>AWS REST JSON</li><li>AWS REST XML</li><li><strong>New serialization/deserialization infrastructure</strong>: Added schema-based serialization with support for complex data types including big integers, big decimals, and timestamps</li></ul>
+<h4>Improved Error Handling</h4>
+<ul><li><strong>Service exceptions</strong>: New base <code>ServiceException</code> class with better error metadata</li><li><strong>Protocol-specific error handling</strong>: Each AWS protocol now has specialized error deserialization</li><li><strong>Enhanced error messages</strong>: More descriptive error messages with request IDs and extended metadata</li></ul>
+<h4>Performance and Reliability</h4>
+<ul><li><strong>Request retry enhancements</strong>: Improved retry strategies with configurable retry modes</li><li><strong>Connection timeout configuration</strong>: Different timeout settings based on deployment mode (standard, in-region, cross-region, mobile)</li><li><strong>Middleware improvements</strong>: Added recursion detection for Lambda environments to prevent infinite loops</li></ul>
+<h4>Developer Experience</h4>
+<ul><li><strong>Command builder pattern</strong>: New fluent API for building commands:</li></ul>
+<pre><code>  Command.classBuilder()
+    .n(&quot;ServiceClient&quot;, &quot;OperationCommand&quot;)
+    .f(inputFilter, outputFilter)
+    .ser(serializer)
+    .de(deserializer)
+    .build()</code></pre>
+<ul><li><strong>Aggregated client support</strong>: Automatically generate convenience methods for all service operations</li><li><strong>Improved logging</strong>: Better structured logging with sensitive data filtering</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed duplicate comment issue in generated code</li><li>Improved URL validation for credential providers</li><li>Better handling of missing or invalid credentials</li></ul>
+    </article>
+    <article class="card" id="breaking-changes">
+      <div class="card-top">
+        <h3>Breaking Changes <a class="anchor" href="#breaking-changes">#</a></h3>
+      </div>
+      <ul><li>Node.js 16.x deprecation warning: Support will end on January 6, 2025</li><li>Some internal functions have been removed or refactored</li></ul>
+    </article>
+    <article class="card" id="technical-improvements">
+      <div class="card-top">
+        <h3>Technical Improvements <a class="anchor" href="#technical-improvements">#</a></h3>
+      </div>
+      <ul><li>Added support for endpoint URL resolution with proper protocol handling</li><li>Enhanced XML and JSON parsing with better error recovery</li><li>Improved support for streaming responses and event streams</li><li>Better handling of binary data with proper base64 encoding/decoding</li></ul>
+<p>This version represents a significant enhancement to the AWS SDK integration capabilities, making it easier to work with AWS services through Claude Code's CLI interface.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

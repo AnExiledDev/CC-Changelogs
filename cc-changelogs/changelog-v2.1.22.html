@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.22 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.22."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.22</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.22</span></h1>
+<p class="sub">This is a maintenance release with no user-facing changes. The update consists solely of version number increments and build metadata updates.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.21 → v2.1.22</b></span>    </div>
+    <div class="stats">
+  <div class="stat f zero"><div class="n">0</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Analysis</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="analysis">
+      <p>After thorough examination of the diff between v2.1.21 and v2.1.22, all changes fall into these categories:</p>
+<ol><li><strong>Version string updates</strong>: All instances of <code>VERSION: "2.1.21"</code> changed to <code>VERSION: "2.1.22"</code></li><li><strong>Build timestamp updates</strong>: <code>BUILD_TIME</code> changed from <code>"2026-01-28T01:36:50Z"</code> to <code>"2026-01-28T06:33:34Z"</code></li><li><strong>Build path updates</strong>: Internal build paths updated from <code>claude-cli-external-build-2146</code> to <code>claude-cli-external-build-2154</code></li></ol>
+<p>There is one minor code change at lines 694-707 in the diff:</p>
+<pre><code>// Added line:
+(_A = null),
+
+// Modified condition:
+// Old: if (!HA || e.length === 0)
+// New: if (!HA || (e.length === 0 &amp;&amp; !_A))</code></pre>
+<div class="blabel">Evidence</div>
+<p>Query handler at approximately line 528104-528305 (API request streaming logic)</p>
+<p>This appears to be an internal state management fix related to the API query handling—specifically ensuring a variable <code>_A</code> is reset and checked during stream event processing. This is an internal implementation detail with no direct user-facing impact.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>This release was built approximately 5 hours after v2.1.21 (01:36 → 06:33 UTC on 2026-01-28), suggesting it may be a quick follow-up fix or scheduled rebuild. The internal code change to the streaming logic may address an edge case in API response handling, but without additional context (such as a related bug report), the specific issue being addressed cannot be determined from the diff alone.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

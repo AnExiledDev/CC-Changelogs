@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.131 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.131."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.131</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.131</span></h1>
+<p class="sub">Claude Code 2.1.131 is a small maintenance release with no new CLI commands, flags, settings, or visible tips detected in the diff from 2.1.129. The user-facing changes are concentrated in API plumbing: bundled file operations now target stable Files API paths, and API-client authentication errors now describe the supported auth inputs more directly.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.129 → v2.1.131</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="stable-files-api-paths">
+      <div class="card-top">
+        <h3>Stable Files API Paths <a class="anchor" href="#stable-files-api-paths">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Bundled Anthropic file operations now call the stable <code>/v1/files</code> endpoints instead of beta-suffixed file URLs.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>This affects internal/API-backed file list, upload, download, metadata, and delete calls.</li><li>Existing Claude Code workflows should not need new flags or settings.</li><li>The old implementation used <code>/v1/files?beta=true</code> and <code>/v1/files/{id}/content?beta=true</code>; the new implementation uses <code>/v1/files</code> and <code>/v1/files/{id}/content</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Files API client paths changed from beta URLs to stable URLs (search for <code>"/v1/files"</code> and <code>"/v1/files?beta=true"</code>).</p>
+    </article>
+    <article class="card" id="clearer-api-authentication-error">
+      <div class="card-top">
+        <h3>Clearer API Authentication Error <a class="anchor" href="#clearer-api-authentication-error">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When the bundled Anthropic API client cannot resolve credentials, the error now says it expects either <code>apiKey</code> or <code>authToken</code>, instead of listing removed credential/profile/config options.</p>
+<div class="blabel">Usage</div>
+<pre><code>ANTHROPIC_API_KEY=... claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>This makes auth failures less misleading for users who hit lower-level API-client errors.</li><li>The new message points users toward API key or bearer-token authentication.</li><li>The previous message referenced <code>credentials</code>, <code>config</code>, and <code>profile</code>; those are no longer listed in the failure text.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Authentication validation message changed (search for <code>"Could not resolve authentication method. Expected either apiKey or authToken to be set"</code>).</p>
+    </article>
+    <article class="card" id="bundled-beta-sdk-surface-cleanup">
+      <div class="card-top">
+        <h3>Bundled Beta SDK Surface Cleanup <a class="anchor" href="#bundled-beta-sdk-surface-cleanup">#</a></h3>
+      </div>
+      <p>Several bundled beta Anthropic SDK resources were removed from the CLI package, including generated client bindings for managed agents, sessions, environments, vaults, memory stores, and user profiles. This appears to be cleanup of packaged SDK internals rather than a new Claude Code CLI workflow: no corresponding new slash command, flag, setting, or tip was added in this release.</p>
+<div class="blabel">Evidence</div>
+<p>Removed beta client routes include <code>"/v1/agents?beta=true"</code>, <code>"/v1/sessions?beta=true"</code>, <code>"/v1/vaults?beta=true"</code>, <code>"/v1/memory_stores?beta=true"</code>, and <code>"/v1/user_profiles?beta=true"</code>.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

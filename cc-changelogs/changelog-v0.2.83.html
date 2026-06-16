@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.83 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.83."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.83</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.83</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.81 → v0.2.83</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="version-update">
+      <div class="card-top">
+        <h3>Version Update <a class="anchor" href="#version-update">#</a></h3>
+      </div>
+      <ul><li>Updated from version 0.2.81 to 0.2.83</li></ul>
+    </article>
+    <article class="card" id="internal-architecture-changes">
+      <div class="card-top">
+        <h3>Internal Architecture Changes <a class="anchor" href="#internal-architecture-changes">#</a></h3>
+      </div>
+      <h4>Dependency Updates</h4>
+<ul><li><strong>Removed legacy polyfills</strong>: Removed Microsoft tslib polyfills (Vj1) and several older semver-related modules (ti, XY1)</li><li><strong>Added ES module introspection utilities</strong>: New low-level JavaScript runtime introspection modules for better error handling and type checking</li><li><strong>Enhanced runtime environment detection</strong>: Added comprehensive checks for JavaScript built-in objects and methods</li></ul>
+<h4>JSON Schema Processing Enhancements</h4>
+<ul><li><strong>New schema validation options</strong>:</li><li>Added <code>allowedAdditionalProperties</code> configuration option (default: true)</li><li>Added <code>rejectedAdditionalProperties</code> configuration option (default: false)</li><li>These options provide finer control over how additional properties in JSON schemas are handled during validation</li><li><strong>Post-processing support</strong>: Added <code>postProcess</code> callback support in the JSON schema generation pipeline, allowing for custom transformations after schema generation</li></ul>
+<h4>Tool System Improvements</h4>
+<ul><li><strong>Removed deprecated todo tool</strong>: The internal <code>tengu_todo_tool</code> reference has been removed from the codebase</li><li><strong>Enhanced error handling</strong>: Improved type checking for tool parameters with better runtime validation</li></ul>
+<h4>Event Stream Processing</h4>
+<ul><li><strong>Improved SSE parser</strong>: Enhanced Server-Sent Events parser with better error handling and support for BOM (Byte Order Mark) detection</li><li><strong>Added stream reset options</strong>: New <code>consume</code> parameter in the reset function for better stream state management</li></ul>
+<h4>Performance and Stability</h4>
+<ul><li><strong>Code simplification</strong>: Removed approximately 44 deprecated functions while adding 473 new utility functions</li><li><strong>Better type safety</strong>: Enhanced runtime type checking with new introspection utilities</li><li><strong>Improved error messages</strong>: More descriptive error reporting with enhanced type validation</li></ul>
+    </article>
+    <article class="card" id="user-facing-improvements">
+      <div class="card-top">
+        <h3>User-Facing Improvements <a class="anchor" href="#user-facing-improvements">#</a></h3>
+      </div>
+      <p>While most changes in this version are internal architecture improvements, users should experience:</p>
+<ul><li>More stable tool execution with better error handling</li><li>Improved reliability when working with complex data structures</li><li>Better performance in JSON schema validation scenarios</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed issues with additional properties handling in JSON schema validation</li><li>Improved stream processing reliability with better state management</li><li>Enhanced type checking to prevent runtime errors</li></ul>
+<p><strong>Note</strong>: This version focuses primarily on internal architecture improvements and stability enhancements rather than new user-facing features.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

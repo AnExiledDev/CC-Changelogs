@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.33 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.33."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.33</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.33</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.32 → v1.0.33</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>🆕 New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4><strong>Enhanced Installation Diagnostics</strong></h4>
+<ul><li>Added comprehensive installation diagnostic system that provides detailed information about your Claude installation</li><li>Run diagnostics to see:</li><li>Current installation type (npm-local, npm-global, native, development)</li><li>Installation path and invoked binary location</li><li>Auto-update capability status</li><li>Configuration settings</li><li>Multiple installation detection</li><li>Specific warnings and recommended fixes</li></ul>
+<h4><strong>Improved Auto-Update Configuration</strong></h4>
+<ul><li>Replaced the legacy <code>autoUpdaterStatus</code> configuration with clearer <code>installMethod</code> and <code>autoUpdates</code> settings</li><li>The system now explicitly tracks:</li><li><code>installMethod</code>: How Claude is installed (local, global, native, unknown)</li><li><code>autoUpdates</code>: Whether auto-updates are enabled (true/false)</li></ul>
+<h4><strong>Shell Alias Detection</strong></h4>
+<ul><li>New functionality to detect existing Claude aliases in shell configuration files</li><li>Automatically checks common shell configs (.bashrc, .zshrc, etc.) for Claude aliases</li><li>Provides smart recommendations when PATH conflicts are detected</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4><strong>Better Installation Type Detection</strong></h4>
+<ul><li>More robust detection of installation methods:</li><li><strong>npm-local</strong>: Installed in ~/.claude/local</li><li><strong>npm-global</strong>: Installed via global npm</li><li><strong>native</strong>: Platform-specific installation</li><li><strong>development</strong>: Running from development build</li></ul>
+<h4><strong>Enhanced Permission Checking</strong></h4>
+<ul><li>Improved detection of npm permission issues for global installations</li><li>Better recommendations for fixing permission problems</li><li>Clearer messaging about when to use <code>claude migrate-installer</code></li></ul>
+<h4><strong>Smarter Configuration Migration</strong></h4>
+<ul><li>Automatic migration from old <code>autoUpdaterStatus</code> to new <code>installMethod</code>/<code>autoUpdates</code> format</li><li>Handles legacy configurations gracefully:</li><li><code>"migrated"</code> → <code>installMethod: "local"</code></li><li><code>"installed"</code> → <code>installMethod: "native"</code></li><li><code>"disabled"</code> → <code>autoUpdates: false</code></li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <h4><strong>Input History Buffer with Debouncing</strong></h4>
+<ul><li>Added new <code>Xk2</code> function that provides an input history buffer with debouncing</li><li>Prevents excessive history entries when typing quickly</li><li>Configurable buffer size and debounce delay</li></ul>
+    </article>
+    <article class="card" id="usage-examples">
+      <div class="card-top">
+        <h3>Usage Examples <a class="anchor" href="#usage-examples">#</a></h3>
+      </div>
+      <h4>Check Installation Status</h4>
+<p>The diagnostic system automatically runs when needed and provides actionable recommendations:</p>
+<pre><code>Claude CLI Diagnostic
+
+Currently running: npm-local (1.0.33)
+Path: /home/user/.claude/local/node_modules/.bin/claude
+Auto-updates: Yes
+Config install method: local
+Config auto-updates: true</code></pre>
+<h4>Fixing Common Issues</h4>
+<p><strong>Issue: Multiple installations detected</strong></p>
+<pre><code>Warning: Multiple installations found
+- npm-local at /home/user/.claude/local
+- npm-global at /usr/local/bin/claude
+
+Fix: Create alias to override: alias claude=&quot;~/.claude/local/node_modules/.bin/claude&quot;</code></pre>
+<p><strong>Issue: Permission problems with global installation</strong></p>
+<pre><code>Warning: Insufficient permissions for auto-updates
+Fix: Run: sudo chown -R $USER:$(id -gn) $(npm -g config get prefix)
+or use `claude migrate-installer` to migrate to local installation</code></pre>
+    </article>
+    <article class="card" id="migration-notes">
+      <div class="card-top">
+        <h3>Migration Notes <a class="anchor" href="#migration-notes">#</a></h3>
+      </div>
+      <ul><li>The configuration system has been updated. Old configurations will be automatically migrated</li><li>If you have custom scripts that check <code>autoUpdaterStatus</code>, update them to use <code>installMethod</code> and <code>autoUpdates</code> instead</li><li>The <code>/migrate-installer</code> command is now the recommended way to switch from global to local installation</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

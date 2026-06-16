@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.84 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.84."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.84</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.84</span></h1>
+<p class="sub">Version 1.0.84 introduces improved search performance with native ripgrep integration, enhanced file path completion with quoted path support, and refined UI components for better interactive selections.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.83 → v1.0.84</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="native-ripgrep-integration">
+      <div class="card-top">
+        <h3>Native Ripgrep Integration <a class="anchor" href="#native-ripgrep-integration">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Built-in support for using ripgrep as the search backend with automatic availability detection <strong>How to use:</strong></p>
+<pre><code># Ripgrep is automatically detected and used when available
+claude --grep &quot;search term&quot; 
+
+# The CLI now tests ripgrep availability on first use
+# Falls back gracefully if ripgrep is not available</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Automatic detection of system ripgrep installation</li><li>Built-in ripgrep binary as fallback option</li><li>Performance telemetry for ripgrep availability</li><li>Configurable search modes (system vs built-in)</li></ul>
+    </article>
+    <article class="card" id="enhanced-file-path-completion">
+      <div class="card-top">
+        <h3>Enhanced File Path Completion <a class="anchor" href="#enhanced-file-path-completion">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Support for quoted file paths in prompts, especially for paths with spaces <strong>How to use:</strong></p>
+<pre><code># Now supports quoted paths in prompts
+@&quot;path with spaces/file.txt&quot;
+
+# Mixed quoted and unquoted paths work seamlessly
+@file1.txt @&quot;folder with spaces/file2.txt&quot; @file3.txt</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Handles both <code>@"quoted paths"</code> and <code>@unquoted</code> paths</li><li>Improved regex patterns for path extraction</li><li>Better support for paths containing spaces and special characters</li><li>Works in both command line and interactive modes</li></ul>
+    </article>
+    <article class="card" id="improved-ui-selection-components">
+      <div class="card-top">
+        <h3>Improved UI Selection Components <a class="anchor" href="#improved-ui-selection-components">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New visual components for better feedback in interactive selections <strong>How to use:</strong></p>
+<pre><code># Selections now show clearer visual indicators
+# - Blue pointer (►) for focused items
+# - Green checkmark (✓) for selected items
+# - Improved color coding for better visibility</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Consistent visual indicators across all selection interfaces</li><li>Better color scheme using "suggestion" and "success" colors</li><li>Enhanced padding and spacing for improved readability</li></ul>
+    </article>
+    <article class="card" id="todo-list-display-enhancement">
+      <div class="card-top">
+        <h3>Todo List Display Enhancement <a class="anchor" href="#todo-list-display-enhancement">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Condensed todo list view with configurable verbosity <strong>Previous behavior:</strong> All todos always displayed in full <strong>New behavior:</strong> Smart condensed view showing only changed items and summaries <strong>Impact:</strong> Cleaner output that focuses on what's currently relevant, with option for full verbosity when needed</p>
+    </article>
+    <article class="card" id="ripgrep-status-reporting">
+      <div class="card-top">
+        <h3>Ripgrep Status Reporting <a class="anchor" href="#ripgrep-status-reporting">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Added ripgrep configuration details to system diagnostics <strong>Previous behavior:</strong> No visibility into search backend status <strong>New behavior:</strong> Reports ripgrep mode, availability, and system path in diagnostics <strong>Impact:</strong> Easier troubleshooting of search-related issues and performance optimization</p>
+    </article>
+    <article class="card" id="session-history-management">
+      <div class="card-top">
+        <h3>Session History Management <a class="anchor" href="#session-history-management">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Removed bookmark persistence to simplify session tracking <strong>Previous behavior:</strong> Bookmarks were persisted across sessions <strong>New behavior:</strong> Session management focuses on messages and checkpoints only <strong>Impact:</strong> Simplified data model with more reliable session recovery</p>
+    </article>
+    <article class="card" id="fixed-code-signing-for-macos-ripgrep-binary">
+      <div class="card-top">
+        <h3>Fixed: Code Signing for macOS Ripgrep Binary <a class="anchor" href="#fixed-code-signing-for-macos-ripgrep-binary">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Ripgrep binary on macOS could fail due to code signing requirements</li><li><strong>Cause:</strong> macOS Gatekeeper blocking unsigned binaries</li><li><strong>Resolution:</strong> Added proper code signing flow for built-in ripgrep on macOS</li></ul>
+    </article>
+    <article class="card" id="fixed-file-path-token-parsing">
+      <div class="card-top">
+        <h3>Fixed: File Path Token Parsing <a class="anchor" href="#fixed-file-path-token-parsing">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> File paths with special characters or quotes could be incorrectly parsed</li><li><strong>Cause:</strong> Regex patterns didn't account for quoted path formats</li><li><strong>Resolution:</strong> Enhanced regex patterns to handle both quoted and unquoted paths</li></ul>
+    </article>
+    <article class="card" id="fixed-ui-component-color-consistency">
+      <div class="card-top">
+        <h3>Fixed: UI Component Color Consistency <a class="anchor" href="#fixed-ui-component-color-consistency">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Inconsistent color schemes across different selection components</li><li><strong>Cause:</strong> Hardcoded color values instead of theme colors</li><li><strong>Resolution:</strong> Unified color system using semantic color names</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

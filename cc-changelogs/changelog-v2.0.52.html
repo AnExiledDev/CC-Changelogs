@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.52 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.52."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.52</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.52</span></h1>
+<p class="sub">Version 2.0.52 introduces persistent storage for large tool outputs (saving them to disk instead of truncating), adds a new <code>CLAUDE_ENV_FILE</code> environment variable for custom session configuration, and includes extra usage visibility in the <code>/usage</code> display for Pro/Max users. Internal improvements include buffered logging for better performance and enhanced telemetry for GitHub Actions workflows.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.51 → v2.0.52</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">13</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="tool-result-persistence">
+      <div class="card-top">
+        <h3>Tool Result Persistence <a class="anchor" href="#tool-result-persistence">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Large tool outputs (&gt;400KB) are now saved to disk instead of being truncated, allowing Claude to access the full data later.</p>
+<p><strong>How it works:</strong> When a tool produces output exceeding 400KB with <code>ENABLE_TOOL_RESULT_SIZE_LIMIT</code> enabled, the output is:</p>
+<ol><li>Saved to <code>~/.claude/projects/&lt;project&gt;/tool-results/&lt;tool&gt;-&lt;timestamp&gt;/result.{txt|json}</code></li><li>A 2KB preview is shown inline</li><li>Claude receives instructions on how to explore the full file</li></ol>
+<p><strong>Example output:</strong></p>
+<pre><code>&lt;persisted-output&gt;
+Output too large (1.5 MB). Full output saved to: ~/.claude/projects/.../tool-results/Bash-1701234567890/result.txt
+
+Preview (first 2.0 KB):
+[preview content...]
+...
+
+You can explore this file using:
+- Read tool to view portions of the file
+- Grep tool to search for patterns
+- Bash with jq to query JSON data
+- Bash with head/tail for beginning/end
+&lt;/persisted-output&gt;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Automatically detects JSON output and creates <code>.json</code> files with <code>jq</code> usage examples</li><li>Tool result files are automatically granted read permission (no prompts needed)</li><li>Falls back to truncation if file writing fails</li><li><strong>Evidence:</strong> <code>$_2()</code> at line 403698, <code>if5()</code> at line 403760, <code>nf5()</code> at line 403783</li></ul>
+    </article>
+    <article class="card" id="custom-session-environment-file">
+      <div class="card-top">
+        <h3>Custom Session Environment File <a class="anchor" href="#custom-session-environment-file">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New <code>CLAUDE_ENV_FILE</code> environment variable allows loading custom session environment scripts.</p>
+<p><strong>How to use:</strong></p>
+<pre><code>export CLAUDE_ENV_FILE=/path/to/my-env-setup.sh
+claude</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Scripts from <code>CLAUDE_ENV_FILE</code> are loaded before hook files from session-env directory</li><li>Multiple sources can be combined (env file + hooks)</li><li>Independent error handling - failures in one source don't prevent loading others</li><li>Useful for personal environment configuration that doesn't belong in hooks</li><li><strong>Evidence:</strong> <code>kqB()</code> at line 232402, environment read at line 232407</li></ul>
+    </article>
+    <article class="card" id="extra-usage-display-in-usage">
+      <div class="card-top">
+        <h3>Extra Usage Display in /usage <a class="anchor" href="#extra-usage-display-in-usage">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Pro and Max plan users can now see their extra usage balance directly in the <code>/usage</code> command output.</p>
+<p><strong>How to use:</strong></p>
+<pre><code>/usage  # Now shows extra usage section for eligible users</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Shows three states:</li><li>Not enabled: "Extra usage not enabled • /extra-usage to enable"</li><li>Unlimited: Shows "Unlimited" with no progress bar</li><li>Metered: Shows utilization bar with spending (e.g., "$5.23 / $30.00 spent")</li><li>Displays monthly reset date</li><li>Controlled by feature flag <code>claude_code_usage_show_extra_usage</code></li><li>Only visible to Pro and Max subscribers</li><li><strong>Evidence:</strong> <code>PM3()</code> at line 481986, <code>RJ0</code> title at line 482045</li></ul>
+    </article>
+    <article class="card" id="bubblewrap-sandbox-detection">
+      <div class="card-top">
+        <h3>Bubblewrap Sandbox Detection <a class="anchor" href="#bubblewrap-sandbox-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New detection capability for when Claude Code is running inside a Bubblewrap sandbox on Linux.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>Checks <code>process.platform === "linux"</code> AND <code>process.env.CLAUDE_CODE_BUBBLEWRAP === "1"</code></li><li>Infrastructure for future sandbox-aware behavior</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Currently unused in application code (preparation for future features)</li><li>Part of environment detection module</li><li><strong>Evidence:</strong> <code>OV6()</code> at line 228083</li></ul>
+    </article>
+    <article class="card" id="buffered-debug-logging">
+      <div class="card-top">
+        <h3>Buffered Debug Logging <a class="anchor" href="#buffered-debug-logging">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Debug logging now uses intelligent buffering instead of direct filesystem writes.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Accumulates log entries in memory (up to 100 entries)</li><li>Flushes every 1000ms or when buffer is full</li><li>Reduces filesystem I/O by 10-100x when debug logging is enabled</li><li>Automatic immediate mode when using <code>--debug</code> flags (for real-time debugging)</li><li>Graceful disposal ensures logs are flushed on exit</li><li><strong>Evidence:</strong> <code>QC0()</code> at line 2348, <code>nw9()</code> at line 2404</li></ul>
+    </article>
+    <article class="card" id="startup-profiling-reports-saved-to-files">
+      <div class="card-top">
+        <h3>Startup Profiling Reports Saved to Files <a class="anchor" href="#startup-profiling-reports-saved-to-files">#</a></h3>
+      </div>
+      <p><strong>What:</strong> When startup profiling is enabled, reports are now saved to persistent files for later analysis.</p>
+<p><strong>How to use:</strong></p>
+<pre><code>export CLAUDE_CODE_PROFILE_STARTUP=1
+claude &lt;command&gt;
+# Report saved to: ~/.claude/startup-perf/&lt;timestamp&gt;.txt</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Previously only logged to console (ephemeral)</li><li>Now saves to <code>~/.claude/startup-perf/&lt;timestamp&gt;.txt</code></li><li>Directory created automatically if missing</li><li>Still logs to console in addition to file</li><li><strong>Evidence:</strong> <code>WV9()</code> at line 507095, <code>cP3()</code> at line 507106</li></ul>
+    </article>
+    <article class="card" id="consolidated-permission-checks-for-special-files">
+      <div class="card-top">
+        <h3>Consolidated Permission Checks for Special Files <a class="anchor" href="#consolidated-permission-checks-for-special-files">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Permission checks for session files (bash outputs, session memory, plan files, tool results) are now centralized.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>FP3()</code> helper function consolidates all special file permission logic</li><li>Tool result files automatically granted read permission (new)</li><li>Cleaner codebase with less duplication</li><li><strong>Evidence:</strong> <code>FP3()</code> at line 506192</li></ul>
+    </article>
+    <article class="card" id="wildcard-tool-permission-rules">
+      <div class="card-top">
+        <h3>Wildcard Tool Permission Rules <a class="anchor" href="#wildcard-tool-permission-rules">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added support for parsing wildcard tool permission rules like <code>ToolName:*</code>.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>Wt8()</code> function parses wildcard patterns in permission rules</li><li>New <code>Mq()</code> function parses tool names with optional rule content in format <code>toolName(ruleContent)</code></li><li>Enhanced permission system flexibility</li><li><strong>Evidence:</strong> <code>Wt8()</code> at line 190167, <code>Mq()</code> at line 502273</li></ul>
+    </article>
+    <article class="card" id="progress-indicator-architecture-refactored">
+      <div class="card-top">
+        <h3>Progress Indicator Architecture Refactored <a class="anchor" href="#progress-indicator-architecture-refactored">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The ConEmu/Ghostty progress reporting system was refactored from an independent side-channel to an integrated render pipeline.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Removed: <code>O81</code> class (ConEmu progress reporter), <code>T1A</code> class (progress manager), <code>LOA</code> global instance</li><li>Added: <code>ink-progress</code> DOM elements, <code>sGB()</code> progress extraction from DOM</li><li>Progress now updates synchronously with UI renders</li><li>Same ANSI escape sequences generated, but through render pipeline</li><li><strong>Evidence:</strong> Removed classes at lines 403283-403407 (v2.0.51), new functions at lines 218873, 220775</li></ul>
+    </article>
+    <article class="card" id="growthbook-experiment-tracking">
+      <div class="card-top">
+        <h3>Growthbook Experiment Tracking <a class="anchor" href="#growthbook-experiment-tracking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added telemetry for A/B test experiment exposure tracking.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Tracks which users are exposed to which experiment variations</li><li>Events include: experiment ID, variation ID, device ID, user attributes</li><li>Batched transmission via OpenTelemetry log pipeline</li><li>Internal analytics only - no user-visible impact</li><li><strong>Evidence:</strong> <code>rNB()</code> at line 231011, <code>tNB()</code> at line 231925, <code>aNB()</code> at line 230979</li></ul>
+    </article>
+    <article class="card" id="enhanced-github-actions-telemetry">
+      <div class="card-top">
+        <h3>Enhanced GitHub Actions Telemetry <a class="anchor" href="#enhanced-github-actions-telemetry">#</a></h3>
+      </div>
+      <p><strong>What:</strong> When running in GitHub Actions, Claude Code now collects additional metadata.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New fields collected: actor, actor ID, repository, repository ID, owner, owner ID</li><li>Sent via <code>github_actions_metadata</code> telemetry field</li><li>Only when <code>GITHUB_ACTIONS=true</code> environment variable is set</li><li><strong>Evidence:</strong> Metadata collection at lines 228565-228573, telemetry at line 231700</li></ul>
+    </article>
+    <article class="card" id="remote-session-id-tracking">
+      <div class="card-top">
+        <h3>Remote Session ID Tracking <a class="anchor" href="#remote-session-id-tracking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New <code>CLAUDE_CODE_REMOTE_SESSION_ID</code> environment variable for tracking remote sessions.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Read from environment and included in telemetry</li><li>Sent as HTTP header <code>x-claude-remote-session-id</code> in API requests</li><li>Enables correlation of events across remote Claude Code sessions</li><li><strong>Evidence:</strong> Environment read at line 231577, telemetry at line 231676, header at line 301327</li></ul>
+    </article>
+    <article class="card" id="optimized-hook-count-tracking">
+      <div class="card-top">
+        <h3>Optimized Hook Count Tracking <a class="anchor" href="#optimized-hook-count-tracking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Refactored how hook progress and resolution counts are tracked during tool execution.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>J29()</code> function pre-computes hook tracking maps</li><li><code>W29()</code> and <code>F29()</code> provide efficient lookup of sibling tool IDs and pending hooks</li><li>Improves performance during parallel tool execution</li><li><strong>Evidence:</strong> <code>J29()</code> at line 503835, <code>W29()</code> at line 503879, <code>F29()</code> at line 503889</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

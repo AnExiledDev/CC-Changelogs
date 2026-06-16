@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.177 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.177."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.177</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.177</span></h1>
+<p class="sub">This is a small patch release focused on internal infrastructure. The main addition is a new model error override system that allows server-side customization of error messages and model picker hints. The release also includes a fix that restricts a first-party-only update pathway to first-party installations.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.176 → v2.1.177</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="model-error-override-system">
+      <div class="card-top">
+        <h3>Model Error Override System <a class="anchor" href="#model-error-override-system">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Infrastructure was added that allows server-side configuration to customize the error messages and model-picker hint text that users see when a model encounters an error.</p>
+<div class="blabel">Details</div>
+<ul><li>A new config key <code>tengu-model-error-overrides</code> is read from server-delivered configuration. It maps model identifiers to objects with optional <code>block</code> (error message text) and <code>pickerHint</code> (hint shown in the model picker) fields.</li><li>When a matching override is present and its <code>block</code> string is non-empty, the override text replaces the default error display.</li><li><code>pickerHint</code> can provide a separate, shorter hint for use in the model selection UI. If absent, the <code>block</code> text is reused.</li><li>If any error occurs reading the override config, the system logs <code>model-error-overrides picker hint failed:</code> or <code>tengu-model-error-overrides block check failed:</code> and falls back to default behavior.</li></ul>
+<p>This is a server-controlled capability with no user-facing knob; the overrides are delivered via the existing feature-flag config mechanism and take effect automatically when present.</p>
+<div class="blabel">Evidence</div>
+<p>New config key (search for <code>"tengu-model-error-overrides"</code>)</p>
+    </article>
+    <article class="card" id="first-party-guard-on-saffron-lattice-eligibility">
+      <div class="card-top">
+        <h3>First-Party Guard on Saffron Lattice Eligibility <a class="anchor" href="#first-party-guard-on-saffron-lattice-eligibility">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The function that checks whether a user is eligible for the saffron lattice (progressive-rollout update) feature now requires the installation to be a first-party build (<code>l6() !== "firstParty"</code> returns early). Previously this check was absent, meaning third-party or forked builds could inadvertently enter the saffron lattice update path.</p>
+<div class="blabel">Evidence</div>
+<p>New guard in eligibility check (search for <code>"firstParty"</code> near <code>tengu_saffron_lattice</code>)</p>
+    </article>
+    <article class="card" id="saffron-lattice-default-state">
+      <div class="card-top">
+        <h3>Saffron Lattice Default State <a class="anchor" href="#saffron-lattice-default-state">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The default value used when the <code>tengu_saffron_lattice</code> feature flag is absent or fails to parse was changed from an empty object <code>{}</code> to an explicit disabled state <code>{ enabled: false }</code>. This makes the fallback behavior unambiguous — if the server config is unavailable, the feature is definitively off rather than potentially entering an indeterminate state.</p>
+<div class="blabel">Evidence</div>
+<p>Default sentinel <code>zJ4 = { enabled: !1 }</code> (search for <code>"tengu_saffron_lattice"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.177.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.177.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

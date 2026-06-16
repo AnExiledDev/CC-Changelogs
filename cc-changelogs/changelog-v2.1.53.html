@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.53 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.53."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.53</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.53</span></h1>
+<p class="sub">This release focuses on security hardening for bash command execution (new Unicode whitespace and mid-word hash injection checks, UNC path blocking), improves the Remote Control experience with a QR code viewer and minimum version enforcement, and significantly restructures the system prompt and Bash tool description for clearer, modular guidance. Background task progress polling has been removed in favor of completion notifications.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.52 → v2.1.53</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">23</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">23 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bash-command-security-checks-unicode-whitespace-and-mid-word">
+      <div class="card-top">
+        <h3>Bash Command Security Checks: Unicode Whitespace and Mid-Word Hash <a class="anchor" href="#bash-command-security-checks-unicode-whitespace-and-mid-word">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Two new security checks detect potentially dangerous command patterns before execution.</p>
+<div class="blabel">Details</div>
+<ul><li><strong>Unicode whitespace detection</strong>: Commands containing exotic Unicode whitespace characters (such as non-breaking spaces <code>\u00A0</code>, em spaces <code>\u2000-\u200A</code>, and others) are now flagged, as these can cause parsing inconsistencies between <code>shell-quote</code> and bash</li><li><strong>Mid-word hash detection</strong>: Commands containing <code>#</code> characters mid-word (e.g., not preceded by whitespace) are flagged because <code>shell-quote</code> and bash parse these differently — bash treats <code>#</code> as a comment start in some contexts while <code>shell-quote</code> does not</li><li>Both checks trigger a user confirmation prompt ("ask" behavior) rather than blocking outright</li></ul>
+<div class="blabel">Evidence</div>
+<p>New security check IDs <code>UNICODE_WHITESPACE</code> and <code>MID_WORD_HASH</code> (search for <code>"UNICODE_WHITESPACE"</code> and <code>"MID_WORD_HASH"</code>)</p>
+    </article>
+    <article class="card" id="unc-network-path-blocking">
+      <div class="card-top">
+        <h3>UNC Network Path Blocking <a class="anchor" href="#unc-network-path-blocking">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Windows UNC network paths (e.g., <code>\\server\share</code>) are now explicitly blocked in the sandbox path resolver, requiring manual user approval.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously, UNC paths could potentially bypass sandbox restrictions</li><li>Now returns a denial with the message "UNC network paths require manual approval"</li></ul>
+<div class="blabel">Evidence</div>
+<p>UNC path check in sandbox path resolution (search for <code>"UNC network paths require manual approval"</code>)</p>
+    </article>
+    <article class="card" id="remote-control-qr-code-viewer">
+      <div class="card-top">
+        <h3>Remote Control QR Code Viewer <a class="anchor" href="#remote-control-qr-code-viewer">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The Remote Control disconnect dialog now includes an option to show/hide a QR code linking to the session URL.</p>
+<div class="blabel">Details</div>
+<ul><li>When a session is connected via Remote Control, the dialog shows three options: "Disconnect this session", "Show QR code" / "Hide QR code", and "Continue"</li><li>The QR code is generated from the session URL, making it easy to share access from a terminal to a mobile device or another screen</li></ul>
+<div class="blabel">Evidence</div>
+<p>Bridge disconnect dialog component (search for <code>"Show QR code"</code> and <code>"Hide QR code"</code>)</p>
+    </article>
+    <article class="card" id="remote-control-minimum-version-enforcement">
+      <div class="card-top">
+        <h3>Remote Control Minimum Version Enforcement <a class="anchor" href="#remote-control-minimum-version-enforcement">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The bridge (Remote Control) system now checks a server-specified minimum version requirement and blocks connections from outdated CLI versions.</p>
+<div class="blabel">Details</div>
+<ul><li>On startup, the bridge checks the <code>tengu_bridge_min_version</code> feature flag for a required minimum version</li><li>If the running CLI version is too old, the user sees: "Your version of Claude Code (X.X.X) is too old for Remote Control. Version Y.Y.Y or higher is required. Run <code>claude update</code> to update."</li><li>This applies to both standalone <code>claude bridge</code> mode and in-session REPL bridge connections</li></ul>
+<div class="blabel">Evidence</div>
+<p>Version check using <code>tengu_bridge_min_version</code> flag (search for <code>"tengu_bridge_min_version"</code>)</p>
+    </article>
+    <article class="card" id="claude-remote-control-cli-command-with-rc-alias">
+      <div class="card-top">
+        <h3><code>claude remote-control</code> CLI Command with <code>rc</code> Alias <a class="anchor" href="#claude-remote-control-cli-command-with-rc-alias">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A formal <code>claude remote-control</code> (aliased as <code>claude rc</code>) subcommand is now registered in the CLI's Commander.js command tree.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously, the remote-control bridge was only accessible through internal paths</li><li>Now it appears as a proper CLI subcommand with description: "Connect your local environment for remote-control sessions via claude.ai/code"</li><li>The command is hidden when bridge is not enabled for the user's account</li></ul>
+<div class="blabel">Evidence</div>
+<p>Commander registration with alias (search for <code>"Connect your local environment for remote-control sessions via claude.ai/code"</code>)</p>
+    </article>
+    <article class="card" id="restructured-bash-tool-description">
+      <div class="card-top">
+        <h3>Restructured Bash Tool Description <a class="anchor" href="#restructured-bash-tool-description">#</a></h3>
+      </div>
+      <p>The Bash tool system prompt has been completely rewritten from a monolithic template literal into a modular, array-based builder. While the overall guidance is similar, it now includes:</p>
+<ul><li>A dedicated "# Instructions" section with clearer organization</li><li>Explicit "For git commands:" subsection with safer defaults guidance</li><li>A new "Avoid unnecessary <code>sleep</code> commands:" subsection with six specific anti-sleep rules, including: don't poll background tasks, use <code>run_in_background</code> for long-running commands, don't retry in sleep loops, and keep sleep durations to 1-5 seconds</li><li>Sandbox description restructured into a more readable format</li></ul>
+<div class="blabel">Evidence</div>
+<p>New modular Bash description builder function (search for <code>"Avoid unnecessary"</code> and <code>"Do not sleep between commands"</code>)</p>
+    </article>
+    <article class="card" id="background-task-notification-model-overhaul">
+      <div class="card-top">
+        <h3>Background Task Notification Model Overhaul <a class="anchor" href="#background-task-notification-model-overhaul">#</a></h3>
+      </div>
+      <p>Background agents and bash tasks no longer generate periodic progress polling messages. Instead, the system now relies entirely on completion notifications.</p>
+<div class="blabel">Details</div>
+<ul><li>The <code>getProgressMessage</code> function has been removed from all task types (local agents, background bash, remote agents, and teammates)</li><li>The <code>task_progress</code> attachment type is no longer generated or rendered</li><li>The Task tool description now explicitly states: "you will be automatically notified when it completes — do NOT sleep, poll, or proactively check on its progress"</li><li><code>lastReportedToolCount</code> and <code>lastReportedTokenCount</code> tracking fields removed from task state</li><li><code>deltaSummarySinceLastFlushToAttachment</code> and the delta summarization LLM call have been removed entirely</li></ul>
+<div class="blabel">Evidence</div>
+<p>Removed progress message infrastructure (search for <code>"do NOT sleep, poll"</code>)</p>
+    </article>
+    <article class="card" id="background-agent-kill-notifications">
+      <div class="card-top">
+        <h3>Background Agent Kill Notifications <a class="anchor" href="#background-agent-kill-notifications">#</a></h3>
+      </div>
+      <p>When users kill running background agents (via the kill-agents shortcut), the system now sends a descriptive notification into the conversation.</p>
+<div class="blabel">Details</div>
+<ul><li>Single agent: <code>Background agent "description" was killed by the user.</code></li><li>Multiple agents: <code>N background agents were killed by the user: "desc1", "desc2".</code></li><li>Delivered as a task-notification mode message so the model understands context was interrupted</li></ul>
+<div class="blabel">Evidence</div>
+<p>Kill notification messages (search for <code>"was killed by the user"</code>)</p>
+    </article>
+    <article class="card" id="improved-memory-selection-prompt">
+      <div class="card-top">
+        <h3>Improved Memory Selection Prompt <a class="anchor" href="#improved-memory-selection-prompt">#</a></h3>
+      </div>
+      <p>The system prompt for selecting relevant memories has been rewritten to be more selective and discerning.</p>
+<div class="blabel">Details</div>
+<ul><li>Old prompt: "Return the filenames of the most relevant memories (up to 5). Only include memories that are clearly relevant to the query."</li><li>New prompt: "Return a list of filenames for the memories that will clearly be useful to Claude Code as it processes the user's query (up to 5)... Be selective and discerning. If there are no memories in the list that would clearly be useful, feel free to return an empty list."</li><li>The new prompt also includes the instruction to describe memories with specific one-line descriptions to aid future retrieval</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated memory selection system prompt (search for <code>"Be selective and discerning"</code>)</p>
+    </article>
+    <article class="card" id="updated-write-tool-description">
+      <div class="card-top">
+        <h3>Updated Write Tool Description <a class="anchor" href="#updated-write-tool-description">#</a></h3>
+      </div>
+      <p>The Write tool description now explicitly recommends the Edit tool for modifications:</p>
+<ul><li>Old: "ALWAYS prefer editing existing files in the codebase. NEVER write new files unless explicitly required."</li><li>New: "Prefer the Edit tool for modifying existing files — it only sends the diff. Only use this tool to create new files or for complete rewrites."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated Write tool instructions (search for <code>"Prefer the Edit tool"</code>)</p>
+    </article>
+    <article class="card" id="improved-file-operation-security">
+      <div class="card-top">
+        <h3>Improved File Operation Security <a class="anchor" href="#improved-file-operation-security">#</a></h3>
+      </div>
+      <p>File creation and log file operations now use more secure flag combinations:</p>
+<ul><li><code>O_EXCL</code> flag added for temp file creation (prevents TOCTOU race conditions)</li><li><code>O_NOFOLLOW</code> flag used on supported platforms (prevents symlink-following attacks)</li><li>Log file open now uses explicit flag combinations (<code>O_WRONLY | O_CREAT | O_APPEND | O_NOFOLLOW</code>) instead of the legacy <code>"a"</code> mode string</li></ul>
+<div class="blabel">Evidence</div>
+<p>New file security flags (search for <code>"O_NOFOLLOW"</code>)</p>
+    </article>
+    <article class="card" id="improved-detectfileencoding-error-handling">
+      <div class="card-top">
+        <h3>Improved <code>detectFileEncoding</code> Error Handling <a class="anchor" href="#improved-detectfileencoding-error-handling">#</a></h3>
+      </div>
+      <p>The file encoding detection function now handles expected filesystem errors (ENOENT, EACCES, EPERM) gracefully with a debug-level log message instead of reporting them as unexpected errors.</p>
+<div class="blabel">Evidence</div>
+<p>Improved error classification (search for <code>"detectFileEncoding failed for expected reason"</code>)</p>
+    </article>
+    <article class="card" id="remote-control-bridge-improvements">
+      <div class="card-top">
+        <h3>Remote Control Bridge Improvements <a class="anchor" href="#remote-control-bridge-improvements">#</a></h3>
+      </div>
+      <p>Several improvements to the Remote Control bridge infrastructure:</p>
+<ul><li><strong>State reporting</strong>: The bridge now reports <code>"processing"</code> and <code>"idle"</code> states to the server, enabling better status visibility on claude.ai/code</li><li><strong>SSE event handling refactored</strong>: Delivery updates and catch-up truncation events are now handled via a generic <code>setOnEvent</code> callback, with catch-up truncation elevated to a proper error log</li><li><strong>Session creation/archival</strong> now accepts explicit <code>baseUrl</code> and <code>getAccessToken</code> parameters, improving BYOC (Bring Your Own Credentials) support</li><li><strong>Compaction boundary events</strong> are now tagged with <code>is_compaction: true</code> when written to the bridge transport</li><li><strong>Bridge REPL error</strong>: The <code>replBridgeError</code> state now preserves the first error rather than overwriting it</li></ul>
+<div class="blabel">Evidence</div>
+<p>State reporting infrastructure (search for <code>"reportState"</code>) and SSE handling (search for <code>"SSE catch-up truncated"</code>)</p>
+    </article>
+    <article class="card" id="alternate-screen-buffer-support">
+      <div class="card-top">
+        <h3>Alternate Screen Buffer Support <a class="anchor" href="#alternate-screen-buffer-support">#</a></h3>
+      </div>
+      <p>The terminal renderer now supports entering and exiting an alternate screen buffer via <code>enterAlternateScreen()</code> / <code>exitAlternateScreen()</code> methods, replacing inline ANSI escape sequences. Used by the year-in-review playback feature.</p>
+<div class="blabel">Evidence</div>
+<p>New screen buffer methods (search for <code>"enterAlternateScreen"</code>)</p>
+    </article>
+    <article class="card" id="improved-newline-security-check">
+      <div class="card-top">
+        <h3>Improved Newline Security Check <a class="anchor" href="#improved-newline-security-check">#</a></h3>
+      </div>
+      <p>The bash command newline injection check has been updated with a more comprehensive regex pattern that better handles line continuations (backslash-newline sequences) as legitimate, while still catching suspicious newline patterns.</p>
+<div class="blabel">Evidence</div>
+<p>Updated newline detection regex (search for <code>"NEWLINES"</code> in the security check)</p>
+    </article>
+    <article class="card" id="improved-command-parsing">
+      <div class="card-top">
+        <h3>Improved Command Parsing <a class="anchor" href="#improved-command-parsing">#</a></h3>
+      </div>
+      <p>A new <code>unquotedKeepQuoteChars</code> field is now returned from command parsing, providing a third representation of commands alongside <code>withDoubleQuotes</code> and <code>fullyUnquoted</code>. This variant preserves quote characters in the output, enabling more accurate security analysis of commands where quote placement matters (e.g., the new mid-word hash check).</p>
+<div class="blabel">Evidence</div>
+<p>New parsing field (search for <code>"unquotedKeepQuoteChars"</code>)</p>
+    </article>
+    <article class="card" id="environment-variable-loading-from-policy-flag-settings">
+      <div class="card-top">
+        <h3>Environment Variable Loading from Policy/Flag Settings <a class="anchor" href="#environment-variable-loading-from-policy-flag-settings">#</a></h3>
+      </div>
+      <p>Environment variables are now loaded from <code>userSettings</code>, <code>flagSettings</code>, and <code>policySettings</code> in addition to user config, giving admins more control over the runtime environment.</p>
+<div class="blabel">Evidence</div>
+<p>Settings-based env loading (search for <code>"policySettings"</code>)</p>
+    </article>
+    <article class="card" id="session-metadata-schema-for-listsessions">
+      <div class="card-top">
+        <h3>Session Metadata Schema for <code>listSessions</code> <a class="anchor" href="#session-metadata-schema-for-listsessions">#</a></h3>
+      </div>
+      <p>A new Zod schema defines the structure returned by <code>listSessions</code>, including fields for <code>sessionId</code>, <code>summary</code>, <code>lastModified</code>, <code>fileSize</code>, <code>customTitle</code>, <code>firstPrompt</code>, <code>gitBranch</code>, and <code>cwd</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Schema with <code>.describe("Session metadata returned by listSessions.")</code> (search for <code>"listSessions"</code>)</p>
+    </article>
+    <article class="card" id="mcp-client-state-update-batching">
+      <div class="card-top">
+        <h3>MCP Client State Update Batching <a class="anchor" href="#mcp-client-state-update-batching">#</a></h3>
+      </div>
+      <p>MCP client state updates are now batched using a 16ms debounce timer, reducing React re-renders when multiple MCP servers report status changes in quick succession.</p>
+<div class="blabel">Evidence</div>
+<p>Batching with 16ms <code>setTimeout</code> in MCP client update callback</p>
+    </article>
+    <article class="card" id="bash-agent-type-removed">
+      <div class="card-top">
+        <h3>Bash Agent Type Removed <a class="anchor" href="#bash-agent-type-removed">#</a></h3>
+      </div>
+      <p>The dedicated "Bash" agent type (described as "Command execution specialist for running bash commands") has been removed from the built-in agent list. This simplifies the agent architecture.</p>
+<div class="blabel">Evidence</div>
+<p>Removed bash agent definition (search for <code>"Command execution specialist"</code>)</p>
+    </article>
+    <article class="card" id="pipeline-command-parsing-fix">
+      <div class="card-top">
+        <h3>Pipeline Command Parsing Fix <a class="anchor" href="#pipeline-command-parsing-fix">#</a></h3>
+      </div>
+      <p>The tree-sitter command parser now recursively processes pipeline nodes instead of treating them the same as <code>redirected_statement</code>. This improves accuracy when analyzing piped commands for security checks.</p>
+<div class="blabel">Evidence</div>
+<p>Recursive pipeline handling in command parser</p>
+    </article>
+    <article class="card" id="glob-pattern-matching-case-insensitive-support">
+      <div class="card-top">
+        <h3>Glob Pattern Matching: Case-Insensitive Support <a class="anchor" href="#glob-pattern-matching-case-insensitive-support">#</a></h3>
+      </div>
+      <p>The internal glob-to-regex pattern matching function now accepts an optional case-insensitive flag, enabling case-insensitive permission rule matching.</p>
+<div class="blabel">Evidence</div>
+<p>New parameter in glob matching function</p>
+    </article>
+    <article class="card" id="trust-dialog-bypass-removed">
+      <div class="card-top">
+        <h3>Trust Dialog Bypass Removed <a class="anchor" href="#trust-dialog-bypass-removed">#</a></h3>
+      </div>
+      <p>The trust dialog bypass for <code>bypassPermissions</code> mode has been removed. Previously, <code>bypassPermissions</code> mode could skip the trust dialog entirely; now the standard trust checking flow applies regardless.</p>
+<div class="blabel">Evidence</div>
+<p>Removed <code>bypassPermissions</code> check in trust dialog gate (search for <code>"bypassPermissions"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed Remote Control initialization to preserve the first error message rather than overwriting it with a generic "initialization failed" message (search for <code>"replBridgeError"</code>)</li><li>Fixed file index <code>.gitignore</code> loading to use async <code>readFile</code> instead of sync <code>readFileSync</code> with <code>existsSync</code>, preventing potential blocking I/O during file picker operations (search for <code>"[FileIndex] loaded ignore patterns"</code>)</li><li>Fixed the glob base path extraction on Windows to consider both <code>/</code> and <code>\\</code> as path separators (search for <code>"lastIndexOf"</code>)</li><li>Fixed conversation rewind to properly reset state by calling <code>Ft()</code> after rewind (search for <code>"tengu_conversation_rewind"</code>)</li><li>Fixed atomic file write error logging to use <code>level: "error"</code> instead of the default level (search for <code>"Failed to write file atomically"</code>)</li><li>Removed extraneous blank line before <code>&lt;fast_mode_info&gt;</code> in the environment info system prompt</li></ul>
+    </article>
+    <article class="card" id="session-time-cap-24h">
+      <div class="card-top">
+        <h3>Session Time Cap (24h) <a class="anchor" href="#session-time-cap-24h">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure for capping bridge sessions to a maximum runtime of 24 hours in privileged namespaces.</p>
+<div class="blabel">Status</div>
+<p>Stubbed — the check variable is hardcoded to <code>false</code> (<code>!1</code>), so the cap never activates.</p>
+<div class="blabel">Details</div>
+<ul><li>When enabled, sessions would log "Session capped to 24h in this namespace (privileged namespace policy)" and automatically shut down after the timeout</li><li>Applies to both standalone bridge mode and REPL bridge sessions</li><li>On expiry, logs "Maximum runtime reached, shutting down…" and aborts the session</li></ul>
+<div class="blabel">Evidence</div>
+<p>Session cap infrastructure (hardcoded to <code>!1</code>, search for <code>"Session capped to 24h"</code>)</p>
+    </article>
+    <article class="card" id="session-turn-uploader">
+      <div class="card-top">
+        <h3>Session Turn Uploader <a class="anchor" href="#session-turn-uploader">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure to upload per-turn data after each conversation turn completes.</p>
+<div class="blabel">Status</div>
+<p>Stubbed — the uploader variable is initialized to <code>null</code> and never populated.</p>
+<div class="blabel">Details</div>
+<ul><li>A new <code>onTurnComplete</code> callback parameter has been added to the REPL configuration</li><li>When a turn uploader is available, it would be called with turn data after each turn</li><li>The <code>createSessionTurnUploader</code> function exists but the initialization path is disabled (<code>r4 = null</code>)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Turn upload infrastructure (search for <code>"createSessionTurnUploader"</code>)</p>
+    </article>
+    <article class="card" id="disable-feedback-command-environment-variable">
+      <div class="card-top">
+        <h3><code>DISABLE_FEEDBACK_COMMAND</code> Environment Variable <a class="anchor" href="#disable-feedback-command-environment-variable">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>CLAUDE_CODE_DISABLE_FEEDBACK_COMMAND</code> environment variable has been added to the known env var list.</p>
+<div class="blabel">Status</div>
+<p>The variable is recognized but the feedback command disabling behavior is not fully wired up in this version.</p>
+<div class="blabel">Evidence</div>
+<p>Env var registration (search for <code>"DISABLE_FEEDBACK_COMMAND"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

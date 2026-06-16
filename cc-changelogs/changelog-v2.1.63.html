@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.63 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.63."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.63</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.63</span></h1>
+<p class="sub">This is a substantial release with several major additions: a new <code>/batch</code> command for parallelized large-scale codebase changes, fully functional HTTP hooks (previously disabled), MCP elicitation hook support, and the renaming of the <code>Task</code> tool to <code>Agent</code>. It also ships a new <code>/simplify</code> code review command, git sparse-checkout support for marketplace plugins, enhanced shell security checks for Zsh, and makes claude.ai MCP servers enabled by default.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.62 → v2.1.63</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">24</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">20 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="batch-command">
+      <div class="card-top">
+        <h3>/batch Command <a class="anchor" href="#batch-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New slash command that researches and plans a large-scale change, then executes it in parallel across 5–30 isolated git worktree agents that each open a PR.</p>
+<div class="blabel">Usage</div>
+<pre><code>/batch migrate from react to vue
+/batch replace all uses of lodash with native equivalents
+/batch add type annotations to all JavaScript files</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Requires a git repository (spawns agents in isolated worktrees)</li><li>Each agent independently implements its portion and opens a PR</li><li>User-invocable only (<code>disableModelInvocation: true</code>) — the model cannot invoke this on its own</li><li>Operates in two phases: first plans in plan mode, then spawns parallel workers after approval</li></ul>
+<div class="blabel">Evidence</div>
+<p>Slash command registration (search for <code>name: "batch"</code>, <code>"Research and plan a large-scale change"</code>)</p>
+    </article>
+    <article class="card" id="simplify-command">
+      <div class="card-top">
+        <h3>/simplify Command <a class="anchor" href="#simplify-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New slash command that reviews changed code for reuse, quality, and efficiency, then fixes any issues found.</p>
+<div class="blabel">Usage</div>
+<pre><code>/simplify</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Runs a 3-agent parallel review process: Code Reuse Review, Quality Review, and Efficiency Review</li><li>Examines all changed files (via <code>git diff</code>)</li><li>User-invocable only</li></ul>
+<div class="blabel">Evidence</div>
+<p>Slash command registration (search for <code>name: "simplify"</code>, <code>"Review changed code for reuse, quality, and efficiency"</code>)</p>
+    </article>
+    <article class="card" id="http-hooks-now-functional">
+      <div class="card-top">
+        <h3>HTTP Hooks (Now Functional) <a class="anchor" href="#http-hooks-now-functional">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>HTTP hooks, previously stubbed with "HTTP hooks are not yet supported," are now fully implemented and operational.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;hooks&quot;: {
+    &quot;PostToolUse&quot;: [{
+      &quot;matcher&quot;: &quot;Write&quot;,
+      &quot;hooks&quot;: [{
+        &quot;type&quot;: &quot;http&quot;,
+        &quot;url&quot;: &quot;https://hooks.example.com/on-write&quot;,
+        &quot;headers&quot;: { &quot;Authorization&quot;: &quot;Bearer $MY_TOKEN&quot; },
+        &quot;allowedEnvVars&quot;: [&quot;MY_TOKEN&quot;]
+      }]
+    }]
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Sends POST requests with hook input as JSON body</li><li>Supports environment variable interpolation in headers via <code>$VAR_NAME</code> or <code>${VAR_NAME}</code> syntax</li><li>SSRF protection: private/link-local addresses are blocked; loopback (127.0.0.1, ::1) is allowed for local development</li><li>New managed setting <code>allowedHttpHookUrls</code> for organization-level URL allowlisting with wildcard support (e.g., <code>"https://hooks.example.com/*"</code>)</li><li>New managed setting <code>httpHookAllowedEnvVars</code> restricts which environment variables hooks can interpolate, intersecting with per-hook <code>allowedEnvVars</code></li><li>Responses must be valid JSON</li></ul>
+<div class="blabel">Evidence</div>
+<p>HTTP hook execution code (search for <code>"Hooks: HTTP hook POST to"</code>, <code>"ERR_HTTP_HOOK_BLOCKED_ADDRESS"</code>, <code>"allowedHttpHookUrls"</code>)</p>
+    </article>
+    <article class="card" id="mcp-elicitation-hooks">
+      <div class="card-top">
+        <h3>MCP Elicitation Hooks <a class="anchor" href="#mcp-elicitation-hooks">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Two new hook events that let hooks intercept MCP server elicitation requests (when an MCP server asks the user for input).</p>
+<div class="blabel">Details</div>
+<ul><li><code>Elicitation</code> hook fires when an MCP server requests user input. Hook can accept, decline, cancel, or provide content to auto-respond.</li><li><code>ElicitationResult</code> hook fires after the user responds to an elicitation. Hook can override the response action or content.</li><li>Supports both form-based and URL-based elicitation modes</li><li>If a hook declines, the elicitation is blocked with "Elicitation denied by hook"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Hook event definitions (search for <code>"Elicitation"</code> and <code>"ElicitationResult"</code> near <code>hook_event_name</code>)</p>
+    </article>
+    <article class="card" id="task-tool-renamed-to-agent">
+      <div class="card-top">
+        <h3>Task Tool Renamed to Agent <a class="anchor" href="#task-tool-renamed-to-agent">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>Task</code> tool has been renamed to <code>Agent</code> to better reflect its purpose. <code>Task</code> is kept as a backward-compatible alias.</p>
+<div class="blabel">Details</div>
+<ul><li>Tool name changed from <code>"Task"</code> to <code>"Agent"</code></li><li>Description changed from <code>"Launch a new task"</code> to <code>"Launch a new agent"</code></li><li><code>"Task"</code> remains as an alias — existing CLAUDE.md files and permissions referencing "Task" will continue to work</li><li>Hook event descriptions updated from "Task tool call" to "Agent tool call"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Tool definition (search for <code>var tq = "Agent"</code>, <code>aliases:</code> containing <code>"Task"</code>)</p>
+    </article>
+    <article class="card" id="git-sparse-checkout-for-marketplace-plugins">
+      <div class="card-top">
+        <h3>Git Sparse-Checkout for Marketplace Plugins <a class="anchor" href="#git-sparse-checkout-for-marketplace-plugins">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>--sparse</code> CLI option and <code>sparsePaths</code> config field for marketplace plugin installation, enabling cone-mode sparse-checkout for monorepo plugin sources.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude plugin marketplace add my-marketplace --sparse .claude-plugin plugins</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Uses git sparse-checkout in cone mode to clone only specified directories</li><li>Useful for monorepos where the marketplace lives in a subdirectory</li><li>Combines <code>--filter=blob:none</code> for blobless clones with sparse-checkout for minimal disk usage</li><li>If <code>sparsePaths</code> is removed from config but the repo is already sparse, triggers a re-clone for full checkout</li></ul>
+<div class="blabel">Evidence</div>
+<p>CLI option definition (search for <code>"--sparse &lt;paths...&gt;"</code>, <code>"sparse-checkout"</code>, <code>"sparsePaths"</code>)</p>
+    </article>
+    <article class="card" id="copy-full-response-setting">
+      <div class="card-top">
+        <h3>Copy Full Response Setting <a class="anchor" href="#copy-full-response-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>copyFullResponse</code> boolean config option that makes <code>/copy</code> always copy the full response, skipping the block-picker dialog.</p>
+<div class="blabel">Usage</div>
+<ul><li>Enable via <code>/config</code> → "Always copy full response (skip /copy picker)"</li><li>Or toggle from the <code>/copy</code> picker itself: "Skip this picker in the future (revert via /config)"</li></ul>
+<div class="blabel">Details</div>
+<ul><li>Default: <code>false</code> (existing block-picker behavior preserved)</li><li>When enabled, <code>/copy</code> immediately copies the entire last response</li><li>Reversible via <code>/config</code> at any time</li></ul>
+<div class="blabel">Evidence</div>
+<p>Config definition (search for <code>"copyFullResponse"</code>, <code>"Always copy full response"</code>)</p>
+    </article>
+    <article class="card" id="permission-mode-cli-flag">
+      <div class="card-top">
+        <h3>--permission-mode CLI Flag <a class="anchor" href="#permission-mode-cli-flag">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New top-level CLI flag for controlling permission handling in sessions.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --permission-mode acceptEdits
+claude remote-control --permission-mode bypassPermissions</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Applies both as a general CLI option and specifically in <code>claude remote-control</code></li><li>Available modes correspond to existing permission modes (e.g., <code>acceptEdits</code>, <code>bypassPermissions</code>)</li><li>Used when spawning sub-sessions and for remote control configuration</li></ul>
+<div class="blabel">Evidence</div>
+<p>CLI argument definition (search for <code>"--permission-mode"</code>)</p>
+    </article>
+    <article class="card" id="marketplace-seed-directory-support">
+      <div class="card-top">
+        <h3>Marketplace Seed Directory Support <a class="anchor" href="#marketplace-seed-directory-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>CLAUDE_CODE_PLUGIN_SEED_DIR</code> environment variable for pre-populating marketplace plugins in managed/enterprise environments.</p>
+<div class="blabel">Details</div>
+<ul><li>Reads <code>known_marketplaces.json</code> from the seed directory</li><li>Syncs seed marketplaces into the user's configuration with <code>autoUpdate: false</code></li><li>Supports seed-managed plugin caches and external plugin caching</li><li>Seed-managed marketplaces are marked read-only and cannot be overwritten by user operations</li></ul>
+<div class="blabel">Evidence</div>
+<p>Seed directory function (search for <code>"CLAUDE_CODE_PLUGIN_SEED_DIR"</code>, <code>"marketplace(s) from seed dir"</code>)</p>
+    </article>
+    <article class="card" id="claude-ai-mcp-servers-enabled-by-default">
+      <div class="card-top">
+        <h3>claude.ai MCP Servers Enabled by Default <a class="anchor" href="#claude-ai-mcp-servers-enabled-by-default">#</a></h3>
+      </div>
+      <p>The claude.ai MCP server integration has changed from opt-in to enabled by default (still GrowthBook-gated for rollout). Users who previously had to set <code>ENABLE_CLAUDEAI_MCP_SERVERS=true</code> no longer need to. To opt out, set <code>ENABLE_CLAUDEAI_MCP_SERVERS=false</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Changed message from <code>"require ENABLE_CLAUDEAI_MCP_SERVERS=true"</code> (v2.1.62) to <code>"enabled by default (GrowthBook-gated). To opt out, set ENABLE_CLAUDEAI_MCP_SERVERS=false"</code> (v2.1.63)</p>
+    </article>
+    <article class="card" id="model-command-shows-current-model">
+      <div class="card-top">
+        <h3>/model Command Shows Current Model <a class="anchor" href="#model-command-shows-current-model">#</a></h3>
+      </div>
+      <p>The <code>/model</code> command description is now dynamic, displaying the currently active model: <code>"Set the AI model for Claude Code (currently Claude Sonnet 4.6)"</code> instead of the previous static <code>"Set the AI model for Claude Code"</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Changed from static <code>description:</code> to <code>get description()</code> getter (search for <code>"Set the AI model for Claude Code (currently"</code>)</p>
+    </article>
+    <article class="card" id="improved-escape-key-ux">
+      <div class="card-top">
+        <h3>Improved Escape Key UX <a class="anchor" href="#improved-escape-key-ux">#</a></h3>
+      </div>
+      <p>The Escape key behavior has been refined with clearer feedback:</p>
+<ul><li>Status line now shows <code>"ctrl+c to interrupt · Esc again to clear"</code> during response generation</li><li>A "keep holding…" animation appears when holding Escape</li><li>Replaces the previous simpler <code>"Esc to clear again"</code> text</li></ul>
+<div class="blabel">Evidence</div>
+<p>New UI strings (search for <code>"ctrl+c to interrupt · Esc again to clear"</code>, <code>"keep holding"</code>)</p>
+    </article>
+    <article class="card" id="stricter-ssh-host-key-checking">
+      <div class="card-top">
+        <h3>Stricter SSH Host Key Checking <a class="anchor" href="#stricter-ssh-host-key-checking">#</a></h3>
+      </div>
+      <p>Git clone operations for marketplace plugins now use <code>StrictHostKeyChecking=yes</code> instead of the previous <code>StrictHostKeyChecking=accept-new</code>. This means new host keys are no longer automatically trusted — the user must explicitly add them first. Improved error messages now provide specific remediation steps:</p>
+<ul><li>For changed host keys: shows <code>ssh-keygen -R &lt;host&gt;</code> command</li><li>For unknown hosts: shows <code>ssh -T git@&lt;host&gt;</code> command</li><li>Detects <code>REMOTE HOST IDENTIFICATION HAS CHANGED</code> and <code>Host key verification failed</code> scenarios</li></ul>
+<div class="blabel">Evidence</div>
+<p>SSH config change (search for <code>"StrictHostKeyChecking=yes"</code>, <code>"SSH host key has changed"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-shell-security-checks">
+      <div class="card-top">
+        <h3>Enhanced Shell Security Checks <a class="anchor" href="#enhanced-shell-security-checks">#</a></h3>
+      </div>
+      <p>New Zsh-specific and general shell security checks for the Bash tool:</p>
+<ul><li><strong>Zsh process substitution</strong> <code>=()</code> — detected and flagged</li><li><strong>Zsh glob qualifiers</strong> with command execution <code>(+</code> — detected and flagged</li><li><strong>Zsh <code>try/always</code> constructs</strong> <code>} always {</code> — detected and flagged</li><li><strong>Dangerous Zsh builtins</strong> (<code>zmodload</code>, <code>zpty</code>, <code>ztcp</code>, <code>zsocket</code>, <code>zf_rm</code>, etc.) — blocked</li><li><strong><code>fc -e</code></strong> command detection — prevents arbitrary command execution via editor</li><li><strong>Backslash-escaped operators</strong> — detects <code>\;</code>, <code>\|</code>, <code>\&amp;</code>, <code>\&lt;</code>, <code>\&gt;</code> outside quotes that can hide command structure</li><li><strong>Comment quote desync</strong> — detects quote characters inside <code>#</code> comments that can confuse quote tracking</li><li><strong>Tilde expansion variants</strong> (<code>~user</code>, <code>~+</code>, <code>~-</code>) — require manual approval</li><li><strong>Compound <code>cd</code> + <code>git</code></strong> commands — flagged to prevent bare repository attacks</li></ul>
+<div class="blabel">Evidence</div>
+<p>Security check functions (search for <code>"Zsh process substitution"</code>, <code>"backslash-escaped operators"</code>, <code>"comment quote desync"</code>, <code>"fc -e"</code>)</p>
+    </article>
+    <article class="card" id="config-file-write-protection">
+      <div class="card-top">
+        <h3>Config File Write Protection <a class="anchor" href="#config-file-write-protection">#</a></h3>
+      </div>
+      <p>A new safety mechanism prevents concurrent config writes from wiping authentication data in <code>~/.claude.json</code>. Before writing, the system re-reads the file and refuses to proceed if the disk version is missing <code>oauthAccount</code> or <code>hasCompletedOnboarding</code> data that exists in the in-memory cache. This addresses a race condition reported in GitHub issue #3117.</p>
+<div class="blabel">Evidence</div>
+<p>Config lock function (search for <code>"saveConfigWithLock"</code>, <code>"re-read config is missing auth that cache has"</code>)</p>
+    </article>
+    <article class="card" id="transcript-sharing-prompts">
+      <div class="card-top">
+        <h3>Transcript Sharing Prompts <a class="anchor" href="#transcript-sharing-prompts">#</a></h3>
+      </div>
+      <p>New session transcript sharing feature that occasionally prompts users: "Can Anthropic look at your session transcript to help us improve Claude Code?" with three options: Yes, No, and "Don't ask again." A frustration-triggered variant also exists. Selecting "Don't ask again" permanently suppresses the prompt via a <code>transcriptShareDismissed</code> config flag.</p>
+<div class="blabel">Evidence</div>
+<p>Transcript sharing dialog (search for <code>"Can Anthropic look at your session transcript"</code>, <code>"Don't ask again"</code>)</p>
+    </article>
+    <article class="card" id="wsl-voice-mode-guard">
+      <div class="card-top">
+        <h3>WSL Voice Mode Guard <a class="anchor" href="#wsl-voice-mode-guard">#</a></h3>
+      </div>
+      <p>Voice mode now detects WSL (Windows Subsystem for Linux) and provides a clear error message explaining that audio devices are unavailable, suggesting users run Claude Code in native Windows instead.</p>
+<div class="blabel">Evidence</div>
+<p>WSL detection guard (search for <code>"Voice mode is not supported in WSL"</code>)</p>
+    </article>
+    <article class="card" id="fast-mode-cooldown-state">
+      <div class="card-top">
+        <h3>Fast Mode Cooldown State <a class="anchor" href="#fast-mode-cooldown-state">#</a></h3>
+      </div>
+      <p>Fast mode now has a three-state model: <code>"on"</code>, <code>"off"</code>, and <code>"cooldown"</code> (after a rate limit). Network errors show a temporary unavailability message rather than fully disabling fast mode. The <code>fast_mode_state</code> field is now included in API response schemas.</p>
+<div class="blabel">Evidence</div>
+<p>Fast mode state function (search for <code>"Fast mode is temporarily unavailable due to a network error"</code>)</p>
+    </article>
+    <article class="card" id="subagentstart-subagentstop-hook-event-descriptions">
+      <div class="card-top">
+        <h3>SubagentStart / SubagentStop Hook Event Descriptions <a class="anchor" href="#subagentstart-subagentstop-hook-event-descriptions">#</a></h3>
+      </div>
+      <p>The <code>SubagentStart</code> and <code>SubagentStop</code> hook event descriptions have been updated from "Task tool call" to "Agent tool call" to match the Task→Agent rename. The events themselves are unchanged.</p>
+<div class="blabel">Evidence</div>
+<p>Hook event descriptions (search for <code>"subagent (Agent tool call)"</code>)</p>
+    </article>
+    <article class="card" id="opus-4-6-launch-promo-removed">
+      <div class="card-top">
+        <h3>Opus 4.6 Launch Promo Removed <a class="anchor" href="#opus-4-6-launch-promo-removed">#</a></h3>
+      </div>
+      <p>The Opus 4.6 launch promotional banner, extra usage promo text (<code>"$50 free extra usage"</code>, <code>"/extra-usage to enable"</code>), and associated feed display logic have been cleaned up. The <code>tengu_copper_lantern</code> and <code>tengu_silver_lantern</code> feature flag checks and related UI components are removed.</p>
+<div class="blabel">Evidence</div>
+<p>Removed functions (search for removed strings <code>"Opus 4.6 is here"</code>, <code>"$50 free extra usage"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed race condition where concurrent config writes could wipe authentication data from <code>~/.claude.json</code> (search for <code>"See GH #3117"</code>)</li><li>Improved OAuth callback handling with better error message when the redirect URL is missing the authorization code (search for <code>"Invalid callback URL: missing authorization code"</code>)</li><li>Fixed <code>"Prompt cancelled by user"</code> error propagation when prompts are cancelled during hook flows (search for <code>"Prompt cancelled by user"</code>)</li><li>Improved orphaned version cleanup with better error handling for <code>stat</code> failures (search for <code>"Failed to stat orphaned marker"</code>)</li><li>MCP server <code>.mcp.json</code> writes now use atomic <code>datasync</code> + <code>rename</code> pattern with proper file permission preservation, replacing the previous simpler write approach</li></ul>
+    </article>
+    <article class="card" id="tool-result-summarization-gradual-rollout">
+      <div class="card-top">
+        <h3>Tool Result Summarization [Gradual Rollout] <a class="anchor" href="#tool-result-summarization-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A feature that instructs the model to preserve important information from tool results in its response text, since original tool results may be cleared later (for context window management).</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_summarize_tool_results</code> (default <code>false</code>)</p>
+<div class="blabel">Details</div>
+<ul><li>When enabled, appends a system instruction: "When working with tool results, write down any important information you might need later in your response, as the original tool result may be cleared later."</li><li>Prepares for a future where tool results are more aggressively pruned from context</li></ul>
+<div class="blabel">Evidence</div>
+<p>Gated by <code>tengu_summarize_tool_results</code> flag (search for <code>"tengu_summarize_tool_results"</code>)</p>
+    </article>
+    <article class="card" id="asciicast-terminal-recording-internal">
+      <div class="card-top">
+        <h3>Asciicast Terminal Recording [Internal] <a class="anchor" href="#asciicast-terminal-recording-internal">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure for recording terminal sessions in asciicast v2 format (<code>.cast</code> files).</p>
+<div class="blabel">Status</div>
+<p>Internal infrastructure — no user-facing command to enable or control recording.</p>
+<div class="blabel">Details</div>
+<ul><li>Monkey-patches <code>process.stdout.write</code> to capture all terminal output with timestamps</li><li>Recordings stored under <code>~/.claude/projects/&lt;project&gt;/</code> as <code>.cast</code> files</li><li>Supports flushing and renaming recordings for session management</li><li>File permissions set to owner read/write only (mode 384)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Recording infrastructure (search for <code>"[asciicast] Recording to"</code>, <code>"[asciicast] Renamed recording"</code>)</p>
+    </article>
+    <article class="card" id="custom-subagent-definitions-in-development">
+      <div class="card-top">
+        <h3>Custom Subagent Definitions [In Development] <a class="anchor" href="#custom-subagent-definitions-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Schema support for defining custom subagent types that can be invoked via the Agent tool.</p>
+<div class="blabel">Status</div>
+<p>Schema definitions exist but no user-facing documentation or invocation path found.</p>
+<div class="blabel">Details</div>
+<ul><li>New schema field: <code>"Definition for a custom subagent that can be invoked via the Agent tool"</code></li><li>Includes fields for agent type identifier, description, model alias, and tool availability</li><li>Suggests future ability to define custom agent types in configuration</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema descriptions (search for <code>"Definition for a custom subagent"</code>, <code>"Agent type identifier"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li><strong>Task → Agent migration</strong>: If you have CLAUDE.md files, hooks, or permissions referencing the <code>Task</code> tool by name, they will continue to work — <code>Task</code> is retained as an alias. However, new documentation and tool output will use <code>Agent</code>.</li><li><strong>HTTP hook security</strong>: Organizations deploying HTTP hooks should review the new <code>allowedHttpHookUrls</code> and <code>httpHookAllowedEnvVars</code> managed settings to restrict which URLs hooks can call and which environment variables can be interpolated.</li><li><strong>SSH host key change</strong>: The switch to <code>StrictHostKeyChecking=yes</code> means marketplace plugin installations via SSH may fail if the host key isn't already in <code>known_hosts</code>. Run <code>ssh -T git@&lt;host&gt;</code> once manually to add it, or use HTTPS URLs for public repos.</li><li><strong><code>/todos</code> removed</strong>: The <code>/todos</code> slash command has been removed. The <code>TodoWrite</code> tool for in-session task tracking remains available.</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

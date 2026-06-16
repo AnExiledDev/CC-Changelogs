@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.37 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.37."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.37</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.37</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.36 → v1.0.37</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.37 Changelog</p>
+    </article>
+    <article class="card" id="print-mode-support">
+      <div class="card-top">
+        <h3>Print Mode Support <a class="anchor" href="#print-mode-support">#</a></h3>
+      </div>
+      <ul><li>Added support for <code>-p</code> / <code>--print</code> command-line flags and automatic detection of non-TTY output</li><li>When running <code>claude -p</code> or <code>claude --print</code>, or when output is piped/redirected, Claude will operate in print mode</li><li>This allows for better integration with scripts and command pipelines</li></ul>
+    </article>
+    <article class="card" id="enhanced-configuration-management">
+      <div class="card-top">
+        <h3>Enhanced Configuration Management <a class="anchor" href="#enhanced-configuration-management">#</a></h3>
+      </div>
+      <h4>Automatic Config Backup and Recovery</h4>
+<ul><li>Configuration files are now automatically backed up when corruption is detected</li><li>If the main config file is corrupted, a timestamped backup is created (e.g., <code>config.json.corrupted.1234567890</code>)</li><li>Users are notified of backup locations and provided with recovery instructions</li><li>Example recovery message:</li></ul>
+<pre><code>  Claude configuration file at ~/.claude/config.json is corrupted
+  The corrupted file has been backed up to: ~/.claude/config.json.corrupted.1234567890
+  A backup file exists at: ~/.claude/config.json.backup
+  You can manually restore it by running: cp &quot;~/.claude/config.json.backup&quot; &quot;~/.claude/config.json&quot;</code></pre>
+<h4>Improved Config File Locking</h4>
+<ul><li>Added file locking mechanism for configuration updates to prevent concurrent write conflicts</li><li>If locking fails, the system gracefully falls back to non-locked saves with appropriate logging</li></ul>
+    </article>
+    <article class="card" id="cost-reporting-control">
+      <div class="card-top">
+        <h3>Cost Reporting Control <a class="anchor" href="#cost-reporting-control">#</a></h3>
+      </div>
+      <ul><li>New environment variable <code>CLAUDE_CODE_DISABLE_COST_REPORTING</code> to disable cost reporting features</li><li>Usage: <code>export CLAUDE_CODE_DISABLE_COST_REPORTING=true</code></li></ul>
+    </article>
+    <article class="card" id="agent-plan-rejection-handling">
+      <div class="card-top">
+        <h3>Agent Plan Rejection Handling <a class="anchor" href="#agent-plan-rejection-handling">#</a></h3>
+      </div>
+      <ul><li>Added proper error messaging when an agent's proposed plan is rejected by the user</li><li>Provides clearer feedback in the interactive workflow</li></ul>
+    </article>
+    <article class="card" id="error-handling">
+      <div class="card-top">
+        <h3>Error Handling <a class="anchor" href="#error-handling">#</a></h3>
+      </div>
+      <ul><li>Added new <code>AbortError</code> class for better error categorization and handling of aborted operations</li></ul>
+    </article>
+    <article class="card" id="stream-processing">
+      <div class="card-top">
+        <h3>Stream Processing <a class="anchor" href="#stream-processing">#</a></h3>
+      </div>
+      <ul><li>Migrated from generic stream imports to more specific <code>PassThrough</code> stream for improved performance</li></ul>
+    </article>
+    <article class="card" id="tool-permission-system">
+      <div class="card-top">
+        <h3>Tool Permission System <a class="anchor" href="#tool-permission-system">#</a></h3>
+      </div>
+      <ul><li>Added new permission request structure for tools, including:</li><li>Tool name identification</li><li>Input validation</li><li>Unique tool use request IDs for tracking</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed configuration reading and writing logic to be more robust</li><li>Improved error messages and user guidance for configuration issues</li><li>Enhanced logging throughout the configuration management system</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Refactored configuration file operations with better error handling and recovery</li><li>Added comprehensive logging for debugging configuration issues</li><li>Improved modularization of stream processing components</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

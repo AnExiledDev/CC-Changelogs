@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.81 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.81."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.81</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.81</span></h1>
+<p class="sub">This release introduces a new <code>RemoteTrigger</code> tool for managing scheduled remote agents, an <code>auto-mode critique</code> CLI subcommand for AI-powered review of custom auto mode rules, MCP channel permissions infrastructure, and configurable shell support for hooks (bash/powershell). It also adds time-based micro-compaction for idle sessions, a user-configurable <code>autoDreamEnabled</code> setting, <code>defaultShell</code> configuration, worktree state persistence, and new plan-approval UX options including "clear context."</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.80 → v2.1.81</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">6</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">16 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="auto-mode-rule-critique-cli">
+      <div class="card-top">
+        <h3>Auto Mode Rule Critique CLI <a class="anchor" href="#auto-mode-rule-critique-cli">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>claude auto-mode critique</code> subcommand that sends your custom auto mode rules to an AI reviewer that evaluates them for clarity, completeness, conflicts, and actionability.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude auto-mode critique
+claude auto-mode critique --model opus
+claude auto-mode defaults   # view the default rules for reference</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Reads your custom rules from <code>autoMode.{allow, soft_deny, environment}</code> in settings</li><li>Shows the full classifier system prompt alongside your custom rules for context</li><li>AI reviewer comments only on rules that could be improved</li><li>If no custom rules are found, prompts you to add them and use <code>claude auto-mode defaults</code> to see defaults</li></ul>
+<div class="blabel">Evidence</div>
+<p>Auto mode rule critique command (search for <code>"Analyzing your auto mode rules"</code> and <code>"auto_mode_critique"</code>)</p>
+    </article>
+    <article class="card" id="auto-dream-user-setting">
+      <div class="card-top">
+        <h3>Auto-Dream User Setting <a class="anchor" href="#auto-dream-user-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New user-configurable <code>autoDreamEnabled</code> setting that controls background memory consolidation (auto-dream), overriding the server-side default.</p>
+<p>Usage: Set <code>autoDreamEnabled</code> in your Claude Code settings to <code>true</code> or <code>false</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Description: "Enable background memory consolidation (auto-dream). When set, overrides the server-side default."</li><li>When not set, falls back to the server-controlled <code>tengu_onyx_plover</code> feature flag</li><li>Related UI: <code>· /dream to run</code> hint shown in interface</li></ul>
+<div class="blabel">Evidence</div>
+<p>Auto-dream user setting (search for <code>"Enable background memory consolidation"</code> and <code>"autoDreamEnabled"</code>)</p>
+    </article>
+    <article class="card" id="default-shell-setting">
+      <div class="card-top">
+        <h3>Default Shell Setting <a class="anchor" href="#default-shell-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>defaultShell</code> setting to configure the default shell interpreter for input-box <code>!</code> commands.</p>
+<div class="blabel">Details</div>
+<ul><li>Description: "Default shell for input-box ! commands. Defaults to 'bash' on all platforms (no Windows auto-flip)."</li><li>Currently defaults to <code>"bash"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Default shell config (search for <code>"defaultShell"</code> and <code>"Default shell for input-box"</code>)</p>
+    </article>
+    <article class="card" id="shell-type-for-hooks">
+      <div class="card-top">
+        <h3>Shell Type for Hooks <a class="anchor" href="#shell-type-for-hooks">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Hook frontmatter now accepts a <code>shell</code> field to specify the shell interpreter, supporting <code>'bash'</code> or <code>'powershell'</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Description: "Shell interpreter. 'bash' uses your $SHELL (bash/zsh/sh); 'powershell' uses pwsh. Defaults to bash."</li><li>Invalid shell values log a warning and fall back to bash</li><li>PowerShell hooks are not available in all builds of Claude Code — if unavailable, a warning is logged</li></ul>
+<div class="blabel">Evidence</div>
+<p>Shell hook support (search for <code>"shell must be 'bash' or 'powershell'"</code> and <code>"Shell interpreter."</code>)</p>
+    </article>
+    <article class="card" id="plan-approval-clear-context-option">
+      <div class="card-top">
+        <h3>Plan Approval Clear Context Option <a class="anchor" href="#plan-approval-clear-context-option">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The plan approval dialog now offers a "clear context" option, letting you combine plan approval with context reset.</p>
+<div class="blabel">Details</div>
+<ul><li>New setting <code>showClearContext</code>: "When true, the plan-approval dialog offers a 'clear context' option. Defaults to false."</li><li>When context usage is available, shows percentage: "Yes, clear context (X% used) and use auto mode"</li><li>Also offers "Yes, and use auto mode" without clearing context</li><li>"No, keep planning" option includes inline text input for feedback</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plan clear context (search for <code>"Yes, clear context"</code> and <code>"showClearContext"</code>)</p>
+    </article>
+    <article class="card" id="worktree-name-validation">
+      <div class="card-top">
+        <h3>Worktree Name Validation <a class="anchor" href="#worktree-name-validation">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Worktree names are now validated with strict rules for allowed characters and length.</p>
+<div class="blabel">Details</div>
+<ul><li>Names must contain only letters, digits, dots, underscores, and dashes</li><li>Maximum length of 64 characters</li><li>Cannot be empty, <code>"."</code>, or <code>".."</code></li><li>Parameter description updated: "Optional name for the worktree (letters, digits, dots, underscores, dashes only; max 64 chars)."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Worktree name validation (search for <code>"Invalid worktree name"</code> and <code>"must contain only letters, digits"</code>)</p>
+    </article>
+    <article class="card" id="sessionstart-hook-initialusermessage-field">
+      <div class="card-top">
+        <h3>SessionStart Hook <code>initialUserMessage</code> Field <a class="anchor" href="#sessionstart-hook-initialusermessage-field">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>SessionStart</code> hook event input now includes an optional <code>initialUserMessage</code> field containing the first user message.</p>
+<div class="blabel">Details</div>
+<ul><li>Allows hooks to access the initial prompt text at session start</li><li>Useful for hooks that need to adjust behavior based on what the user asked</li></ul>
+<div class="blabel">Evidence</div>
+<p>SessionStart hook field (search for <code>"initialUserMessage"</code>)</p>
+    </article>
+    <article class="card" id="deep-link-cli-arguments">
+      <div class="card-top">
+        <h3>Deep Link CLI Arguments <a class="anchor" href="#deep-link-cli-arguments">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>--deep-link-last-fetch</code> and <code>--deep-link-repo</code> CLI flags for deep linking from external sources.</p>
+<div class="blabel">Details</div>
+<ul><li><code>--deep-link-last-fetch &lt;ms&gt;</code>: FETCH_HEAD mtime in epoch ms, precomputed by the deep link trampoline</li><li><code>--deep-link-repo &lt;slug&gt;</code>: Repo slug the deep link <code>?repo=</code> parameter resolved to the current cwd</li></ul>
+<div class="blabel">Evidence</div>
+<p>Deep link CLI args (search for <code>"--deep-link-last-fetch"</code> and <code>"--deep-link-repo"</code>)</p>
+    </article>
+    <article class="card" id="renamed-bash-command-shell-command-terminology">
+      <div class="card-top">
+        <h3>Renamed "Bash Command" → "Shell Command" Terminology <a class="anchor" href="#renamed-bash-command-shell-command-terminology">#</a></h3>
+      </div>
+      <p>Hook-related log messages and internal naming have been updated from "Bash command" (<code>LocalBashTask</code>) to "Shell command" (<code>LocalShellTask</code>), reflecting the new multi-shell support. Messages like "Bash command failed for pattern" are now "Shell command failed for pattern."</p>
+<div class="blabel">Evidence</div>
+<p>Terminology rename (search for <code>"LocalShellTask"</code> and <code>"Shell command failed for pattern"</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-context-window-fallback">
+      <div class="card-top">
+        <h3>Auto Mode Context Window Fallback <a class="anchor" href="#auto-mode-context-window-fallback">#</a></h3>
+      </div>
+      <p>When the auto mode classifier transcript exceeds the model's context window, Claude Code now falls back to manual approval instead of aborting. In headless mode, the session is still aborted with a descriptive error.</p>
+<div class="blabel">Evidence</div>
+<p>Context window handling (search for <code>"Auto mode classifier transcript exceeded context window"</code> and <code>"Classifier transcript exceeded context window"</code>)</p>
+    </article>
+    <article class="card" id="permission-denial-message-updates">
+      <div class="card-top">
+        <h3>Permission Denial Message Updates <a class="anchor" href="#permission-denial-message-updates">#</a></h3>
+      </div>
+      <p>Permission denial messages have been clarified: "Permission for this action has been denied. Reason:" replaces the previous "Permission for this action was declined." A separate "Denied via channel" path now supports MCP-channel-based denials.</p>
+<div class="blabel">Evidence</div>
+<p>Permission messages (search for <code>"Permission for this action has been denied"</code> and <code>"Denied via channel"</code>)</p>
+    </article>
+    <article class="card" id="memory-access-instructions-broadened">
+      <div class="card-top">
+        <h3>Memory Access Instructions Broadened <a class="anchor" href="#memory-access-instructions-broadened">#</a></h3>
+      </div>
+      <p>Memory retrieval instructions have been updated to trigger more broadly: "When memories (personal or team) seem relevant, or the user references prior work with them or others in their organization" replaces the narrower "When specific known memories seem relevant to the task at hand."</p>
+<div class="blabel">Evidence</div>
+<p>Memory instructions (search for <code>"When memories (personal or team) seem relevant"</code>)</p>
+    </article>
+    <article class="card" id="worktree-state-persistence">
+      <div class="card-top">
+        <h3>Worktree State Persistence <a class="anchor" href="#worktree-state-persistence">#</a></h3>
+      </div>
+      <p>Worktree session state (cwd, branch, commit, session ID) is now persisted to the session file as a <code>"worktree-state"</code> message, enabling session recovery.</p>
+<div class="blabel">Evidence</div>
+<p>Worktree persistence (search for <code>"worktree-state"</code> and <code>"saveWorktreeState"</code>)</p>
+    </article>
+    <article class="card" id="pr-attribution-changed-to-summary">
+      <div class="card-top">
+        <h3>PR Attribution Changed to Summary <a class="anchor" href="#pr-attribution-changed-to-summary">#</a></h3>
+      </div>
+      <p>PR attribution data processing changed from returning "enhanced" analysis to returning a "summary" format.</p>
+<div class="blabel">Evidence</div>
+<p>PR attribution change (search for <code>"PR Attribution: returning summary"</code>)</p>
+    </article>
+    <article class="card" id="credentials-file-change-detection">
+      <div class="card-top">
+        <h3>Credentials File Change Detection <a class="anchor" href="#credentials-file-change-detection">#</a></h3>
+      </div>
+      <p>A new file watcher monitors <code>.credentials.json</code> for mtime changes and automatically invalidates the credential cache when the file is modified externally.</p>
+<div class="blabel">Evidence</div>
+<p>Credentials watcher — <code>kA9()</code> at line ~179473 (search for <code>".credentials.json"</code>)</p>
+    </article>
+    <article class="card" id="plugin-skill-discovery-policy-enforcement">
+      <div class="card-top">
+        <h3>Plugin Skill Discovery Policy Enforcement <a class="anchor" href="#plugin-skill-discovery-policy-enforcement">#</a></h3>
+      </div>
+      <p>Dynamic skill discovery now respects <code>projectSettings</code> and <code>strictPluginOnlyCustomization</code> policies. When plugin-only customization is enforced, non-plugin skill sources are blocked.</p>
+<div class="blabel">Evidence</div>
+<p>Skill discovery policy (search for <code>"Dynamic skill discovery skipped: projectSettings disabled or plugin-only policy"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
+    </article>
+    <article class="card" id="remotetrigger-tool-gradual-rollout">
+      <div class="card-top">
+        <h3>RemoteTrigger Tool [Gradual Rollout] <a class="anchor" href="#remotetrigger-tool-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new tool for managing scheduled remote Claude Code agents (triggers) through the claude.ai CCR API — list, create, update, and run triggers without exposing OAuth tokens.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged by <code>tengu_surreal_dali</code> (default false), also requires <code>allow_remote_sessions</code> policy.</p>
+<div class="blabel">Details</div>
+<ul><li>Actions: <code>list</code>, <code>get</code>, <code>create</code>, <code>update</code>, <code>run</code> — maps to <code>/v1/code/triggers</code> API</li><li>Auth is handled in-process with OAuth tokens injected automatically</li><li>Tool is deferrable (<code>shouldDefer: true</code>) to reduce initial tool schema load</li><li>Read-only actions (<code>list</code>, <code>get</code>) are flagged as concurrency-safe</li><li>Requires claude.ai login and organization UUID</li></ul>
+<div class="blabel">Evidence</div>
+<p>RemoteTrigger tool definition (gated by <code>tengu_surreal_dali</code>, search for <code>"RemoteTrigger"</code> and <code>"manage scheduled remote agent triggers"</code>)</p>
+    </article>
+    <article class="card" id="mcp-channel-permissions-gradual-rollout">
+      <div class="card-top">
+        <h3>MCP Channel Permissions [Gradual Rollout] <a class="anchor" href="#mcp-channel-permissions-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Enables MCP servers with the <code>claude/channel</code> capability to push permission decisions and requests via notifications, allowing server-side permission management.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged by <code>tengu_harbor_permissions</code> (default false). Additionally requires Teams/Enterprise opt-in.</p>
+<div class="blabel">Details</div>
+<ul><li>Uses <code>notifications/claude/channel/permission</code> and <code>notifications/claude/channel/permission_request</code> notification paths</li><li>MCP servers must declare both <code>claude/channel</code> and <code>claude/channel/permission</code> in capabilities</li><li>Teams/Enterprise opt-in: "Teams/Enterprise opt-in for channel notifications... Default off. Set true to allow; users then select servers via --channels."</li><li>Includes an FNV-1a hash-based identifier system with profanity filtering for generated codes</li></ul>
+<div class="blabel">Evidence</div>
+<p>Channel permissions infrastructure (gated by <code>tengu_harbor_permissions</code>, search for <code>"notifications/claude/channel/permission"</code>)</p>
+    </article>
+    <article class="card" id="remote-review-in-development">
+      <div class="card-top">
+        <h3>Remote Review [In Development] <a class="anchor" href="#remote-review-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Offloads <code>/review</code> PR reviews to a remote Claude Code session, running the review in the background and delivering results as a task notification.</p>
+<div class="blabel">Status</div>
+<p>Gated by <code>REVIEW_REMOTE</code> environment variable.</p>
+<div class="blabel">Details</div>
+<ul><li>When triggered, launches a remote session with the PR diff</li><li>Polls remote session for events every 1 second, with 30-minute timeout</li><li>Delivers review findings via task-notification when complete</li><li>Includes session cleanup (delete/archive) after completion</li><li>Falls back to local review if remote launch fails</li><li>Produces notification: "Remote review session launched. Review output will arrive as a task-notification when complete."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Remote review launcher (gated by <code>REVIEW_REMOTE</code>, search for <code>"Remote review session launched"</code> and <code>"launchRemoteReview"</code>)</p>
+    </article>
+    <article class="card" id="time-based-micro-compaction-gradual-rollout">
+      <div class="card-top">
+        <h3>Time-Based Micro-Compaction [Gradual Rollout] <a class="anchor" href="#time-based-micro-compaction-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Automatically clears old tool result content when the user returns after an idle gap, reducing context size without a full compaction.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged by <code>tengu_slate_heron</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects idle gaps between the last assistant message and the current time</li><li>When the gap exceeds a configurable threshold, replaces old tool results with "[Old tool result content cleared]"</li><li>Keeps the N most recent tool results intact (<code>keepRecent</code> config)</li><li>Logs token savings: "[TIME-BASED MC] gap Xmin &gt; Ymin, cleared Z tool results (~N tokens), kept last M"</li><li>Triggers automatic compaction marker after clearing</li></ul>
+<div class="blabel">Evidence</div>
+<p>Time-based micro-compaction (gated by <code>tengu_slate_heron</code>, search for <code>"[TIME-BASED MC]"</code> and <code>"[Old tool result content cleared]"</code>)</p>
+    </article>
+    <article class="card" id="mcp-tool-read-search-allowlist-in-development">
+      <div class="card-top">
+        <h3>MCP Tool Read/Search Allowlist [In Development] <a class="anchor" href="#mcp-tool-read-search-allowlist-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A comprehensive allowlist classifying hundreds of known MCP tool names as "search" or "read" operations, likely for auto-approving read-only MCP operations.</p>
+<div class="blabel">Status</div>
+<p>Infrastructure added, not yet visibly wired to auto-approval logic.</p>
+<div class="blabel">Details</div>
+<ul><li>Search tools: ~90 tools from Slack, GitHub, Datadog, Sentry, Google, Atlassian, Stripe, PubMed, Brave, and more</li><li>Read tools: ~270 tools covering Slack reads, GitHub detail views, Grafana dashboards, PagerDuty, Jira/Confluence, Asana, MongoDB, Elasticsearch, Figma, Puppeteer screenshots, and more</li><li>Classification uses snake_case normalization of tool names</li></ul>
+<div class="blabel">Evidence</div>
+<p>MCP tool classification allowlist — <code>PT4()</code> at line ~327832 (search for <code>"slack_search_public"</code>)</p>
+    </article>
+    <article class="card" id="strictpluginonlycustomization-policy-in-development">
+      <div class="card-top">
+        <h3>strictPluginOnlyCustomization Policy [In Development] <a class="anchor" href="#strictpluginonlycustomization-policy-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>New managed settings policy that blocks non-plugin customization sources for specified surfaces (skills, hooks, etc.).</p>
+<div class="blabel">Status</div>
+<p>Available in managed settings but not broadly documented.</p>
+<div class="blabel">Details</div>
+<ul><li>Can be set to <code>true</code> (locks all surfaces) or an array of specific surface names (e.g., <code>["skills", "hooks"]</code>)</li><li><code>false</code> is an explicit no-lock override</li><li>Plugin, policySettings, built-in, builtin, and bundled sources are always allowed</li><li>Invalid values are logged as warnings</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin-only customization policy (search for <code>"strictPluginOnlyCustomization"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

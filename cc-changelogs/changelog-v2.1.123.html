@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.123 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.123."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.123</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.123</span></h1>
+<p class="sub">This is a minimal patch release from v2.1.122 with 100.0% structural similarity. The only behavioral change is a minor internal refactoring that narrows the scope of the <code>CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS</code> environment variable: certain API betas are now always enabled for first-party provider users regardless of that setting.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.122 → v2.1.123</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">1</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="reduced-scope-of-claude-code-disable-experimental-betas-for-">
+      <div class="card-top">
+        <h3>Reduced scope of <code>CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS</code> for certain API betas <a class="anchor" href="#reduced-scope-of-claude-code-disable-experimental-betas-for-">#</a></h3>
+      </div>
+      <p>The internal function that checks whether a user is on a first-party provider (Anthropic direct, Anthropic AWS, or Foundry) was split into two: a pure provider check and a combined provider-plus-env-var check. Two code paths were updated to use the provider-only check, meaning:</p>
+<ul><li>One specific SDK beta flag (used in API request construction) is now always included for first-party provider sessions, even when <code>CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1</code> is set.</li><li>The SDK beta filter function, which decides whether to pass all beta strings through or restrict to a known set, now passes all betas for first-party providers regardless of the env var.</li></ul>
+<p>Other uses of <code>CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS</code> (e.g., gating thinking summaries, context management beta, tool schema betas) remain unchanged and continue to respect the environment variable.</p>
+<div class="blabel">Evidence</div>
+<p>Provider check refactoring — <code>an8()</code> at line ~148770 no longer includes <code>CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS</code>; new <code>bp()</code> at line ~148774 preserves the old combined behavior for other call sites (search for <code>"CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

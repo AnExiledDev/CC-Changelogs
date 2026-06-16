@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.108 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.108."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.108</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.108</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.107 → v0.2.108</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">3</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.108 Changelog</p>
+    </article>
+    <article class="card" id="attachment-system-enhancement">
+      <div class="card-top">
+        <h3>Attachment System Enhancement <a class="anchor" href="#attachment-system-enhancement">#</a></h3>
+      </div>
+      <ul><li><strong>New attachment types support</strong>: The update introduces a comprehensive attachment handling system that supports multiple types:</li><li><strong>Queued commands</strong>: Execute commands passed as attachments with <code>type: "queued_command"</code></li><li><strong>Nested memory</strong>: Access nested memory content with proper path resolution</li><li><strong>TODO lists</strong>: Automatic reminders when TODO list is empty or hasn't been used recently</li><li><strong>Ultramemory</strong>: New attachment type for enhanced memory handling</li><li><strong>File attachments</strong>: Improved handling for edited files, with automatic notifications when files are modified by user or linter</li></ul>
+    </article>
+    <article class="card" id="enhanced-memory-management">
+      <div class="card-top">
+        <h3>Enhanced Memory Management <a class="anchor" href="#enhanced-memory-management">#</a></h3>
+      </div>
+      <ul><li><strong>New memory export functionality</strong>: Added <code>Jq1</code> function for exporting conversation history to JSONL format</li><li><strong>Session-based memory organization</strong>: Memory is now organized by session ID and stored in structured JSONL files</li><li><strong>Automatic memory cleanup</strong>: Added <code>C41</code> function for automatic database cleanup and memory migration</li></ul>
+    </article>
+    <article class="card" id="improved-command-line-experience">
+      <div class="card-top">
+        <h3>Improved Command-Line Experience <a class="anchor" href="#improved-command-line-experience">#</a></h3>
+      </div>
+      <ul><li><strong>Dynamic timeout configuration</strong>:</li><li>Set default timeout with <code>BASH_DEFAULT_TIMEOUT_MS</code> environment variable</li><li>Set maximum timeout with <code>BASH_MAX_TIMEOUT_MS</code> environment variable</li><li>Default timeout: 2 minutes (configurable)</li><li>Maximum timeout: 10 minutes (configurable)</li></ul>
+    </article>
+    <article class="card" id="new-assistant-features">
+      <div class="card-top">
+        <h3>New Assistant Features <a class="anchor" href="#new-assistant-features">#</a></h3>
+      </div>
+      <ul><li><strong>Refusal handling</strong>: When Claude refuses a request, users now get a helpful message: "This request was refused by the model. Please double-press esc to go back in history and try again with a different prompt."</li><li><strong>Queue serialization</strong>: New <code>xJ6</code> function ensures async operations are properly serialized to prevent race conditions</li></ul>
+    </article>
+    <article class="card" id="file-editing">
+      <div class="card-top">
+        <h3>File Editing <a class="anchor" href="#file-editing">#</a></h3>
+      </div>
+      <ul><li><strong>Enhanced edit validation</strong>: The <code>ph</code> function now checks if <code>old_string</code> is a substring of any previous <code>new_string</code> to prevent conflicting edits</li><li><strong>Better whitespace handling</strong>: Added note in Write tool description: "Do not add trailing whitespace to lines (a newline at the end of a file is fine)"</li></ul>
+    </article>
+    <article class="card" id="documentation-updates">
+      <div class="card-top">
+        <h3>Documentation Updates <a class="anchor" href="#documentation-updates">#</a></h3>
+      </div>
+      <ul><li>Updated documentation URL to point to simplified path: <code>https://docs.anthropic.com/en/docs/claude-code</code></li><li>Improved tool descriptions with clearer formatting and examples</li></ul>
+    </article>
+    <article class="card" id="performance-optimizations">
+      <div class="card-top">
+        <h3>Performance Optimizations <a class="anchor" href="#performance-optimizations">#</a></h3>
+      </div>
+      <ul><li><strong>Serialized memory operations</strong>: Memory save operations are now queued and processed sequentially using <code>bJ6</code></li><li><strong>Better attachment rendering</strong>: New <code>LJ6</code> function provides cleaner rendering of different attachment types</li></ul>
+    </article>
+    <article class="card" id="process-management">
+      <div class="card-top">
+        <h3>Process Management <a class="anchor" href="#process-management">#</a></h3>
+      </div>
+      <ul><li>Added <code>_p0</code> function to track first start time for analytics</li><li>Improved process working directory handling with <code>Ot0</code> import</li></ul>
+    </article>
+    <article class="card" id="model-configuration">
+      <div class="card-top">
+        <h3>Model Configuration <a class="anchor" href="#model-configuration">#</a></h3>
+      </div>
+      <ul><li>Updated model configuration structure in <code>t09</code> with dynamic feature flags</li><li>Added <code>PW</code> function for extracting API keys from configuration</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential race conditions in memory save operations</li><li>Improved error handling for attachment processing</li><li>Better validation for file edit operations to prevent data loss</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Removed Features</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="removed-features">
+      <ul><li>Removed several deprecated functions including wizard-related UI components (<code>MN6</code>, <code>CN6</code>, etc.)</li><li>Removed old memory handling functions in favor of new attachment-based system</li><li>Removed deprecated streaming imports and variables</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

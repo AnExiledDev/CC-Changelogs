@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.28 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.28."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.28</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.28</span></h1>
+<p class="sub">Version 2.0.28 introduces marketplace branch/tag support for plugin repositories, enhanced cleanup when removing marketplaces, and several security and performance improvements including SSH pre-flight checks and agent transcript resumption capabilities.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.27 → v2.0.28</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">20</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">20 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="marketplace-branch-tag-support">
+      <div class="card-top">
+        <h3>Marketplace Branch/Tag Support <a class="anchor" href="#marketplace-branch-tag-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Marketplaces can now be installed from specific branches, tags, or commit refs instead of only the default branch.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Install from a specific branch
+claude marketplace add owner/repo#develop
+
+# Install from a tag
+claude marketplace add owner/repo#v1.2.3
+
+# Install from a commit hash
+claude marketplace add git@github.com:owner/repo.git#abc123</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Use <code>#ref</code> syntax after the repository name or URL to specify a branch, tag, or commit</li><li>Updates to existing marketplaces now respect the specified ref</li><li>Git clone operations include the <code>--branch</code> flag when a ref is specified (<code>Xd8() at line 264036</code>, <code>b5Q() at line 264043</code>, <code>Cd8() at line 264049</code>)</li><li>Git update operations fetch and checkout the specified ref (<code>Bd8() at line 263476</code>)</li><li>Clone and update logging now shows which ref is being used</li><li><strong>Evidence</strong>: New functions <code>Xd8() at line 264036</code>, <code>Bd8() at line 263476</code>, <code>b5Q() at line 264043</code>, <code>Cd8() at line 264049</code>; marketplace parsing extracts ref from URLs at line 263078-263135</li></ul>
+    </article>
+    <article class="card" id="ssh-authentication-pre-flight-check">
+      <div class="card-top">
+        <h3>SSH Authentication Pre-flight Check <a class="anchor" href="#ssh-authentication-pre-flight-check">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude now tests SSH authentication before attempting to clone GitHub repositories, avoiding unnecessary failed clone attempts for users without SSH keys configured.</p>
+<p><strong>How it works:</strong></p>
+<pre><code># When you add a marketplace, Claude now checks SSH first
+claude marketplace add owner/repo
+
+# If SSH is configured: &quot;Cloning via SSH: git@github.com:owner/repo.git&quot;
+# If SSH is NOT configured: &quot;SSH not configured, cloning via HTTPS: https://github.com/owner/repo&quot;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Executes <code>ssh -T git@github.com</code> to verify authentication before cloning</li><li>Uses <code>BatchMode=yes</code> to prevent interactive prompts</li><li>2-second connect timeout and 3-second overall timeout for fast checks</li><li>Automatically falls back to HTTPS without a failed clone attempt</li><li>Provides clearer logging about SSH status</li><li><strong>Evidence</strong>: New function <code>Qd8() at line 263519</code>; usage in marketplace cloning logic at lines 263717-263750</li></ul>
+    </article>
+    <article class="card" id="agent-transcript-resumption">
+      <div class="card-top">
+        <h3>Agent Transcript Resumption <a class="anchor" href="#agent-transcript-resumption">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Agents can now resume from previous execution transcripts, allowing you to continue where a previous agent left off.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># The Agent tool now accepts a &#x27;resume&#x27; parameter
+# When invoking an agent programmatically:
+{
+  &quot;subagent_type&quot;: &quot;investigator&quot;,
+  &quot;prompt&quot;: &quot;Continue analyzing the codebase&quot;,
+  &quot;resume&quot;: &quot;agent-abc123&quot;  // ID of previous agent execution
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>resume</code> parameter in Agent tool input schema</li><li>Loads previous agent's message chain from transcript file</li><li>Filters messages by agent ID and reconstructs conversation history</li><li>Prepends previous messages to new prompt for continuity</li><li>Previous messages are not re-recorded to session storage</li><li><strong>Evidence</strong>: New function <code>b_2() at line 465741</code>; <code>resume</code> parameter schema at line 449027-449032; resume logic at lines 449114-449130</li></ul>
+    </article>
+    <article class="card" id="help-command-fast-path">
+      <div class="card-top">
+        <h3>Help Command Fast Path <a class="anchor" href="#help-command-fast-path">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Commands ending with <code>--help</code> now bypass expensive API calls for prefix detection, significantly improving response time.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Validates help commands using pattern matching before API calls</li><li>Checks that command ends with <code>--help</code> and contains only valid flags</li><li>Ensures no quotes are present (which would complicate parsing)</li><li>Validates all tokens are alphanumeric or the <code>--help</code> flag</li><li>Immediately returns the full command as its own prefix</li><li><strong>Evidence</strong>: New function <code>Yq8() at line 204259</code>; usage at line 204549</li></ul>
+    </article>
+    <article class="card" id="enhanced-marketplace-removal-cleanup">
+      <div class="card-top">
+        <h3>Enhanced Marketplace Removal Cleanup <a class="anchor" href="#enhanced-marketplace-removal-cleanup">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removing a marketplace now automatically cleans up all references from settings files, preventing orphaned configuration entries.</p>
+<p><strong>How it works:</strong></p>
+<pre><code># When you remove a marketplace:
+claude marketplace remove my-marketplace
+
+# Now also removes:
+# - extraKnownMarketplaces.my-marketplace from all settings files
+# - All enabledPlugins entries like &quot;plugin-name@my-marketplace&quot;
+# - Cleans userSettings, projectSettings, and localSettings</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Iterates through all settings files (user, project, local)</li><li>Removes marketplace from <code>extraKnownMarketplaces</code></li><li>Removes all plugins associated with the marketplace from <code>enabledPlugins</code></li><li>Logs cleanup actions for each settings file</li><li>Handles errors gracefully if settings write fails</li><li><strong>Evidence</strong>: Enhanced function <code>ruA() at line 263832</code> (replaced <code>suA()</code> from v2.0.27); cleanup loop at lines 263842-263868</li></ul>
+    </article>
+    <article class="card" id="improved-path-traversal-detection">
+      <div class="card-top">
+        <h3>Improved Path Traversal Detection <a class="anchor" href="#improved-path-traversal-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced security check now detects paths with 3+ consecutive dots (e.g., <code>...</code>, <code>....</code>) as suspicious Windows path patterns.</p>
+<p><strong>Why this matters:</strong> Attackers sometimes use unusual dot sequences to bypass basic <code>..</code> filters. While <code>...</code> isn't standard, blocking it prevents potential exploits in path normalization edge cases.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Adds regex check <code>/\.{3,}/</code> to Windows path validation</li><li>Blocks paths like <code>C:\Users\....\file.txt</code> or <code>path/to/.../folder</code></li><li>Triggers manual approval prompt: "contains a suspicious Windows path pattern"</li><li>Complements existing checks for reserved names, alternate data streams, and other Windows-specific attacks</li><li><strong>Evidence</strong>: Modified function <code>tf2() at line 465855</code> (renamed from <code>mf2()</code>); new check at line 465867</li></ul>
+    </article>
+    <article class="card" id="extended-git-operation-timeouts">
+      <div class="card-top">
+        <h3>Extended Git Operation Timeouts <a class="anchor" href="#extended-git-operation-timeouts">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Git clone and update operations now use 30-second timeouts instead of 5 seconds, improving reliability for large repositories or slow connections.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Clone operations: timeout increased from 5000ms to 30000ms</li><li>Update operations: timeout increased from 5000ms to 30000ms</li><li>Reduces false failures on slow networks or large marketplaces</li><li><strong>Evidence</strong>: <code>Id8() at line 263544</code> uses <code>timeout: 30000</code>; <code>Bd8() at line 263476</code> uses <code>timeout: 30000</code></li></ul>
+    </article>
+    <article class="card" id="terminal-output-height-detection">
+      <div class="card-top">
+        <h3>Terminal Output Height Detection <a class="anchor" href="#terminal-output-height-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved detection of when terminal output needs to be redrawn, accounting for output height relative to terminal rows.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Now considers whether output height exceeds terminal rows</li><li>Checks both previous and current state for overflow conditions</li><li>Prevents visual artifacts when output is taller than terminal</li><li><strong>Evidence</strong>: Enhanced function <code>OL0() at line 70043</code> (was <code>wL0()</code> in v2.0.27); checks <code>B.outputHeight &gt;= B.rows</code> at line 70046</li></ul>
+    </article>
+    <article class="card" id="session-initialization-with-current-working-directory">
+      <div class="card-top">
+        <h3>Session Initialization with Current Working Directory <a class="anchor" href="#session-initialization-with-current-working-directory">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Session state now initializes with the actual current working directory instead of placeholder values.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Calls <code>Uo2()</code> (likely <code>process.cwd()</code>) to get actual working directory</li><li>Normalizes the path using <code>zo2()</code></li><li>Sets both <code>originalCwd</code> and <code>cwd</code> to the correct value at session start</li><li><strong>Evidence</strong>: Modified function <code>wo2() at line 3444</code> (was <code>Yo2()</code> in v2.0.27); uses <code>zo2(Uo2())</code> at line 3446</li></ul>
+    </article>
+    <article class="card" id="tool-permission-request-tracking">
+      <div class="card-top">
+        <h3>Tool Permission Request Tracking <a class="anchor" href="#tool-permission-request-tracking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The permission stream class now tracks pending permission requests, enabling better state management and UI updates.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New method <code>getPendingPermissionRequests()</code> on the stream class</li><li>Returns array of pending <code>can_use_tool</code> requests</li><li>Filters request map to find active permission prompts</li><li>Stores request metadata alongside resolve/reject callbacks</li><li><strong>Evidence</strong>: Enhanced class <code>dzA at line 475314</code> (was <code>hzA</code> in v2.0.27); new method <code>getPendingPermissionRequests() at line 475580</code>; request storage at line 475650</li></ul>
+    </article>
+    <article class="card" id="agent-result-tracking">
+      <div class="card-top">
+        <h3>Agent Result Tracking <a class="anchor" href="#agent-result-tracking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Agent execution results now include the agent ID for better tracking and correlation.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Agent tool results now return <code>agentId</code> field along with content and usage stats</li><li>Enables linking results back to specific agent invocations</li><li>Supports transcript resumption and execution tracking</li><li><strong>Evidence</strong>: Modified function <code>Bv6() at line 448963</code> (was <code>dx6()</code> in v2.0.27); returns <code>agentId: B</code> at line 449019</li></ul>
+    </article>
+    <article class="card" id="model-override-support-for-subagents">
+      <div class="card-top">
+        <h3>Model Override Support for Subagents <a class="anchor" href="#model-override-support-for-subagents">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Agent model selection now supports an additional override parameter for finer-grained control.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New third parameter <code>Q</code> in model resolution function</li><li>If override is provided, it takes precedence over agent-specified model</li><li>Falls back to agent model, then "inherit", then default</li><li>Environment variable <code>CLAUDE_CODE_SUBAGENT_MODEL</code> still has highest priority</li><li><strong>Evidence</strong>: Modified function <code>akA() at line 144682</code> (was <code>lkA()</code> in v2.0.27); uses override parameter at line 144693</li></ul>
+    </article>
+    <article class="card" id="token-budget-capping">
+      <div class="card-top">
+        <h3>Token Budget Capping <a class="anchor" href="#token-budget-capping">#</a></h3>
+      </div>
+      <p><strong>What:</strong> API requests now respect a token budget cap, adjusting both max_tokens and thinking budget_tokens when needed.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New function ensures total tokens don't exceed specified budget</li><li>Reduces thinking budget proportionally when capping is needed</li><li>Prevents thinking budget from consuming all available tokens</li><li><strong>Evidence</strong>: New function <code>pb6() at line 460609</code></li></ul>
+    </article>
+    <article class="card" id="sessionstart-hook-context">
+      <div class="card-top">
+        <h3>SessionStart Hook Context <a class="anchor" href="#sessionstart-hook-context">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Plugin SessionStart hooks now receive session context information for better initialization.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Hooks receive session metadata when invoked</li><li>Enables plugins to customize behavior based on session state</li><li><strong>Evidence</strong>: Modified function <code>Lz() at line 317267</code> (was <code>qz()</code> in v2.0.27); passes session context parameter <code>B</code> at line 317350</li></ul>
+    </article>
+    <article class="card" id="plugin-command-processing-with-session-id">
+      <div class="card-top">
+        <h3>Plugin Command Processing with Session ID <a class="anchor" href="#plugin-command-processing-with-session-id">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Plugin commands and skills now have access to session ID during processing.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Session ID passed through to command/skill creation functions</li><li>Enables session-aware plugin behavior</li><li>Supports plugin state management across invocations</li><li><strong>Evidence</strong>: Modified functions <code>ZR2() at line 441792</code>, <code>YR2() at line 441892</code>, <code>yUA() at line 441803</code> now accept session ID parameter</li></ul>
+    </article>
+    <article class="card" id="file-permission-check-consolidation">
+      <div class="card-top">
+        <h3>File Permission Check Consolidation <a class="anchor" href="#file-permission-check-consolidation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> File write permission checks now use a centralized safety validation function for consistency.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>SL1()</code> function provides unified safety checks for write operations</li><li>Checks for suspicious Windows paths, sensitive files, and permission rules</li><li>Returns structured result with safety status and message</li><li>Used by both direct file operations and tool permission handlers</li><li><strong>Evidence</strong>: New function <code>SL1() at line 465870</code>; used in <code>jL1() at line 466119</code> and <code>xn() at line 466119</code></li></ul>
+    </article>
+    <article class="card" id="ripgrep-binary-loading-flexibility">
+      <div class="card-top">
+        <h3>Ripgrep Binary Loading Flexibility <a class="anchor" href="#ripgrep-binary-loading-flexibility">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added support for custom ripgrep binary location via environment variable.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>RIPGREP_NODE_PATH</code> environment variable supported</li><li>If set, loads ripgrep from specified path instead of bundled version</li><li>Useful for custom deployments or testing</li><li>Falls back to bundled ripgrep if not set</li><li><strong>Evidence</strong>: Modified function <code>To2() at line 3881</code> (was <code>Eo2()</code> in v2.0.27); checks <code>process.env.RIPGREP_NODE_PATH</code> at line 3882</li></ul>
+    </article>
+    <article class="card" id="refactored-functions">
+      <div class="card-top">
+        <h3>Refactored Functions <a class="anchor" href="#refactored-functions">#</a></h3>
+      </div>
+      <ul><li>Session ID generation functions consolidated</li><li>Permission stream class methods reorganized</li><li>Skills loading function signatures updated for session context</li><li>Git clone/update error handling refactored into shared <code>R5Q()</code> function at line 263494</li></ul>
+    </article>
+    <article class="card" id="import-optimizations">
+      <div class="card-top">
+        <h3>Import Optimizations <a class="anchor" href="#import-optimizations">#</a></h3>
+      </div>
+      <ul><li>Removed unused <code>stream</code> import</li><li>Removed unused <code>node:child_process</code> import</li><li>Removed unused <code>node:process</code> import</li><li>Added targeted imports: <code>execSync</code>, <code>spawn</code>, <code>readdir</code>, <code>readFile</code>, <code>PassThrough</code>, <code>homedir</code>, <code>openSync</code>, <code>existsSync</code>, <code>readFileSync</code>, <code>writeFileSync</code>, <code>dg6</code>, <code>cg6</code>, <code>pg6</code></li><li>Added process.cwd import: <code>import { cwd as iL0 } from "node:process"</code> at line 70611</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>Path validation logic consolidated into reusable <code>SL1()</code> function</li><li>Git error handling extracted to <code>R5Q()</code> helper</li><li>Agent ID generation moved to dedicated <code>HrA()</code> function at line 393160</li><li>Transcript path functions reorganized (<code>bf2()</code> at line 465227, <code>PU()</code> at line 465250)</li></ul>
+<p><strong>Note:</strong> This changelog focuses on user-visible changes and significant internal improvements. Many variable and function names appear random due to the code being previously minified. Line numbers reference the prettified v2.0.28 source file.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

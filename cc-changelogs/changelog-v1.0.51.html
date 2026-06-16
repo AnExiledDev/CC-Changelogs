@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.51 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.51."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.51</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.51</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.50 → v1.0.51</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Setup Notes Display</h4>
+<p>A new component has been added to display setup notes and warnings to users during initialization. When there are important setup considerations or configuration requirements, the CLI will now show:</p>
+<ul><li>A warning icon with "Setup notes:" header</li><li>Bulleted list of setup messages</li><li>Clean formatting with proper indentation</li></ul>
+<p>This helps users understand any special configuration or setup steps needed for their environment.</p>
+    </article>
+    <article class="card" id="internal-changes">
+      <div class="card-top">
+        <h3>Internal Changes <a class="anchor" href="#internal-changes">#</a></h3>
+      </div>
+      <h4>Update Lock File Path Resolution</h4>
+<p>The update lock file path is now dynamically resolved using a new <code>hk()</code> function instead of being statically defined. This provides more flexibility in determining the lock file location.</p>
+<h4>Reduced Memory Threshold</h4>
+<p>The internal memory threshold has been decreased from 80,000 to 70,000, which may improve performance in memory-constrained environments.</p>
+<h4>New Dependencies</h4>
+<ul><li>Added <code>PassThrough</code> stream import for improved stream handling</li><li>Added <code>cwd</code> import from node:process for better working directory management</li></ul>
+    </article>
+    <article class="card" id="removed-features">
+      <div class="card-top">
+        <h3>Removed Features <a class="anchor" href="#removed-features">#</a></h3>
+      </div>
+      <h4>File Watching System Removed</h4>
+<p>The entire file watching infrastructure has been removed, including:</p>
+<ul><li>Chokidar-based file system watcher</li><li>Settings file monitoring for automatic reload</li><li>External change detection system</li><li>The "Detected changes to settings.json. Restart to apply." notification</li></ul>
+<p>This means users will now need to manually restart Claude Code after making changes to configuration files rather than seeing automatic notifications about external changes.</p>
+<h4>Removed Dependencies</h4>
+<p>Several file system and path-related imports have been removed as they were part of the now-removed file watching system.</p>
+    </article>
+    <article class="card" id="summary">
+      <div class="card-top">
+        <h3>Summary <a class="anchor" href="#summary">#</a></h3>
+      </div>
+      <p>This update focuses on simplifying the codebase by removing the automatic file watching system while adding better setup guidance for users. The removal of file watching may require users to be more mindful about restarting the application after configuration changes, but it reduces complexity and potential resource usage from continuous file monitoring.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

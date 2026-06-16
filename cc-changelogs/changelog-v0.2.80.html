@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.80 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.80."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.80</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.80</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.79 → v0.2.80</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>OAuth Support for Claude.ai Pro/Team Users (<code>CLAUDE_MAX</code>)</h4>
+<ul><li><strong>New environment variable</strong>: <code>CLAUDE_MAX</code> enables OAuth authentication for Claude.ai Pro/Team users</li><li>When enabled, adds <code>user:inference</code> scope to OAuth permissions, allowing Claude Code to use your Claude.ai account for API access</li><li>OAuth flow automatically handles token refresh when tokens are near expiration (within 5 minutes)</li><li>Separate token storage for Claude.ai OAuth vs Console API keys</li></ul>
+<h4>Deny Rules for Tool Permissions</h4>
+<ul><li><strong>New permission behavior</strong>: In addition to "allow" rules, you can now create "deny" rules</li><li>Navigate between Allow/Deny modes using Tab or arrow keys in the permission rules interface</li><li>Denied tools will be automatically rejected without prompting</li><li>Example: Add a deny rule for <code>Bash</code> to prevent any shell command execution</li></ul>
+<h4>Managed Settings Support</h4>
+<ul><li><strong>Enterprise policy control</strong>: System administrators can now configure tool permissions via managed settings</li><li>Managed settings are loaded from system-level policy files:</li><li>macOS: <code>/Library/Application Support/ClaudeCode/policies.json</code></li><li>Linux: <code>/etc/claude-code/policies.json</code></li><li>Managed permission rules cannot be modified or deleted by users</li><li>Rules are displayed with a special indicator showing they're managed by your organization</li></ul>
+<h4>Tool Renaming</h4>
+<ul><li><strong>dispatch_agent</strong> renamed to <strong>AgentTool</strong> for better clarity</li><li><strong>ReadNotebook</strong> renamed to <strong>NotebookReadTool</strong> for consistency</li><li><strong>LS</strong> renamed to <strong>LSTool</strong> for consistency</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Enhanced Security</h4>
+<ul><li>API key validation now ensures keys only contain alphanumeric characters, dashes, and underscores</li><li>Improved error messages for invalid API key formats</li><li>Better error handling for OAuth token refresh failures</li></ul>
+<h4>Terminal Bell Control (macOS)</h4>
+<ul><li>Automatically attempts to disable the audio bell in Terminal.app profiles</li><li>Reduces notification noise during command execution</li></ul>
+<h4>At-Mention Content Display</h4>
+<ul><li>New visual formatting for at-mention content in conversations</li><li>Better handling of user-provided file references</li></ul>
+<h4>Performance Enhancements</h4>
+<ul><li>Prompt caching can now be disabled via <code>DISABLE_PROMPT_CACHING</code> environment variable</li><li>Improved async handling for file operations and OAuth flows</li></ul>
+    </article>
+    <article class="card" id="usage-examples">
+      <div class="card-top">
+        <h3>Usage Examples <a class="anchor" href="#usage-examples">#</a></h3>
+      </div>
+      <h4>Using OAuth with Claude.ai Account:</h4>
+<pre><code># Enable Claude.ai OAuth authentication
+export CLAUDE_MAX=1
+claude
+
+# The OAuth flow will include user:inference scope
+# Your Claude.ai Pro/Team account will be used for API access</code></pre>
+<h4>Creating Deny Rules:</h4>
+<pre><code># In the permission rules interface:
+1. Press Tab to switch to &quot;Deny&quot; mode
+2. Select &quot;Add a new rule...&quot;
+3. Enter the tool pattern (e.g., &quot;Bash&quot;, &quot;Write*&quot;, etc.)
+4. The tool will be automatically denied without prompting</code></pre>
+<h4>Managed Settings Example:</h4>
+<pre><code>// /Library/Application Support/ClaudeCode/policies.json
+{
+  &quot;permissions&quot;: {
+    &quot;allow&quot;: [&quot;Read*&quot;, &quot;Grep&quot;, &quot;LS&quot;],
+    &quot;deny&quot;: [&quot;Bash&quot;, &quot;Write*&quot;, &quot;Delete*&quot;]
+  }
+}</code></pre>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed potential race conditions in OAuth callback handling</li><li>Improved error messages for port conflicts during OAuth flow</li><li>Better handling of manual OAuth code entry</li><li>Fixed issues with permission rule deletion</li><li>Enhanced validation for tool permission contexts</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

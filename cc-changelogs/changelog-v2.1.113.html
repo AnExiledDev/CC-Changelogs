@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.113 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.113."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.113</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.113</span></h1>
+<p class="sub">Version 2.1.113 introduces deep linking support with base64url-encoded CLI parameters, a new event-driven trigger system for GitHub and Slack integrations, a structured <code>where</code> clause predicate language for filtering, and a daemon backend option for background agents. The release also ships as a Linux-only build with all platform detection hardcoded, disabling Windows and macOS code paths, and removes large bundled libraries (undici, ws, Fetch/URL polyfills, YAML parser) in favor of native Node.js modules.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.112 → v2.1.113</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">23</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">6</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">6</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">23 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="deep-linking-with-base64url-parameters">
+      <div class="card-top">
+        <h3>Deep Linking with Base64url Parameters <a class="anchor" href="#deep-linking-with-base64url-parameters">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New CLI flags for launching Claude Code via deep links with shell-safe, base64url-encoded parameters. This enables external applications (such as IDE extensions or web UIs) to open Claude Code with a prefilled prompt and working directory without worrying about shell escaping.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --prefill-b64 &lt;base64url-encoded-prompt&gt; --deep-link-cwd-b64 &lt;base64url-encoded-cwd&gt;
+claude --deep-link-repo=&lt;repo&gt; --deep-link-origin=&lt;origin&gt; --deep-link-last-fetch=&lt;timestamp&gt;</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>--prefill-b64</code>: Base64url-encoded text to prefill into the prompt</li><li><code>--deep-link-cwd-b64</code>: Base64url-encoded working directory path</li><li><code>--deep-link-repo</code>: Repository identifier for the deep link</li><li><code>--deep-link-origin</code>: Origin identifier for deep-link launches</li><li><code>--deep-link-last-fetch</code>: Timestamp of last fetch for deep-link context</li><li>Includes extensive validation: rejects Unicode bidirectional control characters, UNC/network paths, and paths with un-quotable characters (single quotes, backslashes, exclamation marks, dollar signs, newlines)</li><li>Error messages guide users to reinstall to a safe path if their Claude binary path contains shell metacharacters</li></ul>
+<div class="blabel">Evidence</div>
+<p>Deep link argument construction (search for <code>"--deep-link-cwd-b64"</code> and <code>"--prefill-b64"</code>)</p>
+    </article>
+    <article class="card" id="event-driven-trigger-system-for-github-and-slack">
+      <div class="card-top">
+        <h3>Event-Driven Trigger System for GitHub and Slack <a class="anchor" href="#event-driven-trigger-system-for-github-and-slack">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New structured trigger types for scheduling agent workflows based on external events from GitHub pull requests and Slack messages, replacing the older string-based format.</p>
+<div class="blabel">Details</div>
+<ul><li><code>github.pull_request.opened</code> — triggers when a PR is opened (replaces deprecated <code>github:pull-request-opened</code>)</li><li><code>github.pull_request.merged</code> — triggers when a PR is merged (replaces deprecated <code>github:pull-request-merged</code>)</li><li><code>slack.message</code> — triggers on Slack messages, with channel filtering via the <code>where</code> clause</li><li>Deprecated formats produce helpful migration messages: e.g., <code>'; use 'on: github.pull_request.opened'</code></li><li>Trigger definitions use the new <code>on:</code> entry format and support structured event objects like <code>{event: slack.message, channel: #channel}</code></li><li>Includes comprehensive validation with error messages for invalid triggers, cron expressions, and event formats</li></ul>
+<div class="blabel">Evidence</div>
+<p>Trigger definitions (search for <code>"github.pull_request.merged"</code> and <code>"slack.message"</code>)</p>
+    </article>
+    <article class="card" id="where-clause-predicate-language">
+      <div class="card-top">
+        <h3>Where Clause Predicate Language <a class="anchor" href="#where-clause-predicate-language">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new structured filtering syntax for specifying conditions on event triggers and data queries, supporting a rich set of comparison operators.</p>
+<div class="blabel">Details</div>
+<ul><li>Operators: <code>is</code>, <code>is_not</code> (single values), <code>one_of</code>, <code>none_of</code> (list values), <code>starts_with</code>, <code>contains</code>, <code>matches</code></li><li>Provides clear error messages for malformed predicates:</li><li><code>where: empty list for "field"</code> — when a list operator receives an empty array</li><li><code>where: unknown op "op"</code> — for unrecognized operators</li><li><code>where: "field" takes a single value; use one_of/none_of for a list</code> — for type mismatches</li><li><code>where: must be a map of field→predicate, or a list of single-field maps</code> — for structural errors</li><li>Scalars and objects cannot be mixed: <code>where: "field" mixes scalars and objects; use {one_of: [...]} or an op object</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Predicate operator definitions (search for <code>"one_of"</code> and <code>"none_of"</code>)</p>
+    </article>
+    <article class="card" id="daemon-backend-for-background-agents">
+      <div class="card-top">
+        <h3>Daemon Backend for Background Agents <a class="anchor" href="#daemon-backend-for-background-agents">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new <code>backend</code> configuration option that lets background agents run via a daemon process instead of tmux.</p>
+<div class="blabel">Usage</div>
+<p>Configure in settings:</p>
+<pre><code>{
+  &quot;backend&quot;: &quot;daemon&quot;
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Two supported values: <code>"tmux"</code> (default) and <code>"daemon"</code></li><li>When set to <code>"daemon"</code>, background agent sessions use a detached daemon process instead of creating tmux panes</li><li>Tmux remains the default; the daemon option provides an alternative for environments where tmux is not available or not desired</li><li>Related: new <code>autoAddRemoteControlDaemonWorker</code> setting for automatically configuring daemon workers</li></ul>
+<div class="blabel">Evidence</div>
+<p>Backend schema definition (search for <code>backend: E.enum(["tmux", "daemon"])</code>)</p>
+    </article>
+    <article class="card" id="custom-session-titles-via-sdk-protocol">
+      <div class="card-top">
+        <h3>Custom Session Titles via SDK Protocol <a class="anchor" href="#custom-session-titles-via-sdk-protocol">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The SDK initialize protocol now accepts a <code>title</code> parameter, allowing programmatic callers to set a custom session title at launch.</p>
+<div class="blabel">Details</div>
+<ul><li>When provided, the session uses the custom title and skips automatic title generation</li><li>Has no effect on the persisted title when resuming an existing session</li><li>Also adds a <code>customTitle</code> field to the session schema for user-set titles via <code>/rename</code></li><li>The <code>/rename</code> command description now mentions that the title appears in the "prompt box, /resume picker, and terminal title" (previously only "/resume and terminal title")</li></ul>
+<div class="blabel">Evidence</div>
+<p>SDK protocol schema (search for <code>"Custom session title. When provided"</code>)</p>
+    </article>
+    <article class="card" id="network-denied-domains-configuration">
+      <div class="card-top">
+        <h3>Network Denied Domains Configuration <a class="anchor" href="#network-denied-domains-configuration">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Expanded network security with a new <code>deniedDomains</code> field that blocks specific domains even if they match <code>allowedDomains</code> rules.</p>
+<div class="blabel">Details</div>
+<ul><li>Accepts an array of domain strings with wildcard support (same syntax as <code>allowedDomains</code>)</li><li>Merged from all settings sources regardless of <code>allowManagedDomainsOnly</code> — meaning organization policies can always enforce domain blocking</li><li>Takes priority over <code>allowedDomains</code>: a domain matched by both lists is blocked</li><li>Logs denials with the specific domain and port for debugging</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema definition (search for <code>"Domains that are always blocked, even if matched by allowedDomains"</code>)</p>
+    </article>
+    <article class="card" id="in-app-feedback-submission">
+      <div class="card-top">
+        <h3>In-App Feedback Submission <a class="anchor" href="#in-app-feedback-submission">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Users can now submit feedback directly from the CLI, with clear success and error messaging.</p>
+<div class="blabel">Details</div>
+<ul><li>New success message: "Feedback sent"</li><li>Error messages provide actionable guidance:</li><li>"Couldn't send feedback: not signed in. Run /login, then retry."</li><li>"Couldn't send feedback. If it keeps failing, you can file at [URL]"</li><li>UI includes "Press any key to close" prompt after submission</li></ul>
+<div class="blabel">Evidence</div>
+<p>Feedback messaging (search for <code>"Feedback sent"</code> and <code>"Couldn't send feedback"</code>)</p>
+    </article>
+    <article class="card" id="update-safety-guards">
+      <div class="card-top">
+        <h3>Update Safety Guards <a class="anchor" href="#update-safety-guards">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New validation prevents <code>/update</code> when it could cause problems.</p>
+<div class="blabel">Details</div>
+<ul><li>"Cannot /update while background tasks are running — wait for them to finish, then try again." — prevents mid-task updates that could disrupt running agents</li><li>"Cannot /update — session transcript is in a different project directory than the child would resolve. Exit the worktree or restart manually." — prevents update failures in worktree contexts</li></ul>
+<div class="blabel">Evidence</div>
+<p>Update guard messages (search for <code>"Cannot /update while background tasks"</code>)</p>
+    </article>
+    <article class="card" id="team-onboarding-guide-generator">
+      <div class="card-top">
+        <h3>Team Onboarding Guide Generator <a class="anchor" href="#team-onboarding-guide-generator">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new system for generating personalized team onboarding guides based on usage analytics.</p>
+<div class="blabel">Details</div>
+<ul><li>Generates a "Welcome to [Team Name]" document with:</li><li>Work type breakdown (build features, fix bugs, refactor, etc.) with ASCII bar charts</li><li>Top skills and commands with usage frequency</li><li>Top MCP servers with call counts</li><li>Setup checklist for new team members</li><li>Powered by an LLM prompt that analyzes session descriptors and derives work-type percentages</li><li>Complements the existing Insights dashboard feature</li></ul>
+<div class="blabel">Evidence</div>
+<p>Onboarding template (search for <code>"# Welcome to [Team Name]"</code>)</p>
+    </article>
+    <article class="card" id="agent-stall-detection">
+      <div class="card-top">
+        <h3>Agent Stall Detection <a class="anchor" href="#agent-stall-detection">#</a></h3>
+      </div>
+      <p>The stream watchdog now detects when agents make no progress for an extended period and surfaces an actionable error: "Agent stalled: no progress for Ns (stream watchdog did not recover)". Previously, stalled agents could hang silently.</p>
+<div class="blabel">Evidence</div>
+<p>Stall detection (search for <code>"Agent stalled: no progress for"</code>)</p>
+    </article>
+    <article class="card" id="unclean-session-recovery">
+      <div class="card-top">
+        <h3>Unclean Session Recovery <a class="anchor" href="#unclean-session-recovery">#</a></h3>
+      </div>
+      <p>A new message "Prior session exited uncleanly" notifies users when resuming a session that didn't terminate gracefully, helping them understand potential context gaps.</p>
+<div class="blabel">Evidence</div>
+<p>Recovery notification (search for <code>"Prior session exited uncleanly"</code>)</p>
+    </article>
+    <article class="card" id="improved-effort-level-messaging">
+      <div class="card-top">
+        <h3>Improved Effort Level Messaging <a class="anchor" href="#improved-effort-level-messaging">#</a></h3>
+      </div>
+      <p>The effort level notification changed from "Effort level set to auto" to "Effort level set to max", providing clearer feedback when effort is maximized. The "ultrathink" keyword now triggers a system prompt explaining that deeper reasoning is being applied.</p>
+<div class="blabel">Evidence</div>
+<p>Effort messaging (search for <code>"Effort level set to max"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-loop-tick-prompts">
+      <div class="card-top">
+        <h3>Enhanced /loop Tick Prompts <a class="anchor" href="#enhanced-loop-tick-prompts">#</a></h3>
+      </div>
+      <p>The autonomous loop tick prompts were significantly rewritten to provide clearer numbered steps and better explain dynamic pacing behavior. The prompt header changed from "# Autonomous loop tick" to "# /loop tick", and scheduled task prompts now include explicit step-by-step instructions.</p>
+<div class="blabel">Evidence</div>
+<p>Loop prompt changes (search for <code>"/loop tick"</code>)</p>
+    </article>
+    <article class="card" id="cjk-punctuation-support-in-mentions">
+      <div class="card-top">
+        <h3>CJK Punctuation Support in Mentions <a class="anchor" href="#cjk-punctuation-support-in-mentions">#</a></h3>
+      </div>
+      <p>The @-mention detection regex now recognizes CJK punctuation marks (。、？！) as valid word boundaries, improving mention detection in Chinese, Japanese, and Korean text. Previously, typing <code>@file。</code> wouldn't trigger autocomplete, but now it does.</p>
+<div class="blabel">Evidence</div>
+<p>CJK regex patterns (search for <code>"\u3002\u3001\uFF1F\uFF01"</code>)</p>
+    </article>
+    <article class="card" id="ansi-color-output-on-windows">
+      <div class="card-top">
+        <h3>ANSI Color Output on Windows <a class="anchor" href="#ansi-color-output-on-windows">#</a></h3>
+      </div>
+      <p>Removed a Windows platform check that was blocking ANSI color output, enabling colored terminal output regardless of detected platform.</p>
+<div class="blabel">Evidence</div>
+<p>Color enablement (search for <code>K6K</code> in the annotations — removed <code>if (process.platform === "win32") return !1</code>)</p>
+    </article>
+    <article class="card" id="improved-plugin-configuration-error-messages">
+      <div class="card-top">
+        <h3>Improved Plugin Configuration Error Messages <a class="anchor" href="#improved-plugin-configuration-error-messages">#</a></h3>
+      </div>
+      <p>Plugin option validation now provides more actionable guidance: <code>Plugin option "..." isn't set. Open /plugin manage to configure it, or check that the plugin's userConfig schema declares "..."</code>. This helps users quickly fix misconfigured plugins.</p>
+<div class="blabel">Evidence</div>
+<p>Plugin error message (search for <code>"isn't set. Open /plugin manage to configure it"</code>)</p>
+    </article>
+    <article class="card" id="permission-denial-context-in-don-t-ask-mode">
+      <div class="card-top">
+        <h3>Permission Denial Context in Don't-Ask Mode <a class="anchor" href="#permission-denial-context-in-don-t-ask-mode">#</a></h3>
+      </div>
+      <p>When a tool permission is denied in "don't ask" mode, the denial message now explicitly explains: "Permission to use [tool] has been denied because Claude Code is running in don't ask mode." This provides clearer context for why an action was blocked.</p>
+<div class="blabel">Evidence</div>
+<p>Denial messaging (search for <code>"denied because C"</code> in the annotations for <code>PL7</code>)</p>
+    </article>
+    <article class="card" id="improved-bash-tool-instructions">
+      <div class="card-top">
+        <h3>Improved Bash Tool Instructions <a class="anchor" href="#improved-bash-tool-instructions">#</a></h3>
+      </div>
+      <p>The Bash tool help text now explicitly instructs the model to never prepend <code>cd &lt;current-directory&gt;</code> before commands, reducing unnecessary directory changes in generated commands.</p>
+<div class="blabel">Evidence</div>
+<p>Bash tool help (search for <code>"never prepend"</code>)</p>
+    </article>
+    <article class="card" id="cli-terminology-update">
+      <div class="card-top">
+        <h3>CLI Terminology Update <a class="anchor" href="#cli-terminology-update">#</a></h3>
+      </div>
+      <p>"Exit the REPL" has been renamed to "Exit the CLI" throughout the interface, reflecting the product's evolution from a simple read-eval-print loop to a full CLI application.</p>
+<div class="blabel">Evidence</div>
+<p>Terminology change (search for <code>"Exit the CLI"</code>)</p>
+    </article>
+    <article class="card" id="sandbox-override-permission-support">
+      <div class="card-top">
+        <h3>Sandbox Override Permission Support <a class="anchor" href="#sandbox-override-permission-support">#</a></h3>
+      </div>
+      <p>The permission decision system now supports a <code>sandboxOverride</code> reason type, allowing sandbox-level permission overrides to be distinguished from regular permission grants in the UI and telemetry.</p>
+<div class="blabel">Evidence</div>
+<p>Sandbox override (search for <code>"sandboxOverride"</code>)</p>
+    </article>
+    <article class="card" id="concurrent-session-detection">
+      <div class="card-top">
+        <h3>Concurrent Session Detection <a class="anchor" href="#concurrent-session-detection">#</a></h3>
+      </div>
+      <p>New session lifecycle management detects concurrent CLI sessions across multiple process types (interactive, background, loop) and validates via Zod schema, helping prevent resource conflicts.</p>
+<div class="blabel">Evidence</div>
+<p>Session detection (search for <code>xZ$</code> in annotations)</p>
+    </article>
+    <article class="card" id="improved-api-error-formatting">
+      <div class="card-top">
+        <h3>Improved API Error Formatting <a class="anchor" href="#improved-api-error-formatting">#</a></h3>
+      </div>
+      <p>API errors that contain JSON-formatted messages are now detected and parsed for better display, rather than showing raw JSON strings to users.</p>
+<div class="blabel">Evidence</div>
+<p>JSON error parsing (search for <code>JMH</code> in annotations — <code>if (H.message.includes('{"'))</code>)</p>
+    </article>
+    <article class="card" id="telemetry-request-id-tracking">
+      <div class="card-top">
+        <h3>Telemetry Request ID Tracking <a class="anchor" href="#telemetry-request-id-tracking">#</a></h3>
+      </div>
+      <p>New <code>clientRequestId</code> and <code>requestId</code> fields are now tracked in telemetry payloads, enabling better request correlation for debugging and support.</p>
+<div class="blabel">Evidence</div>
+<p>Request ID fields (search for <code>"clientRequestId"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed ANSI escape sequence handling to include the CSI alternate sequence (<code>\x9B</code>), resolving potential display issues in some terminals (search for <code>"uwK"</code> in annotations)</li><li>Fixed string truncation returning incorrect length by changing the return to use the length parameter variable instead of a different variable (search for <code>VK</code> in annotations — <code>return z + "…" → return K + "\u2026"</code>)</li><li>Fixed DEL character (<code>\x7F</code>) handling in interactive text input — previously the DEL character was treated as empty string, now it's correctly recognized as a delete action (search for <code>"c4$"</code> in annotations)</li><li>Fixed backspace key handling to recognize the <code>\x7F</code> (DEL) character code alongside <code>\b</code> (search for <code>"c4$"</code> — <code>O === '' || O === '\b' → A === '\x7F' || A === '\b'</code>)</li><li>Fixed Ctrl+U (delete to line start) to use proper <code>deleteToLineStart()</code> method instead of dispatching a raw text replacement (search for <code>"qI"</code> in annotations)</li><li>Improved Unicode normalization throughout the CLI — hundreds of literal Unicode characters (middle dots, em dashes, ellipses, arrows, box-drawing characters) are now consistently represented as escape sequences, preventing rendering issues in terminals that handle raw Unicode differently</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
+    </article>
+    <article class="card" id="message-timestamps-in-development">
+      <div class="card-top">
+        <h3>Message Timestamps [In Development] <a class="anchor" href="#message-timestamps-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Shows a timestamp above each assistant message, giving users a clear timeline of the conversation.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged — gated by <code>tengu_silk_hinge</code> (disabled by default)</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>showMessageTimestamps</code> setting (boolean, global scope)</li><li>Description: "Show a timestamp above each assistant message"</li><li>Setting is hidden from the settings UI when the feature flag is off</li><li>Full implementation exists: the timestamp rendering, state management, and cache key integration are all in place</li><li>When enabled, timestamps appear above assistant messages in the chat transcript</li></ul>
+<div class="blabel">Evidence</div>
+<p>Feature flag disabled (search for <code>C$("tengu_silk_hinge", !1)</code>)</p>
+    </article>
+    <article class="card" id="tengu-amber-lynx-in-development">
+      <div class="card-top">
+        <h3>tengu_amber_lynx [In Development] <a class="anchor" href="#tengu-amber-lynx-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Purpose unknown — the feature flag is defined but its associated functionality is not clearly documented in user-facing strings.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged — gated by <code>tengu_amber_lynx</code> (disabled by default)</p>
+<div class="blabel">Details</div>
+<ul><li>Used in a component related to git/terminal state rendering</li><li>Single reference: <code>Z = C$("tengu_amber_lynx", !1)</code></li><li>No user-facing strings or tips associated with this flag</li></ul>
+<div class="blabel">Evidence</div>
+<p>Feature flag disabled (search for <code>C$("tengu_amber_lynx", !1)</code>)</p>
+    </article>
+    <article class="card" id="linux-only-build">
+      <div class="card-top">
+        <h3>Linux-Only Build <a class="anchor" href="#linux-only-build">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>This version is built as a Linux-only binary. All <code>process.platform</code> detection has been replaced with hardcoded <code>"linux"</code> values (via <code>switch ("linux")</code> replacing <code>switch (process.platform)</code>). The Windows and macOS code paths remain in the bundle as dead code but are unreachable. Specific impacts:</p>
+<ul><li>Computer use is restricted: "createCliExecutor called on linux. Computer control is macOS-only."</li><li>Windows PowerShell process introspection has been removed</li><li>macOS-specific clipboard image handling has been removed</li><li>Platform-specific update URLs will only return Linux paths</li><li>Voice mode's Windows-specific check has been removed (the feature itself still requires the native audio module)</li><li>The native installer reports "Unsupported architecture: x64" because architecture detection is also hardcoded</li></ul>
+<p>This is a build-time artifact of the npm package targeting Linux. macOS and Windows users should use the native installer for their platform rather than the npm package.</p>
+    </article>
+    <article class="card" id="massive-internal-refactoring-native-node-js-modules">
+      <div class="card-top">
+        <h3>Massive Internal Refactoring: Native Node.js Modules <a class="anchor" href="#massive-internal-refactoring-native-node-js-modules">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The most significant internal change in this release is a wholesale migration from bundled polyfills and custom wrappers to native Node.js built-in modules:</p>
+<ul><li><strong>Removed bundled libraries</strong>: WebSocket (<code>ws</code> client/server), undici HTTP client, Fetch API polyfill, URL/URLSearchParams polyfill, YAML parser, FormData implementation, Bidirectional Text Algorithm, HTTP/1.1 and HTTP/2 protocol handlers</li><li><strong>Replaced with</strong>: Direct <code>require()</code> calls to Node.js built-ins (<code>fs</code>, <code>fs/promises</code>, <code>path</code>, <code>crypto</code>, <code>os</code>, <code>url</code>, <code>http</code>, <code>http2</code>, <code>stream</code>, <code>child_process</code>, <code>net</code>, <code>events</code>, <code>buffer</code>, <code>util</code>, <code>vm</code>, <code>module</code>)</li><li><strong>Custom file system wrappers removed</strong>: The 40+ method <code>kv5</code> filesystem abstraction layer was removed in favor of direct <code>fs</code> and <code>fs/promises</code> calls throughout the codebase</li><li>Over 100 scattered module imports were consolidated into centralized initialization blocks</li><li>Custom UUID generation replaced with <code>crypto.randomUUID()</code> across dozens of call sites</li><li>Custom path utilities replaced with <code>path.join()</code>, <code>path.resolve()</code>, <code>path.basename()</code>, etc.</li></ul>
+<p>This results in a smaller bundle size and better alignment with the Node.js runtime.</p>
+    </article>
+    <article class="card" id="aws-bedrock-sdk-integration">
+      <div class="card-top">
+        <h3>AWS Bedrock SDK Integration <a class="anchor" href="#aws-bedrock-sdk-integration">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>A complete AWS SDK v3 integration for Bedrock Runtime has been added, including:</p>
+<ul><li>Bedrock Runtime client with full middleware stack</li><li>AWS Signature Version 4 (SigV4) request signing</li><li>OAuth2 credential provider for AWS login flows</li><li>ECS/EKS container credentials support</li><li>Assume Role with MFA support</li><li>30+ Bedrock API command definitions (guardrails, inference profiles, model management)</li><li>AWS STS client for credential operations</li><li>EventStream marshalling for real-time bidirectional communication</li></ul>
+<p>This replaces the previous Bedrock integration approach with a more complete, standards-compliant AWS SDK implementation.</p>
+    </article>
+    <article class="card" id="embedded-documentation-refresh">
+      <div class="card-top">
+        <h3>Embedded Documentation Refresh <a class="anchor" href="#embedded-documentation-refresh">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>SDK documentation embedded in the CLI has been refreshed with updated guides for:</p>
+<ul><li>Python (Files API, Streaming, Tool Use, Managed Agents, Core API)</li><li>TypeScript (Messages, Batches, Files, Prompt Caching, Tool Use)</li><li>Ruby (Installation, Client initialization, Messages)</li><li>C# (Client initialization, Messages)</li><li>Model migration guide for upgrading to newer Claude models</li><li>Verification guides for CLI and server/API changes</li></ul>
+<p>Several older documentation blocks were removed and replaced with updated versions reflecting current API patterns.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

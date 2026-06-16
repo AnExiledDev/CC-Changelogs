@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.19 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.19."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.19</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.19</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.18 → v0.2.19</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Vim Mode Support</h4>
+<ul><li><strong>New command</strong>: <code>vim</code> - Toggle between vim and emacs editing modes</li><li>Usage: Simply type <code>vim</code> in the command prompt to switch modes</li><li>In vim mode: Use <code>Escape</code> key to toggle between INSERT and NORMAL modes</li><li>In emacs mode: Standard emacs-style keybindings are active</li><li>The editor mode preference is persisted in settings</li></ul>
+<h4>️ Enhanced Text Editing</h4>
+<ul><li><strong>Vim mode implementation</strong> with full modal editing support:</li></ul>
+<p><strong>Normal Mode Commands</strong>:</p>
+<ul><li>Movement: <code>h</code> (left), <code>l</code> (right), <code>j</code> (down), <code>k</code> (up)</li><li>Line navigation: <code>0</code> (start of line), <code>$</code> (end of line)</li><li>Word navigation: <code>w</code> (next word), <code>e</code> (end of word), <code>b</code> (previous word)</li><li>Document navigation: <code>gg</code> (first line), <code>G</code> (last line)</li></ul>
+<p><strong>Editing Commands</strong>:</p>
+<ul><li><code>i</code> - Insert mode at cursor</li><li><code>I</code> - Insert mode at beginning of line</li><li><code>a</code> - Insert mode after cursor</li><li><code>A</code> - Insert mode at end of line</li><li><code>x</code> - Delete character under cursor</li><li><code>d</code> + motion - Delete with motion (e.g., <code>dd</code> for delete line, <code>d$</code> for delete to end of line)</li><li><code>D</code> - Delete to end of line</li><li><code>c</code> + motion - Change (delete and enter insert mode)</li><li><code>C</code> - Change to end of line</li><li><code>.</code> - Repeat last change</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Input Handling Refactoring</h4>
+<ul><li>Improved paste handling with better chunking for large text inputs</li><li>Enhanced placeholder rendering with cursor display</li><li>Better separation of concerns between input state management and rendering</li></ul>
+<h4>Import Optimizations</h4>
+<ul><li>Streamlined Node.js imports:</li><li>Combined imports from <code>node:process</code> (env, cwd)</li><li>Combined imports from <code>node:stream</code> (PassThrough)</li><li>Reduced redundant import statements</li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <h4>New Classes/Functions</h4>
+<ul><li><code>q6</code> class (renamed from <code>Gd</code>) - Enhanced text cursor with new methods:</li><li><code>endOfWord()</code> - Navigate to end of current/next word</li><li><code>startOfFirstLine()</code> - Navigate to document start</li><li><code>startOfLastLine()</code> - Navigate to last line start</li></ul>
+<ul><li><code>Uf2()</code> - Core vim mode state machine handling modal editing</li><li><code>jN1()</code> - Vim-enabled text input component</li><li><code>sx()</code> - Refactored input rendering component</li><li><code>y90()</code> - Paste handling wrapper function</li></ul>
+<h4>Settings</h4>
+<ul><li>New <code>editorMode</code> setting added to persistent configuration</li><li>Default mode is "emacs" for backward compatibility</li></ul>
+    </article>
+    <article class="card" id="usage-examples">
+      <div class="card-top">
+        <h3>Usage Examples <a class="anchor" href="#usage-examples">#</a></h3>
+      </div>
+      <p><strong>Switching to vim mode:</strong></p>
+<pre><code>$ claude
+&gt; vim
+Editor mode set to vim. Use Escape key to toggle between INSERT and NORMAL modes.</code></pre>
+<p><strong>Using vim navigation:</strong></p>
+<pre><code># In NORMAL mode:
+- Press &#x27;i&#x27; to enter INSERT mode and start typing
+- Press &#x27;Escape&#x27; to return to NORMAL mode
+- Use &#x27;hjkl&#x27; for navigation
+- Use &#x27;dd&#x27; to delete a line
+- Use &#x27;.&#x27; to repeat the last edit</code></pre>
+<p><strong>Switching back to emacs mode:</strong></p>
+<pre><code>&gt; vim
+Editor mode set to emacs. Using standard emacs-style keybindings.</code></pre>
+<p>The vim mode implementation provides a familiar editing experience for vim users while maintaining full compatibility with the existing emacs-style keybindings. The mode preference persists across sessions, so users only need to switch once.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

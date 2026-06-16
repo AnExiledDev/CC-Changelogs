@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.108 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.108."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.108</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.108</span></h1>
+<p class="sub">This release introduces a JavaScript REPL tool for executing code with persistent state and programmatic tool access, a new usage analysis dashboard (Birch Compass) for understanding what drives your rate limits, and a model-switch confirmation dialog that warns about cache invalidation. It also brings fuzzy "Did you mean?" suggestions for mistyped commands and skills, changes the permission rule wildcard syntax from <code>:<em></code> to <code> </em></code>, adds MCP server auto-reconnection with exponential backoff, and includes a broad UI refresh replacing text-based status icons with a unified component system.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.107 → v2.1.108</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">22</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">22 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="javascript-repl-tool">
+      <div class="card-top">
+        <h3>JavaScript REPL Tool <a class="anchor" href="#javascript-repl-tool">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new built-in tool that lets Claude execute JavaScript code in a persistent VM context with programmatic access to Claude Code tools (Read, Write, Edit, Glob, Grep, Bash).</p>
+<p>Usage: Claude can now run JavaScript directly to perform file operations, chain tool calls, and compute results. Variables persist across multiple REPL invocations within the same conversation.</p>
+<div class="blabel">Details</div>
+<ul><li>Supports top-level <code>await</code> for async operations</li><li>State persists across calls — variables defined in one REPL call remain accessible in subsequent calls</li><li>Provides <code>registerTool()</code>, <code>unregisterTool()</code>, <code>listTools()</code>, and <code>getTool()</code> for dynamic tool management</li><li>Includes a <code>haiku(prompt, schema?)</code> function for lightweight model sampling</li><li>Includes <code>shQuote(s)</code> for safe shell string quoting</li><li><code>import</code>/<code>require</code> are not available (VM context is sealed); use the built-in tool functions for file and shell operations</li><li>REPL VM state is cleared on <code>/compact</code> — a notification informs you: "Your REPL VM state has been cleared as part of this compaction"</li><li>Includes a replay mechanism for validating REPL execution determinism across compaction boundaries</li></ul>
+<div class="blabel">Evidence</div>
+<p>REPL tool registration with "Execute JavaScript code with access to Claude Code tools" description (search for <code>"Execute JavaScript"</code>)</p>
+    </article>
+    <article class="card" id="repl-replay-and-drift-detection">
+      <div class="card-top">
+        <h3>REPL Replay and Drift Detection <a class="anchor" href="#repl-replay-and-drift-detection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure for replaying REPL code blocks after compaction to validate that execution produces consistent results.</p>
+<div class="blabel">Details</div>
+<ul><li>Extracts code blocks and tool calls from conversation history for replay</li><li>Caches tool call results to replay against</li><li>Detects nondeterminism: "likely nondeterminism (Date.now, Math.random) took a different branch"</li><li>Throws <code>ReplayCacheExhausted</code> when replayed code makes more tool calls than the original</li><li>Reports replay status: "N blocks replayed cleanly"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Replay infrastructure (search for <code>"REPL replay"</code> and <code>"ReplayCacheExhausted"</code>)</p>
+    </article>
+    <article class="card" id="usage-analysis-dashboard-birch-compass-gradual-rollout">
+      <div class="card-top">
+        <h3>Usage Analysis Dashboard (Birch Compass) [Gradual Rollout] <a class="anchor" href="#usage-analysis-dashboard-birch-compass-gradual-rollout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new settings panel that analyzes your local sessions and shows what's contributing to your rate limit usage, with actionable recommendations.</p>
+<div class="blabel">Details</div>
+<ul><li>Available to Pro and Max subscribers</li><li>Shows approximate usage breakdown based on local sessions (does not include other devices or claude.ai)</li><li>Tracks five cost behavior categories:</li><li><strong>Cache misses</strong>: "X% of your usage hit a &gt;100k-token cache miss" — recommendation: <code>/compact</code> before stepping away</li><li><strong>Long context</strong>: "X% of your usage was at &gt;150k context" — recommendation: <code>/compact</code> mid-task, <code>/clear</code> when switching</li><li><strong>Subagent-heavy sessions</strong>: "X% of your usage came from subagent-heavy sessions" — recommendation: configure cheaper models for simpler subagents</li><li><strong>High parallelism</strong>: "X% of your usage was while 4+ sessions ran in parallel" — recommendation: queue sessions for more even usage</li><li><strong>Long-running sessions</strong>: "X% of your usage came from sessions active for 8+ hours" — recommendation: ensure continuous usage is intentional</li><li>Toggle between 24-hour and 7-day views with <code>d</code> and <code>w</code> keyboard shortcuts</li><li>Notes: "these are independent characteristics of your usage, not a breakdown"</li><li>Warns about oversized session files (&gt;200MB) that would skew analysis</li></ul>
+<div class="blabel">Evidence</div>
+<p>Feature gated by <code>tengu_birch_compass</code> flag (search for <code>"tengu_birch_compass"</code> and <code>"What's contributing to your limits usage"</code>)</p>
+    </article>
+    <article class="card" id="model-switch-confirmation-dialog">
+      <div class="card-top">
+        <h3>Model Switch Confirmation Dialog <a class="anchor" href="#model-switch-confirmation-dialog">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new confirmation dialog warns you when switching models mid-conversation that the cache will be invalidated.</p>
+<div class="blabel">Details</div>
+<ul><li>Dialog title: "Switch model?"</li><li>Message: "This conversation is cached for the current model. Switching to [model] means the full history gets re-read on your next message."</li><li>Subtitle: "Your next response will be slower and use more tokens"</li><li>Options: "Yes, switch to [model]" or "No, go back"</li><li>Only shown when the conversation has cached content for the current model</li></ul>
+<div class="blabel">Evidence</div>
+<p>Model switch confirmation (search for <code>"Switch model?"</code> and <code>"This conversation is cached"</code>)</p>
+    </article>
+    <article class="card" id="fuzzy-did-you-mean-suggestions">
+      <div class="card-top">
+        <h3>Fuzzy "Did You Mean?" Suggestions <a class="anchor" href="#fuzzy-did-you-mean-suggestions">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When you mistype a slash command or skill name, Claude Code now suggests the closest match.</p>
+<div class="blabel">Details</div>
+<ul><li>For slash commands: <code>Unknown command: /stauts. Did you mean /status?</code></li><li>For skills: <code>Unknown skill: comit. Did you mean commit?</code></li><li>Uses fuzzy string matching to find the best candidate from available commands and skills</li><li>Tracks suggestion availability for analytics</li></ul>
+<div class="blabel">Evidence</div>
+<p>Fuzzy matcher for commands and skills (search for <code>"Did you mean /"</code> and <code>"Did you mean "</code>)</p>
+    </article>
+    <article class="card" id="command-vs-skill-disambiguation">
+      <div class="card-top">
+        <h3>Command vs Skill Disambiguation <a class="anchor" href="#command-vs-skill-disambiguation">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When the model tries to invoke a built-in CLI command as a skill, it now receives a clear error explaining the distinction.</p>
+<div class="blabel">Details</div>
+<ul><li>Error message: "[name] is a [type] command, not a skill. Ask the user to run /[name] themselves — it cannot be invoked via the [tool] tool."</li><li>Prevents confusion between built-in slash commands and skill invocations</li></ul>
+<div class="blabel">Evidence</div>
+<p>Disambiguation error message (search for <code>"command, not a skill"</code>)</p>
+    </article>
+    <article class="card" id="mcp-server-auto-reconnection-with-backoff">
+      <div class="card-top">
+        <h3>MCP Server Auto-Reconnection with Backoff <a class="anchor" href="#mcp-server-auto-reconnection-with-backoff">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Failed remote MCP servers now automatically reconnect using exponential backoff instead of staying disconnected.</p>
+<div class="blabel">Details</div>
+<ul><li>Logs: <code>[MCP] Retry: N failed remote server(s) after Xms backoff</code></li><li>Stops retrying when all servers reconnect: <code>[MCP] Retry: all remote servers connected, stopping</code></li><li>Reports persistent failures: <code>remote server(s) still failed after all retries:</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>MCP reconnection logic (search for <code>"[MCP] Retry"</code> and <code>"failed remote server"</code>)</p>
+    </article>
+    <article class="card" id="permission-rule-wildcard-syntax-changed-from-to">
+      <div class="card-top">
+        <h3>Permission Rule Wildcard Syntax Changed from <code>:<em></code> to <code> </em></code> <a class="anchor" href="#permission-rule-wildcard-syntax-changed-from-to">#</a></h3>
+      </div>
+      <p>The wildcard syntax for permission rules has changed from colon-asterisk to space-asterisk. For example:</p>
+<ul><li>Old: <code>Bash(git:<em>)</code>, <code>Bash(npm run:</em>)</code></li><li>New: <code>Bash(git <em>)</code>, <code>Bash(npm run </em>)</code></li></ul>
+<p>This affects settings files, autocomplete suggestions, onboarding examples, and documentation. The old <code>:<em></code> syntax continues to be recognized alongside the new <code> </em></code> syntax for backward compatibility.</p>
+<div class="blabel">Evidence</div>
+<p>Permission rule syntax change (search for <code>"Bash(git <em>)"</code> and <code>"Bash(npm </em>)"</code>)</p>
+    </article>
+    <article class="card" id="clear-command-description-updated">
+      <div class="card-top">
+        <h3><code>/clear</code> Command Description Updated <a class="anchor" href="#clear-command-description-updated">#</a></h3>
+      </div>
+      <p>The <code>/clear</code> command description has been updated from "Clear conversation history and free up context" to "Start fresh: discard the current conversation and context" for clearer communication.</p>
+<div class="blabel">Evidence</div>
+<p>Clear command description (search for <code>"Start fresh: discard the current conversation and context"</code>)</p>
+    </article>
+    <article class="card" id="rewind-gains-undo-alias">
+      <div class="card-top">
+        <h3><code>/rewind</code> Gains <code>undo</code> Alias <a class="anchor" href="#rewind-gains-undo-alias">#</a></h3>
+      </div>
+      <p>The <code>/rewind</code> command (also aliased as <code>/checkpoint</code>) now also responds to <code>/undo</code>, making it more discoverable.</p>
+<div class="blabel">Evidence</div>
+<p>Undo alias addition (search for <code>"undo"</code> near <code>"checkpoint"</code>)</p>
+    </article>
+    <article class="card" id="improved-language-orthographic-correctness">
+      <div class="card-top">
+        <h3>Improved Language Orthographic Correctness <a class="anchor" href="#improved-language-orthographic-correctness">#</a></h3>
+      </div>
+      <p>When Claude responds in non-English languages, it now receives explicit instructions to maintain full orthographic correctness, including all required diacritical marks, accents, and special characters. For example, it will no longer substitute "nao" for "não" or "fur" for "für".</p>
+<div class="blabel">Evidence</div>
+<p>Orthographic instruction (search for <code>"orthographic"</code> and <code>"diacritical marks"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-rate-limit-and-server-error-messages">
+      <div class="card-top">
+        <h3>Enhanced Rate Limit and Server Error Messages <a class="anchor" href="#enhanced-rate-limit-and-server-error-messages">#</a></h3>
+      </div>
+      <p>Rate limit and server error messages now include dynamic status information and direct users to the updated status page at <code>status.claude.com</code> (changed from <code>status.anthropic.com</code>).</p>
+<div class="blabel">Details</div>
+<ul><li>429 errors now show: "Request rejected (429)" with "Server is temporarily limiting requests (not your usage limit)"</li><li>Status URL changed to <code>status.claude.com</code></li><li>Error guidance suggests: "this may be a temporary capacity issue — check status.claude.com"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Status URL change (search for <code>"status.claude.com"</code>)</p>
+    </article>
+    <article class="card" id="improved-sleep-blocking-guidance">
+      <div class="card-top">
+        <h3>Improved Sleep/Blocking Guidance <a class="anchor" href="#improved-sleep-blocking-guidance">#</a></h3>
+      </div>
+      <p>The guidance for sleep commands and blocking behavior has been substantially rewritten to emphasize Monitor as the preferred alternative.</p>
+<div class="blabel">Details</div>
+<ul><li>Old: <code>sleep N</code> as first command with N ≥ 2 is blocked with brief explanation</li><li>New: "Long leading <code>sleep</code> commands are blocked. To poll until a condition is met, use Monitor with an until-loop (e.g. <code>until &lt;check&gt;; do sleep 2; done</code>)"</li><li>Additional guidance: "Do not chain shorter sleeps to work around the block"</li><li>General sleep advice simplified from "keep the duration short (1-5 seconds)" to "keep the duration short"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Blocking guidance improvements (search for <code>"Long leading"</code> and <code>"until-loop"</code>)</p>
+    </article>
+    <article class="card" id="paste-line-break-normalization">
+      <div class="card-top">
+        <h3>Paste Line Break Normalization <a class="anchor" href="#paste-line-break-normalization">#</a></h3>
+      </div>
+      <p>Multiline paste operations now normalize Windows (CRLF) and classic Mac (CR) line endings to Unix (LF) format, preventing issues with mixed line endings in pasted content.</p>
+<div class="blabel">Evidence</div>
+<p>Paste normalization (search for <code>"\\r\\n|\\r"</code> in paste handler)</p>
+    </article>
+    <article class="card" id="enhanced-bom-handling-in-file-reads">
+      <div class="card-top">
+        <h3>Enhanced BOM Handling in File Reads <a class="anchor" href="#enhanced-bom-handling-in-file-reads">#</a></h3>
+      </div>
+      <p>File reading now properly handles UTF-8 Byte Order Marks with improved byte count accounting and comprehensive line ending normalization after BOM removal.</p>
+<div class="blabel">Evidence</div>
+<p>BOM detection (search for <code>"65279"</code>)</p>
+    </article>
+    <article class="card" id="unified-status-icon-component">
+      <div class="card-top">
+        <h3>Unified Status Icon Component <a class="anchor" href="#unified-status-icon-component">#</a></h3>
+      </div>
+      <p>Success checkmarks (✓), warning icons, and error indicators throughout the CLI have been replaced with a consistent component-based icon system (<code>N4</code> component), improving visual consistency across status messages, plugin marketplace results, GitHub Actions workflow confirmations, and iTerm2 setup output.</p>
+<div class="blabel">Evidence</div>
+<p>45+ instances of the new component replacing text-based icons (search for <code>status: "success"</code> near <code>N4</code>)</p>
+    </article>
+    <article class="card" id="plugin-version-resolution-tracking">
+      <div class="card-top">
+        <h3>Plugin Version Resolution Tracking <a class="anchor" href="#plugin-version-resolution-tracking">#</a></h3>
+      </div>
+      <p>Plugin installations now track a <code>resolvedVersion</code> field that records the tag-derived semver version resolved during installation. This improves version verification and deduplication, especially when upstream plugins forget to bump their <code>plugin.json</code> version.</p>
+<div class="blabel">Details</div>
+<ul><li>Description: "Tag-derived semver this install resolved to (when fetched via a version constraint). Used by verifyAndDemote in preference to manifest.version"</li><li>Plugin cache is invalidated when resolved version changes</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin version tracking (search for <code>"resolvedVersion"</code>)</p>
+    </article>
+    <article class="card" id="exitworktree-and-enterworktree-subagent-validation">
+      <div class="card-top">
+        <h3>ExitWorktree and EnterWorktree Subagent Validation <a class="anchor" href="#exitworktree-and-enterworktree-subagent-validation">#</a></h3>
+      </div>
+      <p>Both <code>ExitWorktree</code> and <code>EnterWorktree</code> now validate that they are not being called from a subagent with a cwd override (e.g., <code>isolation: "worktree"</code> or explicit cwd). This prevents subagents from mutating the parent session's working directory.</p>
+<div class="blabel">Details</div>
+<ul><li>Error: "ExitWorktree cannot be called from a subagent with a cwd override — it would mutate the parent session's process-wide working directory."</li><li>Directs subagents to use Bash with <code>cd</code> for directory changes</li></ul>
+<div class="blabel">Evidence</div>
+<p>Worktree validation (search for <code>"ExitWorktree cannot be called from a subagent"</code>)</p>
+    </article>
+    <article class="card" id="ultrareview-cloud-launch-flow">
+      <div class="card-top">
+        <h3>Ultrareview Cloud Launch Flow <a class="anchor" href="#ultrareview-cloud-launch-flow">#</a></h3>
+      </div>
+      <p>Ultrareview has been updated with a clearer cloud launch confirmation flow.</p>
+<div class="blabel">Details</div>
+<ul><li>Now prompts: "Run ultrareview in the cloud?" with estimated time "~10–20 min"</li><li>Requires Claude.ai authentication: "Ultrareview requires a Claude.ai account. Run /login to authenticate."</li><li>Unavailable during essential-traffic-only mode</li><li>Description updated: "Finds and verifies bugs in your branch using a multi-agent review fleet"</li><li>REPL tool execution is blocked during ultrareview with access validation</li></ul>
+<div class="blabel">Evidence</div>
+<p>Ultrareview flow (search for <code>"Run ultrareview in the cloud?"</code> and <code>"ultrareview-launch"</code>)</p>
+    </article>
+    <article class="card" id="settings-schema-refactored-to-feature-gates">
+      <div class="card-top">
+        <h3>Settings Schema Refactored to Feature Gates <a class="anchor" href="#settings-schema-refactored-to-feature-gates">#</a></h3>
+      </div>
+      <p>The monolithic settings schema has been refactored into a modular feature gate system. Features like <code>autoMode</code>, <code>deepLink</code>, <code>voice</code>, <code>assistant</code>, and <code>briefView</code> are now individually defined with their own <code>buildGate()</code>, <code>shape()</code>, and <code>permissionsShape()</code> methods, making the settings system more maintainable and enabling conditional feature compilation.</p>
+<div class="blabel">Evidence</div>
+<p>Feature gate definitions (search for <code>"autoMode"</code> near <code>"buildGate"</code>)</p>
+    </article>
+    <article class="card" id="headless-plugin-installation-progress-callbacks">
+      <div class="card-top">
+        <h3>Headless Plugin Installation Progress Callbacks <a class="anchor" href="#headless-plugin-installation-progress-callbacks">#</a></h3>
+      </div>
+      <p>Plugin installations via the SDK now support progress callbacks, enabling SDK consumers to track installation stages (started, completed, per-marketplace installed/failed).</p>
+<div class="blabel">Evidence</div>
+<p>Progress callback (search for <code>"Headless plugin installation progress"</code>)</p>
+    </article>
+    <article class="card" id="repl-blocked-by-pretooluse-hook">
+      <div class="card-top">
+        <h3>REPL Blocked by PreToolUse Hook <a class="anchor" href="#repl-blocked-by-pretooluse-hook">#</a></h3>
+      </div>
+      <p>REPL tool execution now respects PreToolUse hooks, showing a clear "Blocked by PreToolUse hook" message when execution is blocked by a hook.</p>
+<div class="blabel">Evidence</div>
+<p>Hook blocking message (search for <code>"Blocked by PreToolUse hook"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed paste handling to normalize CRLF and CR line endings to LF in multiline mode, preventing mixed line endings from confusing editors (search for <code>"\\r\\n|\\r/g"</code>)</li><li>Fixed attribution snapshot handling to clear the map before storing new snapshots, preventing stale data accumulation (search for <code>"D.clear()"</code>)</li><li>Fixed dependency version resolution to check both <code>resolvedVersion</code> and manifest version for more accurate plugin deduplication (search for <code>"resolvedVersion"</code>)</li><li>Fixed ANSI escape sequence parsing to correctly handle CSI sequences, OSC sequences, and other terminal control codes (search for <code>"Tq4"</code>)</li><li>Fixed a variable reference bug in a slice operation where the wrong variable was being used (search for <code>"O6.slice(1)"</code>)</li><li>Improved validation of at-mentions to require content presence alongside title checks, preventing empty mentions from being processed (search for <code>"contentLength"</code>)</li><li>Fixed React component state management by correcting dependency arrays and initial state values (search for <code>"lzA"</code>)</li><li>Improved skill source filtering logic to correctly include builtin sources instead of excluding them (search for <code>"q.source !== 'builtin'"</code>)</li></ul>
+    </article>
+    <article class="card" id="birch-compass-session-dashboard-gradual-rollout">
+      <div class="card-top">
+        <h3>Birch Compass Session Dashboard [Gradual Rollout] <a class="anchor" href="#birch-compass-session-dashboard-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>While the dashboard infrastructure is fully built, it is gated behind the <code>tengu_birch_compass</code> feature flag with a default of <code>false</code>, meaning it is not yet available to all users.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged with <code>tengu_birch_compass</code> (default: disabled)</p>
+<div class="blabel">Details</div>
+<ul><li>Full UI, cost analysis engine, and 5 behavior categories are implemented</li><li>Requires Pro or Max subscription even when enabled</li><li>Keyboard shortcuts (<code>d</code>/<code>w</code>) for period switching are wired up</li><li>Session scanning and file size validation are complete</li></ul>
+<div class="blabel">Evidence</div>
+<p>Feature gated with default false (search for <code>tengu_birch_compass</code> — <code>b8("tengu_birch_compass", !1)</code>)</p>
+    </article>
+    <article class="card" id="coach-mode-in-development">
+      <div class="card-top">
+        <h3>Coach Mode [In Development] <a class="anchor" href="#coach-mode-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>coachMode</code> configuration option has been added to the settings schema and tracked configuration attributes, but its behavioral implementation is not yet visible.</p>
+<div class="blabel">Status</div>
+<p>Infrastructure only — configuration plumbing exists but no observable behavioral changes</p>
+<div class="blabel">Details</div>
+<ul><li>Added to tracked configuration attributes alongside existing settings</li><li>No user-facing documentation or tips found for this feature yet</li></ul>
+<div class="blabel">Evidence</div>
+<p>Configuration property (search for <code>"coachMode"</code>)</p>
+    </article>
+    <article class="card" id="assistant-feature-gate-in-development">
+      <div class="card-top">
+        <h3>Assistant Feature Gate [In Development] <a class="anchor" href="#assistant-feature-gate-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The feature gate system includes an <code>assistant</code> feature with <code>buildGate: () =&gt; !1</code> (always false), indicating planned but disabled functionality.</p>
+<div class="blabel">Status</div>
+<p>Disabled — build gate returns false, shape returns empty object</p>
+<div class="blabel">Details</div>
+<ul><li>Included in the feature gate list alongside <code>autoMode</code>, <code>deepLink</code>, <code>voice</code>, and <code>briefView</code></li><li>Shape returns <code>Md5</code> (an empty object), indicating the settings schema is not yet defined</li></ul>
+<div class="blabel">Evidence</div>
+<p>Assistant gate disabled (search for <code>assistant</code> near <code>buildGate</code> — returns <code>!1</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The permission rule wildcard syntax change from <code>:<em></code> to <code> </em></code> is the most impactful change for existing users. If you have custom permission rules in your settings files using the old syntax (e.g., <code>Bash(git:<em>)</code>), the old format continues to work but new autocomplete suggestions and documentation now use the space-asterisk format (e.g., <code>Bash(git </em>)</code>). Consider updating your rules to the new syntax for consistency.</p>
+<p>The removal of the bundled Chalk template library and HTML5 tokenizer (parse5) from the CLI reduces the package size. These were replaced by lighter-weight alternatives or removed where unused.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

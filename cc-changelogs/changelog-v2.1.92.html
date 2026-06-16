@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.92 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.92."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.92</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.92</span></h1>
+<p class="sub">This release introduces a major interactive AWS Bedrock setup wizard (<code>/setup-bedrock</code>), a new <code>/teleport</code> command for resuming sessions from claude.ai, and a <code>/stop</code> command for quick session-only stopping conditions. The <code>/advisor</code> command has been redesigned with a rich UI dialog, the release notes viewer is now interactive with a version picker, and several internal optimizations include tool result deduplication and a new seccomp multicall binary approach for Linux sandboxing. The <code>/tag</code> and <code>/vim</code> commands have been removed.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.91 → v2.1.92</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">17</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">10</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">17 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="interactive-aws-bedrock-setup-wizard">
+      <div class="card-top">
+        <h3>Interactive AWS Bedrock Setup Wizard <a class="anchor" href="#interactive-aws-bedrock-setup-wizard">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A comprehensive multi-step wizard that walks you through configuring AWS Bedrock authentication, region selection, credential verification, and model pinning — all from within the CLI.</p>
+<div class="blabel">Usage</div>
+<pre><code>/setup-bedrock</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Supports four authentication methods: AWS SSO profile, Bedrock API key (bearer token), access key + secret, or existing environment credentials</li><li>Auto-discovers AWS profiles from <code>~/.aws/config</code> and <code>~/.aws/credentials</code></li><li>Verifies credentials by calling STS <code>GetCallerIdentity</code> and listing Bedrock inference profiles</li><li>Model pinning step tests each candidate (Sonnet, Opus, Haiku) with a one-token request to verify availability</li><li>Saves configuration to <code>~/.claude/settings.json</code> under <code>env:</code></li><li>Handles SSO session expiry, invalid credentials, and missing permissions with specific guidance</li><li>Only visible when <code>CLAUDE_CODE_USE_BEDROCK=1</code> is already set</li></ul>
+<div class="blabel">Evidence</div>
+<p>Bedrock wizard UI components (search for <code>"Set up AWS Bedrock"</code>, <code>"Bedrock configuration saved to ~/.claude/settings.json"</code>, <code>"How do you authenticate to AWS?"</code>)</p>
+    </article>
+    <article class="card" id="teleport-command">
+      <div class="card-top">
+        <h3>/teleport Command <a class="anchor" href="#teleport-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Resume a Claude Code session that was started on claude.ai/code directly in your local CLI.</p>
+<div class="blabel">Usage</div>
+<pre><code>/teleport
+# or use the alias:
+/tp</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Loads a remote session's conversation history into your local Claude Code instance</li><li>Requires remote sessions to be enabled (<code>allow_remote_sessions</code> policy)</li><li>Only available when authenticated</li><li>Shows "Session resumed successfully" on completion or "Teleport cancelled" on abort</li></ul>
+<div class="blabel">Evidence</div>
+<p>Teleport command registration (search for <code>"Resume a Claude Code session from claude.ai"</code>, <code>"Teleport cancelled"</code>)</p>
+    </article>
+    <article class="card" id="stop-command-quick-session-stop-hook">
+      <div class="card-top">
+        <h3>/stop Command — Quick Session Stop Hook <a class="anchor" href="#stop-command-quick-session-stop-hook">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Set a session-only prompt-based Stop hook with a quick one-liner, allowing you to define a stopping condition that Claude evaluates after each turn.</p>
+<div class="blabel">Usage</div>
+<pre><code>/stop Has Claude completed all requested tasks?</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Creates a prompt-type hook on the "Stop" event for the current session only</li><li>If a Stop hook already exists, shows the current condition and lets you edit, update, or delete it</li><li>Submitting an empty prompt clears the hook</li><li>Tab switches focus between the input and a "Delete this hook" option when editing an existing hook</li><li>The hook condition is evaluated by Claude after each turn — if met, Claude stops</li></ul>
+<div class="blabel">Evidence</div>
+<p>Stop hook command and UI (search for <code>"Set a session-only Stop hook with a quick prompt"</code>, <code>"Stop hook set"</code>, <code>"Stop hook cleared"</code>, <code>"tengu_stop_hook_command"</code>)</p>
+    </article>
+    <article class="card" id="redesigned-advisor-command">
+      <div class="card-top">
+        <h3>Redesigned /advisor Command <a class="anchor" href="#redesigned-advisor-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>/advisor</code> command is now a full interactive dialog with rich descriptions, replacing the previous text-based interface.</p>
+<div class="blabel">Usage</div>
+<pre><code>/advisor           # Opens the advisor selection dialog
+/advisor opus      # Set advisor directly
+/advisor off       # Disable advisor</code></pre>
+<div class="blabel">Details</div>
+<ul><li>New dialog title "Advisor Tool" with explanatory text about how the advisor works</li><li>Explains: "When Claude needs stronger judgment — a complex decision, an ambiguous failure, a problem it's circling without progress — it escalates to the advisor model for guidance, then resumes"</li><li>Highlights the Sonnet + Opus pairing: "near-Opus performance with reduced token usage"</li><li>Shows a warning if the current main model doesn't support the advisor</li><li>Valid advisor options are "opus" and "sonnet"</li><li>Description changed from "Configure the advisor model" to "Configure the Advisor Tool to consult a stronger model for guidance at key moments during a task"</li><li>Advisor enablement is no longer gated by <code>canUserConfigure</code> from <code>tengu_sage_compass</code>; now uses a simpler <code>nb()</code> check</li></ul>
+<div class="blabel">Evidence</div>
+<p>Advisor dialog redesign (search for <code>"Configure the Advisor Tool to consult a stronger model for guidance at key moments during a task"</code>, <code>"Advisor Tool"</code>, <code>"When Claude needs stronger judgment"</code>)</p>
+    </article>
+    <article class="card" id="interactive-release-notes-viewer">
+      <div class="card-top">
+        <h3>Interactive Release Notes Viewer <a class="anchor" href="#interactive-release-notes-viewer">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>/release-notes</code> command now shows an interactive version picker instead of dumping all notes at once.</p>
+<div class="blabel">Usage</div>
+<pre><code>/release-notes</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Presents a scrollable list of versions (up to 10 visible at once)</li><li>"Show all" option to display all versions' notes combined</li><li>Select a specific version to view only its notes</li><li>Versions are sorted by semver (newest first)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Release notes interactive picker (search for <code>"Select a version to view its notes."</code>)</p>
+    </article>
+    <article class="card" id="context-window-size-notification">
+      <div class="card-top">
+        <h3>Context Window Size Notification <a class="anchor" href="#context-window-size-notification">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new notification appears when your context window grows large, showing approximate uncached token count and suggesting <code>/clear</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Triggers when uncached tokens exceed ~50,000</li><li>Only shows if more than a certain time has passed since session start</li><li>Format: <code>~Nk uncached · /clear to start fresh</code></li><li>Helps users understand when conversation context is getting expensive</li></ul>
+<div class="blabel">Evidence</div>
+<p>Context notification function (search for <code>"k uncached"</code>, <code>"/clear to start fresh"</code>)</p>
+    </article>
+    <article class="card" id="write-tool-prompt-update">
+      <div class="card-top">
+        <h3>Write Tool Prompt Update <a class="anchor" href="#write-tool-prompt-update">#</a></h3>
+      </div>
+      <p>The Write tool now advises: "For appending to an existing file, prefer shell redirection via Bash (e.g. <code>echo "..." &gt;&gt; file</code>) over rewriting the whole file." The old <code>mode:'append'</code> parameter has been removed from the Write tool schema.</p>
+<div class="blabel">Evidence</div>
+<p>Write tool description change (search for <code>"For appending to an existing file, prefer shell redirection"</code>)</p>
+    </article>
+    <article class="card" id="keybinding-display-system-overhaul">
+      <div class="card-top">
+        <h3>Keybinding Display System Overhaul <a class="anchor" href="#keybinding-display-system-overhaul">#</a></h3>
+      </div>
+      <p>A new <code>formatChord</code> system renders keyboard shortcuts with platform-aware formatting. Supports three display styles: <code>default</code> (e.g., <code>ctrl+A</code>), <code>compact</code> (e.g., <code>^a</code>), and <code>symbol</code> (e.g., <code>⌃A</code>). Mac-specific glyphs (⌘, ⌥) are used when the platform is macOS. Chord sequences and arrow key groups are formatted intelligently.</p>
+<div class="blabel">Evidence</div>
+<p>Keyboard shortcut formatting (search for <code>"Enter"</code>, <code>"Esc"</code>, <code>"⏎"</code>, <code>"⌃"</code> in the new key map definition at ~line 316314)</p>
+    </article>
+    <article class="card" id="oauth-offline-access-scope">
+      <div class="card-top">
+        <h3>OAuth <code>offline_access</code> Scope <a class="anchor" href="#oauth-offline-access-scope">#</a></h3>
+      </div>
+      <p>The OAuth flow now automatically appends <code>offline_access</code> to the authorization scope when the server supports it, enabling longer-lived refresh tokens.</p>
+<div class="blabel">Evidence</div>
+<p>OAuth scope handling (search for <code>"Appended offline_access to authorization scope"</code>)</p>
+    </article>
+    <article class="card" id="managed-settings-enforcement">
+      <div class="card-top">
+        <h3>Managed Settings Enforcement <a class="anchor" href="#managed-settings-enforcement">#</a></h3>
+      </div>
+      <p>Organizations can now require that remote managed settings are freshly fetched before the CLI starts. If the fetch fails, the CLI exits with a clear message instead of proceeding with stale settings.</p>
+<div class="blabel">Evidence</div>
+<p>Managed settings enforcement (search for <code>"Your organization requires remote managed settings to load"</code>, <code>"When set in managed settings, the CLI blocks startup"</code>)</p>
+    </article>
+    <article class="card" id="cron-minimum-tick-interval-validation">
+      <div class="card-top">
+        <h3>Cron Minimum Tick Interval Validation <a class="anchor" href="#cron-minimum-tick-interval-validation">#</a></h3>
+      </div>
+      <p>Scheduled tasks in proactive mode now validate that the cron expression doesn't fire more frequently than the configured <code>minTickIntervalMinutes</code>, preventing overly aggressive scheduling.</p>
+<div class="blabel">Evidence</div>
+<p>Cron validation (search for <code>"Cron period too short"</code>)</p>
+    </article>
+    <article class="card" id="auto-compact-experiment-notification">
+      <div class="card-top">
+        <h3>Auto-Compact Experiment Notification <a class="anchor" href="#auto-compact-experiment-notification">#</a></h3>
+      </div>
+      <p>When the auto-compact threshold is set by a server experiment (not user config), a notification now shows the threshold and how to override it: <code>compacted at N · override with CLAUDE_CODE_AUTO_COMPACT_WINDOW=1000000</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Auto-compact notification (search for <code>"override with CLAUDE_CODE_AUTO_COMPACT_WINDOW"</code>)</p>
+    </article>
+    <article class="card" id="memory-system-path-unification">
+      <div class="card-top">
+        <h3>Memory System Path Unification <a class="anchor" href="#memory-system-path-unification">#</a></h3>
+      </div>
+      <p>The memory index now handles both private and team memories under a single path structure. Private memories use <code>file.md</code> paths and team memories use <code>team/file.md</code>. The old separate "shared team memory" context tag has been removed.</p>
+<div class="blabel">Evidence</div>
+<p>Memory path description (search for <code>"indexes both private and team memories"</code>)</p>
+    </article>
+    <article class="card" id="macos-sandbox-mach-service-lookup-allow-list">
+      <div class="card-top">
+        <h3>macOS Sandbox: Mach Service Lookup Allow-List <a class="anchor" href="#macos-sandbox-mach-service-lookup-allow-list">#</a></h3>
+      </div>
+      <p>A new sandbox setting lets users specify additional XPC/Mach service names to allow, supporting tools like 1Password CLI, Playwright, or other system services. Supports trailing-wildcard matching (e.g., <code>"2BUA8C4S2C.com.1password.*"</code>).</p>
+<div class="blabel">Evidence</div>
+<p>Mach service setting (search for <code>"macOS only: Additional XPC/Mach service names"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-max-retries-validation">
+      <div class="card-top">
+        <h3><code>CLAUDE_CODE_MAX_RETRIES</code> Validation <a class="anchor" href="#claude-code-max-retries-validation">#</a></h3>
+      </div>
+      <p>The <code>CLAUDE_CODE_MAX_RETRIES</code> environment variable is now validated to ensure it parses to a finite integer ≥ 0, preventing invalid values from causing unexpected behavior.</p>
+<div class="blabel">Evidence</div>
+<p>Retry validation (search for <code>"Number.isFinite"</code> near the <code>CLAUDE_CODE_MAX_RETRIES</code> handler)</p>
+    </article>
+    <article class="card" id="improved-worktree-change-detection">
+      <div class="card-top">
+        <h3>Improved Worktree Change Detection <a class="anchor" href="#improved-worktree-change-detection">#</a></h3>
+      </div>
+      <p>Worktree cleanup now writes a <code>CLAUDE_BASE</code> marker to track the baseline commit, enabling accurate detection of commits ahead and uncommitted changes when deciding whether to auto-clean a worktree.</p>
+<div class="blabel">Evidence</div>
+<p>Worktree baseline tracking (search for <code>"CLAUDE_BASE"</code>, <code>"commitsAhead="</code>)</p>
+    </article>
+    <article class="card" id="remote-control-session-name-prefix">
+      <div class="card-top">
+        <h3>Remote Control Session Name Prefix <a class="anchor" href="#remote-control-session-name-prefix">#</a></h3>
+      </div>
+      <p>The <code>--remote-control-session-name-prefix</code> flag now defaults to the hostname and is documented as configurable.</p>
+<div class="blabel">Evidence</div>
+<p>Remote control prefix (search for <code>"Prefix for auto-generated Remote Control session names"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed compact streaming error messages to include <code>hasStartedStreaming</code> state for better debugging (search for <code>"Compact streaming failed. hasStartedStreaming="</code>)</li><li>Hook condition evaluation prompt now includes structured response format guidance, requiring JSON with <code>ok</code> and <code>reason</code> fields (search for <code>"You are evaluating a hook condition in Claude Code"</code>)</li><li>Worktree removal hooks now report specific failure messages distinguishing between agent worktrees and regular worktrees (search for <code>"WorktreeRemove hook did not remove"</code>)</li><li>Team memory sync now gracefully handles inaccessible team directories instead of failing (search for <code>"team-memory-sync: team dir inaccessible"</code>)</li><li>Voice recording cancellation now explicitly discards without submitting (search for <code>"cancelRecording: discarding without submit"</code>)</li></ul>
+    </article>
+    <article class="card" id="tool-result-deduplication-in-development">
+      <div class="card-top">
+        <h3>Tool Result Deduplication [In Development] <a class="anchor" href="#tool-result-deduplication-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When identical tool results appear multiple times in a conversation, subsequent occurrences are replaced with a short reference to the original, saving context window space.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged behind <code>tengu_onyx_basin_m1k</code> (default: false)</p>
+<div class="blabel">Details</div>
+<ul><li>Hashes tool result content and tracks seen results with short IDs (<code>r1</code>, <code>r2</code>, etc.)</li><li>Duplicate results are replaced with: <code>&lt;identical to result [rN] from your {tool} call earlier — refer to that output&gt;</code></li><li>Only applies to results longer than 256 characters and shorter than a configurable max</li><li>Tracks telemetry via <code>tengu_tool_result_dedup</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Tool result deduplication (gated by <code>tengu_onyx_basin_m1k</code>, search for <code>"result-id:"</code>, <code>"identical to result"</code>)</p>
+    </article>
+    <article class="card" id="rerun-command-aliases-in-development">
+      <div class="card-top">
+        <h3>Rerun Command Aliases [In Development] <a class="anchor" href="#rerun-command-aliases-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Tool results will include <code>[rerun: bN]</code> footers, and future Bash calls can use <code>{rerun: 'bN'}</code> to exactly replay a prior command without retyping it.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged behind <code>tengu_velvet_anchor</code> (default: false)</p>
+<div class="blabel">Details</div>
+<ul><li>Each Bash command gets assigned a short alias (<code>b1</code>, <code>b2</code>, etc.)</li><li>The <code>rerun</code> field and <code>command</code> field are mutually exclusive</li><li>Error message for invalid alias: <code>Unknown rerun alias 'bN'. Valid aliases this session: ...</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Rerun alias system (gated by <code>tengu_velvet_anchor</code>, search for <code>"Unknown rerun alias"</code>, <code>"rerun"</code>)</p>
+    </article>
+    <article class="card" id="voice-handsfree-mode-in-development">
+      <div class="card-top">
+        <h3>Voice Handsfree Mode [In Development] <a class="anchor" href="#voice-handsfree-mode-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A hands-free voice interaction mode with hold-to-talk and tap-to-toggle modes.</p>
+<div class="blabel">Status</div>
+<p>Feature-gated behind <code>VOICE_HANDSFREE</code>; internal-only annotation states "Hidden from public SDK types until external launch."</p>
+<div class="blabel">Details</div>
+<ul><li>Three modes: <code>hold</code> (hold to talk, default), <code>tap</code> (tap to start/stop+submit), and <code>off</code></li><li>Setting for "Submit the prompt when hold-to-talk is released (hold mode only)"</li><li>Described as "Voice handsfree settings; behavior gated at read sites by feature(VOICE_HANDSFREE)"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Voice handsfree settings (search for <code>"VOICE_HANDSFREE"</code>, <code>"'hold' (default): hold to talk"</code>)</p>
+    </article>
+    <article class="card" id="autonomous-proactive-auto-activation-in-development">
+      <div class="card-top">
+        <h3>Autonomous Proactive Auto-Activation [In Development] <a class="anchor" href="#autonomous-proactive-auto-activation-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A setting to automatically activate autonomous background operation at launch for entitled users.</p>
+<div class="blabel">Status</div>
+<p>New setting infrastructure added; activation depends on entitlement.</p>
+<div class="blabel">Details</div>
+<ul><li>When <code>true</code>, proactive mode activates automatically at launch (if entitled)</li><li>When <code>false</code> or <code>null</code>, the user must opt in via <code>/proactive</code> or <code>--proactive</code></li><li>Described as "Autonomous background operation configuration"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Proactive auto-activate setting (search for <code>"Autonomous background operation configuration"</code>, <code>"When true, autonomous background operation is activated automatically at launch"</code>)</p>
+    </article>
+    <article class="card" id="tag-command">
+      <div class="card-top">
+        <h3>/tag Command <a class="anchor" href="#tag-command">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The <code>/tag</code> command for toggling searchable tags on sessions has been entirely removed. All related UI (tag confirmation dialog, tag display in resume, tag-based search prioritization) has been removed.</p>
+    </article>
+    <article class="card" id="vim-command">
+      <div class="card-top">
+        <h3>/vim Command <a class="anchor" href="#vim-command">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The <code>/vim</code> command for toggling between Vim and Normal editing modes has been removed.</p>
+    </article>
+    <article class="card" id="sleep-tool">
+      <div class="card-top">
+        <h3>Sleep Tool <a class="anchor" href="#sleep-tool">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The <code>Sleep</code> tool (for waiting/resting) has been removed from the tool set.</p>
+    </article>
+    <article class="card" id="pre-generated-seccomp-bpf-filters">
+      <div class="card-top">
+        <h3>Pre-generated Seccomp BPF Filters <a class="anchor" href="#pre-generated-seccomp-bpf-filters">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The old approach of shipping pre-generated BPF filter files (<code>unix-block.bpf</code>) for seccomp sandboxing has been replaced with a multicall binary approach using <code>/proc/self/exe</code> and <code>ARGV0</code> dispatch. The <code>vendor/seccomp/</code> directory and architecture-specific filter lookup code have been removed.</p>
+    </article>
+    <article class="card" id="skill-improvement-feature">
+      <div class="card-top">
+        <h3>Skill Improvement Feature <a class="anchor" href="#skill-improvement-feature">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The infrastructure for auto-improving skill definition files based on user preferences has been removed (the "You are editing a skill definition file" prompt and related code).</p>
+    </article>
+    <article class="card" id="session-timeout-flag">
+      <div class="card-top">
+        <h3><code>--session-timeout</code> Flag <a class="anchor" href="#session-timeout-flag">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The <code>--session-timeout</code> CLI flag has been removed.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.176 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.176."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.176</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.176</span></h1>
+<p class="sub">This release introduces footer link badges — a new way to configure regex patterns that turn output into clickable links in the REPL footer. It also significantly expands project file upload support (the Project tool now surfaces PDFs, images, and other file uploads alongside text docs), extends the allowed flag set for <code>rg</code>, and tightens <code>rm</code>/<code>rmdir</code> safety analysis with several new dangerous-pattern detections. The Agent tool's fork behavior is also made explicit.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.175 → v2.1.176</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">13</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">5</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="footer-link-badges">
+      <div class="card-top">
+        <h3>Footer Link Badges <a class="anchor" href="#footer-link-badges">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>footerLinks</code> setting lets you define regex patterns that are matched against each turn's output (tool results and assistant text). When a pattern matches, the REPL footer shows a clickable badge linking to a URL built from named capture groups in the match.</p>
+<div class="blabel">Details</div>
+<ul><li>Configured in user, flag, or managed settings only (not project <code>.claude/settings.json</code>)</li><li>Entries use <code>type: "regex"</code> with <code>pattern</code>, <code>url</code>, and optional <code>label</code> fields</li><li>The <code>url</code> field is a URL template; <code>{name}</code> placeholders are filled from named regex capture groups (values are URL-encoded)</li><li>The URL origin must be a literal <code>https://</code> or <code>http://</code> scheme — dynamic origins are rejected</li><li><code>{name}</code> in the <code>label</code> field is also filled from capture groups; defaults to the full match text</li><li>The PR link badge (detected from the current git repo) is rendered as the first footer badge</li><li>A dedicated URL template setting for PR links accepts <code>{host}</code>, <code>{owner}</code>, <code>{repo}</code>, <code>{number}</code>, <code>{url}</code> placeholders</li></ul>
+<div class="blabel">Evidence</div>
+<p>Footer link scanner (search for <code>"[footerLinks] pattern"</code> and <code>"repl_footer_links"</code>)</p>
+    </article>
+    <article class="card" id="explicit-fork-selection-for-agent-tool">
+      <div class="card-top">
+        <h3>Explicit Fork Selection for Agent Tool <a class="anchor" href="#explicit-fork-selection-for-agent-tool">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>subagent_type: "fork"</code> value is now a named, explicitly-selectable agent type rather than the implicit default when no <code>subagent_type</code> is provided. This makes multi-agent code clearer and avoids accidental forking.</p>
+<div class="blabel">Details</div>
+<ul><li>Omitting <code>subagent_type</code> (when the fork experiment is active) previously implicitly created a fork; now the behavior is documented as explicit opt-in via <code>"fork"</code></li><li>Remote sessions cannot use <code>isolation: "remote"</code> with fork — a clear error is returned</li><li>Other named agent types still start with zero context</li><li>The Agent tool description has been updated to reflect this</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated Agent tool description (search for <code>"(except subagent_type: \"fork\")"</code> and <code>"Fork cannot use isolation: \"remote\""</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">11 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="project-tool-file-uploads-now-visible-and-readable">
+      <div class="card-top">
+        <h3>Project Tool: File Uploads Now Visible and Readable <a class="anchor" href="#project-tool-file-uploads-now-visible-and-readable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The Project tool (<code>project_info</code>, <code>project_read</code>, <code>project_delete</code>) now surfaces file uploads (PDFs, images, and other binary files) alongside text docs.</p>
+<ul><li><code>project_info</code> output now includes a <code>## Project files (N)</code> section listing file uploads and a <code>## Synced sources (N)</code> section listing connector-synced content (Google Drive, GitHub, Outline, MCP resources)</li><li><code>project_read</code> on a file upload returns a <code>file_kind</code> field; for document-type uploads (PDF, docx) it returns extracted text; for other types it returns empty content with a notice explaining that no text extract is available</li><li><code>project_delete</code> on a file upload now returns a clear error explaining that file uploads can only be removed from claude.ai, not via the tool</li><li>The error message when a path is not found now says "No doc or file at" instead of "No doc at" and lists both docs and files</li></ul>
+<div class="blabel">Evidence</div>
+<p>Project tool description update (search for <code>"is a file upload; project_delete only removes text docs"</code> and <code>"## Project files ("</code>)</p>
+    </article>
+    <article class="card" id="webfetch-artifact-urls-are-now-fetchable">
+      <div class="card-top">
+        <h3>WebFetch: Artifact URLs Are Now Fetchable <a class="anchor" href="#webfetch-artifact-urls-are-now-fetchable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The WebFetch tool description now explicitly documents that <code>https://claude.ai/code/artifact/{uuid}</code> URLs (including <code>preview.claude.ai</code>) are fetchable using your claude.ai login — you do not need curl or a headless browser for these. The Artifact tool description also now includes a note: "To read an existing artifact's content: call WebFetch with its URL."</p>
+<div class="blabel">Evidence</div>
+<p>WebFetch description update (search for <code>"https://claude.ai/code/artifact/"</code> and <code>"Exception: claude.ai/code/artifact/{uuid} URLs ARE fetchable"</code>)</p>
+    </article>
+    <article class="card" id="grep-tool-expanded-allowed-flags-for-rg">
+      <div class="card-top">
+        <h3>Grep Tool: Expanded Allowed Flags for <code>rg</code> <a class="anchor" href="#grep-tool-expanded-allowed-flags-for-rg">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The Grep tool's <code>rg</code> allowlist now includes additional flags that were previously missing:</p>
+<ul><li><code>--smart-case</code> — case-insensitive if pattern is all-lowercase, case-sensitive otherwise</li><li><code>--case-sensitive</code> — always case-sensitive (overrides <code>--ignore-case</code>)</li><li><code>--no-line-number</code> — suppress line numbers</li><li><code>--multiline</code> — allow patterns to match across newlines</li><li><code>--pcre2</code> — use PCRE2 regex engine</li></ul>
+<div class="blabel">Evidence</div>
+<p>Grep allowlist expansion (search for <code>"--smart-case"</code> and <code>"--no-line-number"</code>)</p>
+    </article>
+    <article class="card" id="rm-rmdir-safety-analysis-expanded">
+      <div class="card-top">
+        <h3><code>rm</code>/<code>rmdir</code> Safety Analysis Expanded <a class="anchor" href="#rm-rmdir-safety-analysis-expanded">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The dangerous-removal checker that guards <code>rm</code> and <code>rmdir</code> commands has been significantly reworked with several new detection patterns:</p>
+<ul><li>Detects when a <code>cd</code> precedes a relative glob removal, making the target statically unresolvable</li><li>Detects when the removal target (after glob expansion) cannot be resolved to a directory</li><li>Detects when a glob pattern traverses multiple directories that cannot be statically enumerated (more than one wildcard level deep)</li><li>Now checks against all configured working directories, not just the primary CWD — additional working directories and their parents are also protected</li><li>The old check ("remove CWD or its parent") has been replaced by the more precise "workspace directory" check</li></ul>
+<div class="blabel">Evidence</div>
+<p>Removal safety expansion (search for <code>"This command changes directories before the removal"</code> and <code>"This command's glob pattern traverses directories"</code>)</p>
+    </article>
+    <article class="card" id="sed-command-static-analysis">
+      <div class="card-top">
+        <h3><code>sed</code> Command Static Analysis <a class="anchor" href="#sed-command-static-analysis">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new static analyzer for <code>sed</code> commands has been added that validates redirect targets in sed pipelines. It checks for and flags:</p>
+<ul><li>Commands that carry redirect-borne content that cannot be statically validated (swallowed arguments, unanalyzable heredocs, or expansion in a redirect target)</li><li>Commands that are over-length or contain characters that bash and the analyzer tokenize differently</li></ul>
+<p>These now require explicit approval rather than being auto-allowed.</p>
+<div class="blabel">Evidence</div>
+<p>sed analyzer (search for <code>"sed command carries redirect-borne content"</code> and <code>"sed command could not be statically validated"</code>)</p>
+    </article>
+    <article class="card" id="notification-settings-ui">
+      <div class="card-top">
+        <h3>Notification Settings UI <a class="anchor" href="#notification-settings-ui">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new Notifications settings panel has been added, accessible from the REPL. It lets you configure:</p>
+<ul><li>Channel: cycles through available notification backends (auto, iterm2, terminal_bell, iterm2_with_bell, kitty, ghostty, notifications_disabled)</li><li>"Notify when Claude needs you" — get a notification when a background session is blocked waiting for input</li><li>"Notify when Claude is done" — get a notification when a session finishes</li></ul>
+<p>The <code>iterm2+bell</code> combined mode (iTerm2 notification + terminal bell) is also available as a new channel option.</p>
+<div class="blabel">Evidence</div>
+<p>Notifications UI (search for <code>"Notify when Claude needs you"</code> and <code>"iterm2+bell"</code>)</p>
+    </article>
+    <article class="card" id="chrome-integration-clearer-offer-flow">
+      <div class="card-top">
+        <h3>Chrome Integration: Clearer Offer Flow <a class="anchor" href="#chrome-integration-clearer-offer-flow">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The Claude-in-Chrome integration now has cleaner offer and rejection messaging:</p>
+<ul><li>The startup offer now shows "Yes, use my browser" and "No, keep browser tools off" options explicitly</li><li>"Turn browser tools off for future sessions" guidance added</li><li>"This session is in Auto mode, so an AI classifier approves routine browser actions — you are only prompted when it is unsure" message</li><li>"This session is in Don't Ask mode, so browser actions that need approval are skipped rather than prompted" message</li><li>"Site-level permissions come from the Chrome extension" clarification</li><li>The old hardcoded system-prompt paragraph about the <code>claude-in-chrome</code> skill has been removed; Chrome integration is now handled through the normal MCP machinery</li></ul>
+<div class="blabel">Evidence</div>
+<p>Chrome flow updates (search for <code>"Yes, use my browser"</code> and <code>"Turn browser tools off for future sessions"</code>)</p>
+    </article>
+    <article class="card" id="mcp-first-party-auth-error-handling">
+      <div class="card-top">
+        <h3>MCP First-Party Auth Error Handling <a class="anchor" href="#mcp-first-party-auth-error-handling">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When a first-party MCP server (one using your claude.ai login) rejects the connection, Claude now emits a structured error with code <code>FIRST_PARTY_AUTH_REJECTED</code> and a more actionable message:</p>
+<ul><li>HTTP 403: explains the token may be missing a required scope, and suggests running <code>/login</code></li><li>HTTP 401: tells you the token may have expired, and suggests <code>/login</code></li></ul>
+<p>The new code enables better diagnostics and retry logic — if a 401 occurs after sending an access token, Claude automatically refreshes the token and retries the request once.</p>
+<div class="blabel">Evidence</div>
+<p>First-party auth error (search for <code>"FIRST_PARTY_AUTH_REJECTED"</code> and <code>"missing a scope this server needs"</code>)</p>
+    </article>
+    <article class="card" id="session-title-language-matching">
+      <div class="card-top">
+        <h3>Session Title Language Matching <a class="anchor" href="#session-title-language-matching">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The session title generation prompt now instructs the model to "Write the title in the language the user wrote in, regardless of the language of the examples above." Previously the title examples were all in English and the model would sometimes generate English titles for non-English sessions.</p>
+<div class="blabel">Evidence</div>
+<p>Title prompt update (search for <code>"Write the title in the language the user wrote in"</code>)</p>
+    </article>
+    <article class="card" id="windows-unc-path-warning-in-background-sessions">
+      <div class="card-top">
+        <h3>Windows: UNC Path Warning in Background Sessions <a class="anchor" href="#windows-unc-path-warning-in-background-sessions">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Background sessions on Windows now detect UNC (network) paths in the working directory and emit a warning that such paths are not supported and will be neutralized. This prevents silent failures when background agents are spawned with a UNC-path CWD.</p>
+<div class="blabel">Evidence</div>
+<p>UNC path check (search for <code>"warning: background sessions do not support Windows network (UNC) paths"</code>)</p>
+    </article>
+    <article class="card" id="claude-api-skill-c-and-curl-reference-added">
+      <div class="card-top">
+        <h3><code>claude-api</code> Skill: C# and cURL Reference Added <a class="anchor" href="#claude-api-skill-c-and-curl-reference-added">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>claude-api</code> skill's reference corpus now includes comprehensive documentation for:</p>
+<ul><li>The official C# (Anthropic .NET) SDK — installation, basic messages, streaming, thinking/extended thinking, tool use, the <code>BetaToolRunner</code>, and <code>Microsoft.Extensions.AI IChatClient</code> integration</li><li>Raw HTTP / cURL examples — setup, basic message request, streaming (SSE), thinking, tool-use loops, and response parsing with <code>jq</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>C# and cURL API reference (search for <code>"dotnet add package Anthropic"</code> and <code>"# Claude API — cURL / Raw HTTP"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed <code>project_read</code> not recognizing file uploads — it previously threw "No doc at" for any upload path; it now correctly dispatches to the <code>/extracted</code> endpoint for document-type uploads (PDF, docx) and returns a clear notice for non-document types (search for <code>"/extracted"</code>)</li></ul>
+<ul><li>Fixed daemon roster cleanup incorrectly leaving <code>.sock.err</code> and <code>.sock.late</code> files behind when the corresponding socket no longer existed — now both <code>.err</code> and <code>.late</code> orphan files are removed during roster sweeps (search for <code>"[bg-dispatch] removed non-regular"</code>)</li></ul>
+<ul><li>Improved <code>project_delete</code> error for file uploads — previously threw a generic "No doc at" error when trying to delete a file upload; now returns an actionable message explaining that file uploads must be removed from claude.ai (search for <code>"is a file upload; project_delete only removes text docs"</code>)</li></ul>
+<ul><li>The safety classifier unavailability notice is now dynamic — it names the specific classifier that was unavailable rather than using a generic phrase (search for <code>"(the safety classifier)"</code>)</li></ul>
+<ul><li>Remote Control session reconnection handling improved — login-triggered account changes now cleanly disconnect the Remote Control session with a clear log message (search for <code>"Account changed via /login — disconnecting Remote Control session"</code>)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.176.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.176.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

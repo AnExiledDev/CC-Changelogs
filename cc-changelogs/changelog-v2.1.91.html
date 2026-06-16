@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.91 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.91."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.91</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.91</span></h1>
+<p class="sub">This release activates the Ultraplan cloud planning feature (previously dark-launched), introduces several feature-flagged agent behavior optimizations (reduced file re-reads, Write append mode, smarter subagent output), removes the deprecated <code>/output-style</code> and <code>/pr-comments</code> commands along with Magic Docs, and fixes keyboard shortcut conflicts across the entire UI where single-key bindings could interfere with system shortcuts like Ctrl+X or Ctrl+F.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.90 → v2.1.91</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">21</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">7</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">6</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">21 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="disable-shell-execution-in-skills-policy-setting">
+      <div class="card-top">
+        <h3>Disable Shell Execution in Skills (Policy Setting) <a class="anchor" href="#disable-shell-execution-in-skills-policy-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new <code>disableSkillShellExecution</code> policy/config setting that prevents inline shell execution in skills and custom slash commands from user, project, or plugin sources.</p>
+<p>Usage: Set in your settings or policy configuration:</p>
+<pre><code>{
+  &quot;disableSkillShellExecution&quot;: true
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When enabled, shell command blocks (`<code> </code>`<code>! </code><code> fenced blocks and </code><code> !</code>...<code> </code><code> inline syntax) in skills are replaced with </code>[shell command execution disabled by policy]`</li><li>Applies to commands from user, project, or plugin sources — not policy settings</li><li>Useful for organizations that want to allow skills but prevent arbitrary shell execution</li></ul>
+<div class="blabel">Evidence</div>
+<p>Policy gate and replacement logic (search for <code>"disableSkillShellExecution"</code> and <code>"[shell command execution disabled by policy]"</code>)</p>
+    </article>
+    <article class="card" id="feedback-command-provider-aware-disabling">
+      <div class="card-top">
+        <h3><code>/feedback</code> Command Provider-Aware Disabling <a class="anchor" href="#feedback-command-provider-aware-disabling">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>/feedback</code> command now displays informative messages explaining why it's unavailable on non-first-party providers and when disabled by policy, instead of silently failing or showing a generic error.</p>
+<div class="blabel">Details</div>
+<ul><li>Shows specific messages for Amazon Bedrock, Vertex AI, and Microsoft Foundry users, directing them to GitHub issues</li><li>Respects <code>DISABLE_FEEDBACK_COMMAND</code>, <code>DISABLE_BUG_COMMAND</code>, and <code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code> environment variables</li><li>Respects organization policy <code>allow_product_feedback</code></li><li>All messages now direct users to <code>https://github.com/anthropics/claude-code/issues</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Provider-specific feedback disabling (search for <code>"/feedback has been disabled"</code> and <code>"/feedback is not available when using"</code>)</p>
+    </article>
+    <article class="card" id="peer-session-messaging">
+      <div class="card-top">
+        <h3>Peer Session Messaging <a class="anchor" href="#peer-session-messaging">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When another Claude Code session sends a message while you're working, it now appears with contextual framing that helps Claude understand the message source.</p>
+<div class="blabel">Details</div>
+<ul><li>Messages from peer sessions are labeled: "A peer session sent a message while you were working"</li><li>Claude is instructed: "This is from another Claude session, not your user. After completing your current task, decide whether/how to respond."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Peer session notification framing (search for <code>"A peer session sent a message"</code>)</p>
+    </article>
+    <article class="card" id="sandbox-unavailable-error-in-stream-json-mode">
+      <div class="card-top">
+        <h3>Sandbox Unavailable Error in Stream-JSON Mode <a class="anchor" href="#sandbox-unavailable-error-in-stream-json-mode">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When running in headless mode (<code>--output-format stream-json</code>) and the sandbox is required but unavailable, Claude Code now emits a proper JSON error result instead of only writing to stderr.</p>
+<div class="blabel">Details</div>
+<ul><li>Error message includes: <code>"Sandbox required but unavailable: {reason}. Set sandbox.failIfUnavailable=false to allow unsandboxed execution."</code></li><li>The JSON result includes all standard fields (session_id, uuid, duration, etc.) for proper parsing by automation tools</li></ul>
+<div class="blabel">Evidence</div>
+<p>Headless sandbox error handling (search for <code>"Sandbox required but unavailable:"</code>)</p>
+    </article>
+    <article class="card" id="untrusted-device-detection-for-bridge-sessions">
+      <div class="card-top">
+        <h3>Untrusted Device Detection for Bridge Sessions <a class="anchor" href="#untrusted-device-detection-for-bridge-sessions">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Bridge/remote session connections now detect "untrusted device" errors and return a terminal failure instead of silently retrying.</p>
+<div class="blabel">Details</div>
+<ul><li>When the bridge endpoint returns a 403 with <code>untrusted_device</code> resource, the connection is marked as terminal</li><li>Users see a message to <code>"run /login to enroll this device"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Untrusted device handling in bridge connection (search for <code>"untrusted_device"</code> and <code>"run /login to enroll this device"</code>)</p>
+    </article>
+    <article class="card" id="keyboard-shortcut-conflict-prevention">
+      <div class="card-top">
+        <h3>Keyboard Shortcut Conflict Prevention <a class="anchor" href="#keyboard-shortcut-conflict-prevention">#</a></h3>
+      </div>
+      <p>Multiple keyboard handlers across the UI now properly check that Ctrl and Meta (Cmd) modifiers are not pressed before responding to single-key shortcuts. Previously, pressing Ctrl+X, Ctrl+F, Ctrl+S, Ctrl+K, Ctrl+T, Ctrl+W, or Ctrl+Q could trigger unrelated in-app actions.</p>
+<p>Affected areas:</p>
+<ul><li>Shell/task panel: <code>x</code> (kill), <code>f</code> (focus), <code>t</code> (terminate), <code>k</code> (kill)</li><li>Submit confirmation: <code>s</code> (submit)</li><li>Session picker: <code>q</code> (quit)</li><li>Worktree picker: <code>w</code> (select worktree)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Guards added as <code>!t.ctrl &amp;&amp; !t.meta</code> before key checks across ~10 components (search for <code>!t.ctrl &amp;&amp; !t.meta</code> in the diff)</p>
+    </article>
+    <article class="card" id="permission-mode-auto-classifier">
+      <div class="card-top">
+        <h3>Permission Mode: <code>auto</code> Classifier <a class="anchor" href="#permission-mode-auto-classifier">#</a></h3>
+      </div>
+      <p>The permission mode setting now includes <code>auto</code> as an option, which uses a model classifier to approve or deny permission prompts automatically.</p>
+<div class="blabel">Evidence</div>
+<p>Auto mode in permission enum (search for <code>"Use a model classifier to approve/deny permission prompts"</code>)</p>
+    </article>
+    <article class="card" id="terminal-reason-tracking">
+      <div class="card-top">
+        <h3>Terminal Reason Tracking <a class="anchor" href="#terminal-reason-tracking">#</a></h3>
+      </div>
+      <p>Query results now include a <code>terminal_reason</code> field that records why the query loop terminated. Possible values include: <code>blocking_limit</code>, <code>rapid_refill_breaker</code>, <code>prompt_too_long</code>, <code>image_error</code>, <code>model_error</code>, <code>aborted_streaming</code>, <code>aborted_tools</code>, <code>stop_hook_prevented</code>, <code>hook_stopped</code>, <code>tool_deferred</code>, <code>max_turns</code>, <code>completed</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Terminal reason enum and field (search for <code>"Why the query loop terminated"</code>)</p>
+    </article>
+    <article class="card" id="rate-limit-reduction-suggestions-gradual-rollout">
+      <div class="card-top">
+        <h3>Rate Limit Reduction Suggestions [Gradual Rollout] <a class="anchor" href="#rate-limit-reduction-suggestions-gradual-rollout">#</a></h3>
+      </div>
+      <p>When hitting a 7-day rate limit on Pro plans, Claude Code now suggests concrete ways to reduce usage:</p>
+<ul><li>If using an Opus model: suggests <code>"try /model sonnet · ~2× runway"</code></li><li>If using high/max effort: suggests <code>"try /effort medium"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Rate limit suggestions (gated by <code>tengu_garnet_plover</code>, search for <code>"try /model sonnet"</code>)</p>
+    </article>
+    <article class="card" id="opus-usage-cost-warning-gradual-rollout">
+      <div class="card-top">
+        <h3>Opus Usage Cost Warning [Gradual Rollout] <a class="anchor" href="#opus-usage-cost-warning-gradual-rollout">#</a></h3>
+      </div>
+      <p>The model selector now shows <code>" · ~2× usage vs Sonnet"</code> when selecting Opus on Pro plans, helping users understand the relative cost.</p>
+<div class="blabel">Evidence</div>
+<p>Opus cost indicator (gated by <code>tengu_gypsum_kite</code>, search for <code>"~2× usage vs Sonnet"</code>)</p>
+    </article>
+    <article class="card" id="high-effort-warning-gradual-rollout">
+      <div class="card-top">
+        <h3>High Effort Warning [Gradual Rollout] <a class="anchor" href="#high-effort-warning-gradual-rollout">#</a></h3>
+      </div>
+      <p>When effort is set to "high" on the Max plan, the effort display now appends <code>"burns fastest — medium handles most tasks"</code> as a gentle nudge.</p>
+<div class="blabel">Evidence</div>
+<p>High effort cost warning (gated by <code>tengu_slate_finch</code>, search for <code>"burns fastest"</code>)</p>
+    </article>
+    <article class="card" id="unified-upgrade-paths-from-server">
+      <div class="card-top">
+        <h3>Unified Upgrade Paths from Server <a class="anchor" href="#unified-upgrade-paths-from-server">#</a></h3>
+      </div>
+      <p>Rate limit dialogs now use server-provided upgrade path data (via the <code>anthropic-ratelimit-unified-upgrade-paths</code> response header) to determine which options to show (overage, plan upgrade), rather than computing them client-side.</p>
+<div class="blabel">Evidence</div>
+<p>Server-driven upgrade paths (search for <code>"anthropic-ratelimit-unified-upgrade-paths"</code>)</p>
+    </article>
+    <article class="card" id="memory-selector-conversation-caching">
+      <div class="card-top">
+        <h3>Memory Selector Conversation Caching <a class="anchor" href="#memory-selector-conversation-caching">#</a></h3>
+      </div>
+      <p>The memory selection system now caches its state per-directory across queries within a session, reusing the conversation context for follow-up memory relevance queries instead of rebuilding it each time. The memory selection prompt has also been revised to support multi-turn usage ("Do not re-select memories you already returned for an earlier query").</p>
+<div class="blabel">Evidence</div>
+<p>Memory selector state management (search for <code>"memdir_relevance"</code>)</p>
+    </article>
+    <article class="card" id="permissiondenied-hook-retry-message">
+      <div class="card-top">
+        <h3>PermissionDenied Hook Retry Message <a class="anchor" href="#permissiondenied-hook-retry-message">#</a></h3>
+      </div>
+      <p>The message shown after a PermissionDenied hook allows a retry has been simplified from "this command is now approved. You may retry it if you would like" to "you may retry this tool call" — more accurate since the hook may approve a non-command tool call.</p>
+<div class="blabel">Evidence</div>
+<p>Revised retry message (search for <code>"you may retry this tool call"</code>)</p>
+    </article>
+    <article class="card" id="tool-telemetry-enrichment">
+      <div class="card-top">
+        <h3>Tool Telemetry Enrichment <a class="anchor" href="#tool-telemetry-enrichment">#</a></h3>
+      </div>
+      <p>Tool usage telemetry now tracks additional dimensions: file path length, bash command length, and whether Read calls use <code>limit</code>/<code>offset</code> parameters.</p>
+<div class="blabel">Evidence</div>
+<p>Telemetry fields (search for <code>readHasLimit</code> and <code>bashCommandLen</code> in the diff)</p>
+    </article>
+    <article class="card" id="notebookedit-path-handling">
+      <div class="card-top">
+        <h3>NotebookEdit Path Handling <a class="anchor" href="#notebookedit-path-handling">#</a></h3>
+      </div>
+      <p>The NotebookEdit tool now properly resolves relative paths (consistent with other file tools) and uses <code>randomUUID</code> instead of <code>Math.random()</code> for generating cell IDs.</p>
+<div class="blabel">Evidence</div>
+<p>Path resolution in notebook edit (search for <code>"notebook_path"</code> and <code>backfillObservableInput</code> in the diff)</p>
+    </article>
+    <article class="card" id="file-upload-filename-sanitization">
+      <div class="card-top">
+        <h3>File Upload Filename Sanitization <a class="anchor" href="#file-upload-filename-sanitization">#</a></h3>
+      </div>
+      <p>File upload form data now properly escapes special characters (newlines, backslashes, quotes) in filenames, preventing malformed multipart requests.</p>
+<div class="blabel">Evidence</div>
+<p>Filename escaping function <code>hMK()</code> (search for <code>"Content-Disposition: form-data"</code> in the string changes)</p>
+    </article>
+    <article class="card" id="ultraplan-improvements">
+      <div class="card-top">
+        <h3>Ultraplan Improvements <a class="anchor" href="#ultraplan-improvements">#</a></h3>
+      </div>
+      <p>The Ultraplan feature received several enhancements:</p>
+<ul><li>Better error handling: "Ultraplan hit an unexpected error during launch" message now sent to the model for graceful recovery</li><li>Auto-polling timeout: sessions that remain unresolved are automatically cleaned up</li><li>Telemetry: new <code>tengu_ultraplan_stopped</code> event when killing ultraplan tasks</li><li>Terms tracking with <code>hasSeenUltraplanTerms</code> state</li></ul>
+<div class="blabel">Evidence</div>
+<p>Ultraplan error and state management (search for <code>"Ultraplan hit an unexpected error"</code>)</p>
+    </article>
+    <article class="card" id="removed-output-style-command">
+      <div class="card-top">
+        <h3>Removed: <code>/output-style</code> Command <a class="anchor" href="#removed-output-style-command">#</a></h3>
+      </div>
+      <p>The deprecated <code>/output-style</code> command has been fully removed. It was already showing a deprecation notice directing users to <code>/config</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Removal of output-style command handler (search for <code>"output-style"</code> in removed section)</p>
+    </article>
+    <article class="card" id="removed-pr-comments-command">
+      <div class="card-top">
+        <h3>Removed: <code>/pr-comments</code> Command <a class="anchor" href="#removed-pr-comments-command">#</a></h3>
+      </div>
+      <p>The built-in <code>/pr-comments</code> slash command for fetching GitHub pull request comments has been removed. The same functionality is available via <code>gh api</code> commands directly.</p>
+<div class="blabel">Evidence</div>
+<p>Removal of pr-comments command definition (search for <code>"Get comments from a GitHub pull request"</code> in removed section)</p>
+    </article>
+    <article class="card" id="removed-magic-docs">
+      <div class="card-top">
+        <h3>Removed: Magic Docs <a class="anchor" href="#removed-magic-docs">#</a></h3>
+      </div>
+      <p>The Magic Docs feature — which automatically updated <code># MAGIC DOC:</code> files based on conversation context — has been completely removed. This includes the update prompt, the template system, and the background agent that processed magic doc files.</p>
+<div class="blabel">Evidence</div>
+<p>Removal of magic doc infrastructure (search for <code>"MAGIC DOC"</code> in removed section)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed <code>findLogicalLineStart</code> crashing or scanning unnecessarily when offset is 0 — now returns 0 immediately (search for <code>"findLogicalLineStart"</code>)</li><li>Fixed <code>CLAUDE_FORCE_DISPLAY_SURVEY</code> environment variable not being properly checked as a boolean, which could cause the feedback survey to show unexpectedly (search for <code>"CLAUDE_FORCE_DISPLAY_SURVEY"</code>)</li><li>Fixed plugin name extraction using proper string-before-delimiter logic instead of naive <code>.split("@")[0]</code>, which could fail for scoped package names (search for <code>FB6</code> in the diff)</li><li>Added proper timeout cleanup in conversation effects, preventing potential memory leaks from dangling setTimeout references</li><li>Fixed Chrome extension installation check to properly catch and log errors instead of letting them propagate silently (search for <code>"Failed to check extension installation"</code>)</li><li>Fixed Windows binary detection for MCP servers by adding a fallback file-size comparison when the standard executable path resolution fails</li><li>Fixed theme change detection by adding support for the <code>themeNotify</code> terminal response, enabling automatic theme updates when the terminal theme changes</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled for all users. These are shipped behind feature flags and may become available in future versions.</p>
+    </article>
+    <article class="card" id="relative-file-paths-in-tool-descriptions-gradual-rollout">
+      <div class="card-top">
+        <h3>Relative File Paths in Tool Descriptions [Gradual Rollout] <a class="anchor" href="#relative-file-paths-in-tool-descriptions-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When enabled, tool descriptions instruct Claude to use relative (cwd-based) file paths instead of absolute paths, and the Bash tool description notes that <code>cd</code> does not persist between calls.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_relpath_gh7k</code> (default: false)</p>
+<div class="blabel">Details</div>
+<ul><li>Read tool description changes from "must be an absolute path" to "can be relative to cwd (preferred for brevity) or absolute"</li><li>Bash tool adds: "Avoid <code>cd</code> unless the User explicitly requests it. The shell already starts in cwd"</li><li>Read tool adds <code>ONLY include with offset to read a specific slice. OMIT to read the whole file</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Relative path tool descriptions (gated by <code>tengu_relpath_gh7k</code>, search for <code>"The file_path parameter can be relative to cwd"</code>)</p>
+    </article>
+    <article class="card" id="redundant-file-re-read-prevention-gradual-rollout">
+      <div class="card-top">
+        <h3>Redundant File Re-Read Prevention [Gradual Rollout] <a class="anchor" href="#redundant-file-re-read-prevention-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When Claude re-reads a file that hasn't changed since its last Read, the tool result returns a warning instead of the file content, saving tokens.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_noreread_q7m_velvet</code> (default: false)</p>
+<div class="blabel">Details</div>
+<ul><li>Returns: "Wasted call — file unchanged since your last Read. Refer to that earlier tool_result instead."</li><li>Edit/Write results now append: "(file state is current in your context — no need to Read it back)"</li><li>Tool descriptions add: "Do NOT re-read a file you just edited to verify"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Re-read prevention (gated by <code>tengu_noreread_q7m_velvet</code>, search for <code>"Wasted call"</code>)</p>
+    </article>
+    <article class="card" id="write-tool-append-mode-gradual-rollout">
+      <div class="card-top">
+        <h3>Write Tool Append Mode [Gradual Rollout] <a class="anchor" href="#write-tool-append-mode-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The Write tool gains a <code>mode</code> parameter with <code>'overwrite'</code> (default) and <code>'append'</code> options, allowing content to be added to the end of a file without rewriting it.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_maple_forge_w8k</code> (default: false)</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>mode</code> parameter on the Write tool schema</li><li>Description: "Use 'append' to add content to the end of an existing file instead of rewriting the full content — e.g. for logs, accumulating output, or adding entries"</li><li>Instruction: "Do NOT re-send the existing file contents" when appending</li></ul>
+<div class="blabel">Evidence</div>
+<p>Write append mode (gated by <code>tengu_maple_forge_w8k</code>, search for <code>"mode:'append'"</code>)</p>
+    </article>
+    <article class="card" id="edit-after-write-without-read-gradual-rollout">
+      <div class="card-top">
+        <h3>Edit After Write Without Read [Gradual Rollout] <a class="anchor" href="#edit-after-write-without-read-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Files written during the current session can be edited without a prior Read call — the Edit tool recognizes that the session already knows the file's contents.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_editafterwrite_qpl</code> (default: false)</p>
+<div class="blabel">Details</div>
+<ul><li>Edit tool description appends: "Files you Wrote this session can be Edited without a prior Read."</li><li>Reduces unnecessary round-trips when writing then immediately editing a file</li></ul>
+<div class="blabel">Evidence</div>
+<p>Edit after write (gated by <code>tengu_editafterwrite_qpl</code>, search for <code>"Files you Wrote this session"</code>)</p>
+    </article>
+    <article class="card" id="subagent-report-file-prevention-gradual-rollout">
+      <div class="card-top">
+        <h3>Subagent Report File Prevention [Gradual Rollout] <a class="anchor" href="#subagent-report-file-prevention-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Subagents are instructed to return findings as text in their final message instead of creating report/summary <code>.md</code> files.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_sub_nomdrep_q7k</code> (default: false)</p>
+<div class="blabel">Details</div>
+<ul><li>Adds instruction: "Do NOT write report/summary/findings/analysis .md files. Return findings directly as your final assistant message — the parent agent reads your text output, not files you create."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Subagent no-report instruction (gated by <code>tengu_sub_nomdrep_q7k</code>, search for <code>"report/summary/findings/analysis .md files"</code>)</p>
+    </article>
+    <article class="card" id="ultraplan-cloud-planning-ui-gradual-rollout">
+      <div class="card-top">
+        <h3>Ultraplan Cloud Planning UI [Gradual Rollout] <a class="anchor" href="#ultraplan-cloud-planning-ui-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The Ultraplan feature — which launches a planning session in Claude Code on the web — now has a fully functional interactive UI in the CLI.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_ultraplan_config</code> (must have <code>enabled: true</code>)</p>
+<div class="blabel">Details</div>
+<ul><li>Typing "ultraplan" in a prompt triggers keyword detection and launches the <code>/ultraplan</code> flow</li><li>"Run ultraplan in the cloud?" dialog with time estimates and option to disable Remote Control</li><li>Plan approval UI with three choices: "Implement here" (inject into current conversation), "Start new session" (clear and start fresh with the plan), or "Cancel" (save plan to file)</li><li>Scrollable plan preview with <code>ctrl+u/ctrl+d</code> to scroll</li><li>If Remote Control is active, launching ultraplan disables it with a warning</li><li>Rejected plans are saved to <code>{session}-ultraplan.md</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Ultraplan config and UI (gated by <code>tengu_ultraplan_config</code>, search for <code>"Run ultraplan in the cloud?"</code> and <code>"Ultraplan approved"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

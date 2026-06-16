@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.34 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.34."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.34</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.34</span></h1>
+<p class="sub">Version 2.0.34 introduces experimental MCP CLI tooling for direct interaction with Model Context Protocol servers, adds a Skills API for skill management, implements passive LSP diagnostics collection, and enhances sandbox configuration with granular override controls.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.33 → v2.0.34</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">15</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">15 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="mcp-cli-command-interface">
+      <div class="card-top">
+        <h3>MCP CLI Command Interface <a class="anchor" href="#mcp-cli-command-interface">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A new command-line interface for interacting with MCP (Model Context Protocol) servers directly from bash commands within Claude Code sessions.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Discover available MCP servers and tools
+mcp-cli servers                        # List all connected MCP servers
+mcp-cli tools [server]                 # List available tools
+mcp-cli grep &quot;weather&quot;                 # Search tools by keyword
+
+# Get tool schema (REQUIRED before calling any tool)
+mcp-cli info slack/search_private      # View JSON schema for parameters
+
+# Invoke MCP tools
+mcp-cli call slack/search_private &#x27;{&quot;query&quot;: &quot;mentions&quot;, &quot;max_results&quot;: 10}&#x27;
+
+# Use stdin for complex JSON
+mcp-cli call api/send_request - &lt;&lt;&#x27;EOF&#x27;
+{
+  &quot;endpoint&quot;: &quot;/data&quot;,
+  &quot;headers&quot;: {&quot;Authorization&quot;: &quot;Bearer token&quot;}
+}
+EOF</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Enabled via <code>ENABLE_EXPERIMENTAL_MCP_CLI</code> environment variable</li><li>Claude must call <code>mcp-cli info</code> before any <code>mcp-cli call</code> to check parameter schemas</li><li>Includes full Commander.js CLI with multiple subcommands</li><li>Automatically tracked with telemetry event <code>tengu_mcp_cli_command_executed</code></li><li><strong>Evidence</strong>: Command parser <code>Re()</code> at line 3935, handler <code>so2()</code> at line 493008, entry point check at line 493024 in <code>pretty-v2.0.34.js</code></li></ul>
+    </article>
+    <article class="card" id="skills-api-client">
+      <div class="card-top">
+        <h3>Skills API Client <a class="anchor" href="#skills-api-client">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New API client for managing Claude skills through the beta API.</p>
+<p><strong>How to use:</strong></p>
+<pre><code>// Skills are managed through the beta client
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+// Create a skill
+await client.beta.skills.create({
+  name: &quot;my-skill&quot;,
+  // ... skill configuration
+}, { betas: [&quot;skills-2025-10-02&quot;] });
+
+// Create a skill version
+await client.beta.skills.versions.create(skillId, {
+  // ... version configuration
+}, { betas: [&quot;skills-2025-10-02&quot;] });
+
+// List, retrieve, delete skills and versions
+await client.beta.skills.list();
+await client.beta.skills.retrieve(skillId);
+await client.beta.skills.delete(skillId);</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Requires <code>skills-2025-10-02</code> beta header</li><li>Full CRUD operations for skills and skill versions</li><li>Accessed via <code>client.beta.skills</code> property</li><li>API endpoints: <code>/v1/skills</code> and <code>/v1/skills/{id}/versions</code></li><li><strong>Evidence</strong>: Class <code>BFA</code> at line 146202, class <code>Q2A</code> at line 146272, beta client integration at line 146346 in <code>pretty-v2.0.34.js</code></li></ul>
+    </article>
+    <article class="card" id="passive-lsp-diagnostics-collection">
+      <div class="card-top">
+        <h3>Passive LSP Diagnostics Collection <a class="anchor" href="#passive-lsp-diagnostics-collection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatic collection of diagnostics (errors, warnings, hints) from LSP servers and delivery as message attachments.</p>
+<p><strong>Details:</strong></p>
+<ul><li>LSP servers now send <code>textDocument/publishDiagnostics</code> notifications automatically</li><li>Diagnostics are queued and attached to the next API request as <code>lsp_diagnostics</code> attachments</li><li>Includes file URI, line ranges, severity levels (Error/Warning/Info/Hint), and diagnostic messages</li><li>Handles multiple LSP servers with individual error tracking and retry logic</li><li>New <code>saveFile</code> method added to LSP manager for <code>textDocument/didSave</code> notifications</li><li><strong>Evidence</strong>: Handler registration <code>lUQ()</code> at line 276542, diagnostic registration <code>dUQ()</code> at line 276467, severity mapper <code>WR6()</code> at line 276504, transformer <code>FR6()</code> at line 276518 in <code>pretty-v2.0.34.js</code></li></ul>
+    </article>
+    <article class="card" id="sandbox-override-configuration">
+      <div class="card-top">
+        <h3>Sandbox Override Configuration <a class="anchor" href="#sandbox-override-configuration">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New settings UI to control whether commands can fall back to running outside the sandbox when sandbox restrictions prevent execution.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Access via /sandbox command in interactive mode
+# Choose from:
+# 1. &quot;Allow unsandboxed fallback&quot; - Commands retry outside sandbox if blocked
+# 2. &quot;Strict sandbox mode&quot; - All commands must run in sandbox or be excluded</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Separate from the main sandbox enable/disable setting</li><li>Can be locked by policy settings from higher-priority configuration sources</li><li>Status displayed in <code>/sandbox</code> command output (e.g., "sandbox enabled, fallback allowed")</li><li>New API methods: <code>areUnsandboxedCommandsAllowed()</code>, <code>areSandboxSettingsLockedByPolicy()</code>, <code>setSandboxSettings()</code></li><li>Documentation link: docs.claude.com/en/docs/claude-code/sandboxing#configure-sandboxing</li><li><strong>Evidence</strong>: Component <code>bn2()</code> at line 465885, policy check <code>Fs2()</code> at line 472000 in <code>pretty-v2.0.34.js</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-wide-character-rendering">
+      <div class="card-top">
+        <h3>Enhanced Wide Character Rendering <a class="anchor" href="#enhanced-wide-character-rendering">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved handling of emoji and CJK characters in terminal output through explicit width tracking in the screen buffer.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Cell objects now include explicit <code>width</code> property (0 for normal, 1 for wide, 2/3 for placeholder)</li><li>Automatic insertion of placeholder cells when writing wide characters</li><li>Renderer skips placeholder cells to prevent double-rendering artifacts</li><li>Width-aware cursor movement (advances 2 positions for wide characters)</li><li>Fixes rendering bugs where placeholder cells were processed incorrectly</li><li><strong>Evidence</strong>: Enhanced cell type <code>pf9</code> at line 67236, width-aware write function <code>$P0()</code> at line 67208, placeholder skipping logic at lines 67852-67853 in <code>pretty-v2.0.34.js</code></li></ul>
+    </article>
+    <article class="card" id="dual-telemetry-system">
+      <div class="card-top">
+        <h3>Dual Telemetry System <a class="anchor" href="#dual-telemetry-system">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Telemetry events now log to both Statsig and Segment (when enabled by feature gate).</p>
+<p><strong>Details:</strong></p>
+<ul><li>New feature gate <code>tengu_log_segment_events</code> controls Segment logging</li><li>Synchronous logging via <code>ZA()</code> function, async via <code>uw()</code> function</li><li>Separate formatters for each system: <code>sc2()</code> for Statsig (flattened strings), <code>rc2()</code> for Segment (structured objects)</li><li>Parallel execution when both systems enabled for optimal performance</li><li>Shared context builder <code>t01()</code> gathers environment, model, and session data</li><li>Gate value cached to avoid repeated lookups</li><li><strong>Evidence</strong>: Dual logger <code>ZA()</code> at line 477386, async logger <code>uw()</code> at line 477389, context builder <code>t01()</code> at line 451726, gate checker <code>Lr2()</code> at line 477375 in <code>pretty-v2.0.34.js</code></li></ul>
+    </article>
+    <article class="card" id="refactored-rendering-engine">
+      <div class="card-top">
+        <h3>Refactored Rendering Engine <a class="anchor" href="#refactored-rendering-engine">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Terminal rendering code reorganized for better maintainability and to support ink2 mode.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Split <code>render()</code> into <code>render_v1()</code> and <code>render_v2()</code> methods</li><li>Cleaner separation between legacy and new rendering paths</li><li>Improved parameter passing (prevFrame explicitly passed instead of using instance state)</li><li>Better handling of non-TTY output modes</li><li><strong>Evidence</strong>: Class <code>RG1</code> with split rendering methods at line 67663 in <code>pretty-v2.0.34.js</code></li></ul>
+    </article>
+    <article class="card" id="process-metrics-collection">
+      <div class="card-top">
+        <h3>Process Metrics Collection <a class="anchor" href="#process-metrics-collection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced telemetry with optional process-level metrics.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>processMetrics</code> field in telemetry context</li><li>Included in both Statsig and Segment events when available</li><li>Retrieved via <code>Lt5()</code> function</li><li>Adds visibility into resource usage patterns</li><li><strong>Evidence</strong>: Process metrics in <code>t01()</code> at line 451726, formatter handling in <code>sc2()</code> at line 451751 and <code>rc2()</code> at line 451762 in <code>pretty-v2.0.34.js</code></li></ul>
+    </article>
+    <article class="card" id="mcp-bash-permission-handling">
+      <div class="card-top">
+        <h3>MCP Bash Permission Handling <a class="anchor" href="#mcp-bash-permission-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved permission checking for MCP tools invoked via bash commands.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New command parser <code>Re()</code> detects <code>mcp-cli call</code> syntax in bash commands</li><li>Permission check function <code>Bg8()</code> validates MCP tool access before execution</li><li>Prevents bash command splitting from bypassing MCP permissions</li><li>Returns appropriate deny/ask/allow behavior with suggestions</li><li><strong>Evidence</strong>: Parser <code>Re()</code> at line 3935, permission check <code>Bg8()</code> at line 212208 in <code>pretty-v2.0.34.js</code></li></ul>
+    </article>
+    <article class="card" id="environment-context-refactoring">
+      <div class="card-top">
+        <h3>Environment Context Refactoring <a class="anchor" href="#environment-context-refactoring">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Telemetry environment context gathering extracted into reusable function.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>Nt5()</code> async function collects platform, runtime, and environment data</li><li>Includes: platform, arch, Node version, terminal type, package managers, runtimes, deployment environment, CI detection, WSL version</li><li>Shared between Statsig and Segment telemetry</li><li>Eliminates code duplication from previous inline implementation</li><li><strong>Evidence</strong>: Function <code>Nt5()</code> at line 451680 in <code>pretty-v2.0.34.js</code></li></ul>
+    </article>
+    <article class="card" id="session-id-handling">
+      <div class="card-top">
+        <h3>Session ID Handling <a class="anchor" href="#session-id-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Session ID now uses environment variable when available for better tracking across processes.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>SQI()</code> function checks <code>CLAUDE_CODE_SESSION_ID</code> environment variable</li><li>Falls back to generated session ID if not set</li><li>Enables correlation of events across related processes</li><li><strong>Evidence</strong>: Function <code>SQI()</code> at line 483098 in <code>pretty-v2.0.34.js</code></li></ul>
+    </article>
+    <article class="card" id="branch-tracking-analytics">
+      <div class="card-top">
+        <h3>Branch Tracking Analytics <a class="anchor" href="#branch-tracking-analytics">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New telemetry event to track forked conversation branches in chat history.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Event <code>tengu_session_forked_branches_fetched</code> tracks branch statistics</li><li>Metrics: total sessions, sessions with branches, max branches per session, average branches</li><li>Only fires when at least one session has multiple branches (max &gt; 1)</li><li>Helps understand user exploration patterns</li><li><strong>Evidence</strong>: Function <code>f1I()</code> at line 474125 in <code>pretty-v2.0.34.js</code></li></ul>
+    </article>
+    <article class="card" id="telemetry-architecture-refactoring">
+      <div class="card-top">
+        <h3>Telemetry Architecture Refactoring <a class="anchor" href="#telemetry-architecture-refactoring">#</a></h3>
+      </div>
+      <ul><li>Old <code>j1()</code> function replaced with <code>ZA()</code> (sync) and <code>uw()</code> (async)</li><li>Old <code>Rs2()</code> Statsig logger replaced with <code>f00()</code></li><li>Old <code>Os2()</code> Segment logger renamed to <code>sA0()</code> with updated helpers</li><li>Context gathering, formatting, and logging now properly separated</li><li>Feature gate system for conditional Segment logging</li></ul>
+    </article>
+    <article class="card" id="lsp-manager-enhancement">
+      <div class="card-top">
+        <h3>LSP Manager Enhancement <a class="anchor" href="#lsp-manager-enhancement">#</a></h3>
+      </div>
+      <ul><li>Added <code>saveFile</code> method to LSP manager for <code>textDocument/didSave</code> notifications</li><li>Improved server initialization with automatic startup on first LSP manager initialization</li><li>Better error handling and logging throughout diagnostic flow</li></ul>
+    </article>
+    <article class="card" id="version-bump">
+      <div class="card-top">
+        <h3>Version Bump <a class="anchor" href="#version-bump">#</a></h3>
+      </div>
+      <ul><li>Updated from v2.0.33 to v2.0.34</li><li><strong>Evidence</strong>: Version string at line 451680 in <code>pretty-v2.0.34.js</code></li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

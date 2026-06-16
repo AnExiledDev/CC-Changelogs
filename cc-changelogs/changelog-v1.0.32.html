@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.32 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.32."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.32</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.32</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.31 → v1.0.32</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Plan Mode</h4>
+<ul><li><strong>New interactive planning feature</strong>: Claude can now present implementation plans before writing code</li><li>When tackling complex coding tasks, Claude will:</li><li>Analyze requirements and create a structured plan</li><li>Present the plan in markdown format for your review</li><li>Wait for your approval before proceeding with implementation</li><li><strong>Usage</strong>: Automatically activated for implementation tasks requiring code changes</li><li><strong>Example</strong>: When you ask "Help me implement dark mode for my app", Claude will first present a plan outlining the steps before making any code changes</li></ul>
+<h4>Exit Plan Mode Tool</h4>
+<ul><li>New <code>exit_plan_mode</code> tool allows Claude to transition from planning to implementation</li><li>Supports markdown-formatted plans for better readability</li><li>Distinguishes between research tasks (no plan needed) and implementation tasks (plan recommended)</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Performance Enhancements</h4>
+<ul><li><strong>HTTP Agent Caching</strong>: Improved performance for operations involving multiple HTTP requests through agent caching</li><li>Reduced overhead when making repeated network calls</li></ul>
+<h4>Configuration Directory Handling</h4>
+<ul><li><strong>Simplified config directory resolution</strong>: The configuration directory logic has been streamlined</li><li>Now uses the nullish coalescing operator (<code>??</code>) for cleaner fallback handling</li><li>Priority remains: <code>CLAUDE_CONFIG_DIR</code> environment variable → default <code>~/.claude</code> directory</li><li><strong>Note</strong>: Support for <code>XDG_CONFIG_HOME</code> has been removed in favor of the simpler approach</li></ul>
+<h4>Error Handling</h4>
+<ul><li><strong>Enhanced BigInt handling</strong>: Better error messages when encountering BigInt values that cannot be converted to numbers</li><li><strong>Improved type conversion</strong>: More robust handling of numeric type conversions with clearer error reporting</li><li><strong>Better JSON parsing errors</strong>: More informative error messages for JSON parsing failures</li></ul>
+    </article>
+    <article class="card" id="technical-improvements">
+      <div class="card-top">
+        <h3>Technical Improvements <a class="anchor" href="#technical-improvements">#</a></h3>
+      </div>
+      <ul><li>Removed several unused modules related to:</li><li>WebIDL type conversions (<code>KD2</code>, <code>wD2</code>)</li><li>Unicode/Punycode processing (<code>ED2</code>, <code>LD2</code>, <code>iw</code>)</li><li>Code cleanup and optimization resulting in a slightly smaller bundle size</li><li>Structural similarity with v1.0.31: 99.6%</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Various stability improvements in error handling paths</li><li>Better handling of edge cases in type conversions</li></ul>
+    </article>
+    <article class="card" id="summary">
+      <div class="card-top">
+        <h3>Summary <a class="anchor" href="#summary">#</a></h3>
+      </div>
+      <p>Version 1.0.32 introduces Plan Mode as the major user-facing feature, allowing for better collaboration between users and Claude on complex coding tasks. The update also includes performance improvements, simplified configuration handling, and enhanced error reporting, making Claude Code more efficient and user-friendly.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

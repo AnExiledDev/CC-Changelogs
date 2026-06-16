@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.109 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.109."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.109</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.109</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.108 → v0.2.109</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.109 Changelog</p>
+    </article>
+    <article class="card" id="custom-model-selection">
+      <div class="card-top">
+        <h3>Custom Model Selection <a class="anchor" href="#custom-model-selection">#</a></h3>
+      </div>
+      <ul><li>Added support for specifying custom AI models via the <code>modelInput</code> parameter</li><li>Users can now override the default model selection when running Claude Code</li><li>The model specification is passed through the new <code>modelInput</code> field in the main execution function</li></ul>
+    </article>
+    <article class="card" id="configuration-management-enhancement">
+      <div class="card-top">
+        <h3>Configuration Management Enhancement <a class="anchor" href="#configuration-management-enhancement">#</a></h3>
+      </div>
+      <ul><li>Introduced <code>kq</code> function for dynamic configuration retrieval</li><li>Respects environment variables: <code>CLAUDE_CODE_USE_BEDROCK</code>, <code>CLAUDE_CODE_USE_VERTEX</code>, and <code>DISABLE_TELEMETRY</code></li><li>Provides fallback to default configuration when telemetry is disabled or custom deployments are used</li></ul>
+    </article>
+    <article class="card" id="bash-command-timeout-configuration">
+      <div class="card-top">
+        <h3>Bash Command Timeout Configuration <a class="anchor" href="#bash-command-timeout-configuration">#</a></h3>
+      </div>
+      <ul><li>New <code>Sf</code> function allows customizing bash command timeouts via <code>BASH_DEFAULT_TIMEOUT_MS</code> environment variable</li><li>Users can now set their preferred timeout for bash operations:</li></ul>
+<pre><code>  export BASH_DEFAULT_TIMEOUT_MS=300000  # 5 minutes
+  claude-code &quot;run my long-running script&quot;</code></pre>
+    </article>
+    <article class="card" id="exit-feedback-system">
+      <div class="card-top">
+        <h3>Exit Feedback System <a class="anchor" href="#exit-feedback-system">#</a></h3>
+      </div>
+      <ul><li>Implemented user feedback collection on exit with <code>Z10</code> and <code>G10</code> functions</li><li>Shows feedback prompt for sessions longer than 10 characters</li><li>Controlled by the "tengu-exit-feedback" feature flag</li></ul>
+    </article>
+    <article class="card" id="version-management">
+      <div class="card-top">
+        <h3>Version Management <a class="anchor" href="#version-management">#</a></h3>
+      </div>
+      <ul><li>Version now properly sourced from package.json (<code>y_2</code> variable)</li><li>Centralized version retrieval through <code>_D5</code> function</li><li>Version updated to 0.2.109</li></ul>
+    </article>
+    <article class="card" id="system-prompt-enhancements">
+      <div class="card-top">
+        <h3>System Prompt Enhancements <a class="anchor" href="#system-prompt-enhancements">#</a></h3>
+      </div>
+      <ul><li>System prompts now receive the model information as a parameter</li><li>More accurate model context in the environment information</li><li>Improved model awareness for better response generation</li></ul>
+    </article>
+    <article class="card" id="ide-integration">
+      <div class="card-top">
+        <h3>IDE Integration <a class="anchor" href="#ide-integration">#</a></h3>
+      </div>
+      <ul><li>Enhanced IDE integration function (<code>jD5</code>) now returns a promise</li><li>Better error handling and cleanup for VS Code extension installation</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>Removed duplicate imports and unused variables</li><li>Consolidated stream imports into a single location</li><li>Better variable naming and function organization</li></ul>
+    </article>
+    <article class="card" id="performance">
+      <div class="card-top">
+        <h3>Performance <a class="anchor" href="#performance">#</a></h3>
+      </div>
+      <ul><li>Optimized file content truncation with dynamic limit calculation</li><li>Improved memory usage in large file handling</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed duplicate import statements for stream and process modules</li><li>Resolved undefined variable references in configuration handling</li><li>Corrected function parameter passing in system prompt generation</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

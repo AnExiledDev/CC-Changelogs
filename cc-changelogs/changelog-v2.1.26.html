@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.26 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.26."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.26</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.26</span></h1>
+<p class="sub">This release adds a <code>--all</code> flag to the plugin disable command for bulk disabling, introduces a new <code>terminalTitleFromRename</code> setting, and adds hook interrupt support that lets hooks abort tool execution mid-flight. Internally, the bundled Statsig SDK has been almost entirely removed, and a new HybridTransport mechanism handles MCP bridge communication via HTTP POST with retry logic.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.25 → v2.1.26</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="plugin-disable-all-flag">
+      <div class="card-top">
+        <h3>Plugin Disable --all Flag <a class="anchor" href="#plugin-disable-all-flag">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>claude plugin disable</code> command now accepts an optional <code>--all</code> flag to disable all enabled plugins at once, instead of requiring a specific plugin name.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude plugin disable --all
+claude plugin disable [plugin]</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The command signature changed from <code>disable &lt;plugin&gt;</code> (required) to <code>disable [plugin]</code> (optional)</li><li>Use <code>--all</code> / <code>-a</code> to disable all enabled plugins in one shot</li><li>Cannot combine <code>--all</code> with a specific plugin name (error: "Cannot use --all with a specific plugin")</li><li>Cannot combine <code>--scope</code> with <code>--all</code></li><li>If no plugins are enabled, displays "No enabled plugins to disable"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin disable all handler (search for <code>"Disable all enabled plugins"</code> or <code>"Cannot use --all with a specific plugin"</code>)</p>
+    </article>
+    <article class="card" id="terminal-tab-title-setting">
+      <div class="card-top">
+        <h3>Terminal Tab Title Setting <a class="anchor" href="#terminal-tab-title-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>terminalTitleFromRename</code> boolean setting that controls whether the terminal tab title is pinned to the value from <code>/rename</code> or auto-updated based on conversation topic.</p>
+<div class="blabel">Usage</div>
+<p>Set in <code>settings.json</code> or <code>settings.local.json</code>:</p>
+<pre><code>{
+  &quot;terminalTitleFromRename&quot;: true
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When <code>true</code>, the terminal tab title is set from <code>/rename</code> and not auto-updated based on the conversation topic</li><li>When <code>false</code> or absent, the previous auto-update behavior continues</li><li>This is useful for users who use <code>/rename</code> to set a meaningful session name and don't want it overwritten</li></ul>
+<div class="blabel">Evidence</div>
+<p>Zod schema setting description (search for <code>"terminal tab title is set from /rename"</code>)</p>
+    </article>
+    <article class="card" id="hook-interrupt-support">
+      <div class="card-top">
+        <h3>Hook Interrupt Support <a class="anchor" href="#hook-interrupt-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Hooks can now interrupt and abort tool execution. When a hook returns a response with the <code>interrupt</code> flag set, the tool's abort controller is triggered, stopping the in-progress operation.</p>
+<div class="blabel">Details</div>
+<ul><li>Applies to both pre-tool and post-tool hooks</li><li>When a hook signals interrupt, the tool execution is aborted via <code>abortController.abort()</code></li><li>The interrupt is logged with tool name and hook message for debugging</li><li>This also applies to SDK permission prompts: a deny with interrupt will abort the controller</li></ul>
+<div class="blabel">Evidence</div>
+<p>Hook abort on interrupt (search for <code>"Hook interrupt: tool="</code>) and SDK deny+interrupt (search for <code>"SDK permission prompt deny+interrupt: tool="</code>)</p>
+    </article>
+    <article class="card" id="plan-execution-ui-improvements">
+      <div class="card-top">
+        <h3>Plan Execution UI Improvements <a class="anchor" href="#plan-execution-ui-improvements">#</a></h3>
+      </div>
+      <p>The plan execution prompt has been improved with clearer messaging and numbered options. The confirmation prompt now reads "Claude has written up a plan and is ready to execute. Would you like to proceed?" instead of the previous generic "Would you like to proceed?". Plan selection options (like "Chat about this" and "Skip interview and plan immediately") are now displayed with numbered prefixes for easier keyboard selection.</p>
+<div class="blabel">Evidence</div>
+<p>Plan confirmation text (search for <code>"written up a plan and is ready to execute"</code>)</p>
+    </article>
+    <article class="card" id="mcp-permission-mode-follow-a-plan">
+      <div class="card-top">
+        <h3>MCP Permission Mode: follow_a_plan <a class="anchor" href="#mcp-permission-mode-follow-a-plan">#</a></h3>
+      </div>
+      <p>A new <code>follow_a_plan</code> permission mode has been added for MCP server interactions. The available permission modes are now <code>ask</code>, <code>skip_all_permission_checks</code>, and <code>follow_a_plan</code>. When the permission mode is set, a confirmation message "Permission mode set to: [mode]" is returned. This mode appears to be used during plan execution to provide an intermediate permission level between full ask and full bypass.</p>
+<div class="blabel">Evidence</div>
+<p>Permission mode handler (search for <code>"follow_a_plan"</code> or <code>"Permission mode set to:"</code>)</p>
+    </article>
+    <article class="card" id="mcp-server-disconnect-flow">
+      <div class="card-top">
+        <h3>MCP Server Disconnect Flow <a class="anchor" href="#mcp-server-disconnect-flow">#</a></h3>
+      </div>
+      <p>New UI flow for disconnecting MCP servers via the browser. Users are shown instructions like "Find the MCP server in the browser and click 'Disconnect'" with options to open claude.ai directly. The disconnect flow includes "Press Enter to open the browser" and "Press Enter when done" confirmation steps.</p>
+<div class="blabel">Evidence</div>
+<p>MCP disconnect instructions (search for <code>'Find the MCP server in the browser and click "Disconnect"'</code>)</p>
+    </article>
+    <article class="card" id="subagentstop-hook-documentation">
+      <div class="card-top">
+        <h3>SubagentStop Hook Documentation <a class="anchor" href="#subagentstop-hook-documentation">#</a></h3>
+      </div>
+      <p>The SubagentStop hook's description now documents the JSON input format: "Input to command is JSON with agent_id, agent_type, and agent_transcript_path." This was previously undocumented, making it clearer for hook authors what data is available when a subagent completes.</p>
+<div class="blabel">Evidence</div>
+<p>SubagentStop description update (search for <code>"agent_id, agent_type, and agent_transcript_path"</code>)</p>
+    </article>
+    <article class="card" id="skills-deduplication-changed-from-inode-to-file-based">
+      <div class="card-top">
+        <h3>Skills Deduplication Changed from Inode to File-Based <a class="anchor" href="#skills-deduplication-changed-from-inode-to-file-based">#</a></h3>
+      </div>
+      <p>The skill deduplication mechanism has changed from inode-based comparison (which relied on filesystem-level identity via inodes, symlinks, or hard links) to file-based comparison. Debug messages now say "same file" instead of "same inode". This likely improves compatibility across different filesystem types and platforms.</p>
+<div class="blabel">Evidence</div>
+<p>Skill dedup logging (search for <code>"skills (same file)"</code>)</p>
+    </article>
+    <article class="card" id="inboxpoller-validation-improvements">
+      <div class="card-top">
+        <h3>InboxPoller Validation Improvements <a class="anchor" href="#inboxpoller-validation-improvements">#</a></h3>
+      </div>
+      <p>The InboxPoller now validates sandbox permission requests and team permission updates more strictly, logging warnings for malformed data rather than potentially crashing:</p>
+<ul><li>Validates that <code>hostPattern.host</code> exists on sandbox permission requests</li><li>Validates that <code>permissionUpdate.rules</code> and <code>permissionUpdate.behavior</code> exist on team permission updates</li></ul>
+<div class="blabel">Evidence</div>
+<p>Validation messages (search for <code>"[InboxPoller] Invalid sandbox permission request"</code>)</p>
+    </article>
+    <article class="card" id="clear-authentication-ui">
+      <div class="card-top">
+        <h3>Clear Authentication UI <a class="anchor" href="#clear-authentication-ui">#</a></h3>
+      </div>
+      <p>A new "Clear authentication for [name]" UI element has been added, allowing users to clear authentication credentials for specific services or plugins.</p>
+<div class="blabel">Evidence</div>
+<p>Auth clearing UI (search for <code>"Clear authentication for "</code>)</p>
+    </article>
+    <article class="card" id="statsig-sdk-removal">
+      <div class="card-top">
+        <h3>Statsig SDK Removal <a class="anchor" href="#statsig-sdk-removal">#</a></h3>
+      </div>
+      <p>The bundled Statsig client SDK has been almost entirely removed (from approximately 87 string references down to 7). This includes removal of:</p>
+<ul><li>The Statsig SDK key and all SDK-specific error messages</li><li>DNS-based fallback mechanisms (<code>cloudflare-dns.com</code>, <code>application/dns-message</code>)</li><li>Local storage providers, event loggers, and evaluation adapters</li><li>The <code>node://localhost</code> browser shim used by the Statsig SDK</li></ul>
+<p>Feature flag evaluation likely moved to a server-side or pre-evaluated model. This should reduce bundle size and eliminate Statsig-related network requests at startup.</p>
+    </article>
+    <article class="card" id="hybridtransport-for-mcp-bridge">
+      <div class="card-top">
+        <h3>HybridTransport for MCP Bridge <a class="anchor" href="#hybridtransport-for-mcp-bridge">#</a></h3>
+      </div>
+      <p>A new <code>HybridTransport</code> class has been added that converts WebSocket URLs to HTTP POST endpoints for sending events. It:</p>
+<ul><li>Transforms <code>/ws/</code> paths to <code>/session/</code> and appends <code>/events</code></li><li>Includes retry logic with multiple attempts</li><li>Handles client errors (4xx except 429) by not retrying</li><li>Uses session tokens for authentication</li><li>Falls back gracefully if no session token is available</li></ul>
+<p>This supplements the existing WebSocket transport with an HTTP POST channel, likely improving reliability of the Claude in Chrome MCP bridge connection. The bridge URL is logged at startup, showing "none (using native socket)" when no bridge is configured.</p>
+<div class="blabel">Evidence</div>
+<p>HybridTransport implementation (search for <code>"HybridTransport: POST URL ="</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

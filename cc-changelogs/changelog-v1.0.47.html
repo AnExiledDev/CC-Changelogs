@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.47 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.47."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.47</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.47</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.46 → v1.0.47</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changed">
+      <div class="card-top">
+        <h3>Changed <a class="anchor" href="#changed">#</a></h3>
+      </div>
+      <ul><li><strong>Optimized Node.js module imports</strong> - The codebase now uses more specific imports instead of importing entire modules:</li><li><code>node:process</code> - Now imports only the <code>cwd</code> function instead of the entire module</li><li><code>node:stream</code> and <code>stream</code> - Now imports only the <code>PassThrough</code> class instead of the entire module</li></ul>
+    </article>
+    <article class="card" id="technical-details">
+      <div class="card-top">
+        <h3>Technical Details <a class="anchor" href="#technical-details">#</a></h3>
+      </div>
+      <ul><li>Replaced default imports with named imports for better tree-shaking and reduced memory footprint:</li><li><code>import mu2 from "node:process"</code> → <code>import { cwd as RLA } from "node:process"</code></li><li><code>import wMA from "node:stream"</code> → <code>import { PassThrough as XvQ } from "node:stream"</code></li><li><code>import NRB from "stream"</code> → <code>import { PassThrough as Yy6 } from "stream"</code></li></ul>
+    </article>
+    <article class="card" id="performance-impact">
+      <div class="card-top">
+        <h3>Performance Impact <a class="anchor" href="#performance-impact">#</a></h3>
+      </div>
+      <p>This change reduces the application's memory usage by only importing the specific functions and classes needed rather than loading entire Node.js modules. Users may experience slightly faster startup times and reduced memory consumption, though the impact will likely be minimal in typical usage scenarios.</p>
+    </article>
+    <article class="card" id="additional-notes">
+      <div class="card-top">
+        <h3>Additional Notes <a class="anchor" href="#additional-notes">#</a></h3>
+      </div>
+      <ul><li>The update includes 154 internal renames, likely due to the minification process adjusting variable names</li><li>No functionality changes - this is purely an optimization update</li><li>The structural similarity remains at 100%, confirming no architectural changes</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.3 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.3."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.3</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.3</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.2 → v1.0.3</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">2</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Changelog v1.0.3</p>
+    </article>
+    <article class="card" id="enhanced-image-type-detection">
+      <div class="card-top">
+        <h3>Enhanced Image Type Detection <a class="anchor" href="#enhanced-image-type-detection">#</a></h3>
+      </div>
+      <ul><li>Added automatic image format detection from base64 data (<code>JQ0</code> function)</li><li>Supports detection of PNG, JPEG, GIF, and WebP formats based on file signatures</li><li>Provides fallback to PNG format when detection fails</li></ul>
+    </article>
+    <article class="card" id="ghosttty-terminal-integration">
+      <div class="card-top">
+        <h3>GhostTTY Terminal Integration <a class="anchor" href="#ghosttty-terminal-integration">#</a></h3>
+      </div>
+      <ul><li>New support for GhostTTY terminal configuration (<code>eL4</code> function)</li><li>Automatically installs Shift+Enter key binding for multi-line input</li><li>Cross-platform support with proper config paths for macOS and Linux</li><li>Creates automatic backups of existing configurations before modification</li><li>Warns users about existing Shift+Enter bindings to prevent conflicts</li></ul>
+    </article>
+    <article class="card" id="improved-unicode-handling">
+      <div class="card-top">
+        <h3>Improved Unicode Handling <a class="anchor" href="#improved-unicode-handling">#</a></h3>
+      </div>
+      <ul><li>Added robust Unicode sanitization (<code>Ff1</code> and <code>IL</code> functions)</li><li>Normalizes text using NFKC normalization</li><li>Removes invisible control characters, direction markers, and private use characters</li><li>Prevents potential security issues from malformed Unicode input</li><li>Applies sanitization recursively to all string inputs in nested data structures</li></ul>
+    </article>
+    <article class="card" id="enhanced-shell-command-safety">
+      <div class="card-top">
+        <h3>Enhanced Shell Command Safety <a class="anchor" href="#enhanced-shell-command-safety">#</a></h3>
+      </div>
+      <ul><li>Improved handling of file descriptor redirections (<code>&gt;&amp;0</code>, <code>&gt;&amp;1</code>, <code>&gt;&amp;2</code>)</li><li>Better parsing and validation of shell commands with output redirection</li><li>Prevents unsafe command patterns while allowing legitimate redirections</li></ul>
+    </article>
+    <article class="card" id="process-information">
+      <div class="card-top">
+        <h3>Process Information <a class="anchor" href="#process-information">#</a></h3>
+      </div>
+      <ul><li>Enhanced user agent string now includes the entrypoint information via <code>CLAUDE_CODE_ENTRYPOINT</code> environment variable</li><li>Provides better debugging context for different execution environments</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>Removed unused imports and variables for cleaner codebase</li><li>Consolidated stream handling with PassThrough import</li><li>Removed deprecated batch operation functionality</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential issues with shell command parsing that could lead to unexpected behavior</li><li>Improved error handling in configuration file operations</li><li>Better validation of command-line arguments containing special characters</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Breaking Changes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="breaking-changes">
+      <ul><li>Removed the experimental Batch tool functionality (was using <code>pF1</code> variable)</li><li>This feature was likely not widely used and has been replaced with more reliable alternatives</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes for Users</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes-for-users">
+      <ul><li>If you use GhostTTY terminal, you'll now have better multi-line input support with Shift+Enter</li><li>Unicode handling is more robust, preventing potential display issues with special characters</li><li>Shell commands with output redirection are now safer and more predictable</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

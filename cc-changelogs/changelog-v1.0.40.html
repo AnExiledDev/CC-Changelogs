@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.40 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.40."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.40</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.40</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.39 → v1.0.40</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">2</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">4</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.40 Changelog</p>
+    </article>
+    <article class="card" id="enhanced-web-search-date-awareness">
+      <div class="card-top">
+        <h3>Enhanced Web Search Date Awareness <a class="anchor" href="#enhanced-web-search-date-awareness">#</a></h3>
+      </div>
+      <p>The WebSearch tool now includes improved guidance for handling date-sensitive queries. When searching for the latest documentation or time-sensitive content, the tool will now properly account for the current date provided in the environment context.</p>
+<p><strong>Example</strong>: If the environment indicates "Today's date: 2025-07-01" and you request "the latest docs", the search will use 2025 in the query instead of defaulting to 2024.</p>
+    </article>
+    <article class="card" id="improved-ssl-tls-certificate-handling">
+      <div class="card-top">
+        <h3>Improved SSL/TLS Certificate Handling <a class="anchor" href="#improved-ssl-tls-certificate-handling">#</a></h3>
+      </div>
+      <p>The CLI now better supports Node.js's automatic certificate authority (CA) handling:</p>
+<ul><li>When <code>NODE_EXTRA_CA_CERTS</code> is set, Claude Code will display an informative message that Node.js will automatically append these certificates to the built-in CAs</li><li>The certificate configuration display has been simplified and clarified</li></ul>
+<div class="blabel">Usage</div>
+<pre><code># Set additional CA certificates
+export NODE_EXTRA_CA_CERTS=/path/to/ca-bundle.crt
+claude-code</code></pre>
+<p>The API configuration info (shown via <code>claude-code --version</code> or during startup) will now display:</p>
+<ul><li><code>Additional CA cert(s): /path/to/ca-bundle.crt</code> when NODE_EXTRA_CA_CERTS is set</li><li>Clearer labeling for mTLS client certificates and keys</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Improvements</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-improvements">
+      <ul><li>Streamlined import statements for Node.js stream modules</li><li>Added support for data structures related to GitHub issue/PR tracking (internal improvement for future features)</li><li>Improved process working directory handling with explicit imports</li><li>Code restructuring for better modularity</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Removed redundant certificate configuration checks</li><li>Fixed duplicate import statements for stream modules</li><li>Cleaned up unnecessary conditional logic in certificate validation</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

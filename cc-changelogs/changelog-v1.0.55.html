@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.55 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.55."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.55</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.55</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.54 → v1.0.55</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="ide-auto-detection-and-multi-ide-support">
+      <div class="card-top">
+        <h3>IDE Auto-Detection and Multi-IDE Support <a class="anchor" href="#ide-auto-detection-and-multi-ide-support">#</a></h3>
+      </div>
+      <ul><li><strong>Enhanced IDE detection</strong>: Claude Code now automatically detects running IDEs on your system and can suggest installing the appropriate extension</li><li><strong>Multi-IDE selection</strong>: When multiple IDEs are detected, users can select which one to install the extension for via a new selection interface</li><li><strong>Supported IDEs expanded</strong>: Full support for VS Code, Cursor, Windsurf, and all JetBrains IDEs (IntelliJ IDEA, PyCharm, WebStorm, PhpStorm, RubyMine, CLion, GoLand, Rider, DataGrip, AppCode, DataSpell, Aqua, Gateway, Fleet, Android Studio)</li></ul>
+    </article>
+    <article class="card" id="auto-connect-ide-dialog">
+      <div class="card-top">
+        <h3>Auto-Connect IDE Dialog <a class="anchor" href="#auto-connect-ide-dialog">#</a></h3>
+      </div>
+      <ul><li>New first-run dialog asking users if they want to enable auto-connect to IDE</li><li>Users can configure this later with <code>/config</code> or the <code>--ide</code> flag</li><li>Setting persisted as <code>autoConnectIde</code> in user preferences</li></ul>
+    </article>
+    <article class="card" id="improved-ide-integration-ui">
+      <div class="card-top">
+        <h3>Improved IDE Integration UI <a class="anchor" href="#improved-ide-integration-ui">#</a></h3>
+      </div>
+      <ul><li><strong>Redesigned welcome screen</strong> for IDE extensions with:</li><li>Color-coded IDE branding (new <code>ide</code> color in theme)</li><li>Clear indication of which IDE extension was installed</li><li>Better visual hierarchy with context indicators (⧉ for open files and selected lines)</li><li>Diff preview indicators showing how changes will appear (+11 -22)</li><li>Clearer hotkey instructions (Cmd+Esc for Quick Launch, Cmd+Option+K for file references)</li></ul>
+    </article>
+    <article class="card" id="new-configuration-options">
+      <div class="card-top">
+        <h3>New Configuration Options <a class="anchor" href="#new-configuration-options">#</a></h3>
+      </div>
+      <ul><li><code>autoInstallIdeExtension</code>: Control whether Claude Code automatically installs IDE extensions (defaults to true)</li><li><code>hasIdeAutoConnectDialogBeenShown</code>: Tracks whether the auto-connect dialog has been shown</li></ul>
+    </article>
+    <article class="card" id="better-ide-status-reporting">
+      <div class="card-top">
+        <h3>Better IDE Status Reporting <a class="anchor" href="#better-ide-status-reporting">#</a></h3>
+      </div>
+      <ul><li>Enhanced <code>/ide</code> command output with more detailed connection status</li><li>Clearer error messages when IDE extensions fail to install</li><li>Version mismatch detection between installed extension and server</li></ul>
+    </article>
+    <article class="card" id="platform-specific-enhancements">
+      <div class="card-top">
+        <h3>Platform-Specific Enhancements <a class="anchor" href="#platform-specific-enhancements">#</a></h3>
+      </div>
+      <ul><li>Improved Windows path handling for better cross-platform compatibility</li><li>Better process detection across macOS, Windows, and Linux</li><li>Platform-specific process keyword matching for accurate IDE detection</li></ul>
+    </article>
+    <article class="card" id="ui-ux-improvements">
+      <div class="card-top">
+        <h3>UI/UX Improvements <a class="anchor" href="#ui-ux-improvements">#</a></h3>
+      </div>
+      <ul><li>New <code>ide</code> theme color (rgb(71,130,200)) for IDE-related UI elements</li><li>Spinner tips system foundation added (for future loading screen tips)</li><li>Better escape key handling in dialogs</li><li>More consistent dialog styling with rounded borders</li></ul>
+    </article>
+    <article class="card" id="refactored-ide-detection-system">
+      <div class="card-top">
+        <h3>Refactored IDE Detection System <a class="anchor" href="#refactored-ide-detection-system">#</a></h3>
+      </div>
+      <ul><li>Centralized IDE configuration in new <code>oc</code> object containing all IDE metadata</li><li>New utility functions:</li><li><code>BBA()</code>: Check if an IDE is VS Code-based</li><li><code>EV()</code>: Check if an IDE is JetBrains-based</li><li><code>tc()</code>: Detect running IDEs on the system</li><li><code>HV()</code>: Get display name for an IDE</li><li><code>IBA()</code>: Get current terminal IDE if applicable</li></ul>
+    </article>
+    <article class="card" id="improved-shell-command-execution">
+      <div class="card-top">
+        <h3>Improved Shell Command Execution <a class="anchor" href="#improved-shell-command-execution">#</a></h3>
+      </div>
+      <ul><li>Simplified shell command construction removing conditional snapshot loading</li><li>Better stdin handling for shell commands using PassThrough streams</li><li>More robust error handling in shell execution</li></ul>
+    </article>
+    <article class="card" id="permission-system-enhancement">
+      <div class="card-top">
+        <h3>Permission System Enhancement <a class="anchor" href="#permission-system-enhancement">#</a></h3>
+      </div>
+      <ul><li>New <code>QJ4()</code> function for enhanced permission prompt handling</li><li>Better integration with tool permission system</li><li>Improved error messages for permission denials</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed duplicate comment issue in generated code</li><li>Improved handling of IDE extension installation failures</li><li>Better error recovery when IDE connection cannot be established</li><li>Fixed path normalization issues on Windows</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Breaking Changes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="breaking-changes">
+      <p>None - this release maintains backward compatibility with existing configurations and workflows.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

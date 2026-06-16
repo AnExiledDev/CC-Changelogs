@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.106 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.106."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.106</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.106</span></h1>
+<p class="sub">Version 1.0.106 introduces conversation compacting for better performance and readability, reduces terminal flickering with synchronized updates, and enhances Windows path handling with improved Cygwin integration.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.105 → v1.0.106</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="conversation-compacting">
+      <div class="card-top">
+        <h3>Conversation Compacting <a class="anchor" href="#conversation-compacting">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatically compact conversation history to improve performance and maintain context <strong>How to use:</strong></p>
+<pre><code># Compacting happens automatically during long conversations
+# Visual boundary shows: &quot;Conversation compacted · ctrl+r for history&quot;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Creates compact boundary markers in conversation flow</li><li>Filters messages from last compact point for better performance</li><li>Shows visual dividers with "Conversation compacted" messaging</li><li>Accessible via ctrl+r to view full history</li><li><strong>Evidence</strong>: <code>Z9B() at line 391737</code>, <code>EG1() at line 391749</code>, <code>Lf6() at line 391752</code>, <code>c_1() at line 391759</code></li></ul>
+    </article>
+    <article class="card" id="terminal-synchronized-updates">
+      <div class="card-top">
+        <h3>Terminal Synchronized Updates <a class="anchor" href="#terminal-synchronized-updates">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Reduces terminal flickering during output rendering using ANSI escape sequences <strong>How to use:</strong></p>
+<pre><code># Automatic - no user action required
+# Terminal output now renders more smoothly</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Implements synchronized update protocol (<code>\x1B[?2026h</code> and <code>\x1B[?2026l</code>)</li><li>Wraps terminal clearing and writing operations</li><li>Eliminates visual artifacts during screen updates</li><li><strong>Evidence</strong>: <code>beginSynchronizedUpdate at line 557</code>, <code>endSynchronizedUpdate at line 558</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-windows-path-support">
+      <div class="card-top">
+        <h3>Enhanced Windows Path Support <a class="anchor" href="#enhanced-windows-path-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved Windows drive letter path handling and bidirectional Cygwin integration <strong>How to use:</strong></p>
+<pre><code># Windows paths like /c/Users/name now work correctly
+# Automatic conversion between Windows and Unix paths</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Added Windows drive letter pattern matching (<code>/^\/[a-z]\//i</code>)</li><li>New <code>SXA()</code> function for <code>cygpath -w</code> conversion</li><li>Bidirectional path conversion support</li><li>Better compatibility in Cygwin environments</li><li><strong>Evidence</strong>: <code>L9B() at line 392483</code>, <code>SXA() at line 344435</code></li></ul>
+    </article>
+    <article class="card" id="message-processing-enhancement">
+      <div class="card-top">
+        <h3>Message Processing Enhancement <a class="anchor" href="#message-processing-enhancement">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New assistant message processing function for improved filtering <strong>How to use:</strong></p>
+<pre><code># Automatic - improves message handling internally
+# Better conversation flow and response processing</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>CQB()</code> function handles assistant message processing</li><li>Enhanced message filtering capabilities</li><li>Improved conversation state management</li><li><strong>Evidence</strong>: <code>CQB() at line 388855</code></li></ul>
+    </article>
+    <article class="card" id="security-improvements">
+      <div class="card-top">
+        <h3>Security Improvements <a class="anchor" href="#security-improvements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Tightened command execution security by removing pattern-matching tools from safe command list <strong>Details:</strong> Removed <code>"grep"</code> and <code>"rg"</code> from the safe commands array to prevent potential security issues with pattern matching operations</p>
+    </article>
+    <article class="card" id="terminal-rendering-optimization">
+      <div class="card-top">
+        <h3>Terminal Rendering Optimization <a class="anchor" href="#terminal-rendering-optimization">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced compact boundary UI component for better visual representation <strong>Details:</strong> Converted <code>ibB()</code> function from text processing to React component for displaying conversation compact boundaries with proper styling and user feedback</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

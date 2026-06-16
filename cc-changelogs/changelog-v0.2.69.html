@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.69 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.69."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.69</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.69</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.68 → v0.2.69</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.69 Changelog</p>
+    </article>
+    <article class="card" id="enhanced-permission-system">
+      <div class="card-top">
+        <h3>Enhanced Permission System <a class="anchor" href="#enhanced-permission-system">#</a></h3>
+      </div>
+      <ul><li><strong>Added deny permissions support</strong>: The permission system now supports both <code>allow</code> and <code>deny</code> rules for tools, giving users more granular control over what tools can be used in their projects.</li></ul>
+<p><strong>Usage example:</strong></p>
+<pre><code>  {
+    &quot;permissions&quot;: {
+      &quot;allow&quot;: [&quot;Read&quot;, &quot;Write&quot;],
+      &quot;deny&quot;: [&quot;Bash&quot;, &quot;WebFetch&quot;]
+    }
+  }</code></pre>
+<p>Previously, only <code>allow</code> rules were supported. Now you can explicitly deny specific tools even if they might be allowed by other rules.</p>
+    </article>
+    <article class="card" id="improved-rule-management">
+      <div class="card-top">
+        <h3>Improved Rule Management <a class="anchor" href="#improved-rule-management">#</a></h3>
+      </div>
+      <ul><li><strong>New deny rules functionality</strong>: Added support for "always deny" rules alongside the existing "always allow" rules. This provides a more comprehensive permission model where certain tools can be permanently blocked.</li></ul>
+<ul><li><strong>Rule source tracking</strong>: Permission rules now track their source (e.g., "projectSettings", "localSettings") and behavior type ("allow" or "deny"), making it easier to understand why a tool is allowed or denied.</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li><strong>Stream handling update</strong>: Switched from default stream import to using named <code>PassThrough</code> import, improving code clarity and tree-shaking capabilities.</li></ul>
+<ul><li><strong>Process module update</strong>: Changed from default process import to named <code>cwd</code> import for better modularity.</li></ul>
+    </article>
+    <article class="card" id="new-utility-functions">
+      <div class="card-top">
+        <h3>New Utility Functions <a class="anchor" href="#new-utility-functions">#</a></h3>
+      </div>
+      <ul><li><strong>Added <code>$j2</code> function</strong>: A new string processing utility that splits text by newlines, processes each line, and rejoins them. This appears to be used for formatting multi-line content.</li></ul>
+<ul><li><strong>Added <code>Hb5</code> function</strong>: Retrieves all deny rules from the permission system, formatting them with their source and rule details.</li></ul>
+<ul><li><strong>Added <code>Ab5</code> function</strong>: Checks if a specific tool is denied by any rule, returning the matching deny rule if found.</li></ul>
+    </article>
+    <article class="card" id="permission-rule-handling">
+      <div class="card-top">
+        <h3>Permission Rule Handling <a class="anchor" href="#permission-rule-handling">#</a></h3>
+      </div>
+      <ul><li><strong>Fixed rule removal logic</strong>: The <code>Pj2</code> function (formerly <code>Lj2</code>) now correctly handles both allow and deny rules when removing permissions from project settings. Previously, it only supported removing "allow" rules.</li></ul>
+<ul><li><strong>Fixed rule addition logic</strong>: The <code>Tj2</code> function now properly handles both allow and deny rules when adding new permissions, instead of throwing an error for non-allow rules.</li></ul>
+    </article>
+    <article class="card" id="new-configuration-schema">
+      <div class="card-top">
+        <h3>New Configuration Schema <a class="anchor" href="#new-configuration-schema">#</a></h3>
+      </div>
+      <ul><li>The permission object schema (<code>Yb5</code>) now includes both <code>allow</code> and <code>deny</code> arrays:</li></ul>
+<pre><code>  {
+    permissions: {
+      allow: [&quot;Tool1&quot;, &quot;Tool2&quot;],  // optional
+      deny: [&quot;Tool3&quot;, &quot;Tool4&quot;]     // optional
+    }
+  }</code></pre>
+    </article>
+    <article class="card" id="constants">
+      <div class="card-top">
+        <h3>Constants <a class="anchor" href="#constants">#</a></h3>
+      </div>
+      <ul><li>Added new constant <code>oy5 = 13</code> (appears to be a configuration value)</li><li>Added new constant <code>ii5 = 3</code> (appears to be a configuration value)</li><li>Removed constant <code>ci5 = 10</code></li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Breaking Changes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="breaking-changes">
+      <p>None identified. The changes maintain backward compatibility while extending functionality.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Migration Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="migration-notes">
+      <p>Projects using the previous permission system will continue to work as before. The new deny rules are optional and only take effect when explicitly configured. Existing "allow-only" configurations remain valid.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

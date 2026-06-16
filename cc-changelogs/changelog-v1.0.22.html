@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.22 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.22."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.22</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.22</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.21 → v1.0.22</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">5</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.22 Changelog</p>
+    </article>
+    <article class="card" id="mcp-resource-management-commands">
+      <div class="card-top">
+        <h3>MCP Resource Management Commands <a class="anchor" href="#mcp-resource-management-commands">#</a></h3>
+      </div>
+      <p>Two new commands have been added for working with MCP (Model Context Protocol) resources:</p>
+<ul><li><strong><code>listMcpResources</code></strong> - Lists all available resources from configured MCP servers</li></ul>
+<pre><code>  # List all resources from all MCP servers
+  claude listMcpResources
+  
+  # List resources from a specific server
+  claude listMcpResources --server myserver</code></pre>
+<ul><li><strong><code>readMcpResource</code></strong> - Reads a specific resource from an MCP server</li></ul>
+<pre><code>  # Read a resource by server name and URI
+  claude readMcpResource --server myserver --uri my-resource-uri</code></pre>
+    </article>
+    <article class="card" id="enhanced-permission-modes">
+      <div class="card-top">
+        <h3>Enhanced Permission Modes <a class="anchor" href="#enhanced-permission-modes">#</a></h3>
+      </div>
+      <ul><li>Added new permission mode: <strong><code>plan</code></strong> - Allows planning mode for complex operations</li><li>Added <code>defaultMode</code> configuration option in permissions settings</li><li>Added <code>disableBypassPermissionsMode</code> option to prevent bypassing permissions entirely</li><li>Permission modes now available: <code>acceptEdits</code>, <code>bypassPermissions</code>, <code>default</code>, <code>plan</code></li></ul>
+    </article>
+    <article class="card" id="xdg-base-directory-support">
+      <div class="card-top">
+        <h3>XDG Base Directory Support <a class="anchor" href="#xdg-base-directory-support">#</a></h3>
+      </div>
+      <p>Claude Code now follows the XDG Base Directory specification for better organization of files:</p>
+<ul><li><strong>State files</strong>: <code>$XDG_STATE_HOME/claude/</code> (defaults to <code>~/.local/state/claude/</code>)</li><li><strong>Cache files</strong>: <code>$XDG_CACHE_HOME/claude/</code> (defaults to <code>~/.cache/claude/</code>)</li><li><strong>Data files</strong>: <code>$XDG_DATA_HOME/claude/</code> (defaults to <code>~/.local/share/claude/</code>)</li><li><strong>Executables</strong>: <code>~/.local/bin/claude</code></li></ul>
+<p>The application will automatically migrate existing files from the old location (<code>~/.claude/</code>) to the new XDG-compliant locations on first run.</p>
+    </article>
+    <article class="card" id="jupyter-notebook-enhancements">
+      <div class="card-top">
+        <h3>Jupyter Notebook Enhancements <a class="anchor" href="#jupyter-notebook-enhancements">#</a></h3>
+      </div>
+      <ul><li><strong>Cell ID Support</strong>: Notebooks now support reading individual cells by their ID</li></ul>
+<pre><code>  # Read a specific cell from a notebook
+  claude notebook-read notebook.ipynb --cell-id cell-123</code></pre>
+<ul><li>Large cell outputs are now truncated with a helpful message indicating how to read the full output</li><li>Improved cell metadata handling with proper cell IDs</li></ul>
+    </article>
+    <article class="card" id="command-history-navigation">
+      <div class="card-top">
+        <h3>Command History Navigation <a class="anchor" href="#command-history-navigation">#</a></h3>
+      </div>
+      <ul><li>Enhanced history navigation with better state management</li><li>History now properly tracks command length for improved user experience</li><li>More robust handling of empty commands and history state</li></ul>
+    </article>
+    <article class="card" id="session-management">
+      <div class="card-top">
+        <h3>Session Management <a class="anchor" href="#session-management">#</a></h3>
+      </div>
+      <ul><li>Session message retrieval is now asynchronous for better performance</li><li>Improved session file handling with async operations</li><li>Better error handling for session loading and storage</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed duplicate imports and removed unused stream imports</li><li>Removed redundant Unicode sanitization variable declarations</li><li>Cleaned up unused launcher script variables</li><li>Fixed permission mode resolution to respect configuration settings</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-changes">
+      <ul><li>Updated version to 1.0.22</li><li>Improved code organization with better module separation</li><li>Enhanced error messages for MCP operations</li><li>Better type safety in permission mode handling</li><li>Streamlined directory structure initialization</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Migration Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="migration-notes">
+      <p>When upgrading to v1.0.22, Claude Code will automatically:</p>
+<ol><li>Check for existing files in <code>~/.claude/</code></li><li>Create new XDG-compliant directory structure</li><li>Migrate your existing data to the new locations</li><li>Create a migration marker to prevent repeated migrations</li></ol>
+<p>Your existing configurations, sessions, and data will be preserved during the migration.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

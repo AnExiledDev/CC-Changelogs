@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.71 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.71."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.71</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.71</span></h1>
+<p class="sub">This is a major release introducing <strong>Auto Mode</strong>, a new AI-powered permission system that automatically approves or blocks tool actions for unattended workflows; <strong>Team Memory</strong>, enabling shared persistent context synced across all team members via the cloud; and <strong>/loop</strong>, a built-in scheduler for running prompts on recurring intervals. Additionally, <code>find</code> and <code>grep</code> are now shadowed with faster embedded alternatives (bfs and ugrep), voice mode has been updated with configurable push-to-talk, and a new heap dump diagnostic tool has been added for debugging memory issues.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.70 → v2.1.71</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">20</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">15 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="auto-mode-permission-mode-auto">
+      <div class="card-top">
+        <h3>Auto Mode (<code>--permission-mode auto</code>) <a class="anchor" href="#auto-mode-permission-mode-auto">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new permission mode that uses an AI-powered "dangerous action classifier" to automatically approve safe tool actions and block dangerous ones, enabling fully autonomous long-running workflows without manual permission prompts.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --permission-mode auto
+claude --enable-auto-mode</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When enabled, each tool action is evaluated by a multi-stage security classifier before execution</li><li>Safe actions (read-only tools, tools on an allowlist, or actions that would be allowed in <code>acceptEdits</code> mode) are fast-pathed without classifier overhead</li><li>The classifier evaluates against a comprehensive threat model including prompt injection, scope creep, accidental damage, data exfiltration, and credential leakage</li><li>Users see an opt-in dialog on first use with options: "Yes, enable auto mode", "Yes, and make it my default mode", or "No, go back"</li><li>If the classifier repeatedly blocks actions (3 consecutive or 20 total), auto mode pauses and falls back to standard permission prompts</li><li>In headless/SDK mode, too many denials or classifier unavailability causes the agent to abort</li><li>Can be disabled per-settings via <code>permissions.disableAutoMode: "disable"</code></li><li>The classifier can be circuit-breaked server-side via <code>tengu_auto_mode_config</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Auto mode permission handler (search for <code>"Auto mode classifier blocked action"</code>) — <code>tM</code> at line ~534821. Classifier prompt at <code>g4q</code> (search for <code>"You are a security monitor for autonomous AI coding agents"</code>)</p>
+    </article>
+    <article class="card" id="loop-command-scheduled-recurring-prompts">
+      <div class="card-top">
+        <h3>/loop Command (Scheduled Recurring Prompts) <a class="anchor" href="#loop-command-scheduled-recurring-prompts">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new <code>/loop</code> slash command that schedules prompts to run on a recurring interval, enabling automated monitoring, polling, and periodic tasks within a Claude Code session.</p>
+<div class="blabel">Usage</div>
+<pre><code>/loop 5m /babysit-prs
+/loop 30m check the deploy
+/loop 1h /standup 1
+/loop check the deploy          (defaults to 10m interval)</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Supports intervals in seconds, minutes, hours, or days (e.g., <code>5m</code>, <code>30m</code>, <code>2h</code>, <code>1d</code>). Minimum granularity is 1 minute</li><li>Also supports standard 5-field cron expressions for precise scheduling (e.g., <code>"<em>/5 </em> <em> </em> <em>"</code> for every 5 minutes, <code>"30 14 </em> * 1-5"</code> for weekdays at 2:30pm)</li><li>Jobs are session-only by default (die when Claude exits), but can be persisted to <code>.claude/scheduled_tasks.json</code> to survive restarts</li><li>Recurring tasks auto-expire after 3 days</li><li>A small deterministic jitter is added to fire times to avoid thundering-herd effects</li><li>Only fires while the REPL is idle (not mid-query)</li><li>Uses file-based locking so only one Claude session runs the scheduler at a time</li><li>Three new internal tools: <code>CronCreate</code>, <code>CronDelete</code>, <code>CronList</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Cron expression parser (search for <code>"Standard 5-field cron expression"</code>) — <code>_a6</code> at line ~449603. Loop command (search for <code>"/loop"</code>)</p>
+    </article>
+    <article class="card" id="team-memory-shared-persistent-knowledge">
+      <div class="card-top">
+        <h3>Team Memory (Shared Persistent Knowledge) <a class="anchor" href="#team-memory-shared-persistent-knowledge">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new shared memory system that syncs learned context across all team members who work in the same project, enabling Claude to build up organizational knowledge over time.</p>
+<p>Usage: Claude automatically manages team memory. Users can say:</p>
+<ul><li>"Remember this for the team" — saves to team memory</li><li>"Remember this" — saves to private user memory</li><li>Team memories are stored in <code>.claude/team/</code> and synced via the cloud</li></ul>
+<div class="blabel">Details</div>
+<ul><li>Two-tier memory system: <strong>private</strong> (per-user, persists across conversations) and <strong>team</strong> (shared, synced across the organization)</li><li>Team memory is synced at session start via an API endpoint and pushed after local changes</li><li>Memories use a frontmatter format with <code>name:</code> and <code>description:</code> fields, stored as individual <code>.md</code> files with a <code>MEMORY.md</code> index</li><li>Secret detection prevents accidentally syncing credentials, API keys, or tokens to team memory</li><li>Path traversal protection (<code>PathTraversalError</code>) prevents malicious file paths from escaping the memory directory</li><li>Requires OAuth authentication; team memory sync uses ETag-based caching to minimize bandwidth</li><li>Conflict resolution with retries when multiple team members push simultaneously</li><li>The UI shows real-time status indicators like "Recalled 2 team memories" or "Writing 1 team memory"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Team memory sync infrastructure (search for <code>"team-memory-sync: fetched successfully"</code>) — <code>gi8</code> at line ~460253. Memory instructions (search for <code>"team: memories that are shared"</code>)</p>
+<div class="blabel">Status</div>
+<p>Gated by <code>tengu_herring_clock</code> feature flag — may be gradually rolling out.</p>
+    </article>
+    <article class="card" id="embedded-search-tools-bfs-ugrep">
+      <div class="card-top">
+        <h3>Embedded Search Tools (bfs/ugrep) <a class="anchor" href="#embedded-search-tools-bfs-ugrep">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When enabled, Claude Code shadows the system <code>find</code> and <code>grep</code> commands with faster embedded alternatives — <code>bfs</code> (breadth-first search) and <code>ugrep</code> — providing significantly improved search performance in the shell.</p>
+<div class="blabel">Details</div>
+<ul><li><code>find</code> is shadowed with <code>bfs</code> (breadth-first file search), configured with <code>-regextype findutils-default</code> for compatibility</li><li><code>grep</code> is shadowed with <code>ugrep</code>, configured with <code>--ignore-files</code>, <code>--hidden</code>, <code>-I</code> (skip binary), and automatic exclusion of <code>.git</code>, <code>.svn</code>, <code>.hg</code>, <code>.bzr</code> directories</li><li>Controlled by the <code>EMBEDDED_SEARCH_TOOLS</code> environment variable</li><li>Only active when not running via SDK entrypoints (sdk-ts, sdk-py, sdk-cli)</li><li>Shell aliases for <code>find</code> and <code>grep</code> are unaliased first to avoid conflicts</li><li>A tip in the system prompt mentions: "When using <code>find -regex</code> with alternation, put the longest alternative first"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Shell shadowing setup (search for <code>"unalias find 2&gt;/dev/null"</code>) — <code>e6Y</code> at line ~245057. Feature gate (search for <code>"EMBEDDED_SEARCH_TOOLS"</code>)</p>
+    </article>
+    <article class="card" id="heap-dump-and-memory-diagnostics">
+      <div class="card-top">
+        <h3>Heap Dump and Memory Diagnostics <a class="anchor" href="#heap-dump-and-memory-diagnostics">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new diagnostic tool for dumping the JS heap and analyzing memory usage, useful for debugging memory leaks in long-running Claude Code sessions.</p>
+<div class="blabel">Details</div>
+<ul><li>Writes <code>.heapsnapshot</code> files to <code>~/Desktop</code> for analysis</li><li>Generates a <code>-diagnostics.json</code> file with memory state information</li><li>Reports heap used, RSS, external memory, and total process memory</li><li>Detects potential leak indicators: high memory growth rate, active handles (timer/socket leaks), open file descriptors (file/socket leaks), detached contexts (iframe/context leaks)</li><li>Distinguishes between native memory leaks vs heap leaks</li><li>Available through a diagnostic command</li></ul>
+<div class="blabel">Evidence</div>
+<p>Heap dump output (search for <code>"[HeapDump] Heap dump written to"</code>)</p>
+    </article>
+    <article class="card" id="workload-cli-flag">
+      <div class="card-top">
+        <h3><code>--workload</code> CLI Flag <a class="anchor" href="#workload-cli-flag">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new <code>--workload &lt;tag&gt;</code> flag for billing-header attribution, allowing organizations to tag Claude Code usage by workload category.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --workload my-project-tag</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Sets the <code>cc_workload</code> header on API requests for cost attribution</li><li>Process-scoped; primarily used by SDK daemon callers that spawn subprocesses for cron work</li><li>Only works with <code>--print</code> mode</li></ul>
+<div class="blabel">Evidence</div>
+<p>Workload tag (search for <code>"cc_workload="</code>) — <code>M31</code> at line ~64100</p>
+    </article>
+    <article class="card" id="handoff-classifier-sub-agent-safety-review">
+      <div class="card-top">
+        <h3>Handoff Classifier (Sub-Agent Safety Review) <a class="anchor" href="#handoff-classifier-sub-agent-safety-review">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new safety classifier that reviews sub-agent output when control is handed back to the main agent, checking for potentially dangerous actions performed by sub-agents.</p>
+<div class="blabel">Details</div>
+<ul><li>When a sub-agent completes, its actions are reviewed against security rules before the main agent acts on the output</li><li>If the classifier flags an issue, the main agent sees: "SECURITY WARNING: This sub-agent performed actions that may violate security policy"</li><li>If the classifier is unavailable, a warning note is shown instead of blocking</li><li>Works in conjunction with the auto mode classifier</li></ul>
+<div class="blabel">Evidence</div>
+<p>Handoff classifier (search for <code>"Handoff classifier flagged sub-agent output"</code>)</p>
+    </article>
+    <article class="card" id="voice-mode-configurable-push-to-talk">
+      <div class="card-top">
+        <h3>Voice Mode: Configurable Push-to-Talk <a class="anchor" href="#voice-mode-configurable-push-to-talk">#</a></h3>
+      </div>
+      <p>The voice input mode has been updated from a fixed "Hold Space to record" trigger to a configurable push-to-talk system. The voice mode setting is now <code>voice:pushToTalk</code> and supports space or modifier key combinations like <code>meta+k</code>. The prompt text changed from "Hold Space to record" to a generic "hold [key] to record" that reflects the configured key.</p>
+<div class="blabel">Evidence</div>
+<p>Voice mode config (search for <code>"voice:pushToTalk"</code>)</p>
+    </article>
+    <article class="card" id="plugin-management-per-user-disable-with-scope-local">
+      <div class="card-top">
+        <h3>Plugin Management: Per-User Disable with <code>--scope local</code> <a class="anchor" href="#plugin-management-per-user-disable-with-scope-local">#</a></h3>
+      </div>
+      <p>Users can now disable a project-scoped plugin just for themselves using the <code>--scope local</code> flag, without affecting other team members. When a plugin is enabled at project scope (<code>.claude/settings.json</code>), the CLI now suggests: "To disable just for you: <code>claude plugin disable &lt;plugin&gt; --scope local</code>". This writes the override to <code>.claude/settings.local.json</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Plugin disable scope (search for <code>"is enabled at project scope"</code>)</p>
+    </article>
+    <article class="card" id="duplicate-mcp-server-suppression">
+      <div class="card-top">
+        <h3>Duplicate MCP Server Suppression <a class="anchor" href="#duplicate-mcp-server-suppression">#</a></h3>
+      </div>
+      <p>When a plugin provides an MCP server that duplicates one already configured manually, the duplicate is now automatically suppressed with a log message rather than causing conflicts. This prevents issues when plugins and manual MCP configurations overlap.</p>
+<div class="blabel">Evidence</div>
+<p>Duplicate suppression (search for <code>"mcp-server-suppressed-duplicate"</code>)</p>
+    </article>
+    <article class="card" id="improved-explore-plan-agent-search-instructions">
+      <div class="card-top">
+        <h3>Improved Explore/Plan Agent Search Instructions <a class="anchor" href="#improved-explore-plan-agent-search-instructions">#</a></h3>
+      </div>
+      <p>The Explore and Plan sub-agents now dynamically adapt their search instructions based on whether embedded search tools (bfs/ugrep) are available. When embedded tools are active, agents are instructed to use <code>find</code> and <code>grep</code> via Bash; otherwise they use the dedicated Glob and Grep tools. The Explore agent system prompt was also updated to say "search broadly when you don't know where something lives" instead of the previous more specific tool-referencing language.</p>
+<div class="blabel">Evidence</div>
+<p>Dynamic search instructions in sub-agent prompts (search for <code>"Use \</code>find\<code> via"</code>)</p>
+    </article>
+    <article class="card" id="debug-skill-improvements">
+      <div class="card-top">
+        <h3>Debug Skill Improvements <a class="anchor" href="#debug-skill-improvements">#</a></h3>
+      </div>
+      <p>The <code>/debug</code> skill now explicitly supports enabling debug logging mid-session. When debug logging was off, invoking <code>/debug</code> turns it on and shows a message that nothing prior was captured. Users are instructed to reproduce the issue, then re-read the log.</p>
+<div class="blabel">Evidence</div>
+<p>Debug logging toggle (search for <code>"## Debug Logging Just Enabled"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-shell-safety-checks">
+      <div class="card-top">
+        <h3>Enhanced Shell Safety Checks <a class="anchor" href="#enhanced-shell-safety-checks">#</a></h3>
+      </div>
+      <p>New safety checks for shell commands:</p>
+<ul><li>Detection of carriage returns (<code>\r</code>) in commands, which <code>shell-quote</code> and <code>bash</code> tokenize differently — a potential injection vector</li><li>Detection of unquoted redirect operators in <code>git commit</code> remainder arguments</li><li>Improved metacharacter detection for glob, backtick, dollar-sign, and other shell expansion characters in tool inputs</li></ul>
+<div class="blabel">Evidence</div>
+<p>Carriage return detection (search for <code>"Command contains carriage return"</code>)</p>
+    </article>
+    <article class="card" id="secret-detection-patterns">
+      <div class="card-top">
+        <h3>Secret Detection Patterns <a class="anchor" href="#secret-detection-patterns">#</a></h3>
+      </div>
+      <p>New regex patterns for detecting secrets that should not be committed or synced:</p>
+<ul><li>GitHub personal access tokens (<code>github_pat_\w{82}</code>)</li><li>PyPI API tokens (<code>pypi-AgEIcHlwaS5vcmc</code>)</li><li>Slack xapp tokens (<code>xapp-\d-[A-Z0-9]+-\d+-[a-z0-9]+</code>)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Token patterns (search for <code>"github_pat_"</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-plan-mode-behavior">
+      <div class="card-top">
+        <h3>Auto Mode Plan Mode Behavior <a class="anchor" href="#auto-mode-plan-mode-behavior">#</a></h3>
+      </div>
+      <p>When in auto mode, the <code>EnterPlanMode</code> tool prompt is significantly reduced — it instructs the agent to skip planning in almost all cases and start implementing immediately, since auto mode users chose continuous execution. Plan mode is reserved only for explicit user requests or exceptional architectural ambiguity.</p>
+<div class="blabel">Evidence</div>
+<p>Auto mode plan override (search for <code>"Auto mode prioritizes continuous execution"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed a typo in the Claude guide agent prompt: "relevate" → "relevant" (search for <code>"subagent to understand the relevant Claude Code features"</code>)</li><li>Removed stale native module fallback attempts for <code>image-processor.node</code> (refactored to lazy singleton pattern) and <code>color-diff.node</code> (removed entirely)</li><li>Fixed stdin resume edge case: added logging for <code>resumeStdin</code> being called with no stored listeners and <code>wasRawMode=false</code>, flagging a possible desync (search for <code>"resumeStdin: called with no stored listeners"</code>)</li></ul>
+    </article>
+    <article class="card" id="client-data-fetching-system-gradual-rollout">
+      <div class="card-top">
+        <h3>Client Data Fetching System [Gradual Rollout] <a class="anchor" href="#client-data-fetching-system-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>clientData</code> fetching system that pulls configuration and feature data from the server at session start, with caching, retry logic, and 401 token refresh.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged — appears to require OAuth subscriber status with specific profile scopes.</p>
+<div class="blabel">Details</div>
+<ul><li>Fetches client data on session start with exponential backoff retries</li><li>Caches responses to disk; skips writes if unchanged</li><li>Handles 401 by refreshing OAuth tokens and retrying</li><li>Skipped when "nonessential traffic" is disabled or when user lacks the required OAuth scopes</li></ul>
+<div class="blabel">Evidence</div>
+<p>Client data infrastructure (search for <code>"[clientData] fetch ok"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p><strong>Removed in this version:</strong></p>
+<ul><li>The <code>tengu_quartz_falcon</code> feature flag (and associated <code>Gs()</code> / <code>Hb6()</code> helpers) has been removed. This flag previously gated an unknown feature with a default label capability.</li><li>The Opus 4.6 welcome notice system (<code>hasShownOpus46Notice</code>) has been removed — the one-time notice about model availability no longer appears. The string "Welcome to Opus 4.6" and the per-model notice tip (<code>opus-4.6-available</code>) were also removed.</li><li>The native Rust <code>color-diff.node</code> module has been removed. Syntax-highlighted diffs now use a different rendering path.</li><li>The native <code>ripgrep.node</code> module has been removed, replaced by the embedded bfs/ugrep search tooling.</li><li>The <code>Auto-approving in</code> / <code>Auto-selecting in</code> / <code>Press any key to intervene</code> countdown UI text was removed, suggesting changes to how auto-approval timers work.</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

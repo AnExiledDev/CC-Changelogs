@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.72 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.72."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.72</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.72</span></h1>
+<p class="sub">This is a substantial release that introduces the <strong>SendUserMessage</strong> tool for structured agent-to-user communication, an <strong>ExitWorktree</strong> tool for mid-session worktree management, and a new <strong>Brief mode</strong> compact chat view. The remote control system receives a major overhaul with unified <code>--spawn</code> flags, auto mode gets an opt-in dialog and a settings-level disable option, and the bash security analyzer is rewritten to use tree-sitter AST analysis for more accurate shell command validation. GCP/Vertex users gain automatic credential refresh, and effort level now supports a session-scoped "max" setting.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.71 → v2.1.72</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">20</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">20 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="sendusermessage-tool">
+      <div class="card-top">
+        <h3>SendUserMessage Tool <a class="anchor" href="#sendusermessage-tool">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new tool that lets Claude post structured checkpoint messages to the user, designed for async workflows where the user may only be reading a compact view of the conversation.</p>
+<p>Usage: Claude calls SendUserMessage with a message, optional file attachments, and a status (<code>proactive</code> for push notifications, <code>normal</code> for replies).</p>
+<div class="blabel">Details</div>
+<ul><li>Messages are concise, outcome-focused checkpoints — like commit messages, not recaps</li><li>Supports markdown formatting and file attachments (screenshots, diffs, logs)</li><li><code>proactive</code> status is for reaching the user's phone when they're away (task done, blockers, questions)</li><li><code>normal</code> status is for replies to active conversations</li><li>Tied to a new <code>defaultView</code> setting: <code>"chat"</code> shows only SendUserMessage checkpoints, <code>"transcript"</code> shows the full output</li></ul>
+<div class="blabel">Evidence</div>
+<p>New tool constant and prompt definition (search for <code>"SendUserMessage"</code>)</p>
+    </article>
+    <article class="card" id="exitworktree-tool">
+      <div class="card-top">
+        <h3>ExitWorktree Tool <a class="anchor" href="#exitworktree-tool">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new tool that allows exiting a worktree session mid-conversation without ending the session, returning to the original working directory.</p>
+<div class="blabel">Details</div>
+<ul><li>Accepts <code>action: "keep"</code> to preserve the worktree and branch on disk, or <code>action: "remove"</code> to delete both</li><li>When removing a worktree with uncommitted changes, requires explicit <code>discard_changes: true</code> confirmation</li><li>Checks for uncommitted files and unmerged commits before removal</li><li>Only operates on worktrees created by EnterWorktree in the current session</li><li>The EnterWorktree tool message now references ExitWorktree: "Use ExitWorktree to leave mid-session, or exit the session to be prompted"</li></ul>
+<div class="blabel">Evidence</div>
+<p>New tool definition (search for <code>"ExitWorktree"</code>)</p>
+    </article>
+    <article class="card" id="brief-mode-compact-chat-view">
+      <div class="card-top">
+        <h3>Brief Mode (Compact Chat View) <a class="anchor" href="#brief-mode-compact-chat-view">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new compact view mode that shows only checkpoint messages (from SendUserMessage) instead of the full tool-call transcript, with dedicated visual styling.</p>
+<div class="blabel">Details</div>
+<ul><li>Controlled by the <code>CLAUDE_CODE_BRIEF</code> environment variable or the <code>tengu_kairos_brief</code> feature flag</li><li>Adds a <code>Brief</code> tool and <code>BRIEF_TOOL_NAME</code> / <code>LEGACY_BRIEF_TOOL_NAME</code> constants</li><li>User messages display with a "You" label in blue; Claude's responses use a distinct orange label</li><li>When brief-only mode is active, the token usage bar is hidden and the spinner uses a simplified dots animation</li><li>Toggle via a new "Toggle brief-only mode" action</li></ul>
+<div class="blabel">Evidence</div>
+<p>Brief mode infrastructure (search for <code>"CLAUDE_CODE_BRIEF"</code>, <code>"tengu_kairos_brief"</code>, <code>"isBriefOnly"</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-opt-in-dialog">
+      <div class="card-top">
+        <h3>Auto Mode Opt-In Dialog <a class="anchor" href="#auto-mode-opt-in-dialog">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When launching Claude with <code>--mode auto</code>, users who haven't previously opted in now see a consent dialog explaining what auto mode does.</p>
+<div class="blabel">Details</div>
+<ul><li>Dialog text: "Auto mode lets Claude run commands without prompting — each action is first checked for safety. Claude can still make mistakes; use in isolated environments."</li><li>Declining the dialog exits the application</li><li>Once accepted, the opt-in is remembered</li><li>New "Yes, and use auto mode" and "Yes, clear context" options in the context-clearing prompt</li></ul>
+<div class="blabel">Evidence</div>
+<p>New dialog component (search for <code>"AutoModeOptInDialog"</code>)</p>
+    </article>
+    <article class="card" id="remote-control-spawn-mode-overhaul">
+      <div class="card-top">
+        <h3>Remote Control Spawn Mode Overhaul <a class="anchor" href="#remote-control-spawn-mode-overhaul">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The remote control <code>--spawn-worktree-sessions</code> and <code>--spawn-same-dir-sessions</code> flags are replaced with a unified <code>--spawn &lt;mode&gt;</code> flag and a new <code>--capacity</code> flag.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude remote-control --spawn=worktree --capacity=4
+claude remote-control --spawn=same-dir
+claude remote-control --spawn=session</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>--spawn</code> accepts <code>same-dir</code> (default), <code>worktree</code>, or <code>session</code></li><li><code>--capacity</code> sets the max concurrent sessions (not valid with <code>--spawn=session</code>, which has fixed capacity 1)</li><li>New <code>--create-session-in-dir</code> / <code>--no-create-session-in-dir</code> flag controls whether a session is pre-created in the current directory</li><li>Interactive spawn mode picker (<code>w to toggle spawn mode</code>) when starting remote control</li><li>Spawn mode preference is saved per-project</li><li>Falls back to <code>same-dir</code> if saved mode is <code>worktree</code> but the directory isn't a git repo</li><li>Error message updated: "Error: Multi-session Remote Control is not enabled for your account yet."</li></ul>
+<div class="blabel">Evidence</div>
+<p>New spawn mode infrastructure (search for <code>"spawn mode"</code>, <code>"--spawn"</code>, <code>"--capacity"</code>)</p>
+    </article>
+    <article class="card" id="gcp-auth-refresh">
+      <div class="card-top">
+        <h3>GCP Auth Refresh <a class="anchor" href="#gcp-auth-refresh">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new <code>gcpAuthRefresh</code> setting that automatically refreshes GCP/Vertex AI credentials when they expire, similar to the existing <code>awsAuthRefresh</code> for AWS.</p>
+<p>Usage: Add to settings or <code>~/.claude.json</code>:</p>
+<pre><code>{
+  &quot;gcpAuthRefresh&quot;: &quot;gcloud auth application-default login&quot;
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Automatically detects expired GCP credentials ("Could not load the default credentials", "Could not refresh access token", <code>invalid_grant</code>)</li><li>Runs the configured refresh command before making API calls</li><li>Times out after 3 minutes with a warning</li><li>Validates credentials before running refresh (skips if still valid)</li><li>Works with Vertex AI authentication (checks <code>CLAUDE_CODE_USE_VERTEX</code>)</li><li>Respects the new <code>CLAUDE_CODE_SKIP_VERTEX_AUTH</code> environment variable</li></ul>
+<div class="blabel">Evidence</div>
+<p>New settings schema field and credential checker (search for <code>"gcpAuthRefresh"</code>, <code>"Could not load the default credentials"</code>)</p>
+    </article>
+    <article class="card" id="disable-auto-mode-via-settings">
+      <div class="card-top">
+        <h3>Disable Auto Mode via Settings <a class="anchor" href="#disable-auto-mode-via-settings">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new <code>disableAutoMode</code> setting that allows organizations or users to disable auto mode entirely.</p>
+<p>Usage: Add to settings:</p>
+<pre><code>{
+  &quot;permissions&quot;: {
+    &quot;disableAutoMode&quot;: &quot;disable&quot;
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When set, shows "auto mode disabled by settings" or "auto mode disabled: disableAutoMode in settings"</li><li>Also respects model-level and org-level restrictions: "auto mode disabled: model does not support auto mode", "auto mode disabled: org not in DAC allowlist"</li><li>New DAC (Documented Allowlisting Check) org allowlist system controls auto mode availability per organization</li><li>Auto mode state is tracked with new attachment types (<code>auto_mode</code> and <code>auto_mode_exit</code>) for proper context management</li></ul>
+<div class="blabel">Evidence</div>
+<p>New settings field and gate messages (search for <code>"disableAutoMode"</code>, <code>"auto mode disabled"</code>)</p>
+    </article>
+    <article class="card" id="tree-sitter-bash-security-analyzer-rewrite">
+      <div class="card-top">
+        <h3>Tree-Sitter Bash Security Analyzer Rewrite <a class="anchor" href="#tree-sitter-bash-security-analyzer-rewrite">#</a></h3>
+      </div>
+      <p>The shell command security analyzer has been significantly rewritten to use tree-sitter AST analysis instead of relying solely on string-based heuristics. When tree-sitter is available, it provides authoritative quote context analysis, compound structure detection, and dangerous pattern identification.</p>
+<p>New security checks include:</p>
+<ul><li>Arithmetic expansion with variable references</li><li>Heredocs with unquoted delimiters (shell expansion risk)</li><li>Brace expansion syntax detection</li><li>IFS assignment (word-splitting changes)</li><li>Tilde expansion in assignment values</li><li>Unicode whitespace and control character detection</li><li>Zsh <code>~[</code> dynamic directory syntax</li><li>Shell keyword misuse detection</li></ul>
+<p>When tree-sitter is unavailable, falls back to the legacy shell-quote parser with a log message: "tree-sitter unavailable, using legacy shell-quote path".</p>
+<div class="blabel">Evidence</div>
+<p>New analyzer functions (search for <code>"Tree-sitter quote context is authoritative"</code>, <code>"Brace expansion"</code>, <code>"IFS assignment"</code>)</p>
+    </article>
+    <article class="card" id="effort-level-max-and-persistence">
+      <div class="card-top">
+        <h3>Effort Level "max" and Persistence <a class="anchor" href="#effort-level-max-and-persistence">#</a></h3>
+      </div>
+      <p>The effort level system now supports a <code>"max"</code> level (restricted to Opus 4.6 models) and persists the effort setting across sessions.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>effortLevel</code> setting in user config: accepts <code>"low"</code>, <code>"medium"</code>, or <code>"high"</code> (persisted)</li><li><code>"max"</code> is session-scoped and not persisted to disk</li><li>If <code>"max"</code> is requested on a non-Opus 4.6 model, it silently falls back to <code>"high"</code></li><li>The status line now shows effort level with visual indicators: ○ low, ◐ medium, ● high, ◉ max</li><li>Effort level display text appears in the status bar with a 20-second timeout</li></ul>
+<div class="blabel">Evidence</div>
+<p>New effort schema and display functions (search for <code>"Persisted effort level"</code>, <code>"opus-4-6"</code>)</p>
+    </article>
+    <article class="card" id="remote-session-timeout-increase">
+      <div class="card-top">
+        <h3>Remote Session Timeout Increase <a class="anchor" href="#remote-session-timeout-increase">#</a></h3>
+      </div>
+      <p>Remote sessions now have a 60-minute timeout, doubled from the previous 30-minute limit.</p>
+<div class="blabel">Evidence</div>
+<p>Timeout string change (search for <code>"remote session exceeded 60 minutes"</code>)</p>
+    </article>
+    <article class="card" id="copy-on-select">
+      <div class="card-top">
+        <h3>Copy on Select <a class="anchor" href="#copy-on-select">#</a></h3>
+      </div>
+      <p>A new <code>copyOnSelect</code> user preference has been added to the persistent settings, allowing automatic clipboard copy when text is selected in the terminal.</p>
+<div class="blabel">Evidence</div>
+<p>New preference key (search for <code>"copyOnSelect"</code>)</p>
+    </article>
+    <article class="card" id="plan-command-enhancement">
+      <div class="card-top">
+        <h3>Plan Command Enhancement <a class="anchor" href="#plan-command-enhancement">#</a></h3>
+      </div>
+      <p>The <code>/plan</code> command now accepts a description argument to immediately start planning with context, instead of only supporting <code>open</code>.</p>
+<div class="blabel">Usage</div>
+<pre><code>/plan add authentication to the API</code></pre>
+<div class="blabel">Evidence</div>
+<p>Argument hint change from <code>"[open]"</code> to <code>"[open|&lt;description&gt;]"</code></p>
+    </article>
+    <article class="card" id="hooks-format-updated">
+      <div class="card-top">
+        <h3>Hooks Format Updated <a class="anchor" href="#hooks-format-updated">#</a></h3>
+      </div>
+      <p>The hooks configuration tip has been updated to reflect the new matcher format. Matchers are now strings (tool names, pipe-separated lists, or empty to match all) instead of objects.</p>
+<p>Before: <code>{"matcher": {"tools": ["BashTool"]}, "hooks": [...]}</code> After: <code>{"matcher": "Edit|Write", "hooks": [...]}</code></p>
+<div class="blabel">Evidence</div>
+<p>Updated tip text (search for <code>"matcher + hooks array"</code>)</p>
+    </article>
+    <article class="card" id="settings-keybinding-changes">
+      <div class="card-top">
+        <h3>Settings Keybinding Changes <a class="anchor" href="#settings-keybinding-changes">#</a></h3>
+      </div>
+      <p>The settings panel keybindings have been updated:</p>
+<ul><li><code>enter</code> now triggers <code>settings:close</code> (was <code>select:accept</code>)</li><li><code>space</code> remains <code>select:accept</code></li><li>New <code>scroll:pageDown</code> and <code>scroll:pageUp</code> keybindings added</li></ul>
+<div class="blabel">Evidence</div>
+<p>Keybinding map changes (search for <code>"settings:close"</code>, <code>"scroll:pageDown"</code>)</p>
+    </article>
+    <article class="card" id="plugin-source-resolution-improvements">
+      <div class="card-top">
+        <h3>Plugin Source Resolution Improvements <a class="anchor" href="#plugin-source-resolution-improvements">#</a></h3>
+      </div>
+      <ul><li>Git repository URLs no longer require a <code>.git</code> suffix</li><li>Plugin source path resolution messages now explain that paths are relative to the marketplace root (the directory containing <code>.claude-plugin/</code>)</li><li>Marketplace-only fields in <code>plugin.json</code> now produce informational warnings instead of errors</li><li>"View on GitHub" link renamed to "View repository" (works with non-GitHub repos)</li><li>Plugin already-installed message clarified to "already installed globally"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema and message changes (search for <code>"marketplace root"</code>, <code>"marketplace-only fields"</code>)</p>
+    </article>
+    <article class="card" id="clipboard-support-in-tmux-over-ssh">
+      <div class="card-top">
+        <h3>Clipboard Support in tmux over SSH <a class="anchor" href="#clipboard-support-in-tmux-over-ssh">#</a></h3>
+      </div>
+      <p>Clipboard operations now properly support tmux sessions over SSH by writing OSC 52 escape sequences directly to <code>SSH_TTY</code> when available, with a fallback to <code>tmux load-buffer</code>.</p>
+<div class="blabel">Evidence</div>
+<p>New clipboard function (search for <code>"tmux load-buffer"</code> in added function <code>FD7</code>)</p>
+    </article>
+    <article class="card" id="feedback-flow-update">
+      <div class="card-top">
+        <h3>Feedback Flow Update <a class="anchor" href="#feedback-flow-update">#</a></h3>
+      </div>
+      <p>When users give a thumbs-down rating, the follow-up prompt now directs them to <code>/issue</code> for reporting model behavior issues, rather than general feedback.</p>
+<div class="blabel">Evidence</div>
+<p>Feedback text change (search for <code>"Use /issue to report model behavior issues"</code>)</p>
+    </article>
+    <article class="card" id="api-error-message-extraction">
+      <div class="card-top">
+        <h3>API Error Message Extraction <a class="anchor" href="#api-error-message-extraction">#</a></h3>
+      </div>
+      <p>Better extraction of error messages from nested API error responses. When the top-level <code>message</code> field is missing, the system now digs into nested <code>error.error.message</code> and <code>error.message</code> fields before falling back to a generic status message.</p>
+<div class="blabel">Evidence</div>
+<p>New error extraction functions (search for <code>"API error (status"</code>)</p>
+    </article>
+    <article class="card" id="deferred-tools-announcement-simplification">
+      <div class="card-top">
+        <h3>Deferred Tools Announcement Simplification <a class="anchor" href="#deferred-tools-announcement-simplification">#</a></h3>
+      </div>
+      <p>The deferred tools announcement text has been simplified from lengthy explanations to concise notices: "Deferred tools appear by name in <code>&lt;system-reminder&gt;</code> messages" or "Deferred tools appear by name in <code>&lt;available-deferred-tools&gt;</code> messages."</p>
+<div class="blabel">Evidence</div>
+<p>Updated deferred tools text (search for <code>"Deferred tools appear by name"</code>)</p>
+    </article>
+    <article class="card" id="sdk-enhancements">
+      <div class="card-top">
+        <h3>SDK Enhancements <a class="anchor" href="#sdk-enhancements">#</a></h3>
+      </div>
+      <ul><li>New <code>agentProgressSummaries</code> SDK init option for enabling progress summary reporting from agents</li><li>New <code>applied</code> field in settings response showing runtime-resolved model and effort values (as opposed to <code>effective</code> which only shows disk-merged values)</li><li>Task progress summaries now include a <code>summary</code> field in the SDK schema</li><li><code>supportsAutoMode</code> field added to model information schema</li></ul>
+<div class="blabel">Evidence</div>
+<p>SDK schema additions (search for <code>"agentProgressSummaries"</code>, <code>"Runtime-resolved values"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Removed <code>python --version</code> and <code>python3 --version</code> from the auto-allowed command list, ensuring these commands go through normal permission checks (search for <code>"docker ps"</code> in the reduced allowlist)</li><li>Fixed voice mode availability check to use a simple boolean state instead of calling an external function, preventing potential errors (search for <code>"voiceEnabled"</code>)</li><li>Fixed carriage return handling in text input to not treat <code>\r</code> preceded by a backslash as a submit trigger (search for <code>"replace(/(?&lt;=[^\\\r\n])\r$/"</code>)</li><li>Improved mouse input handling to filter out raw mouse escape sequences that lack a key name, preventing spurious input events (search for <code>"^\[&lt;\d+;\d+;\d+[Mm]"</code>)</li><li>Fixed tmux clipboard detection — mouse reporting is now disabled in tmux sessions to prevent conflicts (search for <code>"process.env.TMUX"</code> in function <code>o_8</code>)</li><li>Auto mode classifier now checks <code>requiresUserInteraction</code> on tools before sending to classifier, preventing interactive tools from being auto-approved (search for <code>"requiresUserInteraction"</code>)</li><li>TaskOutput tool's <code>block</code> parameter now accepts string booleans (<code>"true"</code>/<code>"false"</code>) in addition to actual booleans, improving compatibility (search for <code>"preprocess"</code> near <code>"block"</code>)</li></ul>
+    </article>
+    <article class="card" id="background-workflows-in-development">
+      <div class="card-top">
+        <h3>Background Workflows [In Development] <a class="anchor" href="#background-workflows-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure for a new "local_workflow" task type that tracks background workflow execution with dedicated status line display.</p>
+<div class="blabel">Status</div>
+<p>Infrastructure added but the trigger mechanism is not yet exposed.</p>
+<div class="blabel">Details</div>
+<ul><li>New task type <code>local_workflow</code> alongside existing <code>local_agent</code> and <code>remote_agent</code></li><li>Status line shows "1 background workflow" or "N background workflows" count</li><li>The spinner component displays <code>" · N in background"</code> when workflows are running</li></ul>
+<div class="blabel">Evidence</div>
+<p>Task label generation (search for <code>"background workflow"</code>)</p>
+    </article>
+    <article class="card" id="nova-3-voice-gate-in-development">
+      <div class="card-top">
+        <h3>Nova 3 Voice Gate [In Development] <a class="anchor" href="#nova-3-voice-gate-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A feature flag <code>tengu_cobalt_frost</code> gates a "Nova 3" voice stream capability.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged, not yet broadly enabled.</p>
+<div class="blabel">Details</div>
+<ul><li>Log message: "Nova 3 gate enabled (tengu_cobalt_frost)"</li><li>Likely an upgrade to the voice transcription model</li></ul>
+<div class="blabel">Evidence</div>
+<p>Feature flag (search for <code>"tengu_cobalt_frost"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p><strong>Migration: Remote Control flags</strong> — If you use <code>--spawn-worktree-sessions</code> or <code>--spawn-same-dir-sessions</code>, these have been replaced by <code>--spawn=worktree</code> and <code>--spawn=same-dir</code> respectively. The old flags will produce an error directing you to the new syntax.</p>
+<p><strong>Migration: Hooks format</strong> — The hooks matcher format has changed from an object <code>{"tools": ["BashTool"]}</code> to a string <code>"Bash"</code> or pipe-separated list <code>"Edit|Write"</code>. Existing configurations should still work but the error tip now reflects the new format.</p>
+<p><strong>Bundle size reduction</strong> — The RxJS library (Observable, Subscriber, Subscription, and many related classes) has been removed from the bundle, reducing the overall package size. The tree-sitter WASM files and several other large dependencies (lodash templating, spawn-rx internals) have also been cleaned up.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

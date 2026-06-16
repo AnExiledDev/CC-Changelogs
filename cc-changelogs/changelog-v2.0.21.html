@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.21 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.21."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.21</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.21</span></h1>
+<p class="sub">This release improves the plan mode workflow by adding guidance for handling ambiguous requirements, helping Claude better understand when to ask clarifying questions before implementing features.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.20 → v2.0.21</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enhanced-plan-mode-guidance">
+      <div class="card-top">
+        <h3>Enhanced Plan Mode Guidance <a class="anchor" href="#enhanced-plan-mode-guidance">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The ExitPlanMode tool now includes comprehensive guidance on handling ambiguous requirements and unclear implementation approaches.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added "Handling Ambiguity in Plans" section to help Claude identify when clarification is needed at <code>OU8() at line 428198</code></li><li>Claude will now proactively ask about:</li><li>Multiple valid implementation approaches (e.g., architectural patterns)</li><li>Library or framework choices</li><li>Assumptions that could affect implementation</li><li>Includes a new example demonstrating proper clarification workflow for authentication features</li><li>Claude must now resolve ambiguities before proceeding with implementation</li></ul>
+<p><strong>Impact:</strong> Users will experience fewer instances where Claude makes incorrect assumptions about implementation details. When requirements are unclear, Claude will ask targeted questions to understand the desired approach before writing code.</p>
+<p><strong>Evidence:</strong></p>
+<ul><li>v2.0.20: Basic ExitPlanMode documentation at <code>OU8() at line 428188</code> with 2 examples</li><li>v2.0.21: Enhanced ExitPlanMode documentation at <code>OU8() at line 428198</code> with ambiguity handling section and 3 examples</li></ul>
+    </article>
+    <article class="card" id="improved-signal-handling">
+      <div class="card-top">
+        <h3>Improved Signal Handling <a class="anchor" href="#improved-signal-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced initialization sequence to include proper SIGINT/SIGTERM signal handlers for graceful shutdown.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added signal handler initialization (<code>N7()</code>) to the <code>uz1</code> startup function at line 455136</li><li>Ensures proper cleanup when Claude Code is interrupted or terminated</li><li>No user-visible behavior change, but improves reliability</li></ul>
+<p><strong>Evidence:</strong></p>
+<ul><li>v2.0.20: <code>uz1</code> initialization at line 455101 without signal handlers</li><li>v2.0.21: <code>uz1</code> initialization at line 455136 now includes <code>N7()</code> signal handler</li></ul>
+    </article>
+    <article class="card" id="code-reorganization">
+      <div class="card-top">
+        <h3>Code Reorganization <a class="anchor" href="#code-reorganization">#</a></h3>
+      </div>
+      <ul><li>Internal variable and function renames throughout the codebase (6690 renames total)</li><li>Import statement reorganization for better code structure</li><li>No functional changes to existing features</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

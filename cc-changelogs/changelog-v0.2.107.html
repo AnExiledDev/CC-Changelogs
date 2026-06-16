@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.107 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.107."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.107</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.107</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.106 → v0.2.107</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.107 Changelog</p>
+    </article>
+    <article class="card" id="enhanced-project-level-memory-claude-md">
+      <div class="card-top">
+        <h3>Enhanced Project-Level Memory (CLAUDE.md) <a class="anchor" href="#enhanced-project-level-memory-claude-md">#</a></h3>
+      </div>
+      <ul><li><strong>Automatic project context loading</strong>: Claude Code now automatically discovers and loads <code>CLAUDE.md</code> files from parent directories up to your home directory</li><li><strong>Nested memory attachments</strong>: When working in subdirectories, Claude Code will now find and include all relevant <code>CLAUDE.md</code> files in the directory hierarchy</li><li><strong>Usage</strong>: Simply place a <code>CLAUDE.md</code> file in your project root or any parent directory, and Claude Code will automatically use it for context when working in that project or its subdirectories</li></ul>
+    </article>
+    <article class="card" id="ide-integration-improvements">
+      <div class="card-top">
+        <h3>IDE Integration Improvements <a class="anchor" href="#ide-integration-improvements">#</a></h3>
+      </div>
+      <ul><li><strong>JetBrains IDE support</strong>: Added specific guidance for JetBrains IDE users</li><li><strong>New prompt for plugin installation</strong>: When using a JetBrains IDE without the plugin installed, you'll now see:</li></ul>
+<pre><code>  Please install the plugin and restart the IDE:
+  https://plugins.jetbrains.com/plugin/27310</code></pre>
+<ul><li><strong>Conditional extension management</strong>: Extension installation prompts now only appear for supported IDEs (VS Code)</li></ul>
+    </article>
+    <article class="card" id="memory-system-enhancements">
+      <div class="card-top">
+        <h3>Memory System Enhancements <a class="anchor" href="#memory-system-enhancements">#</a></h3>
+      </div>
+      <ul><li>Added <code>CX6</code> function for discovering CLAUDE.md files in parent directories</li><li>New <code>Ha5</code> function handles nested memory attachment triggers</li><li>Improved <code>vs</code> function now properly tracks visited paths to prevent infinite recursion</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>Refactored stream imports to use named imports (<code>PassThrough</code> from "stream")</li><li>Consolidated process imports to use named imports (<code>cwd</code> from "node:process")</li><li>Added new variable <code>yU6</code> for improved code organization</li></ul>
+    </article>
+    <article class="card" id="database-warning-removal">
+      <div class="card-top">
+        <h3>Database Warning Removal <a class="anchor" href="#database-warning-removal">#</a></h3>
+      </div>
+      <ul><li>Removed the persistent database unavailability warnings</li><li>Removed the <code>/doctor</code> command prompt for database issues</li><li>Removed better-sqlite3 troubleshooting messages and links</li><li>These changes suggest that database functionality has been stabilized or reimplemented</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Under the Hood</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="under-the-hood">
+      <ul><li>Function renaming: Several internal functions were renamed for consistency</li><li>Improved error handling in the nested memory attachment system</li><li>Better separation of concerns between VS Code and JetBrains IDE features</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

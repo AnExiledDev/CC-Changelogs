@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.120 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.120."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.120</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.120</span></h1>
+<p class="sub">This release introduces a condensed "lean prompt" system for reduced token usage on capable models, a new <code>claude ultrareview</code> CLI command for cloud-hosted code reviews, interactive daemon service installation prompts, a memory write confirmation dialog, and expanded Windows PowerShell support. It also adds the <code>tabs_close_mcp</code> Chrome extension tool, a <code>hideVimModeIndicator</code> setting for custom status lines, and several improvements to how deny rules, autocompact notifications, and explore agent descriptions are handled.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.119 → v2.1.120</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">23</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">23 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="claude-ultrareview-cli-subcommand">
+      <div class="card-top">
+        <h3><code>claude ultrareview</code> CLI Subcommand <a class="anchor" href="#claude-ultrareview-cli-subcommand">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Run a cloud-hosted multi-agent code review directly from the command line, without entering an interactive session.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude ultrareview              # review current branch
+claude ultrareview 42           # review PR #42
+claude ultrareview main         # review against a base branch
+claude ultrareview --json       # print raw bugs.json payload
+claude ultrareview --timeout 45 # wait up to 45 minutes (default: 30)</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Launches a remote multi-agent session that finds and verifies bugs in your branch</li><li>Prints live progress (found, verified, refuted counts) to stderr while waiting</li><li>Outputs formatted findings with file paths, line numbers, and severity (🔴 normal, 🟡 nit, 🟣 pre-existing)</li><li>Ctrl-C cancels the wait but leaves the remote review running — a URL is printed so you can view it in the browser</li><li>The <code>/ultrareview</code> slash command existed previously; this adds it as a top-level CLI entry point</li></ul>
+<div class="blabel">Evidence</div>
+<p>CLI command registered via <code>.command("ultrareview [target]")</code> with <code>.description("Run a cloud-hosted multi-agent code review...")</code> — search for <code>"ultrareview [target]"</code></p>
+    </article>
+    <article class="card" id="lean-prompt-mode-condensed-tool-descriptions">
+      <div class="card-top">
+        <h3>Lean Prompt Mode (Condensed Tool Descriptions) <a class="anchor" href="#lean-prompt-mode-condensed-tool-descriptions">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new prompt optimization mode that significantly reduces system prompt token usage by sending shorter, denser tool descriptions to capable models.</p>
+<div class="blabel">Usage</div>
+<pre><code>CLAUDE_CODE_LEAN_PROMPT=1 claude   # force enable via env var</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When active, tool descriptions for Grep, Glob, WebFetch, Write, Edit, WebSearch, TodoWrite, Bash, and the Task/Explore agent are replaced with much shorter versions</li><li>Example: the Grep tool description goes from a multi-paragraph usage guide to a compact 4-line summary</li><li>The Explore agent description is refined to emphasize it is a "read-only search agent" not suitable for code review or cross-file analysis</li><li>Activated by the <code>CLAUDE_CODE_LEAN_PROMPT</code> environment variable, or gradually rolled out via the <code>tengu_vellum_lantern</code> feature flag</li><li>Currently limited to Opus 4.6+ and Opus 4.7 models</li></ul>
+<div class="blabel">Evidence</div>
+<p>Lean prompt gate function checks <code>CLAUDE_CODE_LEAN_PROMPT</code> and <code>tengu_vellum_lantern</code> — search for <code>"CLAUDE_CODE_LEAN_PROMPT"</code></p>
+    </article>
+    <article class="card" id="memory-write-confirmation-dialog">
+      <div class="card-top">
+        <h3>Memory Write Confirmation Dialog <a class="anchor" href="#memory-write-confirmation-dialog">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When Claude writes or edits a memory file, a confirmation dialog now appears showing what was saved, with the option to approve or reject the change.</p>
+<div class="blabel">Details</div>
+<ul><li>Shows "Memory written" or "Memory updated" with a preview of the content (or a one-sentence AI-generated summary for large memories)</li><li>For edits, displays a diff view; for new memories, displays the body text</li><li>Auto-hides after a configurable timeout (default 8 seconds) with a countdown indicator</li><li>Rejecting a memory write undoes the file change (restores the previous content or deletes the file)</li><li>The summary is generated by Sonnet 4.6 for memories exceeding a line threshold (default: 5 lines)</li><li>Controlled by the <code>tengu_slate_siskin</code> feature flag (disabled by default)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Memory write survey infrastructure with approve/reject dialog — search for <code>"memoryWriteSurvey"</code> and <code>"tengu_slate_siskin"</code></p>
+    </article>
+    <article class="card" id="memory-types-skill">
+      <div class="card-top">
+        <h3><code>memory-types</code> Skill <a class="anchor" href="#memory-types-skill">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new internal skill that provides a full reference for the memory type taxonomy — what each type captures, when to save it, and how to structure the body.</p>
+<div class="blabel">Details</div>
+<ul><li>Not user-invocable directly; Claude uses it automatically before writing a memory file when lean prompts are active</li><li>Enabled when <code>tengu_ochre_finch</code> flag is active or <code>CLAUDE_CODE_LEAN_PROMPT</code> is set</li><li>Replaces the longer inline memory documentation in the system prompt with a shorter summary plus a skill reference</li><li>The system prompt now lists memory types as a compact bulleted list and says "Invoke the <code>memory-types</code> skill for scope, body structure and examples"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill registered as <code>"memory-types"</code> with <code>userInvocable: !1</code> — search for <code>"memory-types"</code></p>
+    </article>
+    <article class="card" id="daemon-cold-start-service-installation-prompt">
+      <div class="card-top">
+        <h3>Daemon Cold-Start Service Installation Prompt <a class="anchor" href="#daemon-cold-start-service-installation-prompt">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When no background daemon is running and one is needed, Claude Code now interactively asks whether to install it as a persistent system service.</p>
+<div class="blabel">Usage</div>
+<pre><code>No background daemon is running.
+Installing it as a service keeps scheduled and remote-control workers running across reboot.
+Install as a service now? [Y/n/never, or &#x27;once&#x27; for this login session]</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>Y</code> (default): installs a launchd (macOS) or systemd (Linux) service that persists across reboot</li><li><code>once</code>: spawns a transient daemon for the current login session only</li><li><code>never</code>: remembers the dismissal and won't ask again (spawns transient)</li><li><code>n</code>: does nothing — the command fails with the original "no daemon running" error</li><li>Controlled by the <code>tengu_quiet_harbor</code> feature flag (determines whether mode is "ask" or "transient")</li><li>Also configurable via <code>CLAUDE_CODE_DAEMON_COLD_START</code> environment variable or <code>settings.daemonColdStart</code></li><li>The daemon auto-uninstalls stale service files that were not created by the current version (tagged with <code>claude-managed: v1</code>)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Interactive prompt with <code>"Install as a service now? [Y/n/never, or 'once' for this login session]"</code> — search for that string, gated by <code>tengu_quiet_harbor</code></p>
+    </article>
+    <article class="card" id="chrome-extension-tabs-close-mcp-tool">
+      <div class="card-top">
+        <h3>Chrome Extension: <code>tabs_close_mcp</code> Tool <a class="anchor" href="#chrome-extension-tabs-close-mcp-tool">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new MCP tool that lets Claude close individual tabs in the Chrome tab group by ID.</p>
+<div class="blabel">Details</div>
+<ul><li>Only tabs in the current session's tab group are closable</li><li>Call <code>tabs_context_mcp</code> first to get valid tab IDs</li><li>If you close the group's last tab, Chrome auto-removes the group — the next <code>tabs_context_mcp</code> with <code>createIfEmpty</code> starts fresh</li><li>Replaces the previous <code>update_plan</code> tool that was used in the Chrome extension's plan-approval flow</li></ul>
+<div class="blabel">Evidence</div>
+<p>Tool registered as <code>"tabs_close_mcp"</code> with title <code>"Tabs Close"</code> — search for <code>"tabs_close_mcp"</code></p>
+    </article>
+    <article class="card" id="user-deny-rules-awareness-in-system-prompt">
+      <div class="card-top">
+        <h3>User Deny Rules Awareness in System Prompt <a class="anchor" href="#user-deny-rules-awareness-in-system-prompt">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude is now informed about the user's configured permission deny rules and instructed to block circumvention attempts.</p>
+<div class="blabel">Details</div>
+<ul><li>The system prompt now includes a section listing all active deny rules</li><li>Claude is instructed to block actions that achieve the same effect via a different tool — e.g., using <code>python -c</code>, <code>sed -i</code>, <code>cat &gt;</code>, heredocs, or similar to write a file that an Edit/Write deny rule covers</li><li>Only non-internal deny rules are surfaced (rules starting with a specific internal prefix are filtered out)</li></ul>
+<div class="blabel">Evidence</div>
+<p>New function builds deny rule text: <code>"User Deny Rules: The user has configured these permission deny rules..."</code> — search for <code>"User Deny Rules"</code></p>
+    </article>
+    <article class="card" id="hidevimmodeindicator-status-line-setting">
+      <div class="card-top">
+        <h3><code>hideVimModeIndicator</code> Status Line Setting <a class="anchor" href="#hidevimmodeindicator-status-line-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new boolean setting to suppress the built-in <code>-- INSERT --</code> / <code>-- VISUAL --</code> vim mode indicator below the prompt.</p>
+<p>Usage (in settings):</p>
+<pre><code>{
+  &quot;statusLine&quot;: {
+    &quot;hideVimModeIndicator&quot;: true
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Use this when your custom status line script already renders <code>vim.mode</code> itself</li><li>Prevents duplicate mode indicators when using a custom status line</li></ul>
+<div class="blabel">Evidence</div>
+<p>New setting <code>hideVimModeIndicator</code> with <code>.describe("Hide the built-in...")</code> — search for <code>"hideVimModeIndicator"</code></p>
+    </article>
+    <article class="card" id="claude-effort-system-prompt-substitution">
+      <div class="card-top">
+        <h3><code>CLAUDE_EFFORT</code> System Prompt Substitution <a class="anchor" href="#claude-effort-system-prompt-substitution">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new <code>${CLAUDE_EFFORT}</code> template variable is now available in system prompts, dynamically resolved from the session's effort setting.</p>
+<div class="blabel">Details</div>
+<ul><li>The variable is interpolated during session initialization</li><li>Allows system prompts to adapt behavior based on the current effort level</li></ul>
+<div class="blabel">Evidence</div>
+<p>Template variable <code>${CLAUDE_EFFORT}</code> appears in system prompt processing — search for <code>"CLAUDE_EFFORT"</code></p>
+    </article>
+    <article class="card" id="renamed-bash-mode-to-shell-mode">
+      <div class="card-top">
+        <h3>Renamed "Bash Mode" to "Shell Mode" <a class="anchor" href="#renamed-bash-mode-to-shell-mode">#</a></h3>
+      </div>
+      <p>The <code>!</code> prefix hint has been renamed from "bash mode" to "shell mode" to reflect the broader shell support now available (bash, zsh, sh, and PowerShell on Windows).</p>
+<div class="blabel">Evidence</div>
+<p>String changed from <code>"! for bash mode"</code> to <code>"! for shell mode"</code> — search for <code>"! for shell mode"</code></p>
+    </article>
+    <article class="card" id="expanded-windows-powershell-integration">
+      <div class="card-top">
+        <h3>Expanded Windows PowerShell Integration <a class="anchor" href="#expanded-windows-powershell-integration">#</a></h3>
+      </div>
+      <p>PowerShell support on Windows has been improved with smarter shell selection and better error handling:</p>
+<ul><li>Shell selection now falls back gracefully: if <code>defaultShell</code> is set to "bash" but Git Bash isn't installed, PowerShell is used instead, and vice versa</li><li>The shell setting description now reads "Defaults to bash (powershell on Windows without Git Bash)"</li><li>Clipboard operations on Windows now use proper argument arrays instead of concatenated strings for safer command execution</li><li>Clear error messages guide users when neither Git Bash nor PowerShell is available:</li><li>"Claude Code on Windows requires either Git for Windows (for bash) or PowerShell"</li><li>Hook errors now suggest "Install Git for Windows, or add <code>shell: powershell</code> to this hook's config"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Shell fallback logic in <code>g24()</code> function — search for <code>"Git Bash not found"</code> and <code>"CLAUDE_CODE_USE_POWERSHELL_TOOL"</code></p>
+    </article>
+    <article class="card" id="improved-scroll-wheel-notification">
+      <div class="card-top">
+        <h3>Improved Scroll Wheel Notification <a class="anchor" href="#improved-scroll-wheel-notification">#</a></h3>
+      </div>
+      <p>The scroll wheel arrow-key detection now suggests a simpler fix. The notification has been changed from "run /terminal-setup to fix" to "use PgUp/PgDn to scroll", removing the need for users to run a separate command.</p>
+<div class="blabel">Evidence</div>
+<p>String changed from <code>"run /terminal-setup to fix"</code> to <code>"use PgUp/PgDn to scroll"</code> — search for <code>"PgUp/PgDn to scroll"</code></p>
+    </article>
+    <article class="card" id="improved-autocompact-notification">
+      <div class="card-top">
+        <h3>Improved Autocompact Notification <a class="anchor" href="#improved-autocompact-notification">#</a></h3>
+      </div>
+      <p>The autocompact notification has been refined:</p>
+<ul><li>Message changed from <code>"compacted at the auto window (N tokens)"</code> to <code>"compacting at the auto N window · configure with /autocompact"</code></li><li>Notification priority changed from "medium" to "immediate" for better visibility</li><li>Now uses the "suggestion" color theme and a 12-second timeout</li></ul>
+<div class="blabel">Evidence</div>
+<p>Notification text updated — search for <code>"compacting at the auto"</code> and <code>"configure with /autocompact"</code></p>
+    </article>
+    <article class="card" id="better-exit-detach-labels-for-remote-sessions">
+      <div class="card-top">
+        <h3>Better Exit/Detach Labels for Remote Sessions <a class="anchor" href="#better-exit-detach-labels-for-remote-sessions">#</a></h3>
+      </div>
+      <p>When running as a background/remote session with active tasks, the Escape exit message now shows "detach (session keeps running)" instead of "stop session", making it clearer that background work continues after detaching.</p>
+<div class="blabel">Evidence</div>
+<p>Dynamic label logic — search for <code>"detach (session keeps running)"</code> and <code>"stop session"</code></p>
+    </article>
+    <article class="card" id="richer-tool-call-labels-in-status-display">
+      <div class="card-top">
+        <h3>Richer Tool-Call Labels in Status Display <a class="anchor" href="#richer-tool-call-labels-in-status-display">#</a></h3>
+      </div>
+      <p>AskUserQuestion prompts and Plan-mode submissions now show descriptive labels in the status display:</p>
+<ul><li>Questions show the header/question text (e.g., "Question: Which library?" or "Tap to answer")</li><li>Plan submissions show "Plan ready for review"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Label rendering logic — search for <code>"Tap to answer"</code> and <code>"Plan ready for review"</code></p>
+    </article>
+    <article class="card" id="hidden-message-count-in-focused-mode">
+      <div class="card-top">
+        <h3>Hidden Message Count in Focused Mode <a class="anchor" href="#hidden-message-count-in-focused-mode">#</a></h3>
+      </div>
+      <p>When messages are hidden due to <code>/focus</code> mode, the prompt now displays a count like "3 messages hidden (/focus to show)" to help users know when context has been abbreviated.</p>
+<div class="blabel">Evidence</div>
+<p>New label format — search for <code>"hidden (/focus to show)"</code></p>
+    </article>
+    <article class="card" id="graceful-marketplace-plugin-degradation">
+      <div class="card-top">
+        <h3>Graceful Marketplace Plugin Degradation <a class="anchor" href="#graceful-marketplace-plugin-degradation">#</a></h3>
+      </div>
+      <p>Plugins with unrecognized source types are now stubbed rather than dropped entirely:</p>
+<ul><li>If a marketplace plugin entry uses a source type not supported by the current Claude Code version, it is preserved as an "unsupported" placeholder</li><li>Installation attempts fail with a clear "update Claude Code and try again" message</li><li>This prevents <code>detectDelistedPlugins</code> from incorrectly treating it as removed</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin stubbing logic — search for <code>"Stubbing unparseable marketplace plugin entry"</code> and <code>"source.source: 'unsupported'"</code></p>
+    </article>
+    <article class="card" id="daemon-cli-enhancements">
+      <div class="card-top">
+        <h3>Daemon CLI Enhancements <a class="anchor" href="#daemon-cli-enhancements">#</a></h3>
+      </div>
+      <p>The <code>claude daemon</code> subcommand has been reorganized with new operations:</p>
+<ul><li>New <code>hub</code> subcommand for interactive daemon management (requires TTY)</li><li>New <code>list</code> subcommand for a flat view across all worker kinds</li><li>New <code>scheduled</code>, <code>assistant</code>, <code>remote-control</code> subcommands for per-kind listing and mutation</li><li><code>start</code> and <code>restart</code> subcommands are now explicitly disabled with a clear message: "the daemon runs on demand and exits when the last client disconnects"</li><li><code>stop --any</code> can now stop transient (non-service) daemons</li><li>Better status output including <code>pid</code>, <code>version</code>, <code>uptime</code>, <code>origin</code>, and <code>config</code> path</li><li>Auto-uninstalls stale service files from previous Claude Code versions</li></ul>
+<div class="blabel">Evidence</div>
+<p>Help text registered as <code>"Usage: claude daemon [subcommand] [options]..."</code> — search for that string</p>
+    </article>
+    <article class="card" id="improved-explore-agent-description">
+      <div class="card-top">
+        <h3>Improved Explore Agent Description <a class="anchor" href="#improved-explore-agent-description">#</a></h3>
+      </div>
+      <p>The Explore (search) agent description has been rewritten to be more precise about its limitations: it is now described as a "read-only search agent" that should NOT be used for "code review, design-doc auditing, cross-file consistency checks, or open-ended analysis" since it "reads excerpts rather than whole files and will miss content past its read window."</p>
+<div class="blabel">Evidence</div>
+<p>New description string — search for <code>"read-only search agent"</code></p>
+    </article>
+    <article class="card" id="feedback-submission-now-tracks-surface-origin">
+      <div class="card-top">
+        <h3>Feedback Submission Now Tracks Surface Origin <a class="anchor" href="#feedback-submission-now-tracks-surface-origin">#</a></h3>
+      </div>
+      <p>The <code>/feedback</code> submission now records the <code>surface</code> field (e.g., "cli") to distinguish reports from different Claude Code surfaces (terminal, CCD, CCW). This helps the triage pipeline route reports correctly.</p>
+<div class="blabel">Evidence</div>
+<p><code>surface</code> parameter in feedback payload — search for <code>"Where the feedback flow was initiated"</code></p>
+    </article>
+    <article class="card" id="file-watcher-error-handling">
+      <div class="card-top">
+        <h3>File Watcher Error Handling <a class="anchor" href="#file-watcher-error-handling">#</a></h3>
+      </div>
+      <p>Multiple subsystems now log warnings on file watcher errors instead of crashing:</p>
+<ul><li><code>[settings] watcher error:</code> for settings file changes</li><li><code>[skills] watcher error:</code> for skill file changes</li><li><code>[theme] watcher error:</code> for theme file changes</li><li><code>[jobStateNameSync] watcher error:</code> for job state changes</li><li><code>[useBgSessionPr] watcher error:</code> for background session PR changes</li><li><code>FileChanged: watcher error:</code> for general file change detection</li></ul>
+<div class="blabel">Evidence</div>
+<p>Search for <code>"watcher error:"</code> in the string diff</p>
+    </article>
+    <article class="card" id="agent-auto-relaunch-tracking">
+      <div class="card-top">
+        <h3>Agent Auto-Relaunch Tracking <a class="anchor" href="#agent-auto-relaunch-tracking">#</a></h3>
+      </div>
+      <p>A new <code>CLAUDE_AGENTS_AUTO_RELAUNCHED_AT</code> environment variable is set when an agent is automatically relaunched, allowing detection and prevention of relaunch loops.</p>
+<div class="blabel">Evidence</div>
+<p>New env var — search for <code>"CLAUDE_AGENTS_AUTO_RELAUNCHED_AT"</code></p>
+    </article>
+    <article class="card" id="username-validation">
+      <div class="card-top">
+        <h3>Username Validation <a class="anchor" href="#username-validation">#</a></h3>
+      </div>
+      <p>The <code>getUsername()</code> function now validates the system username against a safe regex pattern and falls back to <code>"claude-code-user"</code> if it contains unexpected characters, preventing potential issues with unusual usernames.</p>
+<div class="blabel">Evidence</div>
+<p>Username validation with regex test — function <code>xe()</code> at line ~104573</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed Chrome extension <code>ToolCallTimeoutError</code> and <code>ExtensionDisconnectedMidCallError</code> — new error types provide more specific messaging when the Chrome extension disconnects mid-operation or times out (search for <code>"ExtensionDisconnectedMidCallError"</code>)</li><li>Fixed daemon stop on Windows: the error message now correctly advises using <code>taskkill /PID</code> instead of attempting signals that Windows doesn't support (search for <code>"taskkill /PID"</code>)</li><li>Fixed worktree cleanup handling: uncommitted changes in agent worktrees are now preserved with a warning rather than silently lost (search for <code>"changed file(s) would be lost, kept"</code>)</li><li>Fixed autocompact thrashing detection: the thrashing message now properly triggers on repeated rapid re-compactions (search for <code>"Autocompact is thrashing"</code>)</li><li>Fixed auth token refresh: proactive token refresh failures are now logged and retried with a 60-second delay instead of failing silently (search for <code>"auth: proactive refresh failed"</code>)</li><li>Fixed plan-mode blocking: the <code>post_turn_summary</code> now correctly maps <code>"blocked"</code> status to <code>"need_input"</code> for plan mode flows (search for <code>"status_category"</code>)</li></ul>
+    </article>
+    <article class="card" id="lean-prompt-system-gradual-rollout">
+      <div class="card-top">
+        <h3>Lean Prompt System [Gradual Rollout] <a class="anchor" href="#lean-prompt-system-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The full lean prompt system that compresses all tool descriptions and system prompt content for reduced token usage.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged behind <code>tengu_vellum_lantern</code> (default false), overridable with <code>CLAUDE_CODE_LEAN_PROMPT=1</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Currently restricted to Opus 4.6+ and Opus 4.7 models</li><li>The <code>tengu_ochre_finch</code> flag controls lean memory prompts independently</li><li>When fully enabled, tool descriptions are 60-80% shorter while preserving essential usage information</li><li>Users can preview it now via the environment variable</li></ul>
+    </article>
+    <article class="card" id="memory-write-confirmation-gradual-rollout">
+      <div class="card-top">
+        <h3>Memory Write Confirmation [Gradual Rollout] <a class="anchor" href="#memory-write-confirmation-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The interactive approve/reject dialog for memory file writes.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged behind <code>tengu_slate_siskin</code> (default false), with configurable timeout, throttle, and summary threshold.</p>
+<div class="blabel">Details</div>
+<ul><li>Full UI infrastructure is in place including diff rendering, AI-powered summaries, and undo capability</li><li>Configurable via the feature flag's schema: <code>enabled</code>, <code>timeoutMs</code> (1000-120000), <code>throttleMs</code> (0-3600000), <code>summaryLineThreshold</code> (1-50)</li><li>When enabled, every memory write surfaces a brief confirmation with countdown timer</li></ul>
+    </article>
+    <article class="card" id="daemon-service-cold-start-prompt-gradual-rollout">
+      <div class="card-top">
+        <h3>Daemon Service Cold-Start Prompt [Gradual Rollout] <a class="anchor" href="#daemon-service-cold-start-prompt-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Interactive prompt to install the daemon as a persistent system service.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged behind <code>tengu_quiet_harbor</code> (default false — defaults to "transient" mode where daemon spawns on demand without asking).</p>
+<div class="blabel">Details</div>
+<ul><li>When the flag is enabled (set to return <code>"ask"</code>), the interactive installation prompt appears</li><li>Can be forced via <code>CLAUDE_CODE_DAEMON_COLD_START=ask</code> environment variable or <code>settings.daemonColdStart</code></li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.53 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.53."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.53</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.53</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.52 → v1.0.53</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p>Based on my analysis of the diff for version 1.0.53, here is the detailed changelog:</p>
+    </article>
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>AWS Authentication Enhancements</h4>
+<ul><li><strong>AWS Auth Refresh Command</strong>: Added <code>awsAuthRefresh</code> configuration option that allows users to specify a command to run when AWS credentials need refreshing. This command is automatically executed when AWS authentication fails.</li></ul>
+<pre><code>  # In ~/.claude.json or settings:
+  {
+    &quot;awsAuthRefresh&quot;: &quot;aws sso login --profile myprofile&quot;
+  }</code></pre>
+<ul><li><strong>AWS Credential Export</strong>: Added <code>awsCredentialExport</code> configuration option for dynamically providing AWS credentials from external sources.</li></ul>
+<pre><code>  # In ~/.claude.json or settings:
+  {
+    &quot;awsCredentialExport&quot;: &quot;aws sts assume-role --role-arn arn:aws:iam::123456789012:role/MyRole --role-session-name claude-session&quot;
+  }</code></pre>
+<p>The command must return AWS STS-compatible JSON output with <code>Credentials.AccessKeyId</code>, <code>Credentials.SecretAccessKey</code>, and <code>Credentials.SessionToken</code>.</p>
+<h4>OpenTelemetry Support</h4>
+<ul><li><strong>Custom OTEL Headers</strong>: Added <code>otelHeadersHelper</code> configuration option to dynamically set OpenTelemetry headers for tracing and monitoring.</li></ul>
+<pre><code>  # In ~/.claude.json or settings:
+  {
+    &quot;otelHeadersHelper&quot;: &quot;echo &#x27;{\&quot;x-trace-id\&quot;: \&quot;&#x27;$(uuidgen)&#x27;\&quot;, \&quot;x-org-id\&quot;: \&quot;myorg\&quot;}&#x27;&quot;
+  }</code></pre>
+<h4>MCP (Model Context Protocol) Enhancements</h4>
+<ul><li><strong>Server Instructions</strong>: MCP servers can now provide custom instructions that are automatically included in the system prompt, helping Claude understand how to use specific tools and resources.</li><li><strong>Batch Connection Size</strong>: Added <code>MCP_SERVER_CONNECTION_BATCH_SIZE</code> environment variable to control concurrent MCP server connections (default: 3).</li><li><strong>Improved MCP Command Parsing</strong>: MCP commands are now properly identified with "(MCP)" suffix in command names.</li></ul>
+<h4>Enhanced Conversation Management</h4>
+<ul><li><strong>Restore Options</strong>: When jumping to a previous message (Cmd+L), users can now choose what to restore:</li><li><strong>Both</strong>: Restore both conversation history and workspace state</li><li><strong>Conversation only</strong>: Keep current workspace, restore chat history</li><li><strong>Workspace only</strong>: Keep current chat, restore workspace state</li></ul>
+<h4>Terminal Improvements</h4>
+<ul><li><strong>Dynamic Terminal Resizing</strong>: Improved handling of terminal window resizing with proper event listeners and state management.</li><li><strong>Better TTY Detection</strong>: Enhanced checks for interactive terminal environments.</li></ul>
+    </article>
+    <article class="card" id="user-experience-improvements">
+      <div class="card-top">
+        <h3>User Experience Improvements <a class="anchor" href="#user-experience-improvements">#</a></h3>
+      </div>
+      <h4>Command Processing</h4>
+<ul><li><strong>Enhanced Slash Command Parsing</strong>: Improved parsing of slash commands with better argument extraction and MCP command recognition.</li></ul>
+<pre><code>  # Regular command
+  /search keyword
+  
+  # MCP command (automatically detected)
+  /tool-name (MCP) arguments</code></pre>
+<ul><li><strong>User Prompt Submit Hooks</strong>: Added support for hooks that can intercept and modify user prompts before they're sent to Claude. Hooks can:</li><li>Block prompts with error messages</li><li>Add additional context to prompts</li><li>Run preprocessing steps</li></ul>
+<h4>Error Handling</h4>
+<ul><li><strong>AWS Credential Errors</strong>: Better error messages and automatic retry mechanisms for AWS authentication failures.</li><li><strong>Hook Error Display</strong>: Clear error messages when prompt submission is blocked by hooks.</li></ul>
+    </article>
+    <article class="card" id="configuration">
+      <div class="card-top">
+        <h3>Configuration <a class="anchor" href="#configuration">#</a></h3>
+      </div>
+      <h4>New Settings</h4>
+<ul><li><code>awsAuthRefresh</code>: Command to run when AWS credentials need refreshing</li><li><code>awsCredentialExport</code>: Command to export AWS credentials dynamically</li><li><code>otelHeadersHelper</code>: Command to generate OpenTelemetry headers</li><li><code>MCP_SERVER_CONNECTION_BATCH_SIZE</code>: Environment variable for MCP connection concurrency</li></ul>
+    </article>
+    <article class="card" id="api-and-integration-updates">
+      <div class="card-top">
+        <h3>API and Integration Updates <a class="anchor" href="#api-and-integration-updates">#</a></h3>
+      </div>
+      <ul><li>Added support for the <code>DecodeAuthorizationMessage</code> AWS STS operation</li><li>Enhanced AWS SDK integration with proper credential provider error handling</li><li>Improved TypeScript helper imports and exports</li></ul>
+    </article>
+    <article class="card" id="performance-and-stability">
+      <div class="card-top">
+        <h3>Performance and Stability <a class="anchor" href="#performance-and-stability">#</a></h3>
+      </div>
+      <ul><li><strong>Connection Management</strong>: Better handling of concurrent MCP server connections</li><li><strong>Memory Management</strong>: Improved caching mechanisms for AWS credentials and system state</li><li><strong>Event Handling</strong>: More robust terminal resize event management</li></ul>
+    </article>
+    <article class="card" id="developer-features">
+      <div class="card-top">
+        <h3>Developer Features <a class="anchor" href="#developer-features">#</a></h3>
+      </div>
+      <ul><li><strong>Client Type Configuration</strong>: Added ability to set client type for telemetry</li><li><strong>Enhanced Logging</strong>: Better structured logging for AWS operations and MCP interactions</li><li><strong>Improved Type Safety</strong>: Additional TypeScript utilities and error classes</li></ul>
+<p>This update focuses on improving integration capabilities, particularly with AWS services and MCP servers, while enhancing the overall user experience with better error handling and configuration options.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

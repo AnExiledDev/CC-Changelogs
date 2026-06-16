@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.44 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.44."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.44</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.44</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.43 → v0.2.44</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">3</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.44 Changelog</p>
+    </article>
+    <article class="card" id="thinking-mode-think-harder">
+      <div class="card-top">
+        <h3>Thinking Mode ("Think Harder") <a class="anchor" href="#thinking-mode-think-harder">#</a></h3>
+      </div>
+      <ul><li><strong>New thinking mode activation</strong>: Simply say "think", "think harder", or even "ultrathink" to have Claude make a plan before executing</li><li>Claude will enter a planning mode where it thinks through the implementation steps before coding</li><li>After presenting the plan, you'll be prompted to exit plan mode and proceed with implementation</li></ul>
+    </article>
+    <article class="card" id="enhanced-autocomplete-system">
+      <div class="card-top">
+        <h3>Enhanced Autocomplete System <a class="anchor" href="#enhanced-autocomplete-system">#</a></h3>
+      </div>
+      <ul><li><strong>Improved file path autocomplete</strong>: The autocomplete system now provides intelligent file path suggestions as you type</li><li><strong>Fuzzy file search</strong>: File paths are matched using fuzzy search with relevance scoring</li><li><strong>Directory navigation</strong>: Autocomplete shows parent directories and supports navigating through the file tree</li><li><strong>Smart filtering</strong>: Test files are deprioritized in autocomplete results</li><li><strong>Visual improvements</strong>: Better formatting and scrolling for autocomplete suggestions with a maximum of 10 visible items</li></ul>
+    </article>
+    <article class="card" id="macos-keychain-security-enhancement">
+      <div class="card-top">
+        <h3>macOS Keychain Security Enhancement <a class="anchor" href="#macos-keychain-security-enhancement">#</a></h3>
+      </div>
+      <ul><li>Added <code>gd2()</code> function to delete API keys from macOS Keychain when needed</li><li>Improved security for API key management on macOS</li></ul>
+    </article>
+    <article class="card" id="autocomplete-ui">
+      <div class="card-top">
+        <h3>Autocomplete UI <a class="anchor" href="#autocomplete-ui">#</a></h3>
+      </div>
+      <ul><li><strong>New suggestion types</strong>: Supports both command suggestions (starting with <code>/</code>) and file path suggestions</li><li><strong>Keyboard shortcuts</strong>:</li><li><code>Tab</code>: Accept the current suggestion</li><li><code>Up/Down arrows</code>: Navigate through suggestions</li><li><code>Enter</code>: Accept selected suggestion</li><li><code>Escape</code>: Clear suggestions</li><li><strong>Smart completion</strong>: Automatically completes common prefixes when multiple matches exist</li><li><strong>Visual indicators</strong>: Selected suggestions are highlighted with appropriate colors</li></ul>
+    </article>
+    <article class="card" id="interactive-features">
+      <div class="card-top">
+        <h3>Interactive Features <a class="anchor" href="#interactive-features">#</a></h3>
+      </div>
+      <ul><li><strong>Triple-click detection</strong>: New <code>F91()</code> function detects rapid clicks (3 clicks within 1 second) to trigger special actions</li><li><strong>Auto-accept mode</strong>: New toggle system for automatically accepting certain tool confirmations (can be enabled/disabled per session)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Performance Improvements</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="performance-improvements">
+      <ul><li><strong>Optimized file indexing</strong>: Background file indexing for faster autocomplete responses</li><li><strong>Caching</strong>: File list caching to reduce filesystem operations</li><li><strong>Batch operations</strong>: Multiple tool calls can now be batched for better performance</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Improvements</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-improvements">
+      <ul><li><strong>Non-interactive session support</strong>: Better handling of non-interactive sessions (e.g., when running from scripts)</li><li><strong>Improved error handling</strong>: More robust error handling for API authentication failures</li><li><strong>Code organization</strong>: Refactored autocomplete logic into separate, focused functions for better maintainability</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed issues with permission mode handling</li><li>Improved handling of root/sudo privileges with <code>--dangerously-skip-permissions</code> flag</li><li>Better error messages for API key validation failures</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Updated internal version tracking and telemetry</li><li>Refactored suggestion system to use a more modular architecture</li><li>Improved TypeScript/JavaScript code analysis for better language detection</li></ul>
+<p><strong>Note</strong>: This version focuses heavily on improving the interactive experience with intelligent autocomplete and the new thinking mode for better planning before implementation.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

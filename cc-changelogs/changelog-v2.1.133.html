@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.133 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.133."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.133</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.133</span></h1>
+<p class="sub">Claude Code 2.1.133 adds more control over agent worktrees, improves plugin and managed-policy diagnostics, and exposes reasoning effort more consistently to hooks and Bash. It also includes Windows background-daemon reliability work and a fix for MCP session-expiry handling.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.132 → v2.1.133</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="worktree-base-ref-setting">
+      <div class="card-top">
+        <h3>Worktree Base Ref Setting <a class="anchor" href="#worktree-base-ref-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>You can now choose whether new worktrees start from a clean remote default branch or from your current local HEAD.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;worktree&quot;: {
+    &quot;baseRef&quot;: &quot;head&quot;
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>fresh</code> remains the default and branches from <code>origin/&lt;default-branch&gt;</code>.</li><li><code>head</code> branches from the current local HEAD, so unpushed commits and feature-branch state are present.</li><li>The setting applies to <code>--worktree</code>, <code>EnterWorktree</code>, and agent isolation.</li><li>The setting is also exposed in the config UI as “Worktree base ref”.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Worktree setting schema and UI were added (search for <code>"Which ref new worktrees branch from"</code> and <code>"Worktree base ref"</code>).</p>
+    </article>
+    <article class="card" id="default-agents-view-gradual-rollout">
+      <div class="card-top">
+        <h3>Default Agents View [Gradual Rollout] <a class="anchor" href="#default-agents-view-gradual-rollout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Users with the agents interface enabled can make Claude Code open the agents view by default.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;defaultToAgentsView&quot;: true
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>A new config UI toggle appears as “Open agents view by default”.</li><li>When enabled, normal interactive startup can enter the agents view without requiring <code>claude agents</code>.</li><li>This depends on the existing agents-view gate, so not every user will necessarily see it.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Config option and startup behavior were added (search for <code>"Open agents view by default"</code> and <code>"defaultToAgentsView"</code>).</p>
+    </article>
+    <article class="card" id="clearer-plugin-override-warnings">
+      <div class="card-top">
+        <h3>Clearer Plugin Override Warnings <a class="anchor" href="#clearer-plugin-override-warnings">#</a></h3>
+      </div>
+      <p>Claude Code now warns when a plugin disabled in <code>~/.claude/settings.json</code> is re-enabled by a higher-precedence source such as project, local, flag, or policy settings. The warning explains exactly where to disable it instead.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;enabledPlugins&quot;: {
+    &quot;formatter@anthropic-tools&quot;: false
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Project-enabled plugins should be disabled in <code>.claude/settings.local.json</code>.</li><li>Plugins enabled through <code>--settings</code> must be removed from the <code>--settings</code> value.</li><li>Plugins enabled by managed policy cannot be overridden locally.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New warning UI and remediation text (search for <code>"Plugin settings overridden"</code> and <code>"These plugins are disabled in ~/.claude/settings.json, but a higher-precedence source re-enables them:"</code>).</p>
+    </article>
+    <article class="card" id="better-documentation-for-plugin-setting-precedence">
+      <div class="card-top">
+        <h3>Better Documentation for Plugin Setting Precedence <a class="anchor" href="#better-documentation-for-plugin-setting-precedence">#</a></h3>
+      </div>
+      <p>The <code>enabledPlugins</code> setting description now documents the precedence order directly: user &lt; project &lt; local &lt; flag &lt; policy.</p>
+<div class="blabel">Details</div>
+<ul><li>This makes it clearer why disabling a plugin in user settings may not work when the project re-enables it.</li><li>The schema description now points users to <code>.claude/settings.local.json</code> for project-specific opt-outs.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated setting description (search for <code>"Settings precedence is user &lt; project &lt; local &lt; flag &lt; policy"</code>).</p>
+    </article>
+    <article class="card" id="reasoning-effort-exposed-to-hooks-and-bash">
+      <div class="card-top">
+        <h3>Reasoning Effort Exposed to Hooks and Bash <a class="anchor" href="#reasoning-effort-exposed-to-hooks-and-bash">#</a></h3>
+      </div>
+      <p>Hook authors get structured reasoning-effort information for tool-use lifecycle hooks, and Bash receives the active value as <code>CLAUDE_EFFORT</code> when the model supports effort.</p>
+<div class="blabel">Usage</div>
+<pre><code>echo &quot;$CLAUDE_EFFORT&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Hook input now includes an optional <code>effort.level</code> field.</li><li>The value reflects the active effort level after any model-specific downgrade.</li><li>The field is present for tool-use contexts such as <code>PreToolUse</code>, <code>PostToolUse</code>, <code>Stop</code>, and <code>SubagentStop</code>, but absent for session-lifecycle hooks and models without effort support.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Hook schema and Bash environment wiring (search for <code>"Reasoning effort applied to the current turn"</code> and <code>"Active effort level for the current turn"</code>).</p>
+    </article>
+    <article class="card" id="managed-settings-can-merge-parent-policy">
+      <div class="card-top">
+        <h3>Managed Settings Can Merge Parent Policy <a class="anchor" href="#managed-settings-can-merge-parent-policy">#</a></h3>
+      </div>
+      <p>Administrators can now control whether SDK-provided parent managed settings are dropped or merged under an admin tier.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;parentSettingsBehavior&quot;: &quot;merge&quot;
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>first-wins</code> keeps the previous admin-first behavior.</li><li><code>merge</code> layers a restrictive-only slice from the parent settings under the admin winner.</li><li>This matters for managed-policy deployments where an SDK parent wants to add restrictions without overriding the administrator’s policy.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New managed-settings schema and merge path (search for <code>"parentSettingsBehavior"</code> and <code>"Controls whether the SDK parent tier"</code>).</p>
+    </article>
+    <article class="card" id="admin-controlled-sandbox-binary-paths">
+      <div class="card-top">
+        <h3>Admin-Controlled Sandbox Binary Paths <a class="anchor" href="#admin-controlled-sandbox-binary-paths">#</a></h3>
+      </div>
+      <p>Managed settings can now provide absolute paths for Linux/WSL sandbox helper binaries.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;sandbox&quot;: {
+    &quot;bwrapPath&quot;: &quot;/usr/bin/bwrap&quot;,
+    &quot;socatPath&quot;: &quot;/usr/bin/socat&quot;
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>sandbox.bwrapPath</code> overrides bubblewrap auto-detection.</li><li><code>sandbox.socatPath</code> controls the sandbox network proxy helper.</li><li>These paths are only honored from admin-controlled managed settings.</li><li>Error messages now distinguish “bubblewrap missing” from “configured bwrap path is not executable”.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Managed sandbox path descriptions and validation errors (search for <code>"Linux/WSL only: Absolute path to the bwrap"</code> and <code>"sandbox.bwrapPath is set to"</code>).</p>
+    </article>
+    <article class="card" id="windows-background-daemon-respawn-is-more-durable">
+      <div class="card-top">
+        <h3>Windows Background Daemon Respawn Is More Durable <a class="anchor" href="#windows-background-daemon-respawn-is-more-durable">#</a></h3>
+      </div>
+      <p>Claude Code now tries to spawn upgraded background daemons on Windows through WMI/CIM, falling back to direct spawn if WMI fails.</p>
+<div class="blabel">Details</div>
+<ul><li>The WMI path uses <code>Win32_Process.Create</code> with a hidden process startup configuration.</li><li>If WMI fails or times out, Claude Code logs a fallback warning and starts directly.</li><li>The fallback note says the daemon may not survive SSH or terminal close.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Windows daemon spawn path (search for <code>"daemon: WMI spawn failed"</code> and <code>"Win32_Process.Create rc="</code>).</p>
+    </article>
+    <article class="card" id="skill-tool-guidance-updated">
+      <div class="card-top">
+        <h3>Skill Tool Guidance Updated <a class="anchor" href="#skill-tool-guidance-updated">#</a></h3>
+      </div>
+      <p>The allowed-tools schema now explicitly deprecates passing <code>Skill</code> through the generic <code>tools</code> field and points authors to the dedicated <code>skills</code> field.</p>
+<div class="blabel">Details</div>
+<ul><li>This helps agent and skill authors avoid older tool-allowlist patterns.</li><li>Existing allowed-tools inheritance behavior is unchanged.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated schema description (search for <code>"Note: passing 'Skill' here is deprecated"</code>).</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>MCP session-expiry errors are now recognized when a 404 response includes <code>"mcp_session_terminated"</code>, allowing Claude Code to mark the server as needing auth instead of treating it as a generic failure. Evidence: MCP error classifier (search for <code>"mcp_session_terminated"</code>).</li></ul>
+<ul><li>Compact-cache fallback now preserves abort behavior instead of continuing through fallback paths after cancellation. Evidence: abort checks added around compact cache sharing (search for <code>"Compact cache sharing: no text in response, falling back"</code>).</li></ul>
+<ul><li>Windows command/path handling gained additional normalization and quoting safeguards for daemon spawning, including rejection of unsupported Unicode single-quote variants in generated PowerShell command lines. Evidence: PowerShell quoting guard (search for <code>"unsupported Unicode single-quote in command line"</code>).</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

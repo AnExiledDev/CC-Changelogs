@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.27 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.27."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.27</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.27</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.26 → v1.0.27</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.27 Changelog</p>
+    </article>
+    <article class="card" id="working-directory-management-improvements">
+      <div class="card-top">
+        <h3>Working Directory Management Improvements <a class="anchor" href="#working-directory-management-improvements">#</a></h3>
+      </div>
+      <ul><li><strong>Enhanced directory addition feedback</strong>: The <code>/add-dir</code> command now provides more detailed and specific error messages when adding working directories</li><li>Clear message when no path is provided: "Please provide a directory path."</li><li>Specific error when path doesn't exist: "Path <strong>[path]</strong> was not found."</li><li>Helpful suggestion for non-directory paths: "<strong>[path]</strong> is not a directory. Did you mean to add the parent directory <strong>[parent]</strong>?"</li><li>Informative message for already accessible directories: "<strong>[path]</strong> is already accessible within the existing working directory <strong>[existing]</strong>."</li><li>Success confirmation: "Added <strong>[path]</strong> as a working directory."</li></ul>
+    </article>
+    <article class="card" id="configuration-support">
+      <div class="card-top">
+        <h3>Configuration Support <a class="anchor" href="#configuration-support">#</a></h3>
+      </div>
+      <ul><li><strong>Additional directories from configuration</strong>: Claude Code now reads additional working directories from the configuration file</li><li>Directories specified in <code>permissions.additionalDirectories</code> are automatically added at startup</li><li>These are processed alongside command-line <code>--add-dir</code> arguments</li></ul>
+    </article>
+    <article class="card" id="terminal-title-generation">
+      <div class="card-top">
+        <h3>Terminal Title Generation <a class="anchor" href="#terminal-title-generation">#</a></h3>
+      </div>
+      <ul><li><strong>Fixed unnecessary API calls</strong>: Terminal title generation now skips processing for local command output (messages starting with <code>&lt;local-command-stdout&gt;</code>)</li><li><strong>Disabled prompt caching</strong>: Changed <code>enablePromptCaching</code> from <code>true</code> to <code>false</code> for terminal title requests to improve performance</li></ul>
+    </article>
+    <article class="card" id="import-reorganization">
+      <div class="card-top">
+        <h3>Import Reorganization <a class="anchor" href="#import-reorganization">#</a></h3>
+      </div>
+      <ul><li>Replaced direct <code>stream</code> import with <code>PassThrough</code> from <code>stream</code></li><li>Changed from <code>node:process</code> import to specific <code>cwd</code> import from <code>node:process</code></li><li>Removed unused <code>path.resolve</code> import</li></ul>
+    </article>
+    <article class="card" id="code-refactoring">
+      <div class="card-top">
+        <h3>Code Refactoring <a class="anchor" href="#code-refactoring">#</a></h3>
+      </div>
+      <ul><li>Refactored directory addition logic to use a result-based pattern instead of direct success/message returns</li><li>Improved error handling and message formatting for directory operations</li><li>Better separation of concerns between directory validation and permission context updates</li></ul>
+    </article>
+    <article class="card" id="adding-working-directories">
+      <div class="card-top">
+        <h3>Adding Working Directories <a class="anchor" href="#adding-working-directories">#</a></h3>
+      </div>
+      <pre><code># Add a directory to the working set
+claude --add-dir /path/to/project
+
+# Multiple directories can be added
+claude --add-dir /project1 --add-dir /project2
+
+# Directories from config are automatically included
+# In your config file:
+# permissions:
+# additionalDirectories:
+# - /home/user/projects
+# - /opt/shared/code</code></pre>
+    </article>
+    <article class="card" id="error-handling-examples">
+      <div class="card-top">
+        <h3>Error Handling Examples <a class="anchor" href="#error-handling-examples">#</a></h3>
+      </div>
+      <pre><code># Missing path
+claude --add-dir
+# Output: Please provide a directory path.
+
+# Non-existent path
+claude --add-dir /fake/path
+# Output: Path /fake/path was not found.
+
+# File instead of directory
+claude --add-dir /etc/passwd
+# Output: /etc/passwd is not a directory. Did you mean to add the parent directory /etc?
+
+# Already accessible directory
+claude --add-dir /home/user/project/src  # (when /home/user/project is already added)
+# Output: /home/user/project/src is already accessible within the existing working directory /home/user/project.</code></pre>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

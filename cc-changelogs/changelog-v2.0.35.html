@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.35 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.35."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.35</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.35</span></h1>
+<p class="sub">Version 2.0.35 significantly strengthens security around network path access and file attachments. The update adds comprehensive UNC path detection to prevent unauthorized network resource access, implements file size limits for at-mention attachments, and introduces an optional auto-exit feature for idle sessions. Additionally, slash command search performance was improved through better indexing.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.34 → v2.0.35</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">15</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enhanced-unc-path-detection">
+      <div class="card-top">
+        <h3>Enhanced UNC Path Detection <a class="anchor" href="#enhanced-unc-path-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Expanded detection of Universal Naming Convention (UNC) paths that could access network shares and remote resources.</p>
+<p><strong>Details:</strong></p>
+<ul><li><strong>Comprehensive pattern detection</strong> - Now detects 6 different UNC path patterns (previously only 1):</li><li>Traditional backslash notation: <code>\\server\share</code></li><li>Forward-slash notation: <code>//server/share</code></li><li>WebDAV paths containing <code>DavWWWRoot</code></li><li>IPv4-based paths: <code>\\192.168.1.1\share</code></li><li>IPv6-based paths: <code>\\[2001:db8::1]\share</code></li><li>SSL/port notation variations: <code>@SSL@443</code>, <code>@443@SSL</code></li><li><strong>Defense-in-depth check</strong> - Added explicit UNC path verification in permission checking that triggers before other path validation, requiring manual user approval with message: "Claude requested permissions to read from {path}, which appears to be a UNC path that could access network resources"</li><li><strong>Evidence</strong>: <code>kB1() at line 469623</code>, <code>Cm() at line 474419</code> (new UNC check at lines 474427-474436)</li></ul>
+    </article>
+    <article class="card" id="expanded-windows-path-security">
+      <div class="card-top">
+        <h3>Expanded Windows Path Security <a class="anchor" href="#expanded-windows-path-security">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Additional checks for potentially dangerous Windows path patterns.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Blocks paths containing <code>$</code> or <code>%</code> characters (environment variable references like <code>%APPDATA%</code> or <code>$env:USERNAME</code>)</li><li>Integrated comprehensive UNC detection into suspicious path validation</li><li><strong>Evidence</strong>: <code>hs2() at line 474240</code> (new checks at lines 474253-474254)</li></ul>
+    </article>
+    <article class="card" id="file-size-limits-for-at-mentions">
+      <div class="card-top">
+        <h3>File Size Limits for At-Mentions <a class="anchor" href="#file-size-limits-for-at-mentions">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enforces a 256KB size limit when files are attached via at-mention (<code>@</code> symbol).</p>
+<p><strong>How it works:</strong></p>
+<pre><code># If you try to attach a large file via at-mention:
+@/path/to/large-file.log
+
+# Claude Code will now check the file size first and reject if &gt; 256KB</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Prevents accidental attachment of large log files, binaries, or data files that would waste tokens</li><li>Size check happens before file content is read, saving processing time</li><li>Logs telemetry event <code>tengu_attachment_file_too_large</code> with file size for monitoring</li><li>Regular Read tool usage (without at-mention) is unaffected and can still handle large files with offset/limit parameters</li><li><strong>Evidence</strong>: <code>npA() at line 481542</code>, <code>ob1() at line 313340</code> (size check at lines 313344-313349)</li></ul>
+    </article>
+    <article class="card" id="optimized-slash-command-search">
+      <div class="card-top">
+        <h3>Optimized Slash Command Search <a class="anchor" href="#optimized-slash-command-search">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved slash command autocomplete performance through better data structure indexing.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Reduced redundant array creation during fuzzy search by pre-building search index</li><li>Changed from creating multiple search entries per command (via <code>flatMap</code>) to single structured entries (via <code>map</code>)</li><li>Improves responsiveness when typing <code>/</code> to search available commands</li><li><strong>Evidence</strong>: <code>p22() at line 381579</code> (refactored from <code>d22()</code> which used <code>flatMap</code> at v2.0.34 line 381594)</li></ul>
+    </article>
+    <article class="card" id="automatic-image-compression">
+      <div class="card-top">
+        <h3>Automatic Image Compression <a class="anchor" href="#automatic-image-compression">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New wrapper function that automatically compresses images exceeding 25KB to optimize token usage.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Transparently compresses large images before sending to the API</li><li>Uses multi-strategy compression: resizing, format optimization, quality adjustment</li><li>Default threshold: 25KB (25,000 tokens)</li><li><strong>Evidence</strong>: <code>rk1() at line 276879</code></li></ul>
+    </article>
+    <article class="card" id="simplified-permission-system">
+      <div class="card-top">
+        <h3>Simplified Permission System <a class="anchor" href="#simplified-permission-system">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Migrated <code>ignorePatterns</code> configuration to unified permissions system.</p>
+<p><strong>Details:</strong></p>
+<ul><li>The <code>ignorePatterns</code> field is automatically migrated to permission rules on first run</li><li>After successful migration, <code>ignorePatterns</code> is removed from config file</li><li>Runtime file access checking now uses unified <code>xC()</code> permission function instead of separate <code>GN()</code> ignore checker</li><li>Behavior remains the same - patterns still block file access, just through the permissions infrastructure</li><li><strong>Evidence</strong>: <code>u6A() at line 474347</code> (simplified from <code>IsA()</code>), <code>se2() at line 487463</code> (migration with cleanup at line 487480)</li></ul>
+    </article>
+    <article class="card" id="optional-auto-exit-on-idle">
+      <div class="card-top">
+        <h3>Optional Auto-Exit on Idle <a class="anchor" href="#optional-auto-exit-on-idle">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude Code can now automatically exit after a configured period of inactivity.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Set idle timeout to 60 seconds (60000 milliseconds)
+export CLAUDE_CODE_EXIT_AFTER_STOP_DELAY=60000
+claude
+
+# Claude Code will now exit automatically after 60 seconds of no activity</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Disabled by default - only activates when <code>CLAUDE_CODE_EXIT_AFTER_STOP_DELAY</code> environment variable is set</li><li>Value is in milliseconds (e.g., 60000 = 60 seconds)</li><li>Timer resets whenever Claude Code processes a command</li><li>Useful for automated testing, CI/CD pipelines, or managing long-running sessions</li><li><strong>Evidence</strong>: <code>XA9() at line 488655</code>, exit message at line 488668</li></ul>
+    </article>
+    <article class="card" id="improved-model-name-recognition">
+      <div class="card-top">
+        <h3>Improved Model Name Recognition <a class="anchor" href="#improved-model-name-recognition">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Better handling of model names with bracketed suffixes like <code>[1m]</code>.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Recognizes model names with <code>[1m]</code> suffix (e.g., <code>claude-3-5-sonnet-20241022[1m]</code>)</li><li>Strips suffix and validates against known model list</li><li>Improves compatibility with certain API responses or model name formats</li><li><strong>Evidence</strong>: <code>ce5() at line 466959</code></li></ul>
+    </article>
+    <article class="card" id="fixed-assistant-message-handling">
+      <div class="card-top">
+        <h3>Fixed Assistant Message Handling <a class="anchor" href="#fixed-assistant-message-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved reliability of assistant message extraction from streaming responses.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Changed from <code>return</code> on first assistant message to collecting all messages and returning the last one</li><li>Prevents potential issues where intermediate assistant messages could be missed</li><li>Adds explicit error if no assistant message found in stream</li><li><strong>Evidence</strong>: <code>ES() at line 468457</code> (formerly <code>HS()</code>)</li></ul>
+    </article>
+    <article class="card" id="enhanced-read-tool-validation">
+      <div class="card-top">
+        <h3>Enhanced Read Tool Validation <a class="anchor" href="#enhanced-read-tool-validation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Read tool now properly validates file paths against permission context during input validation.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Passes <code>toolPermissionContext</code> to validation function to check permissions earlier</li><li>Prevents attempting to read files that will be denied by permissions</li><li>More accurate error messages about why files cannot be read</li><li><strong>Evidence</strong>: <code>t4.validateInput(F, B) at line 313355</code> in v2.0.35 (previously missing context parameter)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Improvements</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-improvements">
+      <ul><li>Refactored permission checking for read operations to use consistent code paths</li><li>Added IDE selection context filtering to respect file permissions</li><li>Consolidated path normalization helpers using <code>node:path</code> posix/win32 utilities</li><li>Improved stream handling with consistent PassThrough stream usage across modules</li><li>Better separation of initialization logic from runtime functionality</li></ul>
+<p><strong>Note:</strong> This changelog focuses on user-visible changes and security improvements. Many internal function renamings due to code minification are not included unless they represent functional changes.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

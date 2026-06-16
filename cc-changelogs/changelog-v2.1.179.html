@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.179 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.179."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.179</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.179</span></h1>
+<p class="sub">This release adds Claude Design MCP integration, a HIPAA compliance indicator, and a "not used recently" section in the model picker. It also brings multiple reliability improvements: better connection-drop messages with partial-response recovery, OAuth retry logic for remote sessions, graceful worktree cwd recovery, and clearer error messages for <code>--json-schema</code>, plugin SHA pins, and ultrareview size limits.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.178 → v2.1.179</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">19</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">2</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="claude-design-mcp-integration-gradual-rollout">
+      <div class="card-top">
+        <h3>Claude Design MCP Integration [Gradual Rollout] <a class="anchor" href="#claude-design-mcp-integration-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A built-in first-party MCP server called <code>claude_design</code> is now available, connecting to Anthropic's Design API at <code>https://api.anthropic.com/v1/design/mcp</code>. When enabled, Claude can mock up UI screens directly in your session. A tip reads "Use Claude Design to mock up screens before you build."</p>
+<div class="blabel">Status</div>
+<p>Controlled by feature flag <code>tengu_omelette_whisk</code>. Can also be force-enabled via the environment variable <code>CLAUDE_CODE_ENABLE_DESIGN_MCP=true</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Server name <code>claude_design</code> is treated as first-party — it auto-attaches login OAuth tokens and renders with a bare name (no URL prefix in the UI)</li><li>Setting <code>CLAUDE_CODE_ENABLE_DESIGN_MCP=1</code> bypasses the feature flag for self-hosting or testing</li></ul>
+<div class="blabel">Evidence</div>
+<p>Design MCP server name (search for <code>"claude_design"</code>) and URL (search for <code>"https://api.anthropic.com/v1/design/mcp"</code>)</p>
+    </article>
+    <article class="card" id="hipaa-compliance-indicator">
+      <div class="card-top">
+        <h3>HIPAA Compliance Indicator <a class="anchor" href="#hipaa-compliance-indicator">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When your session is operating under HIPAA compliance constraints, the status bar now displays a persistent indicator: "HIPAA · some features are restricted · /status for details".</p>
+<div class="blabel">Usage</div>
+<pre><code># Appears automatically in the status bar if your organization has HIPAA mode active
+# Run /status to see which specific features are restricted</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The indicator uses tier <code>"warning"</code> styling so it stands out</li><li>The <code>/status</code> command will show the full list of restricted features</li></ul>
+<div class="blabel">Evidence</div>
+<p>HIPAA status bar notification (search for <code>"HIPAA · some features are restricted"</code>)</p>
+    </article>
+    <article class="card" id="model-picker-not-used-recently-section">
+      <div class="card-top">
+        <h3>Model Picker "Not Used Recently" Section <a class="anchor" href="#model-picker-not-used-recently-section">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>/model</code> picker now surfaces models you haven't used in a while in a dedicated "Not used recently" section, and shows "Last used: X days ago" on individual entries. This helps you spot models you may have tried and moved away from.</p>
+<div class="blabel">Usage</div>
+<pre><code>/model
+# Models not recently used appear in a &quot;Not used recently&quot; section
+# Each entry shows &quot;· Last used: 3 days ago&quot; (or &quot;today&quot;)</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Models are grouped in this section if they haven't been selected recently</li><li>The day-count label appears dimmed next to the model name</li><li>This section appears below Attention and Favorites in the picker</li></ul>
+<div class="blabel">Evidence</div>
+<p>Section header label (search for <code>"Not used recently"</code>) and per-entry label (search for <code>"· Last used:"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-altgr-as-text-environment-variable">
+      <div class="card-top">
+        <h3><code>CLAUDE_CODE_ALTGR_AS_TEXT</code> Environment Variable <a class="anchor" href="#claude-code-altgr-as-text-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>New env var for Windows users on keyboards with an AltGr key. AltGr is used on many European and international layouts to produce characters like <code>@</code>, <code>€</code>, <code>[</code>, <code>]</code>, etc. — but it's also interpreted as Ctrl+Alt in Windows, which can interfere with Claude Code shortcuts.</p>
+<div class="blabel">Usage</div>
+<pre><code># Force AltGr combinations to always be treated as text (recommended for most EU users)
+CLAUDE_CODE_ALTGR_AS_TEXT=true claude
+
+# Disable AltGr text mode entirely
+CLAUDE_CODE_ALTGR_AS_TEXT=false claude
+
+# Auto-detect (default): enabled if WT_SESSION is set (Windows Terminal)</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>true</code>/<code>1</code> forces "force" mode — AltGr combos always produce text</li><li><code>false</code>/<code>0</code> forces "off" mode — AltGr combos pass through as Ctrl+Alt key events</li><li>Omitted: "auto" mode, enabled when <code>WT_SESSION</code> is present (Windows Terminal)</li><li>Only applies to printable character ranges (codepoints 32–126 and 160–55295)</li></ul>
+<div class="blabel">Evidence</div>
+<p>New env var handler (search for <code>"CLAUDE_CODE_ALTGR_AS_TEXT"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-otel-diag-stderr-environment-variable">
+      <div class="card-top">
+        <h3><code>CLAUDE_CODE_OTEL_DIAG_STDERR</code> Environment Variable <a class="anchor" href="#claude-code-otel-diag-stderr-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When set, OpenTelemetry diagnostic errors are written directly to stderr in addition to the internal debug log. Useful when debugging custom telemetry or OTEL integrations.</p>
+<div class="blabel">Usage</div>
+<pre><code>CLAUDE_CODE_OTEL_DIAG_STDERR=1 claude
+# OTEL errors now appear on stderr prefixed with &quot;[3P telemetry] OTEL diag error:&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Without this flag, OTEL errors only appear in the internal log (visible via <code>/debug</code>)</li><li>With the flag, errors are also streamed to <code>process.stderr</code> immediately</li><li>The flag is stripped before spawning subprocesses so it doesn't leak</li></ul>
+<div class="blabel">Evidence</div>
+<p>New stderr path (search for <code>"CLAUDE_CODE_OTEL_DIAG_STDERR"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-suppress-session-attribution-environment-variabl">
+      <div class="card-top">
+        <h3><code>CLAUDE_CODE_SUPPRESS_SESSION_ATTRIBUTION</code> Environment Variable <a class="anchor" href="#claude-code-suppress-session-attribution-environment-variabl">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>In remote sessions, Claude now adds a <code>Claude-Session:</code> attribution line to git commit messages and PR bodies. This new env var lets you suppress that attribution.</p>
+<div class="blabel">Usage</div>
+<pre><code># Suppress session attribution in commits and PRs (remote mode only)
+CLAUDE_CODE_SUPPRESS_SESSION_ATTRIBUTION=1 claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When attribution is active (remote session, no suppression), commit messages get a <code>Claude-Session: &lt;session-id&gt;</code> trailer</li><li>PR bodies get the session ID appended as a paragraph</li><li>Only applies in <code>remote</code> mode — no effect in interactive sessions</li></ul>
+<div class="blabel">Evidence</div>
+<p>Attribution suppression check (search for <code>"CLAUDE_CODE_SUPPRESS_SESSION_ATTRIBUTION"</code>) and header format (search for <code>"Claude-Session:"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="better-error-messages-for-json-schema">
+      <div class="card-top">
+        <h3>Better Error Messages for <code>--json-schema</code> <a class="anchor" href="#better-error-messages-for-json-schema">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Two new validation messages are now shown when <code>--json-schema</code> is passed invalid input:</p>
+<ul><li>If the value is not parseable JSON: <code>Error: --json-schema is not valid JSON: &lt;parse error detail&gt;</code></li><li>If the JSON is valid but not an object (e.g., an array or string): <code>Error: --json-schema must be a JSON object</code></li></ul>
+<p>Previously these failures silently continued with an undefined schema object.</p>
+<div class="blabel">Evidence</div>
+<p>Validation error strings (search for <code>"Error: --json-schema is not valid JSON:"</code> and <code>"Error: --json-schema must be a JSON object"</code>)</p>
+    </article>
+    <article class="card" id="plugin-sha-pin-verification-clearer-errors">
+      <div class="card-top">
+        <h3>Plugin SHA Pin Verification: Clearer Errors <a class="anchor" href="#plugin-sha-pin-verification-clearer-errors">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When installing a plugin that specifies a SHA pin and verification fails, the error message is now specific about what went wrong:</p>
+<pre><code>SHA pin verification failed: expected HEAD to be &lt;expected-sha&gt;, got &lt;actual-sha&gt;.
+The pinned commit may have been removed upstream, or a ref with the same name exists.
+Refusing to install.</code></pre>
+<p>If the underlying <code>git rev-parse</code> call itself fails, the <code>got</code> field shows <code>(rev-parse failed)</code> so the root cause is always clear.</p>
+<div class="blabel">Evidence</div>
+<p>SHA verification error (search for <code>"SHA pin verification failed: expected HEAD to be"</code>)</p>
+    </article>
+    <article class="card" id="ultrareview-now-checks-pr-size-before-starting">
+      <div class="card-top">
+        <h3>Ultrareview Now Checks PR Size Before Starting <a class="anchor" href="#ultrareview-now-checks-pr-size-before-starting">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>/ultrareview</code> command now fetches <code>additions</code>, <code>deletions</code>, and <code>changedFiles</code> from GitHub before attempting the review. If the PR is too large, you get an early, clear error:</p>
+<pre><code>PR #42 is too large for ultrareview (85 files, 3,200 lines).
+Split it into smaller PRs, or run `claude` on a narrower local diff.</code></pre>
+<p>The local-diff too-large message was also improved — it no longer suggests pushing a PR:</p>
+<p>Before: "Push a PR and use <code>claude &lt;PR#&gt;</code>, or pass a closer base branch…" After: "Pass a closer base branch (<code>claude &lt;branch&gt;</code>) to narrow the scope, or split the change."</p>
+<div class="blabel">Evidence</div>
+<p>Size-check error (search for <code>"is too large for ultrareview ("</code>) and field fetch (search for <code>"additions,deletions,changedFiles"</code>)</p>
+    </article>
+    <article class="card" id="git-log-isolated-from-local-hooks-and-fsmonitor">
+      <div class="card-top">
+        <h3>Git Log Isolated from Local Hooks and fsmonitor <a class="anchor" href="#git-log-isolated-from-local-hooks-and-fsmonitor">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When scanning recently-added files, Claude now passes four safety flags to git:</p>
+<pre><code>-c core.fsmonitor=
+-c core.hooksPath=/dev/null
+-c core.pager=
+-c log.showSignature=false</code></pre>
+<p>This prevents fsmonitor daemons from slowing the call, local git hooks from running, pagers from blocking output, and commit-signature verification from failing on machines without GPG. The call was occasionally slow or broken on repos with heavy hook setups.</p>
+<div class="blabel">Evidence</div>
+<p>New git flags (search for <code>"core.fsmonitor="</code> and <code>"log.showSignature=false"</code>)</p>
+    </article>
+    <article class="card" id="nul-redirect-replacement-is-now-safer">
+      <div class="card-top">
+        <h3>NUL Redirect Replacement Is Now Safer <a class="anchor" href="#nul-redirect-replacement-is-now-safer">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Claude translates Windows-style <code>NUL</code> redirections (e.g., <code>2&gt;NUL</code>) into <code>/dev/null</code> for cross-platform compatibility. This substitution is now skipped if the command contains <code>&lt;</code>, <code>$</code>, or a backtick — characters that indicate shell expansion or redirection contexts where a static replacement would produce incorrect results.</p>
+<div class="blabel">Evidence</div>
+<p>Safety guard (search for <code>"H.includes(\"&lt;\") || H.includes(\"$\") || H.includes(\"\</code>\")"`)</p>
+    </article>
+    <article class="card" id="exitworktree-graceful-cwd-recovery">
+      <div class="card-top">
+        <h3>ExitWorktree: Graceful cwd Recovery <a class="anchor" href="#exitworktree-graceful-cwd-recovery">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When exiting a git worktree, if the original working directory no longer exists (e.g., it was deleted while Claude was running in the worktree), Claude now tries fallback locations in order: the original worktree path, the home directory, and the process root. A clear message is shown:</p>
+<pre><code>The original directory /path/to/old-dir no longer exists, so the session is now in /home/user.
+Consider restarting Claude from an existing directory.</code></pre>
+<p>If the fallback landed back in the worktree itself, the suggestion to restart is omitted.</p>
+<div class="blabel">Evidence</div>
+<p>Recovery message (search for <code>"The original directory"</code>) and log entry (search for <code>"ExitWorktree: original directory"</code>)</p>
+    </article>
+    <article class="card" id="better-messages-when-api-connection-drops">
+      <div class="card-top">
+        <h3>Better Messages When API Connection Drops <a class="anchor" href="#better-messages-when-api-connection-drops">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Three new user-facing messages now appear when a streaming connection is lost:</p>
+<ul><li>Mid-response (after some content was already delivered): <code>Connection closed mid-response. The response above may be incomplete.</code></li><li>During thinking (before any content): <code>Connection closed while thinking, before producing a response. Try again.</code></li><li>Network-level errors (ECONNRESET, EPIPE, etc.): <code>Connection to the API was lost (&lt;error_code&gt;). This is usually temporary — try again.</code></li></ul>
+<p>Previously these all surfaced as generic error messages.</p>
+<div class="blabel">Evidence</div>
+<p>Stream-drop messages (search for <code>"Connection closed mid-response"</code> and <code>"Connection closed while thinking"</code>) and network-error handler (search for <code>"Connection to the API was lost ("</code>)</p>
+    </article>
+    <article class="card" id="oauth-retry-with-exponential-backoff-in-remote-sessions">
+      <div class="card-top">
+        <h3>OAuth Retry with Exponential Backoff in Remote Sessions <a class="anchor" href="#oauth-retry-with-exponential-backoff-in-remote-sessions">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When a remote session receives a 401 response and OAuth token refresh fails, the client now retries the refresh up to <code>oauth_retry_max_attempts</code> times with exponential backoff. During each attempt, the status shows:</p>
+<pre><code>OAuth refresh failed — waiting for a fresh login (1/3)</code></pre>
+<p>If all attempts fail: <code>OAuth token refresh failed — re-authenticate, then re-enable Remote Control</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Retry message (search for <code>"OAuth refresh failed — waiting for a fresh login ("</code>) and failure message (search for <code>"OAuth token refresh failed — re-authenticate"</code>)</p>
+    </article>
+    <article class="card" id="artifact-share-status-display">
+      <div class="card-top">
+        <h3>Artifact Share Status Display <a class="anchor" href="#artifact-share-status-display">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The artifact WebFetch tool now probes the sharing status of an artifact before reading it. The mode is now shown in descriptive human-readable form instead of raw enum values:</p>
+<ul><li><code>"owner"</code> → "a private page on claude.ai"</li><li><code>"org"</code> → "a page shared with your organization"</li><li><code>"users"</code> → "a page shared with specific users"</li><li>Live-shared → "on claude.ai (viewers see updates immediately)"</li><li>Unknown mode → "others (unrecognized share mode — treating as shared)"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Share mode labels (search for <code>"a private page on claude.ai"</code> and <code>"your organization"</code>)</p>
+    </article>
+    <article class="card" id="fable-5-consent-flow-improvements">
+      <div class="card-top">
+        <h3>Fable 5 Consent Flow Improvements <a class="anchor" href="#fable-5-consent-flow-improvements">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Several improvements to how usage-credits-gated models (Fable 5) behave when consent hasn't been given:</p>
+<ul><li>When Fable 5 is set as a teammate's default model but consent is missing, the teammate panel now shows: "Fable 5 needs usage-credits consent — /model to set up" instead of a silent failure</li><li>A new <code>model_consent_fallback</code> system event is emitted when the gated model falls back to another, carrying the <code>choice</code> (<code>consent</code>/<code>switch_default</code>/<code>cancelled</code>), <code>original_model</code>, <code>fallback_model</code>, and whether the saved default was rewritten</li><li>The model picker shows a "Reset model to the workspace default" option when relevant</li></ul>
+<div class="blabel">Evidence</div>
+<p>Consent fallback message (search for <code>"Fable 5 needs usage-credits consent — /model to set up"</code>) and event type (search for <code>"model_consent_fallback"</code>)</p>
+    </article>
+    <article class="card" id="spinner-state-is-now-per-agent">
+      <div class="card-top">
+        <h3>Spinner State Is Now Per-Agent <a class="anchor" href="#spinner-state-is-now-per-agent">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Internally, the status bar spinner state (responding/thinking/tool-input, compacting status, turn effort) is now tracked per agent ID in a keyed store instead of a single global singleton. This is a prerequisite for correct multi-agent displays where parallel agents each need their own status line. Spinner state for removed agents is cleaned up automatically.</p>
+<div class="blabel">Evidence</div>
+<p>Per-agent state store (search for <code>"defaultVerb"</code> in spinner state initialization) and per-agent accessor (search for <code>"n64(H.agentId)"</code>)</p>
+    </article>
+    <article class="card" id="tool-list-truncation-notice">
+      <div class="card-top">
+        <h3>Tool List Truncation Notice <a class="anchor" href="#tool-list-truncation-notice">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When a tool result or file listing is too long for the context window and must be truncated, the cutoff now shows:</p>
+<pre><code>... and 42 more (truncated for prompt size)</code></pre>
+<p>Previously the list was silently cut with no indication of how much was omitted.</p>
+<div class="blabel">Evidence</div>
+<p>Truncation notice (search for <code>"more (truncated for prompt size)"</code>)</p>
+    </article>
+    <article class="card" id="machineid-is-now-resilient-to-storage-failures">
+      <div class="card-top">
+        <h3>machineID Is Now Resilient to Storage Failures <a class="anchor" href="#machineid-is-now-resilient-to-storage-failures">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>If saving the machine ID to disk fails (e.g., permissions issue), Claude now falls back to an in-memory ID for the current session rather than leaving the field empty. A warning is logged: <code>getOrCreateMachineID: could not persist machineID: &lt;error&gt;</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Fallback error log (search for <code>"getOrCreateMachineID: could not persist machineID:"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Worktree cleanup (<code>process.chdir</code>) now catches and logs errors instead of crashing if the original directory is gone during teardown (search for <code>"Could not chdir to original directory while cleaning up worktree:"</code>)</li><li>Worktree keep (<code>process.chdir</code>) similarly catches errors gracefully (search for <code>"Could not chdir to original directory while keeping worktree:"</code>)</li><li><code>git core.hooksPath</code> resolution now canonicalizes relative paths before writing them back, preventing the wrong path being stored when <code>core.hooksPath</code> is specified as a relative reference</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled for users.</p>
+    </article>
+    <article class="card" id="screen-reader-accessibility-support-in-development">
+      <div class="card-top">
+        <h3>Screen Reader / Accessibility Support [In Development] <a class="anchor" href="#screen-reader-accessibility-support-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure for a screen reader accessibility mode has been added under the feature flag <code>tengu_ax_screen_reader</code>.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged — not yet enabled for any users. No user-visible behavior yet.</p>
+<div class="blabel">Evidence</div>
+<p>Feature flag constant (search for <code>"tengu_ax_screen_reader"</code>)</p>
+    </article>
+    <article class="card" id="precompute-compaction-setting-gradual-rollout">
+      <div class="card-top">
+        <h3>Precompute Compaction Setting [Gradual Rollout] <a class="anchor" href="#precompute-compaction-setting-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new experimental setting <code>precomputeCompactionEnabled</code> allows Claude to precompute the compaction summary in the background before it's actually needed, making context-window compaction faster when it triggers.</p>
+<div class="blabel">Status</div>
+<p>Setting infrastructure exists and is wired to the settings UI, but the setting toggle is only shown when the server flag <code>tengu_sepia_moth</code> is enabled. The actual precompute behavior also requires this flag. The setting description reads: "@internal Precompute the compaction summary in the background before it is needed. Only applies when auto-compact is on."</p>
+<div class="blabel">Details</div>
+<ul><li>Appears in the Experimental section of <code>/settings</code> when enabled</li><li>Default value is <code>true</code> when the flag is active</li><li>Emits a <code>tengu_precompute_compaction_setting_changed</code> telemetry event on change</li></ul>
+<div class="blabel">Evidence</div>
+<p>Setting description (search for <code>"Precompute the compaction summary in the background"</code>) and setting key (search for <code>"precomputeCompactionEnabled"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.179.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.179.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

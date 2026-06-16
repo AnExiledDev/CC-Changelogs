@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.66 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.66."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.66</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.66</span></h1>
+<p class="sub">This release removes the ultraplan mode and the remote-control server subcommand, replaces the <code>/reload-plugins</code> workflow with a restart-based plugin activation model, and enhances the microcompaction system with boundary messages and tool result clearing. It also introduces a new <code>forkContext</code> property for agent definitions, improved parallel tool call error handling, and a redesigned Plugin Status UI.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.64 → v2.1.66</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">17</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">17 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="sub-agent-context-forking-forkcontext">
+      <div class="card-top">
+        <h3>Sub-Agent Context Forking (<code>forkContext</code>) <a class="anchor" href="#sub-agent-context-forking-forkcontext">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Agents can now receive the full parent conversation context when spawned as sub-agents, enabling better awareness of what the user has been working on.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>forkContext</code> frontmatter field for agent <code>.md</code> definitions (set to <code>true</code> or <code>false</code>)</li><li>When enabled, the sub-agent receives prior conversation messages as read-only context</li><li>Agents with <code>forkContext: true</code> must use <code>model: inherit</code> to avoid context length mismatch</li><li>A new <code>### FORKING CONVERSATION CONTEXT ###</code> boundary marker is injected to clearly separate inherited context from the sub-agent's own task</li><li>The sub-agent is instructed to only use tools available in its own system prompt, even if context messages reference other tools</li></ul>
+<div class="blabel">Evidence</div>
+<p>Sub-agent entry system (search for <code>"sub_agent_entered"</code> and <code>"FORKING CONVERSATION CONTEXT"</code>)</p>
+    </article>
+    <article class="card" id="plugin-status-and-error-ui">
+      <div class="card-top">
+        <h3>Plugin Status and Error UI <a class="anchor" href="#plugin-status-and-error-ui">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New interactive UI views for inspecting plugin installation status and diagnosing loading errors.</p>
+<div class="blabel">Details</div>
+<ul><li><strong>Plugin Status</strong> view shows installation progress for marketplaces and plugins (pending, installing, installed, failed)</li><li><strong>Plugin Loading Errors</strong> view lists all plugin load failures with detailed error messages and actionable remediation hints</li><li>Error types include: path-not-found, git-auth-failed, network-error, manifest-parse-error, marketplace-blocked-by-policy, and more</li><li>Each error includes a <code>→</code> arrow hint suggesting how to fix the issue (e.g., "→ Check your internet connection and try again", "→ Configure SSH keys or use HTTPS URL instead")</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin error UI (search for <code>"Plugin Loading Errors"</code> and <code>"Plugin Status"</code>)</p>
+    </article>
+    <article class="card" id="background-plugin-installation">
+      <div class="card-top">
+        <h3>Background Plugin Installation <a class="anchor" href="#background-plugin-installation">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Plugins and marketplaces from settings are now automatically installed in the background when they are missing.</p>
+<div class="blabel">Details</div>
+<ul><li>On startup, Claude Code detects plugins referenced in settings that are not yet installed</li><li>Missing marketplaces are installed first, then missing plugins from those marketplaces</li><li>Installation progress is tracked per-plugin with states: pending → installing → installed/failed</li><li>Plugins from unknown/unconfigured marketplaces are flagged as uninstallable with clear error messages</li><li>New telemetry event <code>tengu_marketplace_background_install</code> tracks installation success/failure rates</li></ul>
+<div class="blabel">Evidence</div>
+<p>Background plugin installer (search for <code>"plugins automatically"</code> and <code>"Setting installation status"</code>)</p>
+    </article>
+    <article class="card" id="plugin-enable-disable-with-scope-support">
+      <div class="card-top">
+        <h3>Plugin Enable/Disable with Scope Support <a class="anchor" href="#plugin-enable-disable-with-scope-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Plugins can now be enabled or disabled at specific scopes (user, project, local), with validation for managed plugins.</p>
+<div class="blabel">Details</div>
+<ul><li>Enabling/disabling a plugin now persists the setting at the appropriate scope</li><li>Managed plugins (from enterprise policy) cannot be enabled or disabled — only updated</li><li>If a <code>--scope</code> argument is provided but doesn't match the plugin's actual scope, a helpful error message is shown</li><li>Success messages include the plugin name and scope: <code>"Successfully enabled plugin: X (scope: user)"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin scope management (search for <code>"Managed plugins cannot be"</code> and <code>"is installed at"</code>)</p>
+    </article>
+    <article class="card" id="restart-based-plugin-activation-replaces-reload-plugins">
+      <div class="card-top">
+        <h3>Restart-Based Plugin Activation (Replaces /reload-plugins) <a class="anchor" href="#restart-based-plugin-activation-replaces-reload-plugins">#</a></h3>
+      </div>
+      <p>The <code>/reload-plugins</code> command has been removed. After installing, enabling, disabling, or updating plugins, Claude Code now displays messages like:</p>
+<ul><li><code>"✓ Installed X. Restart Claude Code to load new plugins."</code></li><li><code>"Configuration saved. Restart Claude Code for changes to take effect."</code></li></ul>
+<p>This replaces the previous <code>"Run /reload-plugins to activate"</code> workflow with a cleaner restart model.</p>
+<div class="blabel">Evidence</div>
+<p>Plugin restart messages (search for <code>"Restart Claude Code"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-microcompaction-with-boundary-messages">
+      <div class="card-top">
+        <h3>Enhanced Microcompaction with Boundary Messages <a class="anchor" href="#enhanced-microcompaction-with-boundary-messages">#</a></h3>
+      </div>
+      <p>The automatic context microcompaction system now produces visible boundary messages when it operates. When tool results are cleared to save context space, a <code>"Context microcompacted"</code> system message is inserted with metadata including token counts saved, number of tool results compacted, and images cleared. Old tool results are replaced with <code>"[Old tool result content cleared]"</code> markers that point to saved files on disk.</p>
+<div class="blabel">Evidence</div>
+<p>Microcompaction boundaries (search for <code>"Context microcompacted"</code> and <code>"[Old tool result content cleared]"</code>)</p>
+    </article>
+    <article class="card" id="sibling-tool-call-error-handling">
+      <div class="card-top">
+        <h3>Sibling Tool Call Error Handling <a class="anchor" href="#sibling-tool-call-error-handling">#</a></h3>
+      </div>
+      <p>When multiple tools run in parallel and one fails, the remaining sibling tool calls now receive a clean error message (<code>"Sibling tool call errored"</code>) instead of hanging or producing ambiguous results. This improves reliability when using parallel tool execution.</p>
+<div class="blabel">Evidence</div>
+<p>Parallel tool error handling (search for <code>"Sibling tool call errored"</code>)</p>
+    </article>
+    <article class="card" id="updated-input-guides">
+      <div class="card-top">
+        <h3>Updated Input Guides <a class="anchor" href="#updated-input-guides">#</a></h3>
+      </div>
+      <p>New contextual keyboard shortcut hints appear during various interactions:</p>
+<ul><li><code>"ctrl+c to interrupt · Esc again to clear"</code> during active operations</li><li><code>"Tab to complete · Enter to add · Esc to cancel"</code> in settings input</li><li><code>"↑/↓ to select · Enter to confirm · Esc to cancel"</code> in selection lists</li></ul>
+<div class="blabel">Evidence</div>
+<p>Input guides (search for <code>"ctrl+c to interrupt"</code>)</p>
+    </article>
+    <article class="card" id="remote-control-simplified">
+      <div class="card-top">
+        <h3>Remote Control Simplified <a class="anchor" href="#remote-control-simplified">#</a></h3>
+      </div>
+      <p>The <code>claude remote-control</code> command has been simplified. The <code>server</code> subcommand and its associated options (<code>--spawn-worktree-sessions</code>, <code>--spawn-same-dir-sessions</code>, <code>--max-sessions</code>, <code>--idle-timeout</code>, <code>--workspace</code>, <code>--host</code>, <code>--port</code>) have been removed. The <code>--name</code> option has also been removed. Remote control now focuses solely on connecting a single terminal for remote sessions via claude.ai/code.</p>
+<div class="blabel">Evidence</div>
+<p>Simplified remote-control help text (search for <code>"Remote Control - Connect your local environment"</code>)</p>
+    </article>
+    <article class="card" id="output-efficiency-system-upgraded-gradual-rollout">
+      <div class="card-top">
+        <h3>Output Efficiency System Upgraded [Gradual Rollout] <a class="anchor" href="#output-efficiency-system-upgraded-gradual-rollout">#</a></h3>
+      </div>
+      <p>The output brevity system has been upgraded from a single on/off toggle (<code>tengu_sotto_voce</code>) to a three-tier system (<code>tengu_swann_brevity</code>) with modes:</p>
+<ul><li><strong>strict</strong>: Extremely concise — "Use the fewest words necessary. Omit preamble, filler, pleasantries."</li><li><strong>focused</strong>: Extra concise — "Lead with the answer or action, not the reasoning."</li><li><strong>polished</strong>: Balanced — "Concise and polished. Never omit important information."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Output efficiency modes (search for <code>"tengu_swann_brevity"</code>)</p>
+    </article>
+    <article class="card" id="model-update-notification">
+      <div class="card-top">
+        <h3>Model Update Notification <a class="anchor" href="#model-update-notification">#</a></h3>
+      </div>
+      <p>The model migration notification has changed from "Model updated to Opus 4.6" to "Model updated to Opus 4.5", reflecting changes in default model availability for certain account types.</p>
+<div class="blabel">Evidence</div>
+<p>Model migration notification (search for <code>"Model updated to Opus 4.5"</code>)</p>
+    </article>
+    <article class="card" id="ultraplan-mode-removed">
+      <div class="card-top">
+        <h3>Ultraplan Mode Removed <a class="anchor" href="#ultraplan-mode-removed">#</a></h3>
+      </div>
+      <p>The <code>ultraplan</code> mode has been completely removed. This includes the <code>ultraplan</code> and <code>ultraplan-mode</code> identifiers, the ultraplan completion messages, and the verification specialist agent that was part of the ultraplan workflow.</p>
+<div class="blabel">Evidence</div>
+<p>All <code>"ultraplan"</code> references removed from source</p>
+    </article>
+    <article class="card" id="scheduled-skills-removed">
+      <div class="card-top">
+        <h3>Scheduled Skills Removed <a class="anchor" href="#scheduled-skills-removed">#</a></h3>
+      </div>
+      <p>The scheduled skills system (cron-based skill execution) has been removed. This includes the schedule display formatting (<code>"Every hour"</code>, <code>"Every day at"</code>, <code>"Weekdays at"</code>), the scheduled skills UI, and the scheduled skills status line.</p>
+<div class="blabel">Evidence</div>
+<p>All <code>"scheduled skill"</code> and <code>"Scheduled skill"</code> references removed</p>
+    </article>
+    <article class="card" id="voice-mode-tip-removed">
+      <div class="card-top">
+        <h3>Voice Mode Tip Removed <a class="anchor" href="#voice-mode-tip-removed">#</a></h3>
+      </div>
+      <p>The tip <code>"Voice mode is now available · /voice to enable"</code> has been removed.</p>
+<div class="blabel">Evidence</div>
+<p>String <code>"Voice mode is now available"</code> removed</p>
+    </article>
+    <article class="card" id="claude-code-desktop-cross-promotion-removed">
+      <div class="card-top">
+        <h3>Claude Code Desktop Cross-Promotion Removed <a class="anchor" href="#claude-code-desktop-cross-promotion-removed">#</a></h3>
+      </div>
+      <p>The following promotional elements have been removed:</p>
+<ul><li><code>"Try Claude Code Desktop"</code> callout</li><li><code>"Open in Claude Code Desktop"</code> button/link</li><li><code>"Same Claude Code with visual diffs, live app preview, parallel sessions, and more"</code> description</li></ul>
+<div class="blabel">Evidence</div>
+<p>All Desktop cross-promotion strings removed</p>
+    </article>
+    <article class="card" id="btw-side-question-tip-removed">
+      <div class="card-top">
+        <h3>/btw Side Question Tip Removed <a class="anchor" href="#btw-side-question-tip-removed">#</a></h3>
+      </div>
+      <p>The tip text <code>"Use /btw to ask a quick side question without interrupting Claude's current work"</code> has been removed. Note: The <code>/btw</code> command itself still exists and functions — only the tip promoting it has been removed.</p>
+<div class="blabel">Evidence</div>
+<p>Tip string <code>"Use /btw to ask a quick side question"</code> removed; <code>/btw</code> regex pattern still present (search for <code>"/btw"</code>)</p>
+    </article>
+    <article class="card" id="code-intelligence-description-removed">
+      <div class="card-top">
+        <h3>Code Intelligence Description Removed <a class="anchor" href="#code-intelligence-description-removed">#</a></h3>
+      </div>
+      <p>The description string <code>"code intelligence (definitions, references, symbols, hover)"</code> for LSP features has been removed from the codebase.</p>
+<div class="blabel">Evidence</div>
+<p>String <code>"code intelligence (definitions, references, symbols, hover)"</code> removed</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

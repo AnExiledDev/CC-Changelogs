@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.22 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.22."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.22</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.22</span></h1>
+<p class="sub">Version 2.0.22 removes the Development Partner Program data sharing functionality, introduces comprehensive user configuration support for MCP servers with interactive setup, adds session environment hooks for shell customization, and implements enterprise allowlist/blocklist controls for MCP server management.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.21 → v2.0.22</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="mcp-server-user-configuration-support">
+      <div class="card-top">
+        <h3>MCP Server User Configuration Support <a class="anchor" href="#mcp-server-user-configuration-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Plugins can now request user-provided configuration values (API keys, paths, settings) through structured schemas defined in their manifest files.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># When adding a plugin that requires configuration:
+claude mcp add my-plugin
+
+# If the plugin has user_config requirements, you&#x27;ll see:
+# Configure my-plugin server
+# Field 1 of 3: API Key
+# [Enter your value]
+
+# Or configure an existing plugin:
+claude mcp configure my-plugin server-name</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Plugins define <code>user_config</code> schemas in manifest.json with field types (string, number, boolean, file, directory)</li><li>Interactive CLI prompts collect configuration values with validation</li><li>Sensitive fields (API keys, tokens) are masked during input</li><li>Configuration persisted to <code>~/.claude/userSettings.json</code> under <code>pluginConfigs</code></li><li>Server configs support variable substitution using <code>${user_config.fieldName}</code> syntax</li><li>Validation ensures required fields are provided and types match schema</li><li><strong>Evidence</strong>: <code>CF1()</code> at line 280192, <code>q7B()</code> at line 280048, <code>fOQ()</code> at line 447320</li></ul>
+    </article>
+    <article class="card" id="session-environment-hooks">
+      <div class="card-top">
+        <h3>Session Environment Hooks <a class="anchor" href="#session-environment-hooks">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Shell environment can now be customized per session through hook scripts that persist throughout the session lifecycle.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># SessionStart hooks can create environment files:
+# Hook creates: ~/.claude/session-env/hook-1.sh
+
+# Environment is automatically sourced before each Bash command
+# Access the env file path via: $CLAUDE_ENV_FILE</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Hook scripts stored in <code>~/.claude/session-env/hook-{N}.sh</code> directories</li><li>Multiple hooks are concatenated and sourced in numerical order</li><li>SessionStart hooks receive <code>CLAUDE_ENV_FILE</code> environment variable pointing to persistent env file</li><li>Environment modifications persist for entire session across all Bash tool executions</li><li>Automatic cleanup of old session environment directories</li><li>Cache invalidation supported for dynamic updates</li><li><strong>Evidence</strong>: <code>bNA()</code> at line 72216, <code>Vh1()</code> at line 247855, <code>ia0()</code> at line 454456</li></ul>
+    </article>
+    <article class="card" id="enterprise-mcp-server-controls">
+      <div class="card-top">
+        <h3>Enterprise MCP Server Controls <a class="anchor" href="#enterprise-mcp-server-controls">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enterprise administrators can now restrict which MCP servers users are allowed to enable through allowlist and blocklist configurations.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Configuration stored in userSettings.json:
+{
+  &quot;allowedMcpServers&quot;: [{&quot;serverName&quot;: &quot;approved-server&quot;}],
+  &quot;deniedMcpServers&quot;: [{&quot;serverName&quot;: &quot;blocked-server&quot;}]
+}
+
+# When users try to add blocked servers:
+# Error: MCP server &#x27;blocked-server&#x27; is not allowed by enterprise policy</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Allowlist: Only servers in the list can be enabled (empty allowlist blocks all servers)</li><li>Blocklist: Explicitly blocked servers cannot be enabled regardless of allowlist</li><li>Priority order: blocklist &gt; allowlist &gt; default (allow all)</li><li>Enforcement applies when adding servers and when loading existing configurations</li><li>Applies to all scopes: enterprise, user, project, local, and plugin</li><li>Loaded servers automatically filtered by policy before being returned</li><li><strong>Evidence</strong>: <code>eR0()</code> at line 280589, <code>y7B()</code> at line 280584, <code>Ni()</code> at line 280640, <code>YP()</code> at line 280843</li></ul>
+    </article>
+    <article class="card" id="tool-permission-auto-grant-from-configuration">
+      <div class="card-top">
+        <h3>Tool Permission Auto-Grant from Configuration <a class="anchor" href="#tool-permission-auto-grant-from-configuration">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Tools can now be automatically approved via configuration, bypassing interactive permission prompts.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Tools pre-approved in configuration skip permission prompts</li><li>Telemetry event <code>tengu_tool_use_granted_in_config</code> tracks auto-granted tools</li><li>Applies to both built-in and MCP tools</li><li><strong>Evidence</strong>: <code>QwQ()</code> at line 436163</li></ul>
+    </article>
+    <article class="card" id="sessionstart-hook-responses-now-visible">
+      <div class="card-top">
+        <h3>SessionStart Hook Responses Now Visible <a class="anchor" href="#sessionstart-hook-responses-now-visible">#</a></h3>
+      </div>
+      <p><strong>What:</strong> SessionStart hook output is now displayed in interactive sessions, making it easier to see what environment setup is occurring.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Hook responses with <code>hook_event: "SessionStart"</code> now appear at the beginning of session streams</li><li>Only successful or non-blocking error responses are shown</li><li>Improves visibility into session initialization process</li><li><strong>Evidence</strong>: <code>MT8()</code> at lines 5737-5743 in v2.0.22</li></ul>
+    </article>
+    <article class="card" id="sdk-control-for-max-thinking-tokens">
+      <div class="card-top">
+        <h3>SDK Control for Max Thinking Tokens <a class="anchor" href="#sdk-control-for-max-thinking-tokens">#</a></h3>
+      </div>
+      <p><strong>What:</strong> SDK users can now dynamically change the maximum thinking tokens limit mid-session.</p>
+<p><strong>How to use:</strong></p>
+<pre><code>// Send control request in SDK:
+{
+  subtype: &quot;set_max_thinking_tokens&quot;,
+  max_thinking_tokens: 10000  // or null to disable
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Takes effect immediately for subsequent conversation turns</li><li>Setting to null disables thinking tokens entirely</li><li>Useful for adjusting reasoning depth based on task complexity</li><li><strong>Evidence</strong>: <code>MT8()</code> at lines 5859-5862 in v2.0.22</li></ul>
+    </article>
+    <article class="card" id="better-non-interactive-session-tracking">
+      <div class="card-top">
+        <h3>Better Non-Interactive Session Tracking <a class="anchor" href="#better-non-interactive-session-tracking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved internal consistency for tracking non-interactive sessions throughout the codebase.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Standardized API using options objects instead of scattered parameters</li><li>Cleaner function signatures: <code>{querySource, agents, isNonInteractiveSession, hasAppendSystemPrompt}</code></li><li>Affects web fetch, conversation summarization, bug reporting, and command extraction</li><li><strong>Evidence</strong>: <code>Zn6()</code> at line 295359, <code>lGQ()</code> at line 408663, <code>cSQ()</code> at line 466310</li></ul>
+    </article>
+    <article class="card" id="fixed-tool-permission-checking-edge-case">
+      <div class="card-top">
+        <h3>Fixed Tool Permission Checking Edge Case <a class="anchor" href="#fixed-tool-permission-checking-edge-case">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Fixed potential crash when tools array is undefined during permission checking.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added null check for tools array before accessing</li><li>Logs error and returns null gracefully instead of crashing</li><li>Improves robustness of permission system</li><li><strong>Evidence</strong>: <code>$NQB()</code> at lines 1281-1285 in v2.0.22</li></ul>
+    </article>
+    <article class="card" id="fixed-escape-key-handling-in-history-search">
+      <div class="card-top">
+        <h3>Fixed Escape Key Handling in History Search <a class="anchor" href="#fixed-escape-key-handling-in-history-search">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Escape key now properly exits history search mode without cancelling the main session.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Improved state management for history search modal</li><li>Escape key handling now controlled by parent component</li><li>Prevents unintended session cancellation when closing search</li><li><strong>Evidence</strong>: <code>mEQ()</code> at line 435476, <code>AwQ()</code> at line 436119</li></ul>
+    </article>
+    <article class="card" id="development-partner-program-data-sharing">
+      <div class="card-top">
+        <h3>Development Partner Program Data Sharing <a class="anchor" href="#development-partner-program-data-sharing">#</a></h3>
+      </div>
+      <p><strong>What:</strong> All functionality related to the Development Partner Program and automatic session data sharing with Anthropic has been removed.</p>
+<p><strong>Previously included:</strong></p>
+<ul><li>UI notifications about data sharing enrollment</li><li>API calls to check organization's data sharing status</li><li>Automatic sharing of Claude Code sessions for model training</li><li>Cost discount calculations for enrolled organizations</li><li>Git repository metadata collection when data sharing was enabled</li></ul>
+<p><strong>Impact:</strong></p>
+<ul><li>Organizations previously enrolled will no longer see data sharing notifications</li><li>Sessions are no longer automatically shared with Anthropic</li><li>API usage cost calculations no longer include data sharing discounts</li></ul>
+<div class="blabel">Evidence</div>
+<p>Removed functions <code>Y7B()</code> at line 279890, <code>vd1()</code> at line 298392, <code>Ya6()</code> at line 298398, <code>Qn()</code> at line 298428, <code>Wa6()</code> at line 298432, <code>qFB()</code> at line 298438, <code>Ja6()</code> at line 298442, <code>EFB()</code> at line 298474, <code>Ia6()</code> at line 298488, <code>wFB()</code> at line 298512 in v2.0.21</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

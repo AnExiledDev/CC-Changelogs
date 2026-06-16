@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.45 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.45."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.45</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.45</span></h1>
+<p class="sub">This release updates the default model from Sonnet 4.5 to Sonnet 4.6 across the application, adds preview/markdown support for AskUserQuestion options to help users compare visual options, and introduces improved output truncation handling for long-running bash commands. The release also includes enhanced sandbox documentation, URL elicitation support for MCP tools, and new settings for customizing sandbox paths.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.44 → v2.1.45</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">14 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="askuserquestion-preview-markdown-support">
+      <div class="card-top">
+        <h3>AskUserQuestion Preview/Markdown Support <a class="anchor" href="#askuserquestion-preview-markdown-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When asking users questions with multiple options, Claude Code can now display a markdown preview pane to show code snippets, ASCII mockups, or diagrams alongside each option.</p>
+<p>Usage: When an option in AskUserQuestion includes a <code>markdown</code> field, the UI switches to a side-by-side layout with options on the left and a preview panel on the right.</p>
+<div class="blabel">Details</div>
+<ul><li>Previews are displayed in a monospace box when an option is focused</li><li>Supports multi-line text with newlines for ASCII art, code, or diagrams</li><li>Only supported for single-select questions (not multiSelect)</li><li>Users can also add free-text notes on their selection via the <code>n</code> key</li></ul>
+<div class="blabel">Evidence</div>
+<p>AskUserQuestion option schema now includes <code>markdown</code> field (search for <code>"Optional preview content shown in a monospace box"</code>)</p>
+    </article>
+    <article class="card" id="user-notes-on-question-selections">
+      <div class="card-top">
+        <h3>User Notes on Question Selections <a class="anchor" href="#user-notes-on-question-selections">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Users can now add free-text notes to their selections when answering AskUserQuestion prompts.</p>
+<div class="blabel">Details</div>
+<ul><li>Press <code>n</code> to add notes on a selected option</li><li>Notes are captured in the response via <code>annotations</code> field</li><li>Useful for providing context about why a particular option was chosen</li></ul>
+<div class="blabel">Evidence</div>
+<p>New annotations schema (search for <code>"Free-text notes the user added to their selection"</code>)</p>
+    </article>
+    <article class="card" id="url-elicitation-for-mcp-tools">
+      <div class="card-top">
+        <h3>URL Elicitation for MCP Tools <a class="anchor" href="#url-elicitation-for-mcp-tools">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>MCP tools can now request that users open a URL (e.g., for OAuth flows) and wait for completion before continuing.</p>
+<div class="blabel">Details</div>
+<ul><li>Supports error code -32042 for URL elicitation requests</li><li>Shows the URL to the user with options to "Reopen URL", "Continue without waiting", or "Skip confirmation"</li><li>Handles completion notifications from MCP servers when the user finishes the URL flow</li><li>If the user cancels, the tool receives a message explaining the cancellation</li></ul>
+<div class="blabel">Evidence</div>
+<p>URL elicitation handler (search for <code>"requires URL elicitation (error -32042"</code>)</p>
+    </article>
+    <article class="card" id="custom-spinner-tips">
+      <div class="card-top">
+        <h3>Custom Spinner Tips <a class="anchor" href="#custom-spinner-tips">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new setting allows overriding the default spinner tips with custom messages.</p>
+<p>Usage: Configure in settings with <code>tips</code> (array of strings) and optional <code>excludeDefault</code> (boolean) to hide default tips.</p>
+<div class="blabel">Evidence</div>
+<p>New setting description (search for <code>"Override spinner tips. tips: array of tip strings"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-sandbox-path-settings">
+      <div class="card-top">
+        <h3>Enhanced Sandbox Path Settings <a class="anchor" href="#enhanced-sandbox-path-settings">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New settings allow configuring additional paths for sandbox read/write permissions.</p>
+<div class="blabel">Details</div>
+<ul><li><code>sandboxExtraAllowWritePaths</code>: Additional paths to allow writing within the sandbox</li><li><code>sandboxExtraDenyReadPaths</code>: Additional paths to deny reading within the sandbox</li><li><code>sandboxExtraDenyWritePaths</code>: Additional paths to deny writing within the sandbox</li><li>These merge with paths from permission rules (Read/Edit allow/deny)</li></ul>
+<div class="blabel">Evidence</div>
+<p>New settings descriptions (search for <code>"Additional paths to allow writing within the sandbox"</code>)</p>
+    </article>
+    <article class="card" id="agent-teams-flag">
+      <div class="card-top">
+        <h3>Agent Teams Flag <a class="anchor" href="#agent-teams-flag">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new experimental <code>--agent-teams</code> CLI flag enables agent team functionality.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --agent-teams</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Sets <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</code> environment variable</li><li>Enables coordinated multi-agent workflows</li></ul>
+<div class="blabel">Evidence</div>
+<p>CLI flag handler (search for <code>"--agent-teams"</code>)</p>
+    </article>
+    <article class="card" id="default-model-updated-to-sonnet-4-6">
+      <div class="card-top">
+        <h3>Default Model Updated to Sonnet 4.6 <a class="anchor" href="#default-model-updated-to-sonnet-4-6">#</a></h3>
+      </div>
+      <p>The default model throughout Claude Code has been updated from Sonnet 4.5 to Sonnet 4.6, including:</p>
+<ul><li>Model selection descriptions now reference Sonnet 4.6</li><li>1M context window options updated to Sonnet 4.6</li><li>Haiku description now compares to Sonnet 4.6 instead of 4.5</li><li>Plan mode hybrid option now uses "Opus 4.6 in plan mode, Sonnet 4.6 otherwise"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Model descriptions updated (search for <code>"Sonnet 4.6 - best for everyday tasks"</code>)</p>
+    </article>
+    <article class="card" id="improved-sandbox-temporary-directory-documentation">
+      <div class="card-top">
+        <h3>Improved Sandbox Temporary Directory Documentation <a class="anchor" href="#improved-sandbox-temporary-directory-documentation">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The Bash tool system prompt now provides clearer guidance on using temporary directories in sandbox mode.</p>
+<div class="blabel">Details</div>
+<ul><li>Now recommends using <code>$TMPDIR</code> environment variable instead of hardcoded <code>/tmp/claude</code></li><li>Notes that TMPDIR is automatically set to the correct sandbox-writable directory</li><li>Advises that most programs respecting TMPDIR will automatically use the correct directory</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated bash system prompt (search for <code>"TMPDIR is automatically set to the correct sandbox-writable directory"</code>)</p>
+    </article>
+    <article class="card" id="output-truncation-for-large-bash-command-output">
+      <div class="card-top">
+        <h3>Output Truncation for Large Bash Command Output <a class="anchor" href="#output-truncation-for-large-bash-command-output">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Long-running bash commands that produce large output now handle truncation more gracefully.</p>
+<div class="blabel">Details</div>
+<ul><li>Output is automatically spilled to disk when it exceeds the inline limit (8MB default)</li><li>Shows truncation message with total size: "Output truncated (XXX KB total)"</li><li>Earlier output is omitted with a message indicating how much was skipped</li><li>Full output is saved to a file for later retrieval</li></ul>
+<div class="blabel">Evidence</div>
+<p>Output truncation handler (search for <code>"Output truncated ("</code>, <code>"KB of earlier output omitted"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-memory-recall-display">
+      <div class="card-top">
+        <h3>Enhanced Memory Recall Display <a class="anchor" href="#enhanced-memory-recall-display">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Improved display text for memory recall operations.</p>
+<div class="blabel">Details</div>
+<ul><li>Changed from "Recalled" to "Potentially relevant memory" for proactive memory suggestions</li><li>Clearer distinction between recalled memories and potentially relevant memories</li></ul>
+<div class="blabel">Evidence</div>
+<p>New memory display strings (search for <code>"Potentially relevant memory:"</code>)</p>
+    </article>
+    <article class="card" id="improved-mobile-integration-messaging">
+      <div class="card-top">
+        <h3>Improved Mobile Integration Messaging <a class="anchor" href="#improved-mobile-integration-messaging">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Updated messaging for mobile integration feature.</p>
+<div class="blabel">Details</div>
+<ul><li>Changed from "Use /mobile to get Claude on your phone" to clearer phrasing</li><li>New messages: "Code everywhere with the Claude app" and "Continue coding in the Claude app"</li><li>QR code instructions now include keyboard shortcut: "space for QR code"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Mobile integration strings (search for <code>"/mobile to use Claude Code from the Claude app on your phone"</code>)</p>
+    </article>
+    <article class="card" id="extra-usage-billing-labels">
+      <div class="card-top">
+        <h3>Extra Usage Billing Labels <a class="anchor" href="#extra-usage-billing-labels">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added clearer labels for when usage is billed as extra usage or at premium rates.</p>
+<div class="blabel">Details</div>
+<ul><li>Shows "Billed as extra usage" indicator for 1M context models when applicable</li><li>Shows "Billed at premium rate" for premium tier usage</li></ul>
+<div class="blabel">Evidence</div>
+<p>Billing label strings (search for <code>"Billed as extra usage"</code>)</p>
+    </article>
+    <article class="card" id="effort-setting-description-updated">
+      <div class="card-top">
+        <h3>Effort Setting Description Updated <a class="anchor" href="#effort-setting-description-updated">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The Opus 4.6 effort setting description has been expanded to better explain the trade-offs.</p>
+<p>Before: "Effort lets you control thinking intensity in Opus 4.6." After: "Effort lets you control the trade off between response thoroughness and token efficiency for Opus 4.6. Higher effort levels offer higher capability, and lower levels tend to use fewer tokens to optimize..."</p>
+<div class="blabel">Evidence</div>
+<p>Updated effort description (search for <code>"Effort lets you control the trade off between response thoroughness"</code>)</p>
+    </article>
+    <article class="card" id="plugin-path-variable-handling-on-windows">
+      <div class="card-top">
+        <h3>Plugin Path Variable Handling on Windows <a class="anchor" href="#plugin-path-variable-handling-on-windows">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Fixed handling of <code>${CLAUDE_PLUGIN_ROOT}</code> variable replacement on Windows to correctly handle backslash path separators.</p>
+<div class="blabel">Evidence</div>
+<p>Path replacement function now converts backslashes to forward slashes on Windows (search for <code>"win32" ? q.replace(/\\\\/g, "/")"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential issue with semver comparison functions to use Bun's native implementation when available (search for <code>"Bun.semver"</code>)</li><li>Removed dependency on js-yaml library (many YAML-related error strings removed from the codebase)</li><li>Fixed JSON schema validation code paths (removed $ref pointer error handling that was causing issues)</li><li>Improved rate limit event handling in SDK message adapter (search for <code>"Ignoring rate_limit_event message"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>This release removes several internal dependencies including the full js-yaml library and json-schema-ref-parser, replaced with more streamlined implementations. Users upgrading from versions using Sonnet 4.5 will automatically use Sonnet 4.6 as the default model.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

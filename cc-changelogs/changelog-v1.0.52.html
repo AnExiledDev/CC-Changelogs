@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.52 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.52."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.52</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.52</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.51 → v1.0.52</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Metrics Opt-Out Detection</h4>
+<ul><li>Added automatic detection of organization-level metrics opt-out preferences</li><li>Claude Code now checks if your organization has disabled metrics logging and respects that setting</li><li>The check is cached for 1 hour to minimize API calls</li><li>If the check fails, metrics are disabled by default for privacy</li></ul>
+<h4>Enhanced Shell Snapshot Management</h4>
+<ul><li><strong>Improved shell snapshot creation</strong> with better error handling and file locking</li><li><strong>Automatic cleanup</strong> of old shell snapshots (older than configured threshold)</li><li>Shell snapshots are now timestamped with random suffixes to avoid conflicts</li><li>Added file locking to prevent concurrent access issues</li><li>Shell snapshot files are automatically cleaned up on shutdown</li></ul>
+<h4>Todo List Reminders</h4>
+<ul><li><strong>Automatic todo reminders</strong> to help you stay on track with your tasks</li><li>Claude will remind you about your todo list after 20 turns without using TodoWrite</li><li>Reminders appear at most every 10 turns to avoid being intrusive</li><li>Example: After extended conversations, Claude will prompt: "You have X pending tasks in your todo list"</li></ul>
+<h4>System Reminders</h4>
+<ul><li>New <code>system-reminder</code> functionality for injecting context-aware guidance</li><li>Allows Claude to provide system-level hints and reminders during conversations</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Terminal Title Management</h4>
+<ul><li>Added <code>CLAUDE_CODE_DISABLE_TERMINAL_TITLE</code> environment variable</li><li>Set this to disable automatic terminal title updates if they interfere with your workflow</li><li>Usage: <code>export CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1</code></li></ul>
+<h4>Performance Enhancements</h4>
+<ul><li>Implemented caching mechanism with configurable TTL for frequently accessed data</li><li>Reduced redundant API calls through intelligent caching</li><li>Cache automatically refreshes stale data in the background</li></ul>
+<h4>Security &amp; Stability</h4>
+<ul><li>Enhanced error handling for shell operations</li><li>Better cleanup of temporary resources</li><li>Improved file locking mechanisms to prevent race conditions</li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <h4>API Updates</h4>
+<ul><li>New endpoint for checking organization metrics preferences: <code>/api/claude_code/organizations/metrics_enabled</code></li><li>Added proper error handling and fallback behavior for API failures</li></ul>
+<h4>Code Refactoring</h4>
+<ul><li>Removed legacy date/time formatting utilities (replaced with more efficient implementations)</li><li>Cleaned up unused imports and dependencies</li><li>Streamlined tool permission decision logic</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed potential race conditions in shell snapshot creation</li><li>Improved cleanup of locked files on process termination</li><li>Better handling of missing or corrupted shell configuration files</li></ul>
+    </article>
+    <article class="card" id="configuration">
+      <div class="card-top">
+        <h3>Configuration <a class="anchor" href="#configuration">#</a></h3>
+      </div>
+      <ul><li>New timeout configurations:</li><li>Shell snapshot creation: 10 seconds (configurable)</li><li>Metrics API check: 5 seconds</li><li>Cache refresh: 1 hour for metrics status</li></ul>
+    </article>
+    <article class="card" id="usage-examples">
+      <div class="card-top">
+        <h3>Usage Examples <a class="anchor" href="#usage-examples">#</a></h3>
+      </div>
+      <p><strong>Disabling terminal title updates:</strong></p>
+<pre><code># Add to your shell configuration
+export CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1
+claude chat</code></pre>
+<p><strong>Todo reminders in action:</strong></p>
+<pre><code>User: Help me refactor this codebase
+Claude: I&#x27;ll help you refactor the codebase. Let me create a todo list to track our progress.
+[... 20+ turns of conversation without using TodoWrite ...]
+Claude: [Reminder: You have 5 pending tasks in your todo list. Use /todos to view them.]</code></pre>
+<p><strong>Shell snapshot behavior:</strong></p>
+<ul><li>Snapshots are created automatically when needed</li><li>Old snapshots (&gt;60 minutes by default) are cleaned up automatically</li><li>Each snapshot is locked to prevent conflicts with concurrent Claude sessions</li></ul>
+<p>This update focuses on improving the developer experience with better task management, respecting privacy preferences, and ensuring stable shell environment handling.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

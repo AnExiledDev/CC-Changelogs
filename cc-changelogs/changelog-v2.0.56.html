@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.56 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.56."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.56</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.56</span></h1>
+<p class="sub">Version 2.0.56 introduces proactive rate limit warnings that notify users before hitting limits, a new <code>/plan</code> command for viewing and editing plan files, and significant reliability improvements to the telemetry system. SDK users gain new capabilities to customize system prompts and define agents programmatically.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.55 → v2.0.56</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">15</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">15 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="proactive-rate-limit-warnings">
+      <div class="card-top">
+        <h3>Proactive Rate Limit Warnings <a class="anchor" href="#proactive-rate-limit-warnings">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude Code now warns you before you hit rate limits by monitoring your usage percentage in real-time, rather than only alerting when limits are reached.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>5-hour limits: Warning at 90% usage when 72% through the window</li><li>Weekly limits: Graduated warnings at 25%, 50%, and 75% based on time progression</li><li>Warnings now show exact usage: "75% of weekly limit used · resets in 2 days"</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>New function <code>BX5()</code> at line 341284 reads <code>anthropic-ratelimit-unified-*-utilization</code> headers</li><li>New threshold configuration <code>eW5</code> at line 341262 defines warning triggers</li><li>Five-hour limit warnings were completely disabled in v2.0.55 (returned <code>null</code>), now active</li><li><strong>Evidence</strong>: <code>BX5()</code> at line 341284, <code>AX5()</code> at line 341260, <code>tW5()</code> at line 341242</li></ul>
+    </article>
+    <article class="card" id="new-plan-command">
+      <div class="card-top">
+        <h3>New <code>/plan</code> Command <a class="anchor" href="#new-plan-command">#</a></h3>
+      </div>
+      <p><strong>What:</strong> View or edit your current session's plan file directly from the command line.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># View the current plan
+/plan
+
+# Open plan file in your editor
+/plan open</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Shows plan content, file path, and editor name</li><li>Displays "No plan found for current session" if no plan exists</li><li><strong>Evidence</strong>: Command definition <code>Xj3</code> at line 495530-495591</li></ul>
+    </article>
+    <article class="card" id="plan-mode-attachment-throttling">
+      <div class="card-top">
+        <h3>Plan Mode Attachment Throttling <a class="anchor" href="#plan-mode-attachment-throttling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Plan mode instructions are now sent to Claude every 5 turns instead of every turn, reducing token usage while maintaining plan awareness.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New constant <code>gX5.TURNS_BETWEEN_ATTACHMENTS = 5</code> at line 343717</li><li>New function <code>cX5()</code> at line 343068 counts turns since last plan attachment</li><li>Reduces repetitive context by ~80% in long planning sessions</li><li><strong>Evidence</strong>: <code>pX5()</code> at line 343087, <code>cX5()</code> at line 343068</li></ul>
+    </article>
+    <article class="card" id="plan-file-reference-attachment">
+      <div class="card-top">
+        <h3>Plan File Reference Attachment <a class="anchor" href="#plan-file-reference-attachment">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The transcript now shows "Plan file referenced (/path/to/plan)" when plan mode is active, providing visibility into which plan file is being used.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New function <code>o10()</code> at line 342568 creates the attachment</li><li>Helpful when resuming sessions to see which plan is active</li><li><strong>Evidence</strong>: <code>o10()</code> at line 342568, rendering at line 468780</li></ul>
+    </article>
+    <article class="card" id="command-based-mcp-server-matching">
+      <div class="card-top">
+        <h3>Command-Based MCP Server Matching <a class="anchor" href="#command-based-mcp-server-matching">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enterprise admins can now allow or deny MCP servers by their exact command invocation, not just by name.</p>
+<p><strong>How to use:</strong></p>
+<pre><code>{
+  &quot;allowedMcpServers&quot;: [
+    { &quot;serverName&quot;: &quot;weather&quot; },
+    { &quot;serverCommand&quot;: [&quot;npx&quot;, &quot;-y&quot;, &quot;@company/approved-server&quot;] }
+  ]
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Each entry must have EITHER <code>serverName</code> OR <code>serverCommand</code>, not both</li><li>Command matching requires exact array equality (all arguments must match)</li><li>Backward compatible - name-based matching still works</li><li>New functions <code>TzA()</code> at line 509000 and <code>KiA()</code> at line 509003 for type checking</li><li><strong>Evidence</strong>: <code>O8B()</code> at line 185472, <code>Tv1()</code> at line 185485, schema at line 509164-509190</li></ul>
+    </article>
+    <article class="card" id="sdk-init-parameters-for-system-prompts-and-agents">
+      <div class="card-top">
+        <h3>SDK Init Parameters for System Prompts and Agents <a class="anchor" href="#sdk-init-parameters-for-system-prompts-and-agents">#</a></h3>
+      </div>
+      <p><strong>What:</strong> SDK users can now customize system prompts and define agents programmatically during initialization.</p>
+<p><strong>How to use:</strong></p>
+<pre><code>await sdk.init({
+  systemPrompt: &quot;You are a specialized assistant...&quot;,
+  appendSystemPrompt: &quot;Additional instructions...&quot;,
+  agents: {
+    &quot;coder&quot;: {
+      &quot;description&quot;: &quot;Coding specialist&quot;,
+      &quot;prompt&quot;: &quot;You are an expert programmer...&quot;,
+      &quot;tools&quot;: [&quot;bash&quot;, &quot;write&quot;],
+      &quot;model&quot;: &quot;claude-opus-4&quot;
+    }
+  }
+})</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li><code>systemPrompt</code> - Override the default system prompt</li><li><code>appendSystemPrompt</code> - Add to the default system prompt</li><li><code>agents</code> - Define agents as JSON without file-based configuration</li><li><strong>Evidence</strong>: <code>$v3()</code> at line 521902, new parameter handling at lines 521915-521920</li></ul>
+    </article>
+    <article class="card" id="killshell-tool">
+      <div class="card-top">
+        <h3>KillShell Tool <a class="anchor" href="#killshell-tool">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New tool that allows terminating background shell processes by ID.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Variable <code>KI1 = "KillShell"</code> at line 480255</li><li>Complements the existing background shell functionality</li><li><strong>Evidence</strong>: <code>KI1</code> at line 480255</li></ul>
+    </article>
+    <article class="card" id="telemetry-reliability-overhaul">
+      <div class="card-top">
+        <h3>Telemetry Reliability Overhaul <a class="anchor" href="#telemetry-reliability-overhaul">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Failed telemetry events are now queued, batched, and retried with exponential backoff instead of being lost.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Events saved to <code>~/.claude/telemetry/1p_failed_events.{session}.{batch}.json</code></li><li>Maximum 8192 queued events, batch size of 200</li><li>Exponential backoff: 500ms → 2s → 4.5s → 8s → 30s (capped)</li><li>Events persist across CLI restarts and are retried on next session</li><li>Default timeout increased from 5s to 10s</li><li><strong>Evidence</strong>: Class <code>zm1</code> at line 234387, <code>queueFailedEvents()</code> at line 234542, <code>retryPreviousBatches()</code> at line 234448</li></ul>
+    </article>
+    <article class="card" id="lsp-diagnostics-volume-limiting">
+      <div class="card-top">
+        <h3>LSP Diagnostics Volume Limiting <a class="anchor" href="#lsp-diagnostics-volume-limiting">#</a></h3>
+      </div>
+      <p><strong>What:</strong> LSP diagnostics are now limited to 10 per file and 30 total, sorted by severity to preserve the most important issues.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Constants <code>D21 = 10</code> (per file) and <code>RG2 = 30</code> (total) at line 341029</li><li>Severity sorting via <code>TG2()</code> at line 340898: Errors → Warnings → Info → Hints</li><li>Cross-turn deduplication prevents same diagnostic from appearing repeatedly</li><li>Diagnostics cleared when file is modified via <code>H21()</code> at line 341024</li><li><strong>Evidence</strong>: <code>SG2()</code> at line 340948, <code>rIA</code> tracking map at line 341032</li></ul>
+    </article>
+    <article class="card" id="enhanced-plan-mode-workflow">
+      <div class="card-top">
+        <h3>Enhanced Plan Mode Workflow <a class="anchor" href="#enhanced-plan-mode-workflow">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The plan mode system prompt has been restructured for clearer phases and better guidance.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Simplified from 5 phases with detailed multi-agent instructions</li><li>Default behavior now launches Plan agents for most tasks</li><li>Clearer guidance on when to skip agents (trivial tasks only)</li><li><strong>Evidence</strong>: <code>Pk3()</code> at line 510641</li></ul>
+    </article>
+    <article class="card" id="settings-change-auth-cache-clearing">
+      <div class="card-top">
+        <h3>Settings Change Auth Cache Clearing <a class="anchor" href="#settings-change-auth-cache-clearing">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Authentication caches are now automatically cleared when settings change, preventing stale credential issues.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New code in <code>mg()</code> state handler at line 519860</li><li>Calls <code>npA()</code> and <code>apA()</code> to clear auth caches on settings changes</li><li><strong>Evidence</strong>: <code>mg()</code> at line 519860, lines 519882-519887</li></ul>
+    </article>
+    <article class="card" id="heredoc-parsing-improvements">
+      <div class="card-top">
+        <h3>Heredoc Parsing Improvements <a class="anchor" href="#heredoc-parsing-improvements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Better handling of heredocs in bash commands, including comment detection and nested heredoc filtering.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New function <code>cS3()</code> at line 507823 detects if position is inside a comment</li><li>Unique session-based heredoc markers via <code>uS3()</code> at line 507807</li><li>Filters out nested heredocs that appear inside other heredocs</li><li><strong>Evidence</strong>: <code>pF0()</code> at line 507843, <code>cS3()</code> at line 507823</li></ul>
+    </article>
+    <article class="card" id="plan-mode-file-path-handling">
+      <div class="card-top">
+        <h3>Plan Mode File Path Handling <a class="anchor" href="#plan-mode-file-path-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The file path checking for protected files now includes the plan file path.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>NX5()</code> (was <code>TF5</code>) at line 342574 now checks against <code>yU(Q)</code> (plan file path)</li><li>Prevents accidental modifications to the active plan file outside plan mode</li><li><strong>Evidence</strong>: <code>NX5()</code> at line 342574</li></ul>
+    </article>
+    <article class="card" id="rate-limit-ui-state-management">
+      <div class="card-top">
+        <h3>Rate Limit UI State Management <a class="anchor" href="#rate-limit-ui-state-management">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Rate limit warning notifications now properly track state to avoid duplicate notifications.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New state tracking in <code>VZ9()</code> at line 477794</li><li>Uses <code>useState</code> for <code>isUsingOverage</code> tracking</li><li>Prevents "Now using extra usage" notification from appearing multiple times</li><li><strong>Evidence</strong>: <code>VZ9()</code> at line 477794</li></ul>
+    </article>
+    <article class="card" id="escape-key-handling-in-transcript-mode">
+      <div class="card-top">
+        <h3>Escape Key Handling in Transcript Mode <a class="anchor" href="#escape-key-handling-in-transcript-mode">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Fixed escape key behavior in transcript mode when operating in subagent context.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>B89()</code> (was <code>O49</code>) at line 474049 now checks <code>ic</code> context</li><li>Prevents unnecessary <code>jJ()</code> calls when in subagent mode</li><li><strong>Evidence</strong>: <code>B89()</code> at line 474049</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.139 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.139."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.139</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">codex &middot; gpt-5.5</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.139</span></h1>
+<p class="sub">Claude Code 2.1.139 adds several user-visible workflow and administration improvements: a new plugin details command, a built-in Proactive output style, interactive terminal scroll-speed tuning, and new Cloud gateway authentication plumbing for enterprise deployments. It also tightens <code>/goal</code>, hook/plugin execution, Remote Control diagnostics, MCP eligibility messages, shell safety checks, and several plugin and transport edge cases.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.138 → v2.1.139</b></span><span class="chip"><span class="k">Provider</span> <b>codex</b></span><span class="chip"><span class="k">Model</span> <b>gpt-5.5</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">8</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">11 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="plugin-details-command">
+      <div class="card-top">
+        <h3>Plugin Details Command <a class="anchor" href="#plugin-details-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p><code>claude plugin details &lt;name&gt;</code> shows what a plugin contributes and estimates how much context its components add.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude plugin details my-plugin
+claude plugin details my-plugin --json</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Lists component inventory for skills, commands, agents, hooks, and MCP servers.</li><li>Shows estimated always-on token cost added to each session.</li><li>Breaks down per-component always-on and on-invoke costs when available.</li><li>Supports JSON output for scripting.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin details subcommand and report output (search for <code>"Show a plugin's component inventory and projected token cost"</code>, <code>"Component inventory"</code>, <code>"Projected token cost"</code>)</p>
+    </article>
+    <article class="card" id="proactive-output-style">
+      <div class="card-top">
+        <h3>Proactive Output Style <a class="anchor" href="#proactive-output-style">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new built-in <code>Proactive</code> output style makes Claude act more autonomously: execute immediately, minimize interruptions, and prefer action over planning.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude
+# Open /config and set Output style to Proactive</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Adds <code>Proactive</code> alongside existing built-in output styles.</li><li>Uses a dedicated style prompt, not just a generic reminder.</li><li>Adds a shorter per-turn reminder: <code>Execute autonomously, minimize interruptions, prefer action over planning.</code></li><li>This is a fully built-in style; no plugin is required.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Built-in output style definition (search for <code>"Proactive Style Active"</code>, <code>"Claude executes immediately, minimizes interruptions, and prefers action over planning"</code>)</p>
+    </article>
+    <article class="card" id="terminal-scroll-speed-setup">
+      <div class="card-top">
+        <h3>Terminal Scroll Speed Setup <a class="anchor" href="#terminal-scroll-speed-setup">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p><code>/terminal-setup</code> now includes an interactive scroll-speed control for tuning mouse wheel behavior in the terminal.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude
+# Run /terminal-setup, then use left/right to adjust scroll speed</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Shows current terminal/editor scroll behavior.</li><li>Lets users adjust with left/right arrows, reset with <code>r</code>, save with Enter, or cancel with Esc.</li><li>Saves the selected value to user settings as <code>CLAUDE_CODE_SCROLL_SPEED</code>.</li><li>Detects terminal context such as VS Code, Cursor, Windows Terminal, xterm.js, and high-rate wheel events.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Interactive scroll-speed UI (search for <code>"Scroll speed"</code>, <code>"Scroll to feel it · ←/→ adjust · r reset to auto · Enter save · Esc cancel"</code>, <code>"CLAUDE_CODE_SCROLL_SPEED"</code>)</p>
+    </article>
+    <article class="card" id="cloud-gateway-authentication-gradual-rollout">
+      <div class="card-top">
+        <h3>Cloud Gateway Authentication [Gradual Rollout] <a class="anchor" href="#cloud-gateway-authentication-gradual-rollout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now has first-class plumbing for an enterprise Cloud gateway backend.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude auth login
+# Select Cloud gateway when that option is available for your environment</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Adds Cloud gateway as a distinct API provider.</li><li>Stores gateway URL/status in account and diagnostics views.</li><li>Refreshes gateway JWTs through the gateway OAuth token endpoint.</li><li>Pins and verifies TLS fingerprints on restore, warning users to re-login if trust changes.</li><li>Loads managed settings through the gateway and surfaces actionable re-authentication messages when they fail.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Cloud gateway provider and login flow (search for <code>"Cloud gateway"</code>, <code>"Gateway URL"</code>, <code>"Connected to Cloud gateway."</code>, <code>"[gateway-refresh] refreshed gateway JWT"</code>)</p>
+    </article>
+    <article class="card" id="goal-status-and-completion-behavior">
+      <div class="card-top">
+        <h3><code>/goal</code> Status and Completion Behavior <a class="anchor" href="#goal-status-and-completion-behavior">#</a></h3>
+      </div>
+      <p><code>/goal</code> is not new in this release, but its UX is clearer. Active goals now show a richer panel with elapsed time, turns, token count, last check, and <code>/goal clear to stop early</code>. Completed goals show <code>Goal achieved</code> and the stop-hook instruction now says the goal auto-clears after success, instead of telling the user to clear it manually.</p>
+<div class="blabel">Evidence</div>
+<p>Goal status panel and updated hook instruction (search for <code>"Goal active"</code>, <code>"/goal clear to stop early"</code>, <code>"It auto-clears once the condition is met"</code>)</p>
+    </article>
+    <article class="card" id="hook-and-plugin-commands-gain-safer-exec-form">
+      <div class="card-top">
+        <h3>Hook and Plugin Commands Gain Safer Exec Form <a class="anchor" href="#hook-and-plugin-commands-gain-safer-exec-form">#</a></h3>
+      </div>
+      <p>Hook command definitions can now use an explicit <code>args</code> array for exec-style invocation. Claude Code validates the common mistake of putting both whitespace in <code>command</code> and also supplying <code>args</code>, and explains how to split executable and arguments correctly.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;command&quot;: &quot;node&quot;,
+  &quot;args&quot;: [&quot;script.js&quot;]
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>command</code> is resolved as an executable when <code>args</code> is present.</li><li>Arguments avoid shell parsing for quotes, <code>$</code>, and backticks.</li><li>Plugin and hook substitutions now include <code>${CLAUDE_PROJECT_DIR}</code> in more places, including monitor hooks and plugin command paths.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Exec-form hook schema and validation (search for <code>"Argument list for exec form"</code>, <code>"Exec form treats \"command\" as a single executable name"</code>, <code>"${CLAUDE_PROJECT_DIR}"</code>)</p>
+    </article>
+    <article class="card" id="remote-control-diagnostics-are-more-specific">
+      <div class="card-top">
+        <h3>Remote Control Diagnostics Are More Specific <a class="anchor" href="#remote-control-diagnostics-are-more-specific">#</a></h3>
+      </div>
+      <p>Remote Control now tells users why it is unavailable in more cases, especially when the session is using API-key auth or a non-first-party backend.</p>
+<div class="blabel">Details</div>
+<ul><li>Distinguishes <code>ANTHROPIC_API_KEY</code>, <code>ANTHROPIC_AUTH_TOKEN</code>, <code>apiKeyHelper</code>, and <code>ANTHROPIC_UNIX_SOCKET</code> cases.</li><li>Explains that Remote Control requires claude.ai subscription auth.</li><li>Adds a specific message when the active backend is not <code>api.anthropic.com</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Remote Control auth diagnostics (search for <code>"Remote Control requires claude.ai subscription auth"</code>, <code>"ANTHROPIC_API_KEY is set"</code>, <code>"Remote Control is only available when using Claude via api.anthropic.com"</code>)</p>
+    </article>
+    <article class="card" id="claude-ai-mcp-connector-diagnostics">
+      <div class="card-top">
+        <h3>Claude.ai MCP Connector Diagnostics <a class="anchor" href="#claude-ai-mcp-connector-diagnostics">#</a></h3>
+      </div>
+      <p>Claude.ai MCP connector setup now reports clearer disabled states for third-party providers, API-key precedence, and missing <code>user:mcp_servers</code> scope.</p>
+<div class="blabel">Details</div>
+<ul><li>Clarifies that claude.ai org connectors are disabled when the inference token lacks MCP scope.</li><li>Explicitly says locally configured MCP servers in <code>managed-mcp.json</code>, <code>.claude.json</code>, and <code>.mcp.json</code> are not affected.</li><li>Adds clearer provider-specific messages for third-party backends.</li></ul>
+<div class="blabel">Evidence</div>
+<p>MCP eligibility messages (search for <code>"[claudeai-mcp] Disabled on third-party provider"</code>, <code>"inference token lacks user:mcp_servers scope"</code>)</p>
+    </article>
+    <article class="card" id="agent-view-disable-setting-renamed">
+      <div class="card-top">
+        <h3>Agent View Disable Setting Renamed <a class="anchor" href="#agent-view-disable-setting-renamed">#</a></h3>
+      </div>
+      <p>The managed setting/environment-variable wording changed from “background-agents fleet” to “agent view.”</p>
+<div class="blabel">Details</div>
+<ul><li>New setting field: <code>disableAgentView</code>.</li><li>New environment variable: <code>CLAUDE_CODE_DISABLE_AGENT_VIEW</code>.</li><li>Old wording referenced <code>CLAUDE_CODE_DISABLE_AGENTS_FLEET</code>; administrators should update managed settings and environment overrides.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Setting rename (search for <code>"Disable agent view"</code>, <code>"CLAUDE_CODE_DISABLE_AGENT_VIEW"</code>, and compare old <code>"CLAUDE_CODE_DISABLE_AGENTS_FLEET"</code>)</p>
+    </article>
+    <article class="card" id="configurable-max-turns-environment-variable">
+      <div class="card-top">
+        <h3>Configurable Max Turns Environment Variable <a class="anchor" href="#configurable-max-turns-environment-variable">#</a></h3>
+      </div>
+      <p>Claude Code now reads <code>CLAUDE_CODE_MAX_TURNS</code> as a default max-turn override when max turns are not otherwise supplied.</p>
+<div class="blabel">Usage</div>
+<pre><code>CLAUDE_CODE_MAX_TURNS=50 claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The value must be a positive integer.</li><li>Invalid values fail early with a clear error.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Max-turn environment parsing (search for <code>"CLAUDE_CODE_MAX_TURNS must be a positive integer"</code>)</p>
+    </article>
+    <article class="card" id="supervised-mode-exits-on-fatal-runtime-errors">
+      <div class="card-top">
+        <h3>Supervised Mode Exits on Fatal Runtime Errors <a class="anchor" href="#supervised-mode-exits-on-fatal-runtime-errors">#</a></h3>
+      </div>
+      <p>When <code>CLAUDE_CODE_SUPERVISED</code> is set, uncaught exceptions and unhandled rejections now cause the process to exit after logging. This is useful for service managers or wrapper processes that should restart a crashed CLI instead of letting it limp along.</p>
+<div class="blabel">Usage</div>
+<pre><code>CLAUDE_CODE_SUPERVISED=1 claude</code></pre>
+<div class="blabel">Evidence</div>
+<p>Supervised fatal-error handling (search for <code>"Uncaught exception under CLAUDE_CODE_SUPERVISED — exiting"</code>, <code>"Unhandled rejection under CLAUDE_CODE_SUPERVISED — exiting"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Bash safety analysis now detects ambiguous heredoc terminators, including <code>&lt;&lt;-</code> tab-prefixed delimiters and heredoc body lines that can be mistaken for terminators with shell metacharacters. Evidence: heredoc safety checks (search for <code>"ambiguous heredoc terminator"</code>, <code>"Heredoc uses &lt;&lt;- with a tab-prefixed delimiter"</code>)</li></ul>
+<ul><li>Plugin ZIP loading now handles archives with a wrapper directory instead of failing or choosing the wrong root. Evidence: inline plugin ZIP handling (search for <code>"Inline plugin zip had wrapper directory; using"</code>)</li></ul>
+<ul><li>Missing plugin errors are more actionable and now suggest <code>claude plugin list</code> or <code>--plugin-dir &lt;path&gt;</code>. Evidence: plugin lookup error (search for <code>"not found. Run </code>claude plugin list<code> to see installed plugins"</code>)</li></ul>
+<ul><li>Marketplace plugin cache misses now explain that the plugin may have been removed and tell users to disable it via <code>/plugin</code>. Evidence: plugin source cache-miss message (search for <code>"the plugin may have been removed. Disable it via /plugin to clear this warning"</code>)</li></ul>
+<ul><li>Settings-file watching now tracks symlink targets so atomic-save edits to the target file are detected. Evidence: symlink target watcher (search for <code>"also watching"</code>, <code>"so atomic-save edits to the target are detected"</code>)</li></ul>
+<ul><li>Plugin directory copying now handles cyclic symlinks, non-regular symlink targets, and symlinks escaping the containment root more carefully. Evidence: symlink materialization safeguards (search for <code>"copyDir: skipping cyclic symlink target"</code>, <code>"copyDir: skipping symlink escaping containment root"</code>)</li></ul>
+<ul><li>HTTP/SSE transport now aborts streams that exceed the body limit without an SSE event boundary, preventing unbounded memory growth when a server returns non-protocol data. Evidence: SSE body overflow guard (search for <code>"without an SSE event boundary"</code>, <code>"HttpBodyOverflowError"</code>)</li></ul>
+<ul><li>Proxy and TLS connection setup now has explicit timeout/failure errors for gateway-style connections. Evidence: connection error strings (search for <code>"TLS connection timed out"</code>, <code>"proxy CONNECT failed"</code>, <code>"proxy CONNECT timed out"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The main migration item is for administrators or wrapper authors: update <code>disableAgentView</code> / <code>CLAUDE_CODE_DISABLE_AGENT_VIEW</code> if you previously depended on the older background-agents fleet setting name. For normal interactive users, this release is backward-compatible.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">codex · gpt-5.5</div></div><div><div class="k">Primary diff</div><div class="val">archive/claude-code/changes/changes-v2.1.139.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive/claude-code/changes/string-diff-v2.1.139.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

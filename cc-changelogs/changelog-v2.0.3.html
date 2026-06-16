@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.3 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.3."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.3</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.3</span></h1>
+<p class="sub">Version 2.0.3 contains internal code optimizations and refactoring improvements. There are no user-facing changes, new features, or bug fixes in this release.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.2 → v2.0.3</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="rendering-function-optimization">
+      <div class="card-top">
+        <h3>Rendering function optimization <a class="anchor" href="#rendering-function-optimization">#</a></h3>
+      </div>
+      <p>The internal rendering function <code>BiQ()</code> at line 356972 was refactored to <code>AiQ()</code> at line 356971, removing unnecessary <code>rows</code> and <code>columns</code> parameters that were being passed through but not actively used by the core rendering logic. The function signature changed from accepting 4 parameters <code>(A, B, Q, Z)</code> to just 2 parameters <code>(A, B)</code>, and the return value no longer includes <code>rows</code> and <code>columns</code> fields.</p>
+<div class="evidence-label">Evidence</div>
+<ul><li>Old: <code>var BiQ = (A, B, Q, Z) =&gt;</code> at line 356972 in v2.0.2</li><li>New: <code>var AiQ = (A, B) =&gt;</code> at line 356971 in v2.0.3</li></ul>
+    </article>
+    <article class="card" id="removed-unused-terminal-size-check-function">
+      <div class="card-top">
+        <h3>Removed unused terminal size check function <a class="anchor" href="#removed-unused-terminal-size-check-function">#</a></h3>
+      </div>
+      <p>The function <code>p3A()</code> at line 358129, which compared terminal dimensions and output heights between render frames, was removed as part of simplifying the rendering pipeline.</p>
+<div class="blabel">Evidence</div>
+<p><code>function p3A(A, B)</code> at line 358129 in v2.0.2 (removed in v2.0.3)</p>
+    </article>
+    <article class="card" id="import-statement-consolidation">
+      <div class="card-top">
+        <h3>Import statement consolidation <a class="anchor" href="#import-statement-consolidation">#</a></h3>
+      </div>
+      <p>Import statements were refactored to use more specific destructured imports:</p>
+<ul><li>Changed from <code>import vKQ from "stream"</code> to <code>import { PassThrough as Xe5 } from "stream"</code> at line 357259</li><li>Changed from <code>import _4Q from "node:process"</code> to <code>import { cwd as g3A } from "node:process"</code> at line 443967</li></ul>
+<div class="evidence-label">Evidence</div>
+<ul><li>Stream import: line 338165 in v2.0.2 vs line 357259 in v2.0.3</li><li>Process import: line 442779 in v2.0.2 vs line 443967 in v2.0.3</li></ul>
+<p>These changes represent internal code quality improvements with no impact on CLI functionality, performance, or user experience.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

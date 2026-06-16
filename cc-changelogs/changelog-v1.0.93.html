@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.93 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.93."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.93</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.93</span></h1>
+<p class="sub">Version 1.0.93 introduces cross-platform network sandboxing with Linux support, MCP SDK server integration, and Git checkpointing for preserving work-in-progress. Security is enhanced with command validation to prevent shell injection attacks.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.92 → v1.0.93</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="linux-network-sandboxing">
+      <div class="card-top">
+        <h3>Linux Network Sandboxing <a class="anchor" href="#linux-network-sandboxing">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Network isolation now available on Linux using bubblewrap (bwrap) <strong>How to use:</strong></p>
+<pre><code># Network sandboxing automatically activates when network restrictions are configured
+# Works transparently with your existing network permission settings</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Uses bubblewrap for containerization on Linux systems</li><li>Implements Unix domain socket proxy with socat for network isolation</li><li>TCP-to-Unix forwarding maintains connectivity while enforcing restrictions</li><li><strong>Evidence</strong>: <code>zr2() at line 370283</code>, <code>Mq6() at line 370273</code></li></ul>
+    </article>
+    <article class="card" id="mcp-sdk-server-support">
+      <div class="card-top">
+        <h3>MCP SDK Server Support <a class="anchor" href="#mcp-sdk-server-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude Code can now connect to MCP servers via SDK transport <strong>How to use:</strong></p>
+<pre><code># Configure SDK-based MCP servers in your settings
+# SDK transport complements existing HTTP and WebSocket options</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>New "sdk" type for MCP server configurations</li><li>Built-in transport class for SDK-based communication</li><li>Seamless integration with existing MCP infrastructure</li><li><strong>Evidence</strong>: <code>class _D0 at line 387347</code>, <code>uBB() at line 388121</code>, <code>sendMcpMessage() at line 430038</code></li></ul>
+    </article>
+    <article class="card" id="git-checkpointing-experimental">
+      <div class="card-top">
+        <h3>Git Checkpointing (Experimental) <a class="anchor" href="#git-checkpointing-experimental">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatically save work-in-progress to shadow Git repositories <strong>How to use:</strong></p>
+<pre><code># Enable in settings when available (feature flag controlled)
+# Shadow repos are automatically managed and cleaned up after 30 days</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Creates shadow repositories to preserve uncommitted changes</li><li>Automatic cleanup of old shadow repos after one month</li><li>Tracks last access time for efficient storage management</li><li><strong>Evidence</strong>: <code>ZmB() at line 419608</code>, <code>GmB() at line 419705</code>, <code>checkpointingShadowRepos at line 355280</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-command-security">
+      <div class="card-top">
+        <h3>Enhanced Command Security <a class="anchor" href="#enhanced-command-security">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Protection against IFS-based shell injection attacks <strong>How to use:</strong></p>
+<pre><code># Automatic - Claude Code now validates commands for dangerous patterns
+# Commands with IFS manipulation will require explicit approval</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Detects IFS variable usage that could bypass security validation</li><li>Comprehensive safe flags validation for common shell commands</li><li>Covers git, xargs, sed, sort, file, and other commands</li><li><strong>Evidence</strong>: <code>gN6() at line 374933</code>, <code>F1B variable at line 379461</code></li></ul>
+    </article>
+    <article class="card" id="image-paste-keybinding-for-windows-linux">
+      <div class="card-top">
+        <h3>Image Paste Keybinding for Windows/Linux <a class="anchor" href="#image-paste-keybinding-for-windows-linux">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New keyboard shortcut for pasting images from clipboard <strong>How to use:</strong></p>
+<pre><code># Press Alt+V to paste images directly from your clipboard
+# Works in all contexts where image input is supported</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Platform-specific keybinding (Alt+V on Windows/Linux, Shift+Tab on macOS)</li><li>Consistent with system clipboard conventions</li><li><strong>Evidence</strong>: <code>Eu variable at line 363750</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-no-proxy-support">
+      <div class="card-top">
+        <h3>Enhanced NO_PROXY Support <a class="anchor" href="#enhanced-no-proxy-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Better proxy bypass logic for excluded hosts <strong>Details:</strong></p>
+<ul><li>New dedicated functions for checking NO_PROXY environment variable</li><li>Intelligent URL matching against proxy bypass patterns</li><li>Supports wildcards, domain suffixes, and port-specific rules</li><li><strong>Evidence</strong>: <code>VJ4() at line 354027</code>, <code>KJ4() at line 354030</code></li></ul>
+    </article>
+    <article class="card" id="network-sandboxing-refactoring">
+      <div class="card-top">
+        <h3>Network Sandboxing Refactoring <a class="anchor" href="#network-sandboxing-refactoring">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Unified cross-platform network isolation <strong>Details:</strong></p>
+<ul><li>Single entry point for both macOS and Linux sandboxing</li><li>Better error messages for uninitialized proxy states</li><li>Improved proxy port management with parameterized functions</li><li><strong>Evidence</strong>: <code>Er2() at line 370309</code> replaces platform-specific <code>Bs2()</code></li></ul>
+    </article>
+    <article class="card" id="permission-mode-persistence">
+      <div class="card-top">
+        <h3>Permission Mode Persistence <a class="anchor" href="#permission-mode-persistence">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Fixed permission mode settings not persisting across sessions <strong>Details:</strong></p>
+<ul><li>Corrected property name mismatch (saved as "mode" but read as "defaultMode")</li><li>Permission modes now correctly persist when changed</li><li>Added helper function for cleaner source validation</li><li><strong>Evidence</strong>: <code>setMode case at line 344856</code> now uses <code>defaultMode</code> consistently</li></ul>
+    </article>
+    <article class="card" id="simplified-timeout-messages">
+      <div class="card-top">
+        <h3>Simplified Timeout Messages <a class="anchor" href="#simplified-timeout-messages">#</a></h3>
+      </div>
+      <p>Error messages for request timeouts no longer include technical hints about API_TIMEOUT_MS, providing cleaner user experience.</p>
+    </article>
+    <article class="card" id="internal-refactoring">
+      <div class="card-top">
+        <h3>Internal Refactoring <a class="anchor" href="#internal-refactoring">#</a></h3>
+      </div>
+      <ul><li>Feature flag checking system enhanced with dedicated function</li><li>MCP-related constants added for token management</li><li>Various function renamings for better code organization</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.43 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.43."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.43</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.43</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.42 → v0.2.43</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">3</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.43 Changelog</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Overview</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="overview">
+      <p>This release focuses on internal optimizations and introduces a new domain checking capability for web fetching. The terminal rendering system has been significantly refactored for better performance.</p>
+    </article>
+    <article class="card" id="domain-fetch-verification">
+      <div class="card-top">
+        <h3>Domain Fetch Verification <a class="anchor" href="#domain-fetch-verification">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new function <code>tP3</code> has been added that checks whether a domain can be fetched before attempting web operations:</p>
+<pre><code>async function tP3(domain) {
+  try {
+    let response = await fetch(
+      `https://claude.ai/api/web/domain_info?domain=${encodeURIComponent(domain)}`
+    );
+    if (response.ok) return (await response.json()).can_fetch === true;
+    return false;
+  } catch (error) {
+    return (logError(error), true);
+  }
+}</code></pre>
+<p>This appears to be a pre-flight check for the WebFetch tool, allowing Claude Code to verify domain accessibility before attempting to fetch content.</p>
+    </article>
+    <article class="card" id="terminal-rendering-refactoring">
+      <div class="card-top">
+        <h3>Terminal Rendering Refactoring <a class="anchor" href="#terminal-rendering-refactoring">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The terminal rendering system underwent significant optimization:</p>
+<ol><li><strong>Removed OSC 133 Terminal Integration</strong>: The shell integration sequences (OSC 133) that were used for marking prompts and command boundaries have been completely removed. This includes:</li></ol>
+<ul><li>Prompt start/end markers (<code>\x1B]133;A\x07</code>, <code>\x1B]133;B\x07</code>)</li><li>Command markers (<code>\x1B]133;C\x07</code>, <code>\x1B]133;D\x07</code>)</li><li>Bracketed paste mode sequences (<code>\x1B[?2026h</code>, <code>\x1B[?2026l</code>)</li></ul>
+<ol><li><strong>Simplified Render Buffer Class</strong>: The <code>yy</code> class (now <code>uy</code>) has been streamlined:</li></ol>
+<ul><li>Removed <code>startOscPrompt</code> and <code>endOscPrompt</code> parameters</li><li>Simplified constructor to only take width and height</li><li>More efficient output generation using map/join instead of manual string concatenation</li></ul>
+<ol><li><strong>Cleaner Output Handling</strong>: The main renderer class (<code>Nn</code> → <code>gn</code>) now:</li></ol>
+<ul><li>No longer tracks or strips OSC sequences from output</li><li>Simplified terminal clearing logic</li><li>More direct output writing without intermediate processing</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Import Changes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="import-changes">
+      <ul><li><strong>Stream Import Modified</strong>: Changed from default import to named import for better tree-shaking:</li></ul>
+<pre><code>  // Before: import b$4 from &quot;stream&quot;;
+  // After: import { Readable as v$4 } from &quot;stream&quot;;</code></pre>
+<ul><li><strong>Process Import Updated</strong>: Changed to named import:</li></ul>
+<pre><code>  // Before: import Hh2 from &quot;node:process&quot;;
+  // After: import { cwd as ww0 } from &quot;node:process&quot;;</code></pre>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Performance Improvements</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="performance-improvements">
+      <ol><li><strong>Reduced String Operations</strong>: The removal of regex-based OSC sequence stripping (<code>t59</code> regex) eliminates unnecessary string processing on every render.</li></ol>
+<ol><li><strong>Simplified Render Pipeline</strong>: The output generation is now more direct, reducing the number of intermediate transformations.</li></ol>
+<ol><li><strong>Memory Efficiency</strong>: Removed several string constants and helper functions that were used for OSC sequence handling.</li></ol>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Details</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-details">
+      <ul><li><strong>Structural Similarity</strong>: 99.8% - indicating this is primarily an optimization release</li><li><strong>Declaration Changes</strong>: +3 additions, -12 deletions, 3 modifications</li><li><strong>Affected Components</strong>: Terminal rendering, web fetching, import optimization</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Impact for Users</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="impact-for-users">
+      <p>This update should be transparent to end users with the following potential improvements:</p>
+<ul><li>Slightly faster terminal rendering, especially for output-heavy operations</li><li>More reliable web fetching with pre-flight domain checks</li><li>Reduced memory footprint due to code removal</li></ul>
+<p>The removal of OSC 133 sequences suggests Claude Code is moving away from shell-specific integrations in favor of a more universal approach to terminal handling.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.39 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.39."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.39</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.39</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.38 → v0.2.39</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.39 Changelog</p>
+    </article>
+    <article class="card" id="administrative-controls">
+      <div class="card-top">
+        <h3>Administrative Controls <a class="anchor" href="#administrative-controls">#</a></h3>
+      </div>
+      <ul><li><strong>Bug Command Control</strong>: Administrators can now disable the <code>bug</code> command via the <code>claude_code_disable_bug_command</code> configuration setting. When disabled, users will see the message "This command has been disabled by your administrator."</li></ul>
+    </article>
+    <article class="card" id="tool-management">
+      <div class="card-top">
+        <h3>Tool Management <a class="anchor" href="#tool-management">#</a></h3>
+      </div>
+      <ul><li><strong>Dynamic Tool Allowlisting</strong>: New functions for managing allowed tools:</li><li>Tools specified via CLI flags (<code>--allowed-tools</code>) are now properly tracked separately from the configuration-based allowed tools</li><li>Multiple tools can be added to the allowed list in batch operations</li><li>Improved handling of tool permissions with clearer separation between CLI-specified and configuration-based tools</li></ul>
+    </article>
+    <article class="card" id="oauth-and-role-management">
+      <div class="card-top">
+        <h3>OAuth and Role Management <a class="anchor" href="#oauth-and-role-management">#</a></h3>
+      </div>
+      <ul><li><strong>User Role Tracking</strong>: OAuth authentication now fetches and stores user roles from the API:</li><li>Organization role (e.g., "developer")</li><li>Workspace role (e.g., "workspace_developer")</li><li>Roles are persisted in the configuration for future reference</li></ul>
+    </article>
+    <article class="card" id="cost-warning-controls">
+      <div class="card-top">
+        <h3>Cost Warning Controls <a class="anchor" href="#cost-warning-controls">#</a></h3>
+      </div>
+      <ul><li><strong>Conditional Cost Warnings</strong>: Cost threshold warnings are now only shown to users with appropriate roles (non-developer roles)</li><li><strong>Environment Variable Override</strong>: Cost warnings can be disabled entirely via the <code>DISABLE_COST_WARNINGS</code> environment variable</li></ul>
+    </article>
+    <article class="card" id="command-prefix-detection">
+      <div class="card-top">
+        <h3>Command Prefix Detection <a class="anchor" href="#command-prefix-detection">#</a></h3>
+      </div>
+      <ul><li><strong>Enhanced Command Detection</strong>: New logic to handle multiple subcommand prefixes when detecting available commands</li><li><strong>Better Error Handling</strong>: Improved detection of command injection attempts with clearer validation</li></ul>
+    </article>
+    <article class="card" id="shell-management">
+      <div class="card-top">
+        <h3>Shell Management <a class="anchor" href="#shell-management">#</a></h3>
+      </div>
+      <ul><li><strong>Shell Initialization</strong>: The persistent shell now properly changes to the initial working directory after sourcing shell configuration files</li><li><strong>Improved Buffer Management</strong>: Removed redundant stdout/stderr buffer tracking in the shell implementation</li></ul>
+    </article>
+    <article class="card" id="telemetry-controls">
+      <div class="card-top">
+        <h3>Telemetry Controls <a class="anchor" href="#telemetry-controls">#</a></h3>
+      </div>
+      <ul><li><strong>Telemetry Opt-out</strong>: Telemetry can now be completely disabled via the <code>DISABLE_TELEMETRY</code> environment variable</li></ul>
+    </article>
+    <article class="card" id="auto-updater-controls">
+      <div class="card-top">
+        <h3>Auto-updater Controls <a class="anchor" href="#auto-updater-controls">#</a></h3>
+      </div>
+      <ul><li><strong>Auto-updater Opt-out</strong>: Auto-updater functionality can be disabled via the <code>DISABLE_AUTOUPDATER</code> environment variable</li></ul>
+    </article>
+    <article class="card" id="new-configuration-storage">
+      <div class="card-top">
+        <h3>New Configuration Storage <a class="anchor" href="#new-configuration-storage">#</a></h3>
+      </div>
+      <ul><li>Added storage for auto-compact configuration with customizable token thresholds</li><li>New configuration key: <code>tengu_auto_compact_config</code></li></ul>
+    </article>
+    <article class="card" id="oauth-endpoints">
+      <div class="card-top">
+        <h3>OAuth Endpoints <a class="anchor" href="#oauth-endpoints">#</a></h3>
+      </div>
+      <ul><li>Added new endpoint for fetching user roles: <code>https://api.anthropic.com/api/oauth/claude_cli/roles</code></li></ul>
+    </article>
+    <article class="card" id="performance">
+      <div class="card-top">
+        <h3>Performance <a class="anchor" href="#performance">#</a></h3>
+      </div>
+      <ul><li>Optimized state management in the main UI component to reduce unnecessary re-renders</li><li>Improved async state handling for write file permissions</li></ul>
+    </article>
+    <article class="card" id="code-quality">
+      <div class="card-top">
+        <h3>Code Quality <a class="anchor" href="#code-quality">#</a></h3>
+      </div>
+      <ul><li>Better separation of concerns between OAuth authentication and API key generation</li><li>Cleaner error handling with more specific error messages in OAuth flows</li><li>Simplified HTTP request handling by switching from fetch to axios for OAuth operations</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential race conditions in state updates for write file allowed directories</li><li>Improved handling of shell exit conditions with better cleanup</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Version</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="version">
+      <p>Updated from 0.2.38 to 0.2.39</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

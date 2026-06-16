@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.92 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.92."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.92</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.92</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.91 → v0.2.92</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.92 Changelog</p>
+    </article>
+    <article class="card" id="oauth-token-revocation-handling">
+      <div class="card-top">
+        <h3>OAuth Token Revocation Handling <a class="anchor" href="#oauth-token-revocation-handling">#</a></h3>
+      </div>
+      <ul><li>Added proper error handling for revoked OAuth tokens</li><li>When an OAuth token is revoked, users will now see the message: "OAuth token revoked · Please run /login"</li><li>This provides clearer guidance on how to resolve authentication issues</li></ul>
+    </article>
+    <article class="card" id="git-repository-detection">
+      <div class="card-top">
+        <h3>Git Repository Detection <a class="anchor" href="#git-repository-detection">#</a></h3>
+      </div>
+      <ul><li>Added two new helper functions for Git repository detection:</li><li><strong>Repository check</strong>: Determines if the current directory is inside a Git repository</li><li><strong>Repository root</strong>: Finds the root directory of the current Git repository</li><li>These functions improve Git-related operations by providing better context awareness</li></ul>
+    </article>
+    <article class="card" id="local-claude-configuration-support">
+      <div class="card-top">
+        <h3>Local Claude Configuration Support <a class="anchor" href="#local-claude-configuration-support">#</a></h3>
+      </div>
+      <ul><li>Added support for <code>CLAUDE.local.md</code> files</li><li>This allows for project-specific Claude configuration that overrides global settings</li><li>The system can now generate and write local configuration files when needed</li></ul>
+    </article>
+    <article class="card" id="command-execution-enhancement">
+      <div class="card-top">
+        <h3>Command Execution Enhancement <a class="anchor" href="#command-execution-enhancement">#</a></h3>
+      </div>
+      <ul><li>Modified the command execution function to accept an optional working directory parameter</li><li>Previously, the working directory was always set to the current directory</li><li>Now supports executing commands in specific directories, improving flexibility for Git operations and other directory-specific commands</li></ul>
+    </article>
+    <article class="card" id="import-reorganization">
+      <div class="card-top">
+        <h3>Import Reorganization <a class="anchor" href="#import-reorganization">#</a></h3>
+      </div>
+      <ul><li>Streamlined imports by consolidating Node.js process and stream imports</li><li>Added proper path utilities import for file path operations</li><li>This improves code organization and reduces redundancy</li></ul>
+    </article>
+    <article class="card" id="error-handling">
+      <div class="card-top">
+        <h3>Error Handling <a class="anchor" href="#error-handling">#</a></h3>
+      </div>
+      <ul><li>Enhanced error handling to specifically catch OAuth token revocation (403 status)</li><li>Previously, OAuth errors might have been handled generically</li><li>Now provides specific, actionable error messages for authentication issues</li></ul>
+    </article>
+    <article class="card" id="handling-oauth-token-revocation">
+      <div class="card-top">
+        <h3>Handling OAuth Token Revocation <a class="anchor" href="#handling-oauth-token-revocation">#</a></h3>
+      </div>
+      <p>When your OAuth token is revoked, you'll see:</p>
+<pre><code>OAuth token revoked · Please run /login</code></pre>
+<p>Simply run the login command to re-authenticate:</p>
+<pre><code>claude login</code></pre>
+    </article>
+    <article class="card" id="working-with-git-repositories">
+      <div class="card-top">
+        <h3>Working with Git Repositories <a class="anchor" href="#working-with-git-repositories">#</a></h3>
+      </div>
+      <p>The new Git detection features work automatically in the background, but they enable Claude to:</p>
+<ul><li>Better understand when you're working in a Git repository</li><li>Find the repository root for operations that need it</li><li>Provide more context-aware Git-related suggestions</li></ul>
+    </article>
+    <article class="card" id="local-configuration">
+      <div class="card-top">
+        <h3>Local Configuration <a class="anchor" href="#local-configuration">#</a></h3>
+      </div>
+      <p>If you need project-specific Claude settings, a <code>CLAUDE.local.md</code> file can now be created in your project directory. This file will override global Claude settings for that specific project.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.17 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.17."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.17</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.17</span></h1>
+<p class="sub">Version 2.0.17 introduces MCPB file format support for distributing packaged MCP servers, adds SOCKS5 proxy support for enhanced network sandboxing, includes support for the new Haiku 4.5 model, and enhances Windows path security validation.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.15 → v2.0.17</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="mcpb-file-format-support">
+      <div class="card-top">
+        <h3>MCPB File Format Support <a class="anchor" href="#mcpb-file-format-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Full support for loading MCP servers from MCPB (<code>.mcpb</code> or <code>.dxt</code>) archive files, which are secure ZIP-based packages containing manifest, configuration, and server code.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Load an MCPB file from local path
+claude --mcp-config path/to/server.mcpb
+
+# Load an MCPB from URL (downloads and caches automatically)
+claude --mcp-config https://example.com/servers/tool.mcpb</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Secure ZIP extraction with protection against zip bombs, path traversal, and excessive file sizes</li><li>Automatic caching system (<code>.mcpb-cache</code> directory) with hash-based invalidation</li><li>Support for downloading MCPB files from HTTP/HTTPS URLs with progress tracking</li><li>Validates manifest.json against schema and generates MCP server configuration</li><li>Security limits: max 512MB per file, max 1GB total uncompressed size, max 100k files, max 50:1 compression ratio</li><li>Three structured error types for debugging: <code>mcpb-download-failed</code>, <code>mcpb-invalid-manifest</code>, <code>mcpb-extract-failed</code></li><li><strong>Evidence</strong>: <code>PO0() at line 279621</code>, <code>_8B() at line 279846</code>, <code>x8B() at line 279926</code>, <code>mg1() at line 279587</code> in v2.0.17 (completely absent from v2.0.15)</li></ul>
+    </article>
+    <article class="card" id="socks5-proxy-support-in-network-sandbox">
+      <div class="card-top">
+        <h3>SOCKS5 Proxy Support in Network Sandbox <a class="anchor" href="#socks5-proxy-support-in-network-sandbox">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Complete SOCKS5 proxy server added alongside existing HTTP proxy for enhanced network sandboxing on Linux and macOS. Provides dual-proxy infrastructure on ports 1080 (SOCKS) and 3128 (HTTP).</p>
+<p><strong>How to use:</strong> Automatic when network sandbox is enabled. The SOCKS proxy is configured via environment variables:</p>
+<pre><code># Automatically set when sandbox is active
+ALL_PROXY=socks5h://localhost:1080</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>SOCKS5 server implementation with authentication and connection filtering</li><li>Unix socket bridges for both HTTP and SOCKS proxies on Linux (<code>claude-socks-<em>.sock</code>, <code>claude-http-</em>.sock</code>)</li><li>Environment variables automatically configured: <code>ALL_PROXY</code>, <code>all_proxy</code>, <code>GIT_SSH_COMMAND</code>, <code>FTP_PROXY</code>, <code>GRPC_PROXY</code>, etc.</li><li>Function <code>QJ6()</code> wraps commands with dual proxy setup using socat</li><li>Parallel initialization of both proxy servers in <code>HJ6()</code></li><li><strong>Evidence</strong>: <code>QJ6() at line 207609</code>, <code>Bp2() at line 207346</code>, <code>KJ6()</code> and <code>HJ6() at line 207225</code> in v2.0.17 (SOCKS functionality completely absent from v2.0.15; only HTTP proxy existed)</li></ul>
+    </article>
+    <article class="card" id="haiku-4-5-model-support">
+      <div class="card-top">
+        <h3>Haiku 4.5 Model Support <a class="anchor" href="#haiku-4-5-model-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Support for the new Claude Haiku 4.5 model (<code>claude-haiku-4-5-20251001</code>), available across all platforms (direct API, Bedrock, Vertex).</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Use Haiku 4.5 as your model
+claude --model claude-haiku-4-5-20251001
+
+# Or use model aliases
+claude --model haiku45</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Model identifier: <code>claude-haiku-4-5-20251001</code></li><li>Display name: "Haiku 4.5"</li><li>Platform mappings configured for firstParty, Bedrock (<code>global.anthropic.claude-haiku-4-5-20251001-v1:0</code>), and Vertex (<code>claude-haiku-4-5@20251001</code>)</li><li>Vertex region environment variable: <code>VERTEX_REGION_CLAUDE_HAIKU_4_5</code></li><li>Haiku 4.5 used in plan mode when model preference is set to "haiku"</li><li><strong>Evidence</strong>: Model detection at <code>IOA() at line 83108</code>, platform mappings at lines 83142-83144, model selection logic at <code>x01() at line 144036</code> (model identifier "haiku-4-5" completely absent from v2.0.15)</li></ul>
+    </article>
+    <article class="card" id="windows-path-security-validation">
+      <div class="card-top">
+        <h3>Windows Path Security Validation <a class="anchor" href="#windows-path-security-validation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced security check that detects suspicious Windows-specific path patterns and requires manual approval before allowing file access.</p>
+<p><strong>How to use:</strong> Automatic protection when Claude attempts to access files with suspicious paths. You'll receive a prompt like: &gt; "Claude requested permissions to read/write to {path}, which contains a suspicious Windows path pattern that requires manual approval."</p>
+<p><strong>Details:</strong></p>
+<ul><li>Detects alternate data streams (<code>:</code> in paths beyond drive letter)</li><li>Detects short/8.3 format names (<code>~1</code>, <code>~2</code> patterns used to bypass filters)</li><li>Detects long path prefixes (<code>\\?\</code>, <code>\\.\</code>) that can bypass security checks</li><li>Detects trailing dots or spaces that Windows ignores</li><li>Detects reserved device names (CON, PRN, AUX, NUL, COM1-9, LPT1-9)</li><li>Applies to both read and write permission checks</li><li><strong>Evidence</strong>: <code>ZMQ() at line 454449</code>, integrated into <code>b41() at line 454621</code> and <code>op() at line 454708</code> (function and security checks completely absent from v2.0.15)</li></ul>
+    </article>
+    <article class="card" id="enhanced-changelog-fetch-respects-traffic-control">
+      <div class="card-top">
+        <h3>Enhanced Changelog Fetch Respects Traffic Control <a class="anchor" href="#enhanced-changelog-fetch-respects-traffic-control">#</a></h3>
+      </div>
+      <p>The changelog fetching functionality now respects the <code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code> environment variable. While the variable existed in v2.0.15, v2.0.17 adds this check to the changelog download function <code>Gb0()</code>, preventing unnecessary network requests in restricted environments.</p>
+<div class="blabel">Evidence</div>
+<p><code>Gb0() at line 362735</code> adds the check (new location for this guard in v2.0.17)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

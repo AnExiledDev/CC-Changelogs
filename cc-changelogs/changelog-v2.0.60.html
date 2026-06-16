@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.60 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.60."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.60</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.60</span></h1>
+<p class="sub">This release adds Pro plan Opus defaults, improved teammate/agent messaging UI, smarter git state detection to prevent diff issues during rebases/merges, and enhanced prompt queue execution handling.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.59 → v2.0.60</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="pro-plan-opus-default-option">
+      <div class="card-top">
+        <h3>Pro Plan Opus Default Option <a class="anchor" href="#pro-plan-opus-default-option">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New experimental feature that allows Pro plan subscribers to use Opus 4.5 as their default model.</p>
+<p><strong>How it works:</strong> When enabled via the <code>tengu_opus_default_pro_plan</code> experiment, Pro plan users will see "Opus 4.5 · Most capable for complex work" as their default model option.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Controlled by experimental flag <code>tengu_opus_default_pro_plan</code> with variant <code>opus_is_default</code></li><li>Added <code>VI6()</code> function at line 181554 that checks if the user's plan is "pro"</li><li>Added <code>haA()</code> function at line 181569 that checks if the Opus default experiment is enabled</li><li>Model description function <code>uaA()</code> at line 181634 now includes the Pro plan Opus option check</li></ul>
+    </article>
+    <article class="card" id="teammate-message-display-component">
+      <div class="card-top">
+        <h3>Teammate Message Display Component <a class="anchor" href="#teammate-message-display-component">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New UI component to render incoming teammate messages with proper formatting and color support.</p>
+<p><strong>How to use:</strong> Teammate messages are automatically displayed when received via the inbox system. Messages appear with the teammate's ID and optional color styling.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added <code>L69()</code> component at line 471586 to parse and render <code>&lt;teammate-message&gt;</code> tags</li><li>Added <code>KS7()</code> parser function at line 471552 that extracts teammate ID, color, and content from message tags</li><li>Messages are rendered with teammate identification and styled borders</li><li><strong>Evidence</strong>: Message rendering added at line 17992-17993 in the message display switch statement</li></ul>
+    </article>
+    <article class="card" id="agent-notification-display-component">
+      <div class="card-top">
+        <h3>Agent Notification Display Component <a class="anchor" href="#agent-notification-display-component">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New UI component to display agent completion/failure notifications in the conversation.</p>
+<p><strong>How to use:</strong> When a background agent completes or fails, a notification is automatically shown with the agent ID, status, and summary.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added <code>O69()</code> component at line 471624 to render <code>&lt;agent-notification&gt;</code> tags</li><li>Displays agent ID, status (completed/failed/stopped), and summary message</li><li>Includes guidance to use <code>AgentOutputTool</code> to retrieve full results</li><li>Added function <code>m39()</code> at line 479132 to format and queue agent notifications</li><li><strong>Evidence</strong>: Message rendering added at line 17994-17995 in the message display switch statement</li></ul>
+    </article>
+    <article class="card" id="prompt-queue-auto-execution-hook">
+      <div class="card-top">
+        <h3>Prompt Queue Auto-Execution Hook <a class="anchor" href="#prompt-queue-auto-execution-hook">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New hook that automatically processes queued commands when the session becomes idle.</p>
+<p><strong>How it works:</strong> When commands are queued (via <code>/add-to-queue</code> or similar), they are now automatically executed when the session is no longer busy, rather than requiring manual intervention.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added <code>i59()</code> hook at line 475244 that monitors loading state and queued commands</li><li>Calls <code>executeQueuedInput</code> callback when session is idle and queue is non-empty</li><li>Added <code>p59()</code> function for executing the queued input with proper state management</li><li>Tracks execution with a ref to prevent duplicate processing</li><li><strong>Evidence</strong>: Hook usage at line 19833-19839 in main component</li></ul>
+    </article>
+    <article class="card" id="teammate-message-submission-handler">
+      <div class="card-top">
+        <h3>Teammate Message Submission Handler <a class="anchor" href="#teammate-message-submission-handler">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New handler that allows submitting messages directly from the inbox to the conversation when idle.</p>
+<p><strong>How it works:</strong> Messages from teammates in the inbox can now be submitted as user queries when the session is idle, enabling seamless teammate collaboration.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added <code>w39()</code> hook at line 478948 for inbox polling and message delivery</li><li>Added <code>onSubmitTeammateMessage</code> callback that creates a user message from teammate content</li><li>Includes sophisticated idle detection and busy-state queuing logic</li><li><strong>Evidence</strong>: Hook usage at line 19883 in main component</li></ul>
+    </article>
+    <article class="card" id="disable-slash-commands-option">
+      <div class="card-top">
+        <h3>Disable Slash Commands Option <a class="anchor" href="#disable-slash-commands-option">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New <code>disableSlashCommands</code> parameter for the main component that prevents slash command processing.</p>
+<p><strong>How to use:</strong> Pass <code>disableSlashCommands: true</code> to the main component to disable all slash command handling.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added <code>disableSlashCommands</code> parameter at line 19137 with default value <code>false</code></li><li>When enabled, the commands list is replaced with an empty array</li><li><strong>Evidence</strong>: Parameter defined at line 19137, conditional at line 19191</li></ul>
+    </article>
+    <article class="card" id="git-rebase-merge-state-detection">
+      <div class="card-top">
+        <h3>Git Rebase/Merge State Detection <a class="anchor" href="#git-rebase-merge-state-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude now detects when git is in the middle of a rebase, merge, cherry-pick, or revert operation and skips the diff display to avoid confusing partial state.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added <code>rm5()</code> function at line 405566 that checks for git state files:</li><li><code>MERGE_HEAD</code> - merge in progress</li><li><code>REBASE_HEAD</code> - rebase in progress</li><li><code>CHERRY_PICK_HEAD</code> - cherry-pick in progress</li><li><code>REVERT_HEAD</code> - revert in progress</li><li>The <code>ky2()</code> function at line 405477 now calls <code>rm5()</code> and returns early if any state file exists</li><li><strong>Evidence</strong>: New function added at line 16108, integration at line 17927</li></ul>
+    </article>
+    <article class="card" id="webfetch-documentation-mode">
+      <div class="card-top">
+        <h3>WebFetch Documentation Mode <a class="anchor" href="#webfetch-documentation-mode">#</a></h3>
+      </div>
+      <p><strong>What:</strong> WebFetch now has a special mode for fetching documentation that allows including code examples without the strict quote limits.</p>
+<p><strong>How it works:</strong> When fetching from llms.txt or documentation sources, the response can include full code examples and documentation excerpts rather than being limited to 125-character quotes.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added <code>Zp0()</code> function at line 53880 with conditional prompt generation</li><li>When the <code>isDocumentation</code> flag is true, uses prompt: "Include relevant details, code examples, and documentation excerpts as needed"</li><li>When false, uses the standard restrictive prompt with 125-character quote limits</li><li>Added <code>ZzB</code> variable at line 182657 pointing to <code>https://platform.claude.com/llms.txt</code></li><li><strong>Evidence</strong>: New function at line 7427, parameter added to <code>md2()</code> at line 18044-18045</li></ul>
+    </article>
+    <article class="card" id="model-name-display-function">
+      <div class="card-top">
+        <h3>Model Name Display Function <a class="anchor" href="#model-name-display-function">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New helper function that formats model identifiers into user-friendly "Claude" prefixed names.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added <code>PCB()</code> function at line 181670</li><li>Transforms model IDs like "sonnet" into "Claude Sonnet"</li><li>Returns just "Claude" if the model name is unchanged after transformation</li><li><strong>Evidence</strong>: Function at line 7462-7468</li></ul>
+    </article>
+    <article class="card" id="react-reconciler-update">
+      <div class="card-top">
+        <h3>React Reconciler Update <a class="anchor" href="#react-reconciler-update">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Updated internal React reconciler with scheduler improvements for better performance.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added new scheduler functions including <code>Hg1()</code>, <code>taA()</code>, <code>aaA()</code> for priority queue management</li><li>Added <code>Dg1()</code> for work loop execution with expiration handling</li><li>Added timing functions <code>Iy()</code>, <code>PzB()</code> for deadline checking</li><li>These are internal React infrastructure updates that improve rendering performance</li></ul>
+    </article>
+    <article class="card" id="inbox-message-handling-improvements">
+      <div class="card-top">
+        <h3>Inbox Message Handling Improvements <a class="anchor" href="#inbox-message-handling-improvements">#</a></h3>
+      </div>
+      <ul><li>Inbox polling now properly queues messages when session is busy</li><li>Messages are delivered when session transitions from busy to idle</li><li>Improved logging with <code>[InboxPoller]</code> prefix for debugging</li></ul>
+    </article>
+    <article class="card" id="query-return-value-handling">
+      <div class="card-top">
+        <h3>Query Return Value Handling <a class="anchor" href="#query-return-value-handling">#</a></h3>
+      </div>
+      <ul><li>The <code>onQuery</code> callback no longer returns a status object</li><li>Simplified concurrent query handling that just returns early without status</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

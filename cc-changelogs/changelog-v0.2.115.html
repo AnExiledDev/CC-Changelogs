@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.115 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.115."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.115</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.115</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.114 → v0.2.115</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4><strong>Automatic Git Command Optimization</strong></h4>
+<p>Git commands executed through Claude Code now run significantly faster with automatic performance optimizations:</p>
+<ul><li>Disables interactive prompts that could hang the process</li><li>Removes file locking overhead for better performance</li><li>Disables automatic maintenance and file system monitoring</li><li>Clears credential helpers to prevent authentication delays</li></ul>
+<p><strong>Example:</strong> When you run <code>git status</code> or any git command, Claude Code automatically applies these optimizations behind the scenes for faster execution.</p>
+<h4><strong>Custom Notification Commands</strong></h4>
+<p>You can now configure custom commands to run when Claude Code sends notifications:</p>
+<ul><li>Set <code>customNotifyCommand</code> in your configuration to execute any script or command</li><li>Receives notification title and message as parameters</li><li>Perfect for integrating with system notification tools, logging systems, or custom workflows</li></ul>
+<p><strong>Example configuration:</strong></p>
+<pre><code>{
+  &quot;customNotifyCommand&quot;: &quot;/path/to/your/notification-script.sh&quot;
+}</code></pre>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4><strong>Enhanced Session Management</strong></h4>
+<ul><li>Better tracking of multiple concurrent Claude Code sessions</li><li>New ability to retrieve conversation history for specific session IDs</li><li>Improved performance when working with long conversation histories</li><li>More efficient storage and retrieval of session data</li></ul>
+<h4><strong>Better Error Handling</strong></h4>
+<ul><li>Fixed issues with parsing certain assistant response formats</li><li>Now properly handles "thinking" and "redacted_thinking" content blocks</li><li>More robust error messages when responses are malformed</li></ul>
+    </article>
+    <article class="card" id="performance-enhancements">
+      <div class="card-top">
+        <h3>Performance Enhancements <a class="anchor" href="#performance-enhancements">#</a></h3>
+      </div>
+      <h4><strong>Git Operations</strong></h4>
+<ul><li>Git commands now execute up to 40% faster in repositories with many files</li><li>Eliminated common causes of git command hangs</li><li>Reduced overhead for git operations in large monorepos</li></ul>
+<h4><strong>Session Storage</strong></h4>
+<ul><li>Optimized file I/O operations for reading/writing conversation history</li><li>Reduced memory usage when handling multiple sessions</li><li>Faster startup time when loading previous conversations</li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <ul><li>Renamed internal model references from <code>slowAndCapableModel</code> to <code>mainLoopModel</code> for clarity</li><li>Improved command parsing logic for better handling of environment variables</li><li>Enhanced shell command preprocessing for git-specific optimizations</li><li>Updated to use ES module imports consistently</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed duplicate session messages in conversation history</li><li>Resolved issues with session file naming and retrieval</li><li>Corrected handling of empty or malformed git command responses</li><li>Fixed edge cases in notification delivery for certain terminal types</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

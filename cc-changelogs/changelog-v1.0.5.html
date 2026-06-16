@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.5 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.5."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.5</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.5</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.4 → v1.0.5</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.5 Changelog</p>
+    </article>
+    <article class="card" id="flexible-configuration-directory">
+      <div class="card-top">
+        <h3>🆕 Flexible Configuration Directory <a class="anchor" href="#flexible-configuration-directory">#</a></h3>
+      </div>
+      <ul><li><strong>New function <code>b9()</code></strong>: Returns the Claude configuration directory, defaulting to <code>~/.claude</code> if <code>CLAUDE_CONFIG_DIR</code> environment variable is not set</li><li><strong>New function <code>vJ()</code></strong>: Intelligently determines the configuration file path:</li><li>First checks for <code>.config.json</code> in the Claude config directory</li><li>Falls back to <code>.claude.json</code> in either the custom config directory or home directory</li><li>Example: If you set <code>CLAUDE_CONFIG_DIR=/custom/path</code>, Claude will look for <code>/custom/path/.config.json</code> first</li></ul>
+    </article>
+    <article class="card" id="centralized-configuration-management">
+      <div class="card-top">
+        <h3>Centralized Configuration Management <a class="anchor" href="#centralized-configuration-management">#</a></h3>
+      </div>
+      <ul><li>Replaced hardcoded configuration paths throughout the codebase with dynamic path resolution</li><li>All configuration-related functions now use the centralized <code>b9()</code> function for consistency</li></ul>
+    </article>
+    <article class="card" id="enhanced-command-execution-with-d2-function">
+      <div class="card-top">
+        <h3>🆕 Enhanced Command Execution with <code>D2()</code> Function <a class="anchor" href="#enhanced-command-execution-with-d2-function">#</a></h3>
+      </div>
+      <ul><li><strong>New options parameter</strong> with configurable defaults:</li></ul>
+<pre><code>  {
+    timeout: 120000,           // 2 minutes default
+    preserveOutputOnError: true,
+    useCwd: true              // Use current working directory
+  }</code></pre>
+<ul><li><strong>Environment variable support</strong>: Pass custom environment variables to executed commands</li><li><strong>Abort signal support</strong>: Cancel long-running commands programmatically</li></ul>
+    </article>
+    <article class="card" id="improved-eg-function-formerly-az">
+      <div class="card-top">
+        <h3>Improved <code>eG()</code> Function (formerly <code>AZ</code>) <a class="anchor" href="#improved-eg-function-formerly-az">#</a></h3>
+      </div>
+      <ul><li>Now accepts flexible parameter formats:</li><li>Simple abort signal: <code>eG(command, abortSignal)</code></li><li>Options object: <code>eG(command, { abortSignal, timeout })</code></li><li>Backward compatible with existing usage</li></ul>
+    </article>
+    <article class="card" id="x11-display-handling">
+      <div class="card-top">
+        <h3>🆕 X11 Display Handling <a class="anchor" href="#x11-display-handling">#</a></h3>
+      </div>
+      <ul><li><strong>New function <code>lh1()</code></strong>: Automatically disables X11 forwarding on Linux systems by setting <code>DISPLAY=""</code> in command environment</li><li>Prevents GUI applications from attempting to open windows when running in headless environments</li></ul>
+    </article>
+    <article class="card" id="resource-discovery">
+      <div class="card-top">
+        <h3>🆕 Resource Discovery <a class="anchor" href="#resource-discovery">#</a></h3>
+      </div>
+      <ul><li><strong>New <code>dO8</code> variable</strong>: Implements automatic resource discovery from connected MCP servers</li><li>Fetches available resources from servers with resource capabilities</li><li>Gracefully handles errors and logs failures for individual servers</li></ul>
+    </article>
+    <article class="card" id="dynamic-fallback-description">
+      <div class="card-top">
+        <h3>🆕 Dynamic Fallback Description <a class="anchor" href="#dynamic-fallback-description">#</a></h3>
+      </div>
+      <ul><li><strong>New function <code>g31()</code></strong>: Generates user-friendly descriptions for model fallback behavior</li><li>Example output: "Use Opus up to 75% of Max usage limits, then Sonnet"</li><li>Adapts description based on configured threshold</li></ul>
+    </article>
+    <article class="card" id="stream-handling">
+      <div class="card-top">
+        <h3>Stream Handling <a class="anchor" href="#stream-handling">#</a></h3>
+      </div>
+      <ul><li>Added <code>PassThrough</code> stream import for improved data streaming capabilities</li></ul>
+    </article>
+    <article class="card" id="refactored-changelog-formatting">
+      <div class="card-top">
+        <h3>Refactored Changelog Formatting <a class="anchor" href="#refactored-changelog-formatting">#</a></h3>
+      </div>
+      <ul><li>Renamed <code>sU2</code> to <code>aU2</code> for consistent naming conventions</li><li>Maintained identical formatting behavior for version changelogs</li></ul>
+    </article>
+    <article class="card" id="updated-system-prompt">
+      <div class="card-top">
+        <h3>Updated System Prompt <a class="anchor" href="#updated-system-prompt">#</a></h3>
+      </div>
+      <ul><li>Version number updated from 1.0.4 to 1.0.5 in user assistance messages</li><li>Added conditional MCP resource information to system prompts</li></ul>
+    </article>
+    <article class="card" id="process-import-fix">
+      <div class="card-top">
+        <h3>Process Import Fix <a class="anchor" href="#process-import-fix">#</a></h3>
+      </div>
+      <ul><li>Added missing <code>cwd</code> import from <code>node:process</code> module</li><li>Ensures proper working directory handling across the application</li></ul>
+    </article>
+    <article class="card" id="configuration-path-resolution">
+      <div class="card-top">
+        <h3>Configuration Path Resolution <a class="anchor" href="#configuration-path-resolution">#</a></h3>
+      </div>
+      <ul><li>Fixed potential issues with configuration file discovery</li><li>Improved fallback logic for legacy configuration locations</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

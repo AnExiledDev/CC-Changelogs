@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.1 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.1."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.1</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.1</span></h1>
+<p class="sub">This is a patch release that fixes a potential crash when loading release notes from a corrupted or unreadable changelog cache file.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.0 → v2.1.1</b></span>    </div>
+    <div class="stats">
+  <div class="stat f zero"><div class="n">0</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed crash when changelog cache file is corrupted or unreadable. The release notes loader (<code>de2()</code> at line 460474) now catches exceptions during changelog parsing and gracefully returns an empty result instead of crashing. This prevents startup failures when the <code>~/.claude/cache/changelog.md</code> file is malformed.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>de2()</code> at line 460474 (release notes loader, reads from <code>"cache", "changelog.md"</code>)</p>
+<p><strong>Before (v2.1.0)</strong>:</p>
+<pre><code>function de2(A) {
+  let Q = k6A();
+  if (!Q) return [];
+  let B = eH1(Q),  // Could throw if file is corrupted
+    G = [],
+    ...
+}</code></pre>
+<p><strong>After (v2.1.1)</strong>:</p>
+<pre><code>function de2(A) {
+  let Q = k6A();
+  if (!Q) return [];
+  let B;
+  try {
+    B = eH1(Q);
+  } catch {
+    return [];  // Gracefully handle corrupted changelog
+  }
+  let G = [],
+  ...
+}</code></pre>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

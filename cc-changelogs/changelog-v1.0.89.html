@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.89 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.89."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.89</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.89</span></h1>
+<p class="sub">Version 1.0.89 introduces powerful debug filtering, a new wizard-based UI framework for multi-step workflows, and significantly improves reliability with enhanced error handling, permission persistence, and extended timeout support for long-running operations.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.88 → v1.0.89</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="debug-output-filtering">
+      <div class="card-top">
+        <h3>Debug Output Filtering <a class="anchor" href="#debug-output-filtering">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Filter debug messages by category using <code>--debug=pattern</code> syntax <strong>How to use:</strong></p>
+<pre><code># Show only MCP-related debug messages
+claude --debug=mcp &lt;command&gt;
+
+# Show all debug messages except verbose ones
+claude --debug=!verbose &lt;command&gt;
+
+# Show multiple specific categories
+claude --debug=mcp,server1,api &lt;command&gt;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Supports both include patterns (show only these) and exclude patterns with <code>!</code> prefix (hide these)</li><li>Automatically categorizes messages based on prefixes, MCP server names, and other patterns</li><li>Cannot mix include and exclude patterns in the same filter</li><li>Helps reduce noise when debugging specific components</li></ul>
+    </article>
+    <article class="card" id="wizard-framework-for-multi-step-workflows">
+      <div class="card-top">
+        <h3>Wizard Framework for Multi-Step Workflows <a class="anchor" href="#wizard-framework-for-multi-step-workflows">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A new React-based wizard system that provides consistent navigation for multi-step processes <strong>How to use:</strong> The wizard framework is currently used internally for the agent creation flow, providing a more intuitive step-by-step experience with:</p>
+<ul><li>Forward/backward navigation with clear visual indicators</li><li>Jump to specific steps when needed</li><li>Step history tracking for complex navigation patterns</li><li>Persistent data across all wizard steps</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Replaces the previous state machine approach for agent creation</li><li>Provides consistent UI with step counters and navigation instructions</li><li>Supports cancellation at any point with Escape key</li><li>Designed to be reusable for future multi-step features</li></ul>
+    </article>
+    <article class="card" id="permission-persistence">
+      <div class="card-top">
+        <h3>Permission Persistence <a class="anchor" href="#permission-persistence">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Permanent permissions granted during tool use are now automatically saved to settings files <strong>How to use:</strong> When you grant permanent permissions to a tool during execution, they are now automatically saved to the appropriate settings file (<code>.claude/settings.json</code> for project, <code>~/.claude/settings.json</code> for user). No manual configuration needed. <strong>Details:</strong></p>
+<ul><li>Supports all permission types: file paths, tool rules, and directories</li><li>Respects settings hierarchy (project vs user settings)</li><li>Eliminates the need to re-grant permissions in future sessions</li><li>Includes comprehensive debug logging for troubleshooting</li></ul>
+    </article>
+    <article class="card" id="enhanced-error-and-api-request-tracking">
+      <div class="card-top">
+        <h3>Enhanced Error and API Request Tracking <a class="anchor" href="#enhanced-error-and-api-request-tracking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Internal diagnostics system that tracks the last API request and maintains an error log <strong>How to use:</strong> This feature works automatically in the background, maintaining a rolling log of the last 100 errors and tracking the most recent API request for debugging purposes. <strong>Details:</strong></p>
+<ul><li>Helps diagnose issues when errors occur</li><li>Maintains structured clones of API requests for analysis</li><li>Error log has a 100-item limit with automatic rotation</li><li>Primarily for internal debugging and support</li></ul>
+    </article>
+    <article class="card" id="expanded-bash-command-permission-tracking">
+      <div class="card-top">
+        <h3>Expanded Bash Command Permission Tracking <a class="anchor" href="#expanded-bash-command-permission-tracking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> 18 additional bash commands now require appropriate file permissions <strong>How to use:</strong> Commands like <code>cat</code>, <code>head</code>, <code>tail</code>, <code>diff</code>, <code>awk</code>, and others now trigger permission checks:</p>
+<pre><code># These commands now check read permissions for the specified paths
+cat /etc/passwd
+head -n 10 /var/log/system.log
+diff file1.txt file2.txt</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>New commands include: <code>cat</code>, <code>head</code>, <code>tail</code>, <code>sort</code>, <code>uniq</code>, <code>wc</code>, <code>cut</code>, <code>paste</code>, <code>column</code>, <code>tr</code>, <code>file</code>, <code>stat</code>, <code>diff</code>, <code>awk</code>, <code>strings</code>, <code>hexdump</code>, <code>base64</code>, <code>nl</code></li><li>All new commands require read permissions only</li><li>Provides clear descriptions when permission prompts appear</li><li>Enhances security by ensuring all file access is properly authorized</li></ul>
+    </article>
+    <article class="card" id="ripgrep-error-recovery">
+      <div class="card-top">
+        <h3>Ripgrep Error Recovery <a class="anchor" href="#ripgrep-error-recovery">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Ripgrep now recovers partial results when interrupted or hitting limits <strong>Previous behavior:</strong> Lost all results if ripgrep was terminated or hit buffer limits <strong>New behavior:</strong> Preserves and returns valid partial results, trimming potentially incomplete last lines <strong>Impact:</strong> More reliable search results in large codebases where ripgrep might hit resource limits</p>
+    </article>
+    <article class="card" id="api-timeout-extension">
+      <div class="card-top">
+        <h3>API Timeout Extension <a class="anchor" href="#api-timeout-extension">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Default API timeout increased from 60 seconds to 600 seconds (10 minutes) <strong>Previous behavior:</strong> API calls would timeout after 1 minute <strong>New behavior:</strong> API calls have 10 minutes before timing out <strong>Impact:</strong> Prevents timeouts for complex Claude interactions, especially with slower models or lengthy operations</p>
+    </article>
+    <article class="card" id="improved-timeout-error-messages">
+      <div class="card-top">
+        <h3>Improved Timeout Error Messages <a class="anchor" href="#improved-timeout-error-messages">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Timeout errors now provide actionable guidance <strong>Previous behavior:</strong> Generic timeout error messages <strong>New behavior:</strong> Displays "Request timed out (check API_TIMEOUT_MS)" with clear next steps <strong>Impact:</strong> Users can easily identify and resolve timeout issues by adjusting the API_TIMEOUT_MS environment variable</p>
+    </article>
+    <article class="card" id="todowrite-tool-schema-enhancement">
+      <div class="card-top">
+        <h3>TodoWrite Tool Schema Enhancement <a class="anchor" href="#todowrite-tool-schema-enhancement">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> TodoWrite tool now requires dual-form descriptions for all todo items <strong>Previous behavior:</strong> Todo items only had <code>content</code> and <code>status</code> fields:</p>
+<pre><code>{&quot;content&quot;: &quot;Fix authentication bug&quot;, &quot;status&quot;: &quot;pending&quot;}</code></pre>
+<p><strong>New behavior:</strong> Todo items require three fields including a new <code>activeForm</code>:</p>
+<pre><code>{
+  &quot;content&quot;: &quot;Fix authentication bug&quot;,
+  &quot;activeForm&quot;: &quot;Fixing authentication bug&quot;,
+  &quot;status&quot;: &quot;pending&quot;
+}</code></pre>
+<p><strong>Impact:</strong></p>
+<ul><li>Forces clearer articulation of both task goals and current actions</li><li>Improves communication between AI and user about task progress</li><li>Enables status spinner to show contextual progress messages (though todo lists remain hidden since v1.0.86)</li><li>All three fields (<code>content</code>, <code>activeForm</code>, <code>status</code>) are now required for TodoWrite tool usage</li><li>Note: While activeForm enhances the schema, users still cannot see todo lists due to display removal in v1.0.86</li></ul>
+    </article>
+    <article class="card" id="platform-compatibility-musl-libc-detection">
+      <div class="card-top">
+        <h3>Platform Compatibility - Musl Libc Detection <a class="anchor" href="#platform-compatibility-musl-libc-detection">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Added detection for musl-based Linux distributions like Alpine Linux <strong>Previous behavior:</strong> Assumed all Linux systems used glibc <strong>New behavior:</strong> Detects musl libc by checking for library files and ldd output <strong>Impact:</strong> Improves compatibility with Alpine Linux and other musl-based distributions</p>
+    </article>
+    <article class="card" id="configurable-ripgrep-timeout">
+      <div class="card-top">
+        <h3>Configurable Ripgrep Timeout <a class="anchor" href="#configurable-ripgrep-timeout">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Ripgrep timeout is now configurable via environment variable <strong>Previous behavior:</strong> Fixed 10-second timeout for ripgrep operations <strong>New behavior:</strong> Uses BASH_DEFAULT_TIMEOUT_MS environment variable, defaulting to 120 seconds <strong>Impact:</strong> Allows adjustment for different system capabilities and codebase sizes</p>
+    </article>
+    <article class="card" id="fixed-permanent-permissions-not-persisting-between-sessions">
+      <div class="card-top">
+        <h3>Fixed: Permanent permissions not persisting between sessions <a class="anchor" href="#fixed-permanent-permissions-not-persisting-between-sessions">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> When users granted "permanent" permissions through the UI, they weren't saved to disk</li><li><strong>Cause:</strong> Missing persistence layer between permission granting and settings files</li><li><strong>Resolution:</strong> Added comprehensive persistence system that writes permissions to appropriate settings files</li><li><strong>Affected versions:</strong> All versions prior to 1.0.89</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

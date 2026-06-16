@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.71 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.71."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.71</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.71</span></h1>
+<p class="sub">Version 1.0.71 introduces a customizable statusLine feature for terminal display, simplifies memory management for better reliability, and adds protection against concurrent operations while improving overall performance through optimized imports and bug fixes.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.70 → v1.0.71</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">13</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="statusline-display">
+      <div class="card-top">
+        <h3>StatusLine Display <a class="anchor" href="#statusline-display">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Customizable status line at the bottom of your terminal showing contextual information <strong>Why:</strong> Provides at-a-glance information about your current session, model, and working directory <strong>How to use:</strong></p>
+<pre><code># Configure in ~/.claude/settings.json
+{
+  &quot;statusLine&quot;: {
+    &quot;type&quot;: &quot;command&quot;,
+    &quot;command&quot;: &quot;cat | jq -r &#x27;\&quot;\\(.model.display_name) in \\(.workspace.current_dir)\&quot;&#x27;&quot;,
+    &quot;padding&quot;: 1
+  }
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Receives JSON input with session_id, model info, workspace paths, and more</li><li>Updates every 300ms (debounced) to show current context</li><li>Can display any command output, limited to first line</li><li>Supports ANSI color codes for custom styling</li></ul>
+    </article>
+    <article class="card" id="statusline-setup-agent">
+      <div class="card-top">
+        <h3>StatusLine Setup Agent <a class="anchor" href="#statusline-setup-agent">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New specialized agent that converts your shell PS1 prompt to Claude Code statusLine <strong>Why:</strong> Makes it easy to replicate your familiar shell prompt in Claude Code without manual configuration <strong>How to use:</strong></p>
+<pre><code># Ask Claude to set up your statusLine
+&quot;Use the statusline-setup agent to convert my PS1 to a statusLine&quot;
+
+# Or use it directly
+/task statusline-setup &quot;Convert my shell prompt&quot;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Automatically reads ~/.zshrc, ~/.bashrc, ~/.bash_profile, or ~/.profile</li><li>Converts PS1 escape sequences (\\u → $(whoami), \\w → $(pwd), etc.)</li><li>Preserves your ANSI color codes</li><li>Updates settings.json automatically</li><li>Removes trailing $ or &gt; characters from output</li></ul>
+    </article>
+    <article class="card" id="global-hooks-control">
+      <div class="card-top">
+        <h3>Global Hooks Control <a class="anchor" href="#global-hooks-control">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New setting to disable all hooks globally <strong>Why:</strong> Provides an escape hatch when hooks are causing issues or impacting performance <strong>How to use:</strong></p>
+<pre><code>// In ~/.claude/settings.json
+{
+  &quot;disableAllHooks&quot;: true
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Disables all hook executions including statusLine updates</li><li>Useful for debugging or performance optimization</li><li>Logs a message when hooks are skipped</li></ul>
+    </article>
+    <article class="card" id="concurrent-query-protection">
+      <div class="card-top">
+        <h3>Concurrent Query Protection <a class="anchor" href="#concurrent-query-protection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Detection and tracking of simultaneous query executions <strong>Why:</strong> Prevents race conditions and undefined behavior from rapid command execution <strong>Details:</strong></p>
+<ul><li>Automatically detects when multiple queries run simultaneously</li><li>Logs telemetry event <code>tengu_concurrent_onquery_detected</code></li><li>Helps identify problematic usage patterns</li></ul>
+    </article>
+    <article class="card" id="simplified-memory-management">
+      <div class="card-top">
+        <h3>Simplified Memory Management <a class="anchor" href="#simplified-memory-management">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Complete rewrite of memory saving from AI-based merging to direct file append <strong>Impact:</strong> Memory operations are now 10-100x faster and much more reliable</p>
+    </article>
+    <article class="card" id="optimized-imports">
+      <div class="card-top">
+        <h3>Optimized Imports <a class="anchor" href="#optimized-imports">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Switched from full module imports to specific function imports <strong>Impact:</strong> Reduced bundle size and improved startup performance</p>
+    </article>
+    <article class="card" id="performance-threshold-updates">
+      <div class="card-top">
+        <h3>Performance Threshold Updates <a class="anchor" href="#performance-threshold-updates">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> New memory and context management thresholds <strong>Impact:</strong> Better handling of large contexts and improved memory efficiency <strong>Details:</strong></p>
+<ul><li>Updated context size limits to 13000/20000 tokens</li><li>Improved memory management for long-running sessions</li></ul>
+    </article>
+    <article class="card" id="fixed-statusline-feature-was-non-functional">
+      <div class="card-top">
+        <h3>Fixed: StatusLine Feature Was Non-Functional <a class="anchor" href="#fixed-statusline-feature-was-non-functional">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> StatusLine feature always returned false, making it completely unusable</li><li><strong>Cause:</strong> Logic error in feature detection function that ignored configuration</li><li><strong>Resolution:</strong> Properly checks for statusLine configuration and enables feature</li><li><strong>Affected users:</strong> Anyone trying to use statusLine in v1.0.70</li></ul>
+    </article>
+    <article class="card" id="fixed-memory-saving-could-fail-unpredictably">
+      <div class="card-top">
+        <h3>Fixed: Memory Saving Could Fail Unpredictably <a class="anchor" href="#fixed-memory-saving-could-fail-unpredictably">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Memory additions would sometimes fail with "No tool use found" errors</li><li><strong>Cause:</strong> Complex AI-based approach that required perfect tool responses</li><li><strong>Resolution:</strong> Simplified to direct file append operations</li><li><strong>Affected users:</strong> Users frequently saving memories</li></ul>
+    </article>
+    <article class="card" id="fixed-potential-race-conditions-in-concurrent-queries">
+      <div class="card-top">
+        <h3>Fixed: Potential Race Conditions in Concurrent Queries <a class="anchor" href="#fixed-potential-race-conditions-in-concurrent-queries">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Multiple simultaneous queries could cause undefined behavior</li><li><strong>Cause:</strong> No protection against concurrent execution</li><li><strong>Resolution:</strong> Added detection and tracking of concurrent queries</li><li><strong>Affected users:</strong> Users triggering rapid commands or using automation</li></ul>
+    </article>
+    <article class="card" id="fixed-unused-dependencies-and-code-cleanup">
+      <div class="card-top">
+        <h3>Fixed: Unused Dependencies and Code Cleanup <a class="anchor" href="#fixed-unused-dependencies-and-code-cleanup">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Importing entire modules when only specific functions were needed</li><li><strong>Resolution:</strong> Changed to named imports for crypto, stream, and process modules</li><li><strong>Affected users:</strong> All users benefit from smaller bundle size</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>Removed deprecated memory management functions (<code>AuB</code>, <code>lhB</code>, <code>l$8</code>)</li><li>Cleaned up unused variables (<code>uw2</code>, <code>ZG8</code>, <code>GG8</code>, <code>FG8</code>)</li><li>Reorganized GitHub Actions workflow variables for consistency</li></ul>
+    </article>
+    <article class="card" id="performance-optimizations">
+      <div class="card-top">
+        <h3>Performance Optimizations <a class="anchor" href="#performance-optimizations">#</a></h3>
+      </div>
+      <ul><li>Switched to named imports for better tree-shaking</li><li>Updated memory thresholds for improved performance</li><li>Added context management feature flag for future API support</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

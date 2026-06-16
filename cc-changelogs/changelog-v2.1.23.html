@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.23 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.23."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.23</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.23</span></h1>
+<p class="sub">This release adds a ripgrep search timeout with graceful error handling, introduces an in-app auto-update configuration dialog, adds customizable spinner verbs for personalized UI, and implements significant infrastructure improvements including WebSocket-based direct connect mode, pipelined speculation for faster responses, and a prompt cache break debugging system. The security policy for code analysis has been updated to better support authorized security testing scenarios.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.22 → v2.1.23</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">16 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="ripgrep-search-timeout-handling">
+      <div class="card-top">
+        <h3>Ripgrep Search Timeout Handling <a class="anchor" href="#ripgrep-search-timeout-handling">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Ripgrep searches now have a timeout (20 seconds, or 60 seconds on WSL) with graceful error handling that returns partial results.</p>
+<div class="blabel">Details</div>
+<ul><li>Searches that take too long will now fail gracefully with a <code>RipgrepTimeoutError</code></li><li>Partial results found before timeout are preserved and returned</li><li>Clear error message: "The search may have matched files but did not complete in time. Try searching a more specific path or pattern."</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>fz8</code> class at line 31473 (contains <code>"RipgrepTimeoutError"</code> and <code>"Ripgrep search timed out after"</code>)</p>
+    </article>
+    <article class="card" id="in-app-auto-update-configuration">
+      <div class="card-top">
+        <h3>In-App Auto-Update Configuration <a class="anchor" href="#in-app-auto-update-configuration">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New dialog to enable or disable auto-updates directly from within Claude Code, with channel selection.</p>
+<p>Usage: Access through the settings interface to configure auto-updates.</p>
+<div class="blabel">Details</div>
+<ul><li>Choose between "Enable with latest channel" or "Enable with stable channel"</li><li>When auto-updates are controlled by environment variables (<code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code> or <code>DISABLE_AUTOUPDATER</code>), the dialog shows a message explaining this and how to re-enable</li></ul>
+<div class="blabel">Evidence</div>
+<p>UI component at line 488151 (contains <code>"Enable Auto-Updates"</code>, <code>"Enable with latest channel"</code>, <code>"Enable with stable channel"</code>)</p>
+    </article>
+    <article class="card" id="customizable-spinner-verbs">
+      <div class="card-top">
+        <h3>Customizable Spinner Verbs <a class="anchor" href="#customizable-spinner-verbs">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New configuration option to customize the spinner verbs shown during Claude's thinking phase.</p>
+<p>Usage: Add to your settings:</p>
+<pre><code>{
+  &quot;spinnerVerbs&quot;: {
+    &quot;mode&quot;: &quot;append&quot;,
+    &quot;verbs&quot;: [&quot;Pondering&quot;, &quot;Contemplating&quot;, &quot;Musing&quot;]
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>mode: "append"</code> - adds your verbs to the default list</li><li><code>mode: "replace"</code> - uses only your custom verbs</li><li>Empty verbs array with replace mode falls back to defaults</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema definition at line 552840 (contains <code>"spinnerVerbs"</code>, <code>'Customize spinner verbs. mode: "append" adds verbs to defaults, "replace" uses only your verbs.'</code>)</p>
+    </article>
+    <article class="card" id="toggle-terminal-keybinding">
+      <div class="card-top">
+        <h3>Toggle Terminal Keybinding <a class="anchor" href="#toggle-terminal-keybinding">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>app:toggleTerminal</code> keyboard action added to the available keybindings.</p>
+<div class="blabel">Details</div>
+<ul><li>Adds a new action for toggling terminal view</li><li>Can be bound to a custom key combination in keybindings configuration</li></ul>
+<div class="blabel">Evidence</div>
+<p>Action registered at line 560172 (contains <code>"app:toggleTerminal"</code>)</p>
+    </article>
+    <article class="card" id="websocket-direct-connect-mode">
+      <div class="card-top">
+        <h3>WebSocket Direct Connect Mode <a class="anchor" href="#websocket-direct-connect-mode">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure for connecting directly to a remote Claude Code server via WebSocket.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>useDirectConnect</code> hook manages WebSocket connections</li><li>Handles connection lifecycle: connecting, connected, disconnected, errors</li><li>Supports permission request forwarding from remote sessions</li><li>Provides clear error messaging for connection failures</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>useDirectConnect</code> hook at line 586518 (contains <code>"[useDirectConnect] Connecting to"</code>, <code>"WebSocket connection error"</code>, <code>"Server disconnected."</code>)</p>
+    </article>
+    <article class="card" id="updated-security-policy-for-code-analysis">
+      <div class="card-top">
+        <h3>Updated Security Policy for Code Analysis <a class="anchor" href="#updated-security-policy-for-code-analysis">#</a></h3>
+      </div>
+      <p>The system prompt for security-related tasks has been expanded to better support legitimate security work:</p>
+<p><strong>Previous policy</strong>: "Assist with defensive security tasks only"</p>
+<p><strong>New policy</strong>: "Assist with authorized security testing, defensive security, CTF challenges, and educational contexts"</p>
+<div class="blabel">Details</div>
+<ul><li>Now explicitly allows: pentesting engagements, CTF competitions, security research, defensive use cases</li><li>Still refuses: destructive techniques, DoS attacks, mass targeting, supply chain compromise, detection evasion for malicious purposes</li><li>Dual-use security tools (C2 frameworks, credential testing, exploit development) require clear authorization context</li></ul>
+<div class="blabel">Evidence</div>
+<p>Policy string at line 550045 (contains <code>"authorized security testing"</code>, <code>"CTF challenges"</code>)</p>
+    </article>
+    <article class="card" id="prompt-cache-break-debugging">
+      <div class="card-top">
+        <h3>Prompt Cache Break Debugging <a class="anchor" href="#prompt-cache-break-debugging">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New detailed logging when prompt caching breaks, helping identify why cache misses occur.</p>
+<div class="blabel">Details</div>
+<ul><li>Logs when cache breaks due to: model changes, system prompt changes (with character delta), tool schema changes</li><li>Format: <code>[PROMPT CACHE BREAK] system prompt changed (+123 chars) [source=X, call #Y, cache read: A → B, creation: C]</code></li><li>Useful for debugging unexpected cache misses in long sessions</li></ul>
+<div class="blabel">Evidence</div>
+<p>Logging at line 266957 (contains <code>"[PROMPT CACHE BREAK]"</code>, <code>"system prompt changed"</code>, <code>"tools changed"</code>, <code>"model changed"</code>)</p>
+    </article>
+    <article class="card" id="pipelined-speculation-system">
+      <div class="card-top">
+        <h3>Pipelined Speculation System <a class="anchor" href="#pipelined-speculation-system">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New speculative execution system that pre-generates suggestions before they're needed.</p>
+<div class="blabel">Details</div>
+<ul><li>Generates pipelined suggestions asynchronously during interaction</li><li>Promotes cached suggestions when user input matches predictions</li><li>Stops speculation at denied tools to avoid wasted work</li><li>Debug logging: <code>[Speculation] Pipelined suggestion: "..."</code>, <code>[Speculation] Promoting pipelined suggestion: "..."</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Speculation logic at line 457819 (contains <code>"[Speculation] Pipelined suggestion:"</code>, <code>"[Speculation] Promoting pipelined suggestion:"</code>, <code>"[Speculation] Stopping at denied tool:"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-fork-agent-logging">
+      <div class="card-top">
+        <h3>Enhanced Fork Agent Logging <a class="anchor" href="#enhanced-fork-agent-logging">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Forked agents now log detailed progress information for debugging.</p>
+<div class="blabel">Details</div>
+<ul><li>Logs transcript recording events</li><li>Tracks message counts and types received</li><li>Reports final usage statistics including cache read/create tokens</li><li>Format: <code>Forked agent [name] finished: N messages, types=[...], totalUsage: input=X output=Y cacheRead=Z cacheCreate=W</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Logging at line 421675 (contains <code>"Forked agent ["</code>, <code>"cacheCreate="</code>, <code>"total sent)"</code>)</p>
+    </article>
+    <article class="card" id="dynamic-skills-loading-via-attachments">
+      <div class="card-top">
+        <h3>Dynamic Skills Loading via Attachments <a class="anchor" href="#dynamic-skills-loading-via-attachments">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Skills can now be loaded dynamically and sent to the model via attachments rather than in the initial prompt.</p>
+<div class="blabel">Details</div>
+<ul><li>Reduces initial prompt size by loading skills on-demand</li><li>Logs: <code>Sending N skills via attachment (initial/dynamic, X total sent)</code></li><li>Skills are formatted with a header: "The following skills are available for use with the Skill tool"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skills handling at line 463656 (contains <code>"skills via attachment"</code>, <code>"The following skills are available for use with the Skill tool"</code>)</p>
+    </article>
+    <article class="card" id="github-pr-state-field">
+      <div class="card-top">
+        <h3>GitHub PR State Field <a class="anchor" href="#github-pr-state-field">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>PR view commands now include the <code>state</code> field in addition to existing fields.</p>
+<div class="blabel">Details</div>
+<ul><li><code>gh pr view --json</code> now fetches: <code>number,url,reviewDecision,isDraft,headRefName,state</code></li><li>Previously only fetched: <code>number,url,reviewDecision,isDraft,headRefName</code></li><li>Enables better PR status detection (open, closed, merged)</li></ul>
+<div class="blabel">Evidence</div>
+<p>GH command at line 578119 (contains <code>"number,url,reviewDecision,isDraft,headRefName,state"</code>)</p>
+    </article>
+    <article class="card" id="improved-windows-process-ancestor-detection">
+      <div class="card-top">
+        <h3>Improved Windows Process Ancestor Detection <a class="anchor" href="#improved-windows-process-ancestor-detection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>PowerShell-based process ancestor detection now retrieves the full ancestor chain in a single call.</p>
+<div class="blabel">Details</div>
+<ul><li>Uses a more efficient PowerShell script that walks the process tree in one execution</li><li>Retrieves both process IDs and command lines for ancestors</li><li>Timeout increased from 1 second to 3 seconds for reliability</li></ul>
+<div class="blabel">Evidence</div>
+<p>PowerShell script at line 198756 (contains <code>"$currentPid ="</code>, batched ancestor retrieval logic)</p>
+    </article>
+    <article class="card" id="improved-api-error-logging">
+      <div class="card-top">
+        <h3>Improved API Error Logging <a class="anchor" href="#improved-api-error-logging">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>API errors now include attempt numbers and more detailed error information.</p>
+<div class="blabel">Details</div>
+<ul><li>Format: <code>API error (attempt N/M): status message</code></li><li>Includes full status code and message for Anthropic API errors</li><li>Helps diagnose retry behavior and transient failures</li></ul>
+<div class="blabel">Evidence</div>
+<p>Error logging at line 325950 (contains <code>"API error (attempt"</code>)</p>
+    </article>
+    <article class="card" id="effort-level-ui-improvements">
+      <div class="card-top">
+        <h3>Effort Level UI Improvements <a class="anchor" href="#effort-level-ui-improvements">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The effort level selector now shows when effort is not supported for the current model.</p>
+<div class="blabel">Details</div>
+<ul><li>Displays "Effort not supported" when the model doesn't support effort configuration</li><li>Shows arrow key hint: "← → to adjust" when effort is supported</li><li>Optional model name shown: "Effort not supported for {model}"</li></ul>
+<div class="blabel">Evidence</div>
+<p>UI at line 486241 (contains <code>"Effort not supported"</code>, <code>"← → to adjust"</code>)</p>
+    </article>
+    <article class="card" id="better-useappstate-error-messages">
+      <div class="card-top">
+        <h3>Better useAppState Error Messages <a class="anchor" href="#better-useappstate-error-messages">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Improved error messages for incorrect usage of the <code>useAppState</code> hook.</p>
+<div class="blabel">Details</div>
+<ul><li>Combined error for both <code>useAppState</code> and <code>useSetAppState</code>: "useAppState/useSetAppState cannot be called outside of an &lt;AppStateProvider /&gt;"</li><li>New error when selector returns the whole state: "Your selector in <code>useAppState(...)</code> returned the original state, which is not allowed. You must instead return a property for optimised rendering."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Error handling at line 476661 (contains <code>"useAppState/useSetAppState cannot be called outside"</code>, <code>"Your selector in \</code>useAppState("`)</p>
+    </article>
+    <article class="card" id="teammate-message-ui-improvements">
+      <div class="card-top">
+        <h3>Teammate Message UI Improvements <a class="anchor" href="#teammate-message-ui-improvements">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Simplified teammate message notifications in the UI.</p>
+<div class="blabel">Details</div>
+<ul><li>Changed from verbose "Queued teammate X:" to brief notification with sender's name</li><li>Changed from text-based "Agent idle · Task N completed" status to rendered components</li><li>Cleaner presentation of teammate messages in the conversation</li></ul>
+<div class="blabel">Evidence</div>
+<p>UI changes at line 416889, 423206 (removes <code>"Agent idle · Task"</code>, <code>"Queued teammate"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed escaped backslash display in terminal setup hints: now correctly shows <code>\\</code> instead of <code>\</code> in messages about multi-line input (<code>p89()</code> at line 188045, <code>"Use backslash (\\\\) + Enter"</code>)</li><li>Fixed prompt caching scope constant to use 2026 date: <code>"prompt-caching-scope-2026-01-05"</code> (constant at line 2882)</li></ul>
+    </article>
+    <article class="card" id="removed-swarm-launch-from-plan-approval">
+      <div class="card-top">
+        <h3>Removed Swarm Launch from Plan Approval <a class="anchor" href="#removed-swarm-launch-from-plan-approval">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The "Yes, and launch swarm" option has been removed from the plan approval dialog. Users can still spawn teams manually using the Task tool with <code>team_name</code> parameter after plan approval. A hint about parallelization is now shown when appropriate: "If this plan can be broken down into multiple independent tasks, consider using a team of teammates (via the Task tool with team_name) to parallelize the work."</p>
+<div class="blabel">Evidence</div>
+<p>Removed strings <code>"Yes, and launch swarm"</code>, <code>"Whether to launch a swarm to implement the plan"</code>, <code>"Number of teammates to spawn in the swarm"</code> and added <code>"hasTaskTool"</code> schema field</p>
+    </article>
+    <article class="card" id="system-prompt-dynamic-boundary">
+      <div class="card-top">
+        <h3>System Prompt Dynamic Boundary <a class="anchor" href="#system-prompt-dynamic-boundary">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>New <code>__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__</code> marker added for separating static and dynamic portions of system prompts, likely for improved prompt caching behavior.</p>
+<div class="blabel">Evidence</div>
+<p>Constant at line 550046 (contains <code>"__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

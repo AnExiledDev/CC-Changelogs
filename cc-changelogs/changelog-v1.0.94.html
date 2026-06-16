@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.94 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.94."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.94</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.94</span></h1>
+<p class="sub">Version 1.0.94 introduces comprehensive performance monitoring with new warnings for large agent descriptions and MCP tools, significantly improves security with sophisticated sed command validation, and enhances the permission system with dynamic update capabilities.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.93 → v1.0.94</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="performance-context-warnings">
+      <div class="card-top">
+        <h3>Performance Context Warnings <a class="anchor" href="#performance-context-warnings">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New warning system that monitors context consumption from custom agents and MCP tools <strong>How to use:</strong></p>
+<pre><code># Warnings appear automatically when thresholds are exceeded
+# Agent descriptions &gt; 15,000 tokens will trigger a warning
+# MCP tools &gt; 25,000 tokens will trigger a warning</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Monitors cumulative token count of custom agent <code>whenToUse</code> descriptions</li><li>Tracks total context consumed by MCP tool definitions</li><li>Shows top contributors by token consumption for optimization</li><li>Integrated with existing CLAUDE.md size warnings into unified system</li><li><strong>Evidence</strong>: <code>kY1() at line 399348</code>, <code>XV5() at line 399376</code>, <code>FV5() at line 399400</code>, <code>WSB() at line 399442</code></li></ul>
+    </article>
+    <article class="card" id="advanced-sed-command-security">
+      <div class="card-top">
+        <h3>Advanced sed Command Security <a class="anchor" href="#advanced-sed-command-security">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Complete replacement of sed command validation with sophisticated parsing that blocks dangerous operations <strong>How to use:</strong></p>
+<pre><code># Safe sed commands work normally
+claude &quot;Use sed to replace text in file.txt&quot;
+
+# Dangerous operations are now blocked:
+# - File writes (s///w, w command)
+# - Command execution (s///e, e command)
+# - Multiple expression exploits</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Prevents sed commands from writing to files or executing shell commands</li><li>Parses actual sed expressions instead of using regex patterns</li><li>Detects and blocks write operations (<code>w</code>), execute operations (<code>e</code>), and dangerous flags</li><li><strong>Evidence</strong>: <code>P1B() at line 379595</code>, <code>mS6() at line 379676</code>, <code>hS6() at line 379611</code>, <code>gS6() at line 379638</code></li></ul>
+    </article>
+    <article class="card" id="dynamic-permission-updates">
+      <div class="card-top">
+        <h3>Dynamic Permission Updates <a class="anchor" href="#dynamic-permission-updates">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Tools can now suggest and apply permission changes during execution <strong>Details:</strong></p>
+<ul><li>Permission prompts can include tool-suggested rules</li><li>"Yes, and apply suggestions" option for streamlined workflows</li><li>Automatic directory access rule creation when accessing folders</li><li>Context-aware permission suggestions based on access patterns</li><li><strong>Evidence</strong>: <code>qW1() at line 430572</code>, <code>Cz1() at line 348277</code>, <code>CR5() at line 421430</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-error-messages">
+      <div class="card-top">
+        <h3>Enhanced Error Messages <a class="anchor" href="#enhanced-error-messages">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved error handling for PDF files <strong>Details:</strong></p>
+<ul><li>Clear message when PDF exceeds page limits</li><li>Guidance to edit message and retry with smaller PDF</li><li><strong>Evidence</strong>: <code>bb6 variable at line 391166</code> in error handler <code>B_1()</code></li></ul>
+    </article>
+    <article class="card" id="checkpointing-status-display">
+      <div class="card-top">
+        <h3>Checkpointing Status Display <a class="anchor" href="#checkpointing-status-display">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Better visibility into checkpointing errors and status <strong>Details:</strong></p>
+<ul><li>Shows checkpointing errors in status display</li><li>Indicates when checkpointing is disabled</li><li>Displays save failures with error messages</li><li><strong>Evidence</strong>: <code>KV5() at line 399769</code></li></ul>
+    </article>
+    <article class="card" id="memory-file-selection-ui">
+      <div class="card-top">
+        <h3>Memory File Selection UI <a class="anchor" href="#memory-file-selection-ui">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Redesigned memory file selector interface <strong>Details:</strong></p>
+<ul><li>Improved organization of memory file options</li><li>Better visual hierarchy for nested imports</li><li>Clearer descriptions of file locations</li><li><strong>Evidence</strong>: <code>sb1() at line 400461</code> replacing <code>hb1()</code></li></ul>
+    </article>
+    <article class="card" id="git-command-flag-handling">
+      <div class="card-top">
+        <h3>Git Command Flag Handling <a class="anchor" href="#git-command-flag-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Fixed handling of numeric flags in git commands <strong>Details:</strong></p>
+<ul><li>Git commands with numeric flags like <code>git log -5</code> now work correctly</li><li>Improved flag parsing to distinguish between numeric flags and invalid options</li><li><strong>Evidence</strong>: <code>lS6() at line 380053</code>, added check for <code>/^-\d+$/</code> pattern at line 1404</li></ul>
+    </article>
+    <article class="card" id="model-deprecation-updates">
+      <div class="card-top">
+        <h3>Model Deprecation Updates <a class="anchor" href="#model-deprecation-updates">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added deprecation dates for additional Claude models <strong>Details:</strong></p>
+<ul><li>Added <code>claude-3-opus-20240229</code> with deprecation date January 5th, 2026</li><li>Added <code>claude-3-5-sonnet-20241022</code> with deprecation date October 22, 2025</li><li>Added <code>claude-3-5-sonnet-20240620</code> with deprecation date October 22, 2025</li><li><strong>Evidence</strong>: <code>My2 object at line 366970</code>, <code>jy2 object at line 367622</code></li></ul>
+    </article>
+    <article class="card" id="settings-processing">
+      <div class="card-top">
+        <h3>Settings Processing <a class="anchor" href="#settings-processing">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced --settings flag processing during initialization <strong>Details:</strong></p>
+<ul><li>Settings are now processed earlier in the startup sequence</li><li>Supports both JSON strings and file paths</li><li>Better error messages for invalid settings</li><li><strong>Evidence</strong>: <code>wS5() at line 433801</code>, initialization check at lines 1537-1541</li></ul>
+    </article>
+    <article class="card" id="local-memory-type-selection">
+      <div class="card-top">
+        <h3>Local Memory Type Selection <a class="anchor" href="#local-memory-type-selection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Simplified memory file selection by removing separate "Local" memory type <strong>Details:</strong></p>
+<ul><li>CLAUDE.local.md functionality appears to be consolidated</li><li>Memory selection UI simplified from three types to unified approach</li><li><strong>Evidence</strong>: Removed functions <code>cv1()</code>, <code>fb1()</code>, <code>VyB variable</code>, <code>hb1()</code>, <code>rz5()</code>, <code>AD5()</code></li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

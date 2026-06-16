@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.124 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.124."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.124</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.124</span></h1>
+<p class="sub">This release includes minor improvements to AWS Bedrock model discovery, better error handling, and updates to the CLI launcher script.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.123 → v0.2.124</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">3</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.124 Changelog</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="improved-aws-bedrock-model-discovery">
+      <div class="card-top">
+        <h3>Improved AWS Bedrock Model Discovery <a class="anchor" href="#improved-aws-bedrock-model-discovery">#</a></h3>
+      </div>
+      <p>The model discovery function has been enhanced with better error handling and a more efficient implementation:</p>
+<ul><li><strong>Better error handling</strong>: The function now catches and logs errors when attempting to discover available models, falling back gracefully to default Bedrock models</li><li><strong>Refactored helper function</strong>: The model search helper <code>U81</code> is now a pure function that accepts the model list as a parameter, making it more testable and reusable</li><li><strong>Explicit null checking</strong>: Added explicit checks for empty or null model lists before attempting to search</li></ul>
+<p><strong>Usage impact</strong>: Users working with AWS Bedrock will experience more reliable model discovery, with clearer fallback behavior when model listing fails.</p>
+    </article>
+    <article class="card" id="cli-launcher-script-update-v0-0-1-v0-0-2">
+      <div class="card-top">
+        <h3>CLI Launcher Script Update (v0.0.1 → v0.0.2) <a class="anchor" href="#cli-launcher-script-update-v0-0-1-v0-0-2">#</a></h3>
+      </div>
+      <p>The bash launcher script has been updated with a subtle but important change in cleanup behavior:</p>
+<pre><code>- # 1. If latest link exists, remove the link and exec it
++ # 1. If latest link exists, exec it (the app will handle cleanup)</code></pre>
+<p><strong>What this means for users</strong>: The launcher no longer removes the "latest" symlink before executing Claude Code. Instead, the application itself now manages this cleanup, providing more reliable update handling and preventing potential race conditions during launches.</p>
+    </article>
+    <article class="card" id="code-organization-improvements">
+      <div class="card-top">
+        <h3>Code Organization Improvements <a class="anchor" href="#code-organization-improvements">#</a></h3>
+      </div>
+      <ul><li>Consolidated stream imports to use named imports from the <code>stream</code> module</li><li>Reorganized process-related imports to use named imports from <code>node:process</code></li><li>Minor code cleanup and consistency improvements</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Details</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-details">
+      <ul><li>Structural similarity with previous version: 99.9%</li><li>Total changes: 5 additions, 5 deletions, 1 modification</li><li>The core functionality remains unchanged, with improvements focused on reliability and error handling</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

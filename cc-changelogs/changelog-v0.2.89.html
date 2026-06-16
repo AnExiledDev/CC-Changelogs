@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.89 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.89."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.89</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.89</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.86 → v0.2.89</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Overview</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="overview">
+      <p>This update significantly restructures the internal codebase, removing 1,130 declarations and adding 176 new ones, resulting in a more streamlined implementation with 84.3% structural similarity to v0.2.86.</p>
+    </article>
+    <article class="card" id="aws-credential-chain-management">
+      <div class="card-top">
+        <h3>AWS Credential Chain Management <a class="anchor" href="#aws-credential-chain-management">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li><strong>New <code>createCredentialChain()</code> function</strong>: Provides enhanced credential chain management for AWS SDK operations</li><li><strong><code>expireAfter()</code> method</strong>: Allows setting custom expiration times for credentials</li><li>Minimum expiration duration enforced at 5 minutes (300,000ms)</li><li>Example usage:</li></ul>
+<pre><code>    const credChain = createCredentialChain(provider1, provider2)
+      .expireAfter(600000); // Set 10-minute expiration</code></pre>
+    </article>
+    <article class="card" id="property-provider-chain">
+      <div class="card-top">
+        <h3>Property Provider Chain <a class="anchor" href="#property-provider-chain">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li><strong>New <code>propertyProviderChain()</code> function</strong>: Implements a chain-of-responsibility pattern for property providers</li><li>Automatically tries next provider in chain if current provider fails with <code>tryNextLink</code> flag</li><li>Throws the last error if all providers fail</li></ul>
+    </article>
+    <article class="card" id="stream-api-support">
+      <div class="card-top">
+        <h3>Stream API Support <a class="anchor" href="#stream-api-support">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li>Enhanced stream transformation capabilities with better error handling</li><li>Added validation for <code>TransformStream</code> API availability</li><li>Improved Blob-to-stream conversion with React Native compatibility warnings</li></ul>
+    </article>
+    <article class="card" id="error-handling">
+      <div class="card-top">
+        <h3>Error Handling <a class="anchor" href="#error-handling">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li>Better error messages for unsupported APIs</li><li>Specific guidance for React Native users regarding fetch streaming limitations</li></ul>
+    </article>
+    <article class="card" id="aws-configuration-components">
+      <div class="card-top">
+        <h3>AWS Configuration Components <a class="anchor" href="#aws-configuration-components">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The following AWS SDK configuration modules were removed in favor of the new credential chain system:</p>
+<ul><li>Boolean selector utilities for environment/config parsing</li><li>Dual-stack endpoint configuration options</li><li>FIPS endpoint configuration options</li><li>Various AWS region and endpoint resolution utilities</li><li>Retry strategy implementations (StandardRetryStrategy, AdaptiveRetryStrategy)</li><li>Multiple AWS signing and authentication modules</li></ul>
+    </article>
+    <article class="card" id="http-protocol-components">
+      <div class="card-top">
+        <h3>HTTP Protocol Components <a class="anchor" href="#http-protocol-components">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li>HTTP request/response classes and utilities</li><li>Content length middleware</li><li>Host header middleware</li><li>Logger middleware</li><li>Recursion detection middleware</li></ul>
+    </article>
+    <article class="card" id="uuid-generation">
+      <div class="card-top">
+        <h3>UUID Generation <a class="anchor" href="#uuid-generation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li>Removed UUID v1, v3, v4, v5 generation utilities</li><li>Removed UUID parsing and validation functions</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li>Consolidated credential provider functionality into new chain-based architecture</li><li>Simplified AWS SDK integration with fewer, more focused modules</li><li>Removed redundant tslib helper functions across multiple modules</li></ul>
+    </article>
+    <article class="card" id="performance">
+      <div class="card-top">
+        <h3>Performance <a class="anchor" href="#performance">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li>Reduced bundle size through removal of unused AWS SDK components</li><li>More efficient credential caching and validation</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Migration Notes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="migration-notes">
+      <ul><li>If you were using removed AWS SDK configuration features directly, you'll need to adapt to the new credential chain pattern</li><li>UUID functionality that was removed can be replaced with external UUID libraries if needed</li><li>The new credential chain system provides a more unified approach to managing AWS credentials across different sources</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Improved handling of credential expiration edge cases</li><li>Better error propagation in provider chains</li><li>Fixed potential memory leaks in credential caching</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

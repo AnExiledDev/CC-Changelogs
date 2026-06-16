@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.27 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.27."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.27</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.27</span></h1>
+<p class="sub">Version 2.0.27 brings significant performance improvements through lazy Yoga rendering library loading, an enhanced session resume interface with interactive search and filtering, and improved environment variable handling. The changes focus on faster startup times and better user experience when managing multiple coding sessions.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.26 → v2.0.27</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">5</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="interactive-session-resume-with-search-and-filtering">
+      <div class="card-top">
+        <h3>Interactive Session Resume with Search and Filtering <a class="anchor" href="#interactive-session-resume-with-search-and-filtering">#</a></h3>
+      </div>
+      <p><strong>What:</strong> When resuming previous sessions, you can now search through sessions and filter by git branch to quickly find what you're looking for.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Start claude code
+claude
+
+# Press Ctrl+R to open session resume
+# Then:
+# - Press &#x27;B&#x27; to toggle filtering by current git branch
+# - Press &#x27;/&#x27; to enter search mode
+# - Type to search across session summaries and branch names
+# - Press Escape or Enter to exit search mode</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Search is case-insensitive and matches against session summary, first prompt, and git branch</li><li>Branch filtering shows only sessions from your current branch (when toggled on)</li><li>Visual feedback shows active filters and search term with a cursor indicator</li><li>Context-aware help text shows available commands based on current mode</li><li><strong>Evidence</strong>: <code>lEA() at line 392685</code> in v2.0.27 (complete rewrite from <code>mEA() at line 392011</code> in v2.0.26)</li></ul>
+    </article>
+    <article class="card" id="new-bordered-box-ui-component">
+      <div class="card-top">
+        <h3>New Bordered Box UI Component <a class="anchor" href="#new-bordered-box-ui-component">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A new reusable UI component for displaying content in bordered boxes with titles and subtitles.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Provides consistent styling for permissions prompts and informational sections</li><li>Supports rounded top border with customizable colors</li><li>Configurable inner padding and optional title coloring</li><li>Used throughout the CLI for better visual organization</li><li><strong>Evidence</strong>: <code>UC() at line 430364</code></li></ul>
+    </article>
+    <article class="card" id="environment-variable-expansion-function">
+      <div class="card-top">
+        <h3>Environment Variable Expansion Function <a class="anchor" href="#environment-variable-expansion-function">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Refactored environment variable expansion into a standalone, reusable function.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Supports <code>${VAR}</code> and <code>${VAR:-default}</code> syntax for environment variables</li><li>Tracks missing variables for better error reporting</li><li>Now used in multiple places for consistent variable handling</li><li>Improved code maintainability through extraction from inline implementation</li><li><strong>Evidence</strong>: <code>iuA() at line 262768</code> (extracted from inline code in <code>Ps8()</code> at line 283329 in v2.0.26)</li></ul>
+    </article>
+    <article class="card" id="lazy-loading-of-yoga-rendering-library">
+      <div class="card-top">
+        <h3>Lazy Loading of Yoga Rendering Library <a class="anchor" href="#lazy-loading-of-yoga-rendering-library">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The Yoga WASM rendering library is now loaded on-demand instead of during startup, significantly improving CLI startup time for non-rendering operations.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>Yoga library loads only when rendering is actually needed</li><li>Automatic error checking prevents usage before initialization</li><li>Memoization ensures the library loads only once</li><li>Most CLI commands (git operations, file reading, etc.) now start faster</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Previous version loaded Yoga synchronously during startup at multiple points</li><li>New version uses lazy async loading with <code>await xq0()</code> memoization</li><li>Error guard function <code>EL9() at line 53524</code> throws "Yoga not loaded" if accessed prematurely</li><li>Single initialization point at <code>OR9() at line 71850</code> replaces multiple <code>await hp()</code> calls</li><li><strong>Evidence</strong>: <code>Wq0() at line 52532</code>, <code>EL9() at line 53524</code>, <code>NMA() at line 53603</code> (replaced synchronous <code>hp() at line 52526</code> in v2.0.26)</li></ul>
+    </article>
+    <article class="card" id="enhanced-session-resume-ui">
+      <div class="card-top">
+        <h3>Enhanced Session Resume UI <a class="anchor" href="#enhanced-session-resume-ui">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The session resume interface is more responsive and provides better visual feedback.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Dynamic layout adjusts for active filters</li><li>Focused input shows cursor indicator for better feedback</li><li>Help text adapts based on current state (search mode vs normal mode)</li><li>Cleaner presentation of session metadata</li><li><strong>Evidence</strong>: Enhanced <code>lEA() at line 392685</code> compared to v2.0.26</li></ul>
+    </article>
+    <article class="card" id="code-organization-and-maintainability">
+      <div class="card-top">
+        <h3>Code Organization and Maintainability <a class="anchor" href="#code-organization-and-maintainability">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Several internal refactorings improve code quality without changing user-facing behavior.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Environment variable expansion logic extracted into reusable function</li><li>Better separation of concerns in session management code</li><li>Reduced code duplication through function extraction</li><li>Improved error messages and validation</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-changes">
+      <ul><li>Import changes: Added <code>cwd as uL0</code> from <code>node:process</code> at line 70580</li><li>Import changes: Added <code>execSync as H9Q, spawn as _v8</code> from <code>node:child_process</code> at line 248770</li><li>Function <code>BM0() at line 71622</code> added for clearing terminal screen</li><li>Multiple helper functions added for the new session filtering features</li><li>Yoga-related functions refactored from synchronous (<code>hp()</code>, <code>Qq0</code> global) to async lazy pattern (<code>Wq0()</code>, <code>j61</code> with <code>EL9()</code> getter)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

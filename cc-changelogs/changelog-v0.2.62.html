@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.62 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.62."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.62</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.62</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.61 → v0.2.62</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">4</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="ide-integration-enhancement">
+      <div class="card-top">
+        <h3>IDE Integration Enhancement <a class="anchor" href="#ide-integration-enhancement">#</a></h3>
+      </div>
+      <ul><li><strong>Enhanced IDE selection awareness</strong>: Claude Code now detects and displays when text is selected in your IDE (when connected via MCP)</li><li>Shows the number of lines selected in the status bar (e.g., "5 lines selected")</li><li>Automatically clears the indicator when selection is removed</li><li>Supports selection notifications from IDE extensions that implement the <code>selection_changed</code> MCP notification</li></ul>
+    </article>
+    <article class="card" id="improved-changelog-management">
+      <div class="card-top">
+        <h3>Improved Changelog Management <a class="anchor" href="#improved-changelog-management">#</a></h3>
+      </div>
+      <ul><li><strong>Dynamic changelog fetching</strong>: Claude Code now fetches the latest changelog from GitHub</li><li>Automatically caches changelog updates for better performance</li><li>Fetches from: <code>https://raw.githubusercontent.com/anthropics/claude-code/refs/heads/main/CHANGELOG.md</code></li><li>Shows relevant release notes on startup when updates are available</li></ul>
+    </article>
+    <article class="card" id="model-configuration-updates">
+      <div class="card-top">
+        <h3>Model Configuration Updates <a class="anchor" href="#model-configuration-updates">#</a></h3>
+      </div>
+      <ul><li><strong>New Sonnet model</strong>: Added support for <code>claude-3-7-sonnet-20250219</code></li><li><strong>Improved model selection</strong>: Better handling of environment-specific model configurations</li><li>Automatically selects appropriate model variant based on your provider (Bedrock, Vertex, or First-party)</li><li>Respects <code>ANTHROPIC_SMALL_FAST_MODEL</code> environment variable for custom model selection</li></ul>
+    </article>
+    <article class="card" id="user-interface">
+      <div class="card-top">
+        <h3>User Interface <a class="anchor" href="#user-interface">#</a></h3>
+      </div>
+      <ul><li><strong>Queue command hint tracking</strong>: Added <code>queuedCommandUpHintCount</code> to user preferences for better hint management</li><li><strong>Enhanced streaming status</strong>: Claude now shows more specific status indicators during response streaming:</li><li>"responding" for regular text responses</li><li>"tool-use" when executing tools</li><li>"thinking" when in thinking mode</li></ul>
+    </article>
+    <article class="card" id="performance">
+      <div class="card-top">
+        <h3>Performance <a class="anchor" href="#performance">#</a></h3>
+      </div>
+      <ul><li><strong>Optimized output handling</strong>: Large outputs are now written in chunks to prevent buffer overflow</li><li>Processes output in 2000-character chunks for better terminal performance</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-changes">
+      <ul><li>Removed unused stream import and process import redundancies</li><li>Consolidated MCP server connection handling</li><li>Improved notification processing for IDE integrations</li><li>Better separation of concerns for changelog and release notes display</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential issues with undefined IDE selection states</li><li>Improved error handling for selection change notifications</li><li>Better handling of edge cases in streaming responses</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

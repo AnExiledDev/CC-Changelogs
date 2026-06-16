@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.18 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.18."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.18</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.18</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.14 → v0.2.18</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">2</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="config-management-enhancements">
+      <div class="card-top">
+        <h3>Config Management Enhancements <a class="anchor" href="#config-management-enhancements">#</a></h3>
+      </div>
+      <ul><li><strong>New config array operations</strong>: Added <code>config add</code> and <code>config rm</code> subcommands to manage configuration arrays</li><li><code>claude config add &lt;key&gt; &lt;value&gt;</code> - Add an item to a config array</li><li><code>claude config rm &lt;key&gt; &lt;value&gt;</code> - Remove an item from a config array</li><li><strong>Alias support</strong>: Added <code>ls</code> as an alias for <code>config list</code></li></ul>
+    </article>
+    <article class="card" id="fish-shell-support">
+      <div class="card-top">
+        <h3>Fish Shell Support <a class="anchor" href="#fish-shell-support">#</a></h3>
+      </div>
+      <ul><li>Added full support for Fish shell in the persistent shell environment</li><li>Fish shell configuration files (<code>.config/fish/config.fish</code>) are now recognized</li></ul>
+    </article>
+    <article class="card" id="image-support-in-command-output">
+      <div class="card-top">
+        <h3>Image Support in Command Output <a class="anchor" href="#image-support-in-command-output">#</a></h3>
+      </div>
+      <ul><li>Command output can now display images when detected (data URLs with base64 encoding)</li><li>When image data is detected in command output, it's sent to Claude and marked as "[Image data detected and sent to Claude]"</li></ul>
+    </article>
+    <article class="card" id="project-configuration">
+      <div class="card-top">
+        <h3>Project Configuration <a class="anchor" href="#project-configuration">#</a></h3>
+      </div>
+      <ul><li>Added <code>ignorePatterns</code> configuration option to specify patterns for files/directories to ignore</li><li>Improved ignore pattern handling with custom pattern support via <code>v_()</code> function</li></ul>
+    </article>
+    <article class="card" id="release-notes-display">
+      <div class="card-top">
+        <h3>Release Notes Display <a class="anchor" href="#release-notes-display">#</a></h3>
+      </div>
+      <ul><li>Simplified release notes display - now shows "What's new:" instead of version-specific headers</li><li>Improved release notes caching and display logic using <code>useMemo</code> for better performance</li></ul>
+    </article>
+    <article class="card" id="error-handling">
+      <div class="card-top">
+        <h3>Error Handling <a class="anchor" href="#error-handling">#</a></h3>
+      </div>
+      <ul><li>Enhanced error reporting with additional context in the <code>Ib</code> function</li><li>Better error tracking with optional extra parameters</li></ul>
+    </article>
+    <article class="card" id="shell-environment">
+      <div class="card-top">
+        <h3>Shell Environment <a class="anchor" href="#shell-environment">#</a></h3>
+      </div>
+      <ul><li>Fixed Fish shell syntax checking with proper flags (<code>--no-execute -c</code>)</li><li>Improved shell command validation for Fish shell compatibility</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Changes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-changes">
+      <ul><li>Updated version to 0.2.18</li><li>Added 42 new functions/variables</li><li>Removed 12 deprecated functions/variables</li><li>Modified 12 existing functions with improvements</li><li>Structural similarity with v0.2.14: 99.2%</li></ul>
+    </article>
+    <article class="card" id="managing-config-arrays">
+      <div class="card-top">
+        <h3>Managing Config Arrays <a class="anchor" href="#managing-config-arrays">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <pre><code># Add a pattern to ignore list
+claude config add ignorePatterns &quot;*.tmp&quot;
+
+# Remove a pattern from ignore list  
+claude config rm ignorePatterns &quot;*.tmp&quot;
+
+# List all config values (using new alias)
+claude config ls</code></pre>
+    </article>
+    <article class="card" id="fish-shell-integration">
+      <div class="card-top">
+        <h3>Fish Shell Integration <a class="anchor" href="#fish-shell-integration">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>Fish shell users can now use Claude Code seamlessly with proper shell integration and syntax validation.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

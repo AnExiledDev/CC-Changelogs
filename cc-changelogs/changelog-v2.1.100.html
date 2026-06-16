@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.100 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.100."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.100</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.100</span></h1>
+<p class="sub">This release adds reassuring status messages during extended thinking periods, relaxes the stall detection thresholds so the spinner no longer shows a "stalled" state prematurely, and tightens several system prompt sections to produce more concise responses. Opus 4.6 users with a server-side flag may also see stricter word-count limits on responses.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.98 → v2.1.100</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="extended-thinking-status-messages">
+      <div class="card-top">
+        <h3>Extended Thinking Status Messages <a class="anchor" href="#extended-thinking-status-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>During long thinking periods, Claude Code now displays timed reassurance messages so you know it's still working.</p>
+<div class="blabel">Details</div>
+<ul><li>After 30 seconds of thinking: "Thinking a bit longer… still working on it…"</li><li>After 90 seconds: "This is a harder one… it might take a few more minutes…"</li><li>After 270 seconds (~4.5 minutes): "Hang tight… really working through this one…"</li><li>Messages appear as dimmed text below the spinner and disappear when thinking ends</li><li>Only displays when the model is in the "thinking" state (extended thinking / chain-of-thought)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Thinking status message array with <code>afterMs</code> timings (search for <code>"Thinking a bit longer"</code>)</p>
+    </article>
+    <article class="card" id="numeric-length-anchors-for-opus-4-6-gradual-rollout">
+      <div class="card-top">
+        <h3>Numeric Length Anchors for Opus 4.6 [Gradual Rollout] <a class="anchor" href="#numeric-length-anchors-for-opus-4-6-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new system prompt section that enforces strict word-count limits on Claude's text output when using Opus 4.6.</p>
+<div class="blabel">Details</div>
+<ul><li>Text between tool calls is limited to ≤25 words</li><li>Final responses are limited to ≤100 words unless the task requires more detail</li><li>Only active when using the Opus 4.6 model AND the server-side <code>quiet_salted_ember</code> flag is set to <code>"true"</code></li><li>Injected as a <code>numeric_length_anchors</code> prompt section in the system prompt</li></ul>
+<div class="blabel">Evidence</div>
+<p>Length anchor prompt section (search for <code>"numeric_length_anchors"</code> and <code>"≤25 words"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="relaxed-stall-detection-during-thinking">
+      <div class="card-top">
+        <h3>Relaxed Stall Detection During Thinking <a class="anchor" href="#relaxed-stall-detection-during-thinking">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The stall detection threshold was increased from 3 seconds to 10 seconds, and the intensity ramp-up period was extended from 2 seconds to 10 seconds. Additionally, the thinking state is now explicitly treated as an active state for stall detection purposes. Together, these changes mean the spinner no longer incorrectly indicates a "stalled" connection during legitimately long thinking periods.</p>
+<div class="blabel">Evidence</div>
+<p>Stall threshold change from <code>3000</code> / <code>2000</code> to <code>1e4</code> / <code>1e4</code> (search for <code>j &gt; 1e4</code> in the stall detection function <code>k87</code>), and added <code>q === "thinking"</code> condition in the calling code</p>
+    </article>
+    <article class="card" id="more-concise-end-of-turn-summaries">
+      <div class="card-top">
+        <h3>More Concise End-of-Turn Summaries <a class="anchor" href="#more-concise-end-of-turn-summaries">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The system prompt guidance for end-of-turn summaries was simplified from "state what changed and what's next. That's it — no recapping the journey, no restating the problem, no listing everything you considered" to the more direct "one or two sentences. What changed and what's next. Nothing else."</p>
+<div class="blabel">Evidence</div>
+<p>Updated summary instruction (search for <code>"End-of-turn summary: one or two sentences"</code>)</p>
+    </article>
+    <article class="card" id="shorter-exploratory-question-responses">
+      <div class="card-top">
+        <h3>Shorter Exploratory Question Responses <a class="anchor" href="#shorter-exploratory-question-responses">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When the user asks an open-ended or exploratory question, Claude is now instructed to respond in 2–3 sentences with a recommendation and the main tradeoff, rather than providing extended analysis with multiple options and tradeoffs. This makes exploratory exchanges snappier while still waiting for user agreement before implementing.</p>
+<div class="blabel">Evidence</div>
+<p>Updated exploratory question prompt (search for <code>"respond in 2-3 sentences with a recommendation"</code>)</p>
+    </article>
+    <article class="card" id="removed-verbose-communication-output-efficiency-prompt-secti">
+      <div class="card-top">
+        <h3>Removed Verbose Communication / Output Efficiency Prompt Section <a class="anchor" href="#removed-verbose-communication-output-efficiency-prompt-secti">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The standalone "# Communicating with the user" prompt section (for Opus 4.6 users) and the "# Output efficiency" prompt section (for other users) were both removed from the system prompt assembly. Their guidance is now covered by the tighter communication style instructions and the new numeric length anchors.</p>
+<div class="blabel">Evidence</div>
+<p>Both <code>"Communicating with the user"</code> and <code>"Output efficiency"</code> strings are absent from v2.1.100 (confirmed via search)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

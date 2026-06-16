@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.66 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.66."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.66</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.66</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.65 → v0.2.66</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.66 Changelog</p>
+    </article>
+    <article class="card" id="todo-list-management-tools">
+      <div class="card-top">
+        <h3>Todo List Management Tools <a class="anchor" href="#todo-list-management-tools">#</a></h3>
+      </div>
+      <p>Added comprehensive todo list functionality with two new tools:</p>
+<p><strong>TodoWrite</strong> - Update and manage your task list during coding sessions</p>
+<ul><li>Create, update, and track todos with status (pending, in_progress, completed) and priority (high, medium, low)</li><li>Automatic progress tracking with visual indicators</li><li>Use it to organize complex multi-step tasks and maintain focus</li></ul>
+<p><strong>TodoRead</strong> - View your current todo list</p>
+<ul><li>Quickly check pending tasks and current progress</li><li>Shows focused view by default, with verbose option for full list</li><li>Helps maintain context across long coding sessions</li></ul>
+<div class="blabel">Example usage</div>
+<pre><code># Claude will proactively use these tools to track progress
+# You can also explicitly ask to see or update the todo list
+&quot;Show me my todo list&quot;
+&quot;Add a todo to implement dark mode&quot;</code></pre>
+    </article>
+    <article class="card" id="enhanced-permission-system">
+      <div class="card-top">
+        <h3>Enhanced Permission System <a class="anchor" href="#enhanced-permission-system">#</a></h3>
+      </div>
+      <ul><li>Improved permission handling for Bash commands with smarter rule suggestions</li><li>Better detection and handling of command injection attempts</li><li>More informative permission debug information display</li><li>Rule suggestions now based on actual command analysis</li></ul>
+    </article>
+    <article class="card" id="settings-enhancement">
+      <div class="card-top">
+        <h3>Settings Enhancement <a class="anchor" href="#settings-enhancement">#</a></h3>
+      </div>
+      <ul><li>Added <code>stressTestingFraction</code> to user settings options</li><li>This appears to be for internal testing/debugging purposes</li></ul>
+    </article>
+    <article class="card" id="user-experience">
+      <div class="card-top">
+        <h3>User Experience <a class="anchor" href="#user-experience">#</a></h3>
+      </div>
+      <ul><li>Better visual formatting for permission prompts</li><li>Clearer distinction between local and project settings descriptions</li><li>Enhanced permission decision reasoning display</li></ul>
+    </article>
+    <article class="card" id="architecture-changes">
+      <div class="card-top">
+        <h3>Architecture Changes <a class="anchor" href="#architecture-changes">#</a></h3>
+      </div>
+      <ul><li>Improved file handling for external tool integrations</li><li>Better error handling in file save operations</li><li>More robust command prefix detection and validation</li></ul>
+    </article>
+    <article class="card" id="new-dependencies">
+      <div class="card-top">
+        <h3>New Dependencies <a class="anchor" href="#new-dependencies">#</a></h3>
+      </div>
+      <ul><li>Added imports for <code>execSync</code>, <code>execFile</code>, and <code>spawn</code> from child_process</li><li>Added <code>PassThrough</code> from stream module</li><li>Added path and filesystem utilities (<code>extname</code>, <code>relative</code>, <code>existsSync</code>, <code>statSync</code>)</li></ul>
+    </article>
+    <article class="card" id="internal-improvements">
+      <div class="card-top">
+        <h3>Internal Improvements <a class="anchor" href="#internal-improvements">#</a></h3>
+      </div>
+      <ul><li>Refactored permission checking logic for better maintainability</li><li>Enhanced rule suggestion generation</li><li>Improved handling of workspace and organization roles</li><li>Better support for admin and billing role detection</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed issues with command injection detection</li><li>Improved error handling in file operations</li><li>Better handling of edge cases in permission flows</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The todo list feature is designed to be used proactively by Claude to track complex tasks and maintain context. It's stored locally in your project's <code>.claude/todos/</code> directory and persists across sessions.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

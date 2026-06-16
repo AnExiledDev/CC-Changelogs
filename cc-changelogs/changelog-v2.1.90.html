@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.90 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.90."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.90</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.90</span></h1>
+<p class="sub">This release introduces the <code>/powerup</code> interactive tutorial system for learning Claude Code features, adds first-class support for Claude Platform on AWS as a new provider, adds the <code>/toggle-memory</code> command for disabling automemory per-session, significantly expands parent proxy support for enterprise network environments, and improves security hardening across Docker, PowerShell, and Linux sandbox subsystems.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.89 → v2.1.90</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="powerup-interactive-feature-tutorials">
+      <div class="card-top">
+        <h3>/powerup — Interactive Feature Tutorials <a class="anchor" href="#powerup-interactive-feature-tutorials">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new <code>/powerup</code> command that launches a set of 10 interactive lessons teaching Claude Code features that "most people miss." Each power-up includes animated terminal demos, explanatory text, and can be marked as completed.</p>
+<div class="blabel">Usage</div>
+<pre><code>/powerup</code></pre>
+<div class="blabel">Details</div>
+<ul><li>10 lessons covering: @ file mentions, permission modes (shift+tab), undo/rewind, background tasks, CLAUDE.md memory, MCP tool integration, skills &amp; hooks, subagents, remote control/teleport, and model/effort switching</li><li>Progress is persisted — unlocked power-ups carry across sessions (stored via <code>powerupsUnlocked</code> in local settings)</li><li>A celebration animation plays when all 10 are completed ("All powered up")</li><li>Suggested to new users on the welcome screen when the terminal is tall enough (≥44 rows): "New here? Run <code>/powerup</code> to learn the features most people miss."</li><li>Telemetry events: <code>tengu_powerup_lesson_opened</code>, <code>tengu_powerup_lesson_completed</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Power-up command and lesson system (search for <code>"Discover Claude Code features through quick interactive lessons"</code>)</p>
+    </article>
+    <article class="card" id="claude-platform-on-aws-provider">
+      <div class="card-top">
+        <h3>Claude Platform on AWS Provider <a class="anchor" href="#claude-platform-on-aws-provider">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now supports "Claude Platform on AWS" as a first-class API provider, alongside Bedrock, Vertex, and Foundry.</p>
+<div class="blabel">Usage</div>
+<pre><code>CLAUDE_CODE_USE_ANTHROPIC_AWS=1 claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Set <code>CLAUDE_CODE_USE_ANTHROPIC_AWS=1</code> to enable the provider</li><li>Requires <code>ANTHROPIC_AWS_WORKSPACE_ID</code> (or <code>workspaceId</code> in constructor)</li><li>Optionally set <code>ANTHROPIC_AWS_BASE_URL</code> or let it derive from <code>AWS_REGION</code> / <code>AWS_DEFAULT_REGION</code> (pattern: <code>https://aws-external-anthropic.{region}.api.aws</code>)</li><li>Supports AWS SigV4 request signing via <code>@aws-sdk/credential-providers</code></li><li>Supports explicit credentials via <code>awsAccessKey</code> + <code>awsSecretAccessKey</code>, AWS profile, or a custom <code>providerChainResolver</code></li><li>Set <code>CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH=1</code> to skip authentication (for development/testing)</li><li>Fast mode is not available on this provider (same as Bedrock, Vertex, and Foundry)</li></ul>
+<div class="blabel">Evidence</div>
+<p>AnthropicAws client class (search for <code>"Claude Platform on AWS"</code> and <code>"ANTHROPIC_AWS_WORKSPACE_ID"</code>)</p>
+    </article>
+    <article class="card" id="toggle-memory-session-automemory-toggle">
+      <div class="card-top">
+        <h3>/toggle-memory — Session Automemory Toggle <a class="anchor" href="#toggle-memory-session-automemory-toggle">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new <code>/toggle-memory</code> slash command that disables or re-enables automemory for the current session.</p>
+<div class="blabel">Usage</div>
+<pre><code>/toggle-memory</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When toggled off: "this conversation will not write or read new memories, and previously-loaded memory content should not be referenced"</li><li>When toggled back on: "memory content may be referenced and new memories can be saved"</li><li>Memory read/write operations are blocked while toggled off, returning guidance to run <code>/toggle-memory</code> to re-enable</li><li>Fires <code>tengu_memory_toggled</code> telemetry with <code>toggled_off</code> boolean</li><li>The command is <code>isHidden: false</code> so it appears in command listings, but <code>isEnabled: () =&gt; false</code> (the toggle itself is always available; the <code>isEnabled</code> likely gates something else)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Toggle-memory command definition (search for <code>"Toggle automemory off/on for this session"</code>)</p>
+    </article>
+    <article class="card" id="parent-proxy-configuration">
+      <div class="card-top">
+        <h3>Parent Proxy Configuration <a class="anchor" href="#parent-proxy-configuration">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The sandbox proxy can now route outbound traffic through an upstream (parent) HTTP proxy, enabling use in corporate environments with mandatory egress proxies.</p>
+<div class="blabel">Details</div>
+<ul><li>Configured via the <code>network.parentProxy</code> setting, with sub-keys for <code>http</code>, <code>https</code>, and <code>noProxy</code></li><li>Falls back to standard <code>HTTP_PROXY</code> / <code>HTTPS_PROXY</code> / <code>NO_PROXY</code> environment variables when the setting is not explicitly configured</li><li><code>NO_PROXY</code> supports hostname suffixes, wildcard <code>*</code>, and CIDR ranges (both IPv4 and IPv6)</li><li>Localhost and loopback addresses always bypass the parent proxy</li><li>CONNECT tunneling through the parent proxy for HTTPS traffic, with proper authentication (Basic auth from proxy URL credentials)</li><li>Hop-by-hop headers are stripped when forwarding through the proxy</li><li>Logs configured proxy URLs at startup: <code>Parent proxy configured: http=... https=...</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Parent proxy routing logic (search for <code>"Upstream HTTP proxy for outbound connections"</code> and <code>"Parent proxy configured"</code>)</p>
+    </article>
+    <article class="card" id="memory-system-refinements">
+      <div class="card-top">
+        <h3>Memory System Refinements <a class="anchor" href="#memory-system-refinements">#</a></h3>
+      </div>
+      <ul><li>The two-step memory save process (write file, then update MEMORY.md index) has been simplified — the MEMORY.md index step has been removed, and memory is saved directly to individual files. The number of <code>MEMORY.md</code> references decreased from 10 to 6 between versions.</li><li>Memory retrieval now prefixes content with "Retrieved for possible relevance — use only if it actually applies to what the user asked" to reduce false positive influence.</li><li>Memory selection is now more conservative with user-profile and project-overview memories: the system explicitly avoids matching on surface keyword overlap (e.g., a profile mentioning "DB performance" won't be selected just because a question contains the word "performance").</li><li>Memory extraction now skips runs where no user prose has been added since the last extraction, reducing unnecessary extraction cycles (search for <code>"[extractMemories] skipping — no user prose since last extraction"</code>).</li><li>The extraction prompt now includes "If nothing is worth saving, output only 'Nothing to save.' Do not explain why." for cleaner no-op results.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Memory selection system prompt (search for <code>"Be especially conservative with user-profile"</code>) and extraction guard (search for <code>"no user prose since last extraction"</code>)</p>
+    </article>
+    <article class="card" id="posttooluse-hook-file-state-sync">
+      <div class="card-top">
+        <h3>PostToolUse Hook File State Sync <a class="anchor" href="#posttooluse-hook-file-state-sync">#</a></h3>
+      </div>
+      <p>When a PostToolUse hook modifies a file that Claude just edited (e.g., a formatter running after a write), Claude Code now automatically detects the change and re-syncs its internal read-file state. This prevents stale-file errors on the next Edit tool call for that file.</p>
+<div class="blabel">Evidence</div>
+<p>Hook file sync handler (search for <code>"PostToolUse hook modified"</code> and <code>"re-synced readFileState"</code>)</p>
+    </article>
+    <article class="card" id="docker-command-security-hardening">
+      <div class="card-top">
+        <h3>Docker Command Security Hardening <a class="anchor" href="#docker-command-security-hardening">#</a></h3>
+      </div>
+      <p>Docker commands now reject <code>--host</code>, <code>--context</code>, <code>--config</code>, and <code>--tls</code> flags, as well as short flags <code>-H</code> and <code>-c</code>, which could be used to redirect Docker operations to a remote daemon and escape the sandbox.</p>
+<div class="blabel">Evidence</div>
+<p>Docker flag validation (search for <code>startsWith("--host")</code> near the docker command validator)</p>
+    </article>
+    <article class="card" id="powershell-security-improvements">
+      <div class="card-top">
+        <h3>PowerShell Security Improvements <a class="anchor" href="#powershell-security-improvements">#</a></h3>
+      </div>
+      <ul><li>Background job operator (<code>&amp;</code>) detection: PowerShell commands using the <code>&amp;</code> operator now trigger a security prompt with the message "Command uses the background job operator (<code>&amp;</code>) which spawns a child PowerShell process" (search for <code>"background job operator"</code>).</li><li><code>Remove-Item -Recurse</code> safety: Deleting the working directory (including <code>.git</code> and <code>.claude</code>) via <code>Remove-Item -Recurse</code> now requires manual approval (search for <code>"Remove-Item -Recurse targeting"</code>).</li><li>Action parameter validation: PowerShell common parameters like <code>-ErrorAction</code>, <code>-WarningAction</code> (and their aliases <code>-ea</code>, <code>-wa</code>, etc.) are now validated to ensure they use expected values (<code>SilentlyContinue</code>, <code>Stop</code>, <code>Continue</code>, <code>Ignore</code>), preventing abuse of these parameters.</li></ul>
+<div class="blabel">Evidence</div>
+<p>PowerShell AST parser (search for <code>"hasBackgroundJob"</code> and <code>"background job operator"</code>)</p>
+    </article>
+    <article class="card" id="linux-sandbox-improvements">
+      <div class="card-top">
+        <h3>Linux Sandbox Improvements <a class="anchor" href="#linux-sandbox-improvements">#</a></h3>
+      </div>
+      <ul><li>Mount point cleanup is now deferred when multiple sandboxes are still active, using a reference counter to avoid premature cleanup (search for <code>"Deferring mount point cleanup"</code>).</li><li>Added <code>--unshare-user</code> flag in certain sandbox configurations for tighter process isolation.</li><li>Write paths that get wiped by a <code>denyRead</code> tmpfs mount are now automatically re-bound (search for <code>"Re-bound write path wiped by denyRead tmpfs"</code>).</li><li>Deny path deduplication prevents redundant sandbox mount operations.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Sandbox refcount (search for <code>"sandbox(es) still active"</code>) and re-bind logic (search for <code>"Re-bound write path wiped by denyRead tmpfs"</code>)</p>
+    </article>
+    <article class="card" id="proxy-error-handling">
+      <div class="card-top">
+        <h3>Proxy Error Handling <a class="anchor" href="#proxy-error-handling">#</a></h3>
+      </div>
+      <p>The sandbox proxy now provides more specific error messages for connection failures:</p>
+<ul><li><code>"CONNECT handshake timed out"</code> — timeout during proxy CONNECT</li><li><code>"Proxy closed during CONNECT handshake"</code> — premature close</li><li><code>"Proxy refused CONNECT: ..."</code> — non-2xx response from proxy</li><li><code>"CONNECT response header too large"</code> — headers exceeding 16KB</li><li><code>"Denying malformed host: ..."</code> / <code>"Rejecting malformed SOCKS host: ..."</code> — input validation</li><li><code>"Invalid destination host for CONNECT"</code> / <code>"Invalid destination port"</code> — bad target validation</li><li><code>"Invalid parent proxy URL, ignoring: ..."</code> — misconfigured parent proxy URL</li><li><code>"unsupported scheme or empty host"</code> — bad proxy URL scheme</li></ul>
+<div class="blabel">Evidence</div>
+<p>CONNECT tunnel error handling (search for <code>"CONNECT handshake timed out"</code> and <code>"Proxy refused CONNECT"</code>)</p>
+    </article>
+    <article class="card" id="upgrade-path-messaging">
+      <div class="card-top">
+        <h3>Upgrade Path Messaging <a class="anchor" href="#upgrade-path-messaging">#</a></h3>
+      </div>
+      <p>Users who cannot upgrade their plan now see a clearer message: "Upgrade not currently available. For additional usage, run /extra-usage." instead of a generic error.</p>
+<div class="blabel">Evidence</div>
+<p>Upgrade handler (search for <code>"Upgrade not currently available"</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-opt-in-logging">
+      <div class="card-top">
+        <h3>Auto-Mode Opt-in Logging <a class="anchor" href="#auto-mode-opt-in-logging">#</a></h3>
+      </div>
+      <p>Debug logging now records auto-mode permission opt-in status, including checks across user, local, flag, and policy settings scopes, making it easier to diagnose permission configuration issues.</p>
+<div class="blabel">Evidence</div>
+<p>Auto-mode logging (search for <code>"[auto-mode] hasAutoModeOptIn"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed network allowlist hostname matching to correctly reject IP addresses for wildcard domain patterns (e.g., <code>*.github.com</code> no longer incorrectly matches bare IP addresses) (search for <code>"qI_"</code> in the <code>NC1</code> function)</li><li>Removed the FetchHttpHandler polyfill and several duplicate URI encoding/query string builder modules that were dead code from the AWS SDK bundling (removed <code>bc7</code>, <code>rn7</code>, <code>D9q</code>, <code>f9q</code>, <code>N9q</code>, <code>y9q</code>, <code>B9q</code> functions)</li></ul>
+    </article>
+    <article class="card" id="buddy-feature-in-development">
+      <div class="card-top">
+        <h3>"Buddy" Feature [In Development] <a class="anchor" href="#buddy-feature-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A companion feature referenced as "buddy" that appears to be gated by configuration.</p>
+<div class="blabel">Status</div>
+<p>Dark-launched / configuration-gated</p>
+<div class="blabel">Details</div>
+<ul><li>The only visible artifact is the message: "buddy is unavailable on this configuration"</li><li>Appears to be checked via <code>Fd8()</code> and returns null when unavailable</li><li>No further implementation details are visible in this version</li></ul>
+<div class="blabel">Evidence</div>
+<p>Buddy availability check (search for <code>"buddy is unavailable on this configuration"</code>)</p>
+    </article>
+    <article class="card" id="transcript-persistence-sync-gradual-rollout">
+      <div class="card-top">
+        <h3>Transcript Persistence Sync [Gradual Rollout] <a class="anchor" href="#transcript-persistence-sync-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure for synchronizing conversation transcripts to a server for session continuity across devices.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged / server-controlled</p>
+<div class="blabel">Details</div>
+<ul><li>Uploads main conversation events and subagent entries to a persistence backend</li><li>Tracks events since last compaction, skips oversized entries</li><li>Integrated with the bridge:repl system for session forwarding</li><li>Log prefix <code>[persistence-sync]</code> for debugging</li><li>CCR v2 internal event writer registered for transcript persistence</li></ul>
+<div class="blabel">Evidence</div>
+<p>Persistence sync system (search for <code>"[persistence-sync] Uploaded"</code> and <code>"CCR v2 internal event writer"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The full HTML generation for "Claude Code Insights" reports was removed from the CLI bundle. If you used <code>/insights</code> to generate local HTML reports, this functionality may have moved to the web interface.</li><li>The <code>/resume</code> command now filters out loop sessions and entrypoint-based sessions from the resume picker (search for <code>"filtered from /resume"</code>).</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

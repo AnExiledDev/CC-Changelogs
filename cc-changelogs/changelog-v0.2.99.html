@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.99 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.99."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.99</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.99</span></h1>
+<p class="sub">This release focuses on improving the user experience with better exit handling in transcript view, clearer settings descriptions, and helpful tips for IDE integration. The changes are primarily quality-of-life improvements that make the CLI more intuitive and user-friendly.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.98 → v0.2.99</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-exit-confirmation-in-transcript-view">
+      <div class="card-top">
+        <h3>New Exit Confirmation in Transcript View <a class="anchor" href="#new-exit-confirmation-in-transcript-view">#</a></h3>
+      </div>
+      <p>When viewing the detailed transcript (accessed via Ctrl+R), users now see a two-step exit confirmation when pressing Ctrl+C:</p>
+<ul><li>First press: Shows "Press ^C again to exit"</li><li>Second press: Exits the application</li></ul>
+<p>This prevents accidental exits when reviewing conversation history.</p>
+    </article>
+    <article class="card" id="updated-settings-panel">
+      <div class="card-top">
+        <h3>Updated Settings Panel <a class="anchor" href="#updated-settings-panel">#</a></h3>
+      </div>
+      <p>The "Todo List" setting has been renamed to "Todo list tool enabled" for better clarity about what this option controls.</p>
+    </article>
+    <article class="card" id="new-tip-of-the-day">
+      <div class="card-top">
+        <h3>New Tip of the Day <a class="anchor" href="#new-tip-of-the-day">#</a></h3>
+      </div>
+      <p>Added a new tip that shows users the IDE integration hotkey:</p>
+<ul><li><strong>macOS</strong>: <code>Cmd+Escape</code> to launch Claude in your IDE</li><li><strong>Other systems</strong>: <code>Ctrl+Escape</code> to launch Claude in your IDE</li></ul>
+<p>This tip appears periodically (every 15 sessions) when IDE integration is available.</p>
+    </article>
+    <article class="card" id="improved-todo-tool-management">
+      <div class="card-top">
+        <h3>Improved Todo Tool Management <a class="anchor" href="#improved-todo-tool-management">#</a></h3>
+      </div>
+      <p>The todo tool list generation now respects the user's todo feature preference more consistently. The <code>TodoRead</code> and <code>TodoWrite</code> tools are only included when the todo feature is explicitly enabled in settings.</p>
+    </article>
+    <article class="card" id="code-structure-changes">
+      <div class="card-top">
+        <h3>Code Structure Changes <a class="anchor" href="#code-structure-changes">#</a></h3>
+      </div>
+      <ul><li>Removed unused imports and variables related to stream processing</li><li>Simplified the todo tools initialization logic by moving it to a computed value based on user preferences</li><li>Minor refactoring of the main application component for better performance</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

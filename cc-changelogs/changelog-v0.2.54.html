@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.54 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.54."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.54</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.54</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.53 → v0.2.54</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="memory-system">
+      <div class="card-top">
+        <h3>Memory System <a class="anchor" href="#memory-system">#</a></h3>
+      </div>
+      <ul><li><strong>New <code>/memory</code> command</strong>: Edit and manage Claude's memory files</li><li>Access three types of memory:</li><li><strong>Project memory</strong> - Stored in <code>./CLAUDE.md</code> (checked into your repository)</li><li><strong>User memory</strong> - Stored in <code>~/.claude/memory</code> (global to your user account)</li><li><strong>Local memory</strong> - Project-specific memory (not checked in)</li><li>Quick access with <code>#</code> prefix in input (e.g., <code># Always use descriptive variable names</code>)</li><li>Visual indicator shows loaded memory types (e.g., "project + user memory")</li><li>Memory files are created automatically when accessed for the first time</li></ul>
+    </article>
+    <article class="card" id="api-response-streaming">
+      <div class="card-top">
+        <h3>API Response Streaming <a class="anchor" href="#api-response-streaming">#</a></h3>
+      </div>
+      <ul><li><strong>SSE (Server-Sent Events) support</strong>: New streaming mode for API responses</li><li>Configuration option to choose between <code>stdio</code> (default) and <code>sse</code> modes</li><li>Enables real-time streaming of Claude's responses for better interactivity</li></ul>
+    </article>
+    <article class="card" id="terminal-enhancements">
+      <div class="card-top">
+        <h3>Terminal Enhancements <a class="anchor" href="#terminal-enhancements">#</a></h3>
+      </div>
+      <ul><li><strong>Option as Meta key support</strong>: Automatic configuration for macOS Terminal.app</li><li>Enables Option+Enter for newline input</li><li>Automatically configures Terminal preferences on first run</li><li>Shows helpful status message when enabled</li></ul>
+    </article>
+    <article class="card" id="webfetch-improvements">
+      <div class="card-top">
+        <h3>WebFetch Improvements <a class="anchor" href="#webfetch-improvements">#</a></h3>
+      </div>
+      <ul><li><strong>15-minute response cache</strong>: Faster repeated access to the same URLs</li><li>Automatic cache cleanup for entries older than 15 minutes</li><li>Improves performance when working with web documentation</li></ul>
+    </article>
+    <article class="card" id="enhanced-domain-detection">
+      <div class="card-top">
+        <h3>Enhanced Domain Detection <a class="anchor" href="#enhanced-domain-detection">#</a></h3>
+      </div>
+      <ul><li><strong>Improved URL parsing</strong>: Better detection of domains mentioned in conversations</li><li>Supports multiple URL formats including bare domains</li><li>More intelligent domain extraction from user messages</li></ul>
+    </article>
+    <article class="card" id="visual-indicators">
+      <div class="card-top">
+        <h3>Visual Indicators <a class="anchor" href="#visual-indicators">#</a></h3>
+      </div>
+      <ul><li><strong>Memory mode indicator</strong>: Shows <code># to memorize</code> hint when in memory mode</li><li><strong>Auto-accept mode indicator</strong>: Shows <code>⏵⏵ auto-accept edits on</code> when file edits are auto-accepted</li><li><strong>Spinner customization</strong>: New spinner styles and messages for different operation types</li><li>Separate configurations for thinking, responding, and tool use states</li></ul>
+    </article>
+    <article class="card" id="project-analysis">
+      <div class="card-top">
+        <h3>Project Analysis <a class="anchor" href="#project-analysis">#</a></h3>
+      </div>
+      <ul><li><strong>File count estimation</strong>: Shows rounded project file count in telemetry</li><li>Provides better context about project size</li><li><strong>Context size tracking</strong>: Improved tracking of memory and context usage</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Performance Improvements</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="performance-improvements">
+      <ul><li><strong>Lodash integration</strong>: Added Lodash (v4.17.21) for optimized utility functions</li><li><strong>Better resource cleanup</strong>: Improved handling of memory and cache resources</li><li><strong>Streaming optimizations</strong>: More efficient handling of large responses</li></ul>
+    </article>
+    <article class="card" id="configuration">
+      <div class="card-top">
+        <h3>Configuration <a class="anchor" href="#configuration">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li><strong>MCP server configuration</strong>: Support for both <code>stdio</code> and <code>sse</code> type servers</li></ul>
+<pre><code>  {
+    &quot;mcpServers&quot;: {
+      &quot;example&quot;: {
+        &quot;type&quot;: &quot;sse&quot;,
+        &quot;url&quot;: &quot;https://example.com/mcp&quot;
+      }
+    }
+  }</code></pre>
+    </article>
+    <article class="card" id="error-handling">
+      <div class="card-top">
+        <h3>Error Handling <a class="anchor" href="#error-handling">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li><strong>Permission error tracking</strong>: Better telemetry for file access issues</li><li><strong>Improved error messages</strong>: More descriptive error feedback for common issues</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li><strong>Removed duplicate dependencies</strong>: Cleaned up dotenv and related packages</li><li><strong>Fixed command parsing</strong>: Better handling of command input modes</li><li><strong>Improved file path handling</strong>: More robust path resolution for memory files</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li><strong>Code reorganization</strong>: Significant refactoring of internal modules</li><li><strong>Updated telemetry</strong>: New events for memory usage, Option+Meta configuration, and cache hits</li><li><strong>Dependency updates</strong>: Updated internal dependencies and build process</li></ul>
+<p>This release focuses on improving the development workflow with the new memory system, better streaming capabilities, and enhanced terminal integration, while also providing performance improvements and bug fixes.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

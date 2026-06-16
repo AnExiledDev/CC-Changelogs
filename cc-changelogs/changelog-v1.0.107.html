@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.107 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.107."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.107</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.107</span></h1>
+<p class="sub">Version 1.0.107 removes the conversation compacting feature that allowed users to condense chat history while maintaining navigation markers. This change streamlines the codebase by eliminating the compact boundary system and its associated UI components.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.106 → v1.0.107</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enhanced-file-system-support">
+      <div class="card-top">
+        <h3>Enhanced File System Support <a class="anchor" href="#enhanced-file-system-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added current working directory access functionality <strong>How to use:</strong> The CLI now has improved file path resolution capabilities for better cross-platform compatibility and file operations. <strong>Details:</strong></p>
+<ul><li>Internal enhancement for file system operations</li><li>Improved path handling across different operating systems</li><li><strong>Evidence</strong>: <code>{ cwd as vP2 } from "node:process"</code> at line 361243</li></ul>
+    </article>
+    <article class="card" id="conversation-compacting">
+      <div class="card-top">
+        <h3>Conversation Compacting <a class="anchor" href="#conversation-compacting">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The conversation compacting feature has been completely removed <strong>Previously:</strong> Users could compact conversation history while maintaining a boundary marker with "ctrl+r for history" functionality <strong>Impact:</strong></p>
+<ul><li>No longer possible to compact conversations to manage context length</li><li>The "Conversation compacted · ctrl+r for history" UI is no longer available</li><li>Compact boundary system messages are no longer generated</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li><strong>Evidence</strong>: Functions <code>Z9B()</code> at line 391737, <code>EG1()</code> at line 391749, <code>Lf6()</code> at line 391752, <code>c_1()</code> at line 391759, and <code>ibB()</code> at line 411623 removed from v1.0.106</li><li>All references to "compact_boundary" and "Conversation compacted" text eliminated</li><li>Related metadata tracking for compacting triggers and token counts removed</li></ul>
+    </article>
+    <article class="card" id="internal-code-refactoring">
+      <div class="card-top">
+        <h3>Internal Code Refactoring <a class="anchor" href="#internal-code-refactoring">#</a></h3>
+      </div>
+      <p>Systematic renaming of internal functions and variables for code organization, including main component functions and React hook references. These changes do not affect user-facing functionality.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

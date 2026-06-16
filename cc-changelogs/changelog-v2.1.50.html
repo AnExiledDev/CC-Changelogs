@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.50 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.50."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.50</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.50</span></h1>
+<p class="sub">This release introduces the new <code>/diff</code> command for viewing uncommitted changes and per-turn diffs, adds VCS-agnostic worktree isolation through configurable hooks (<code>WorktreeCreate</code>/<code>WorktreeRemove</code>), and includes improved handling for MCP servers that are still connecting. Several internal improvements enhance system sleep detection for WebSocket connections and add better logging for sandbox symlink handling on Linux.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.49 → v2.1.50</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">6</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="diff-command">
+      <div class="card-top">
+        <h3><code>/diff</code> Command <a class="anchor" href="#diff-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new slash command to view uncommitted changes and per-turn file diffs directly in the CLI.</p>
+<div class="blabel">Usage</div>
+<pre><code>/diff</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Opens a dialog showing uncommitted changes in your repository</li><li>Displays per-turn diffs showing what changed during each interaction</li><li>Provides a clear visual summary of file modifications</li></ul>
+<div class="blabel">Evidence</div>
+<p>Diff dialog slash command (search for <code>"View uncommitted changes and per-turn diffs"</code>)</p>
+    </article>
+    <article class="card" id="vcs-agnostic-worktree-isolation-via-hooks">
+      <div class="card-top">
+        <h3>VCS-Agnostic Worktree Isolation via Hooks <a class="anchor" href="#vcs-agnostic-worktree-isolation-via-hooks">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Custom hooks for creating and removing worktrees, enabling worktree isolation to work with any version control system—not just Git.</p>
+<div class="blabel">Usage</div>
+<p>Configure hooks in your <code>settings.json</code>:</p>
+<pre><code>{
+  &quot;hooks&quot;: {
+    &quot;WorktreeCreate&quot;: [{
+      &quot;command&quot;: &quot;your-worktree-create-script&quot;
+    }],
+    &quot;WorktreeRemove&quot;: [{
+      &quot;command&quot;: &quot;your-worktree-remove-script&quot;
+    }]
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>WorktreeCreate</code> hook receives JSON input with <code>name</code> (suggested worktree slug); stdout should contain the absolute path to the created worktree</li><li><code>WorktreeRemove</code> hook receives JSON input with <code>worktree_path</code> (absolute path to worktree); exit code 0 indicates successful removal</li><li>Enables worktree isolation for non-Git VCS systems (Mercurial, SVN, etc.)</li><li>Error messages guide users when hooks are missing or fail</li></ul>
+<div class="blabel">Evidence</div>
+<p>Hook types and error messages (search for <code>"WorktreeCreate"</code>, <code>"WorktreeRemove"</code>, <code>"Configure WorktreeCreate/WorktreeRemove hooks"</code>)</p>
+    </article>
+    <article class="card" id="agents-command-for-listing-configured-agents">
+      <div class="card-top">
+        <h3><code>/agents</code> Command for Listing Configured Agents <a class="anchor" href="#agents-command-for-listing-configured-agents">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new command to list all configured agents with their sources and status.</p>
+<div class="blabel">Usage</div>
+<pre><code>/agents</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Shows agents grouped by source (User, Project, Local, Managed, Plugin, CLI arg, Built-in)</li><li>Displays which agents are shadowed/overridden by higher-priority sources</li><li>Shows model and memory settings for each agent</li></ul>
+<div class="blabel">Evidence</div>
+<p>Agent listing function (search for <code>"List configured agents"</code>, <code>"No agents found."</code>, <code>"shadowed by"</code>)</p>
+    </article>
+    <article class="card" id="agent-worktree-isolation-option">
+      <div class="card-top">
+        <h3>Agent Worktree Isolation Option <a class="anchor" href="#agent-worktree-isolation-option">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Agents can now specify an <code>isolation</code> field to run in an isolated worktree.</p>
+<div class="blabel">Usage</div>
+<p>Agents can be configured with <code>isolation: "worktree"</code> to run in a temporary git worktree or hook-based worktree for isolated work.</p>
+<div class="blabel">Details</div>
+<ul><li>Creates an isolated copy of the repository for the agent to work on</li><li>Supports both Git worktrees and custom hook-based worktrees</li><li>Useful for agents that need to make changes without affecting the main working directory</li></ul>
+<div class="blabel">Evidence</div>
+<p>Isolation parsing in agent frontmatter (search for <code>"isolation"</code>, <code>"Isolation mode"</code>)</p>
+    </article>
+    <article class="card" id="pending-mcp-server-notification-in-toolsearch">
+      <div class="card-top">
+        <h3>Pending MCP Server Notification in ToolSearch <a class="anchor" href="#pending-mcp-server-notification-in-toolsearch">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When searching for deferred tools, if some MCP servers are still connecting, the tool now reports which servers are pending.</p>
+<div class="blabel">Details</div>
+<ul><li>Results include <code>pending_mcp_servers</code> field when servers are still initializing</li><li>Message indicates servers are connecting and tools will become available shortly</li></ul>
+<div class="blabel">Evidence</div>
+<p>Pending server handling (search for <code>"Some MCP servers are still connecting"</code>, <code>"pending_mcp_servers"</code>)</p>
+    </article>
+    <article class="card" id="system-sleep-detection-for-websocket-connections">
+      <div class="card-top">
+        <h3>System Sleep Detection for WebSocket Connections <a class="anchor" href="#system-sleep-detection-for-websocket-connections">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Improved reconnection handling when the system wakes from sleep.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects large time gaps between reconnection attempts indicating system sleep</li><li>Resets the reconnection budget after sleep to avoid exhausting retries</li><li>Adds periodic keep-alive frames for more reliable connection maintenance</li></ul>
+<div class="blabel">Evidence</div>
+<p>Sleep detection logic (search for <code>"Detected system sleep"</code>, <code>"resetting reconnection budget"</code>)</p>
+    </article>
+    <article class="card" id="improved-bash-command-prefix-suggestions">
+      <div class="card-top">
+        <h3>Improved Bash Command Prefix Suggestions <a class="anchor" href="#improved-bash-command-prefix-suggestions">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>More intelligent command prefix extraction for permission rules, with support for suggesting editable prefixes.</p>
+<div class="blabel">Details</div>
+<ul><li>Uses @withfig/autocomplete specs for better understanding of command structure</li><li>Supports <code>pyright</code>, <code>timeout</code>, <code>sleep</code>, <code>alias</code>, <code>nohup</code>, <code>time</code>, and <code>srun</code> commands with proper argument parsing</li><li>Permission prompts can show "Yes, and don't ask again for" with editable command prefix</li></ul>
+<div class="blabel">Evidence</div>
+<p>Fig autocomplete integration (search for <code>"@withfig/autocomplete"</code>, <code>"command prefix (e.g., npm run:*)"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-memory-prompts">
+      <div class="card-top">
+        <h3>Enhanced Memory Prompts <a class="anchor" href="#enhanced-memory-prompts">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Clearer organization of memory guidance with separate sections for explicit user requests.</p>
+<div class="blabel">Details</div>
+<ul><li>Added "Explicit user requests" section for remember/forget instructions</li><li>More concise guidance on when to save memories</li><li>Removed redundant "when in doubt" guidance</li></ul>
+<div class="blabel">Evidence</div>
+<p>Memory prompt changes (search for <code>"## Explicit user requests:"</code>)</p>
+    </article>
+    <article class="card" id="linux-sandbox-symlink-safety">
+      <div class="card-top">
+        <h3>Linux Sandbox Symlink Safety <a class="anchor" href="#linux-sandbox-symlink-safety">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Better handling of symlinked write paths in the Linux sandbox.</p>
+<div class="blabel">Details</div>
+<ul><li>Skips symlink write paths that point outside expected locations</li><li>Logs warnings when write paths cannot be resolved</li><li>Prevents potential sandbox escapes via symlink manipulation</li></ul>
+<div class="blabel">Evidence</div>
+<p>Sandbox symlink handling (search for <code>"Skipping symlink write path pointing outside expected location"</code>)</p>
+    </article>
+    <article class="card" id="macos-sandbox-unix-socket-permissions">
+      <div class="card-top">
+        <h3>macOS Sandbox Unix Socket Permissions <a class="anchor" href="#macos-sandbox-unix-socket-permissions">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>More granular Unix socket permissions in the macOS sandbox.</p>
+<div class="blabel">Details</div>
+<ul><li>Changed from broad <code>network*</code> permission to specific <code>network-bind</code> and <code>network-outbound</code> for Unix sockets</li><li>Adds <code>AF_UNIX</code> socket domain permission explicitly</li><li>Improves security by limiting socket access to specific paths</li></ul>
+<div class="blabel">Evidence</div>
+<p>Sandbox socket rules (search for <code>"(allow system-socket (socket-domain AF_UNIX))"</code>)</p>
+    </article>
+    <article class="card" id="improved-session-resume-telemetry">
+      <div class="card-top">
+        <h3>Improved Session Resume Telemetry <a class="anchor" href="#improved-session-resume-telemetry">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Better tracking of session resume performance and success/failure.</p>
+<div class="blabel">Details</div>
+<ul><li>Tracks resume duration in milliseconds</li><li>Reports success/failure status for session resume operations</li><li>Helps identify performance issues with session loading</li></ul>
+<div class="blabel">Evidence</div>
+<p>Resume telemetry (search for <code>"tengu_session_resumed"</code>, <code>"resume_duration_ms"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-simple-mode-improvements">
+      <div class="card-top">
+        <h3>CLAUDE_CODE_SIMPLE Mode Improvements <a class="anchor" href="#claude-code-simple-mode-improvements">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Enhanced behavior for CLAUDE_CODE_SIMPLE environment variable.</p>
+<div class="blabel">Details</div>
+<ul><li>Disables attachments when CLAUDE_CODE_SIMPLE is set</li><li>Skips memory file loading for simplified operation</li><li>Adds CWD and Date to system prompt in simple mode</li></ul>
+<div class="blabel">Evidence</div>
+<p>Simple mode checks (search for <code>"CLAUDE_CODE_SIMPLE"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed issue where GitHub issue/PR references with fewer than 3 digits (e.g., <code>#12</code>) were incorrectly linkified; now only references with 3+ digits are processed (search for <code>/(?&lt;!\w)#(\d{3,})\b/</code>)</li></ul>
+<ul><li>Fixed duplicate MCP tools when connecting to multiple servers that provide tools with the same name (search for <code>"wG([...Y6.mcp.tools"</code> — deduplication by name)</li></ul>
+<ul><li>Fixed memory leak in ring buffer <code>clear()</code> method that wasn't resetting the buffer array (search for <code>"this.buffer.length = 0"</code>)</li></ul>
+<ul><li>Removed "Penguin mode promo" discount display that was showing in the fast mode UI (search for removal of <code>Bl4</code> component)</li></ul>
+<ul><li>Fixed cleanup of LSP diagnostics that had already been sent as attachments (search for <code>"if (J.attachmentSent) j96.delete(O)"</code>)</li></ul>
+<ul><li>Removed the code diff footer feature flag and setting (<code>codeDiffFooterEnabled</code>) that was behind <code>tengu_code_diff_cli</code> - this functionality is now handled by the new <code>/diff</code> command</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The <code>/diff</code> command replaces the previous code diff footer that was shown at the bottom of the chat. Users who relied on the footer can now use <code>/diff</code> to view the same information on demand.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

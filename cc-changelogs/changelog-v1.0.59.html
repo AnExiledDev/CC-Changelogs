@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.59 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.59."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.59</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.59</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.58 → v1.0.59</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4><strong>Checkpointing System</strong> 🆕</h4>
+<p>Claude Code now automatically saves checkpoints of your work during sessions, providing a safety net for your changes.</p>
+<ul><li><strong>Automatic checkpoint creation</strong>: Claude Code creates incremental snapshots of your codebase as you work</li><li><strong>Shadow Git repository</strong>: Checkpoints are stored in <code>.claude/checkpoints/</code> using Git for efficient version tracking</li><li><strong>Opt-out option</strong>: Disable checkpointing by setting the environment variable <code>CLAUDE_CODE_DISABLE_CHECKPOINTING</code></li><li><strong>Configuration</strong>: New <code>checkpointingEnabled</code> setting (enabled by default)</li></ul>
+<p>Usage: Checkpoints are created automatically in the background. No user action required.</p>
+<pre><code># To disable checkpointing:
+export CLAUDE_CODE_DISABLE_CHECKPOINTING=true
+claude</code></pre>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4><strong>Performance Optimizations</strong></h4>
+<ul><li>Removed duplicate import statements for Node.js streams</li><li>Streamlined internal Zod library usage</li><li>Improved Git operations with <code>core.untrackedcache</code> for better performance</li></ul>
+<h4><strong>UI Simplification</strong></h4>
+<ul><li>Removed agent color index management system for a cleaner interface</li><li>Simplified how parallel agents are displayed</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed internal error handling structures</li><li>Improved checkpoint initialization error recovery</li><li>Enhanced configuration validation</li></ul>
+    </article>
+    <article class="card" id="internal-changes">
+      <div class="card-top">
+        <h3>Internal Changes <a class="anchor" href="#internal-changes">#</a></h3>
+      </div>
+      <ul><li>Added cryptographic utilities for checkpoint directory hashing</li><li>Updated internal agent management functions</li><li>Refined memory usage tracking</li><li>Structural code improvements (98.7% similarity to previous version)</li></ul>
+    </article>
+    <article class="card" id="configuration">
+      <div class="card-top">
+        <h3>Configuration <a class="anchor" href="#configuration">#</a></h3>
+      </div>
+      <p>New configuration option added:</p>
+<pre><code>{
+  &quot;checkpointingEnabled&quot;: true  // Enable/disable checkpoint feature
+}</code></pre>
+    </article>
+    <article class="card" id="notes">
+      <div class="card-top">
+        <h3>Notes <a class="anchor" href="#notes">#</a></h3>
+      </div>
+      <ul><li>The checkpointing feature operates transparently in the background</li><li>Checkpoint data is stored locally in your project's <code>.claude/checkpoints/</code> directory</li><li>Each project gets its own unique checkpoint directory based on SHA-256 hash</li><li>The feature adds minimal overhead to your workflow while providing recovery options</li></ul>
+<p>This release focuses on improving reliability and safety with the new checkpointing system while maintaining the familiar Claude Code experience.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

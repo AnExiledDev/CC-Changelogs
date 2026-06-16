@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.118 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.118."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.118</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.118</span></h1>
+<p class="sub">This version temporarily disables the sandbox security system while adding SOCKS5 proxy infrastructure and fixing a symlink resolution bug in CLAUDE.md file processing.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.117 → v1.0.118</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="sandbox-system-temporarily-disabled">
+      <div class="card-top">
+        <h3>Sandbox System Temporarily Disabled <a class="anchor" href="#sandbox-system-temporarily-disabled">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The entire sandbox wrapping system has been disabled, causing all commands to run without filesystem or network restrictions.</p>
+<p><strong>Details:</strong></p>
+<ul><li>The sandbox wrapper function <code>nx6()</code> at line 375662 now returns early, bypassing all sandbox logic</li><li>Both macOS (<code>sandbox-exec</code>) and Linux (<code>bwrap</code>) sandboxing are non-functional</li><li>Commands execute with full system access instead of isolated environments</li><li>This appears to be a temporary disable, likely for debugging or testing purposes</li><li><strong>Evidence</strong>: <code>nx6()</code> at line 375662 returns input unchanged, making all subsequent sandbox code unreachable</li></ul>
+<p><strong>Impact:</strong> Users expecting sandboxed execution will have NO security isolation in this version. Commands run with full system privileges.</p>
+    </article>
+    <article class="card" id="fixed-symlink-resolution-in-claude-md-processing">
+      <div class="card-top">
+        <h3>Fixed Symlink Resolution in CLAUDE.md Processing <a class="anchor" href="#fixed-symlink-resolution-in-claude-md-processing">#</a></h3>
+      </div>
+      <p><strong>What:</strong> CLAUDE.md files accessed through symbolic links are now properly resolved to their real paths.</p>
+<p><strong>Details:</strong></p>
+<ul><li>The <code>rd()</code> function at line 399923 now resolves symlinks before processing CLAUDE.md files</li><li>Both the symlink path and resolved real path are tracked to prevent infinite loops</li><li>Import paths within CLAUDE.md files are correctly resolved relative to the real file location</li><li>Prevents circular symlink issues and incorrect file path resolution</li><li><strong>Evidence</strong>: <code>rd()</code> at line 399923 uses <code>uJ()</code> to resolve symlinks and tracks both paths in the visited set (lines 399947-399959)</li></ul>
+<p><strong>Impact:</strong> Users with symlinked CLAUDE.md files will no longer encounter incorrect behavior or infinite loops during file processing.</p>
+    </article>
+    <article class="card" id="socks5-proxy-support-infrastructure-added">
+      <div class="card-top">
+        <h3>SOCKS5 Proxy Support Infrastructure Added <a class="anchor" href="#socks5-proxy-support-infrastructure-added">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Linux network bridge now supports both HTTP and SOCKS5 proxy ports for future sandbox use.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>gBB()</code> at line 375277 now accepts both HTTP and SOCKS proxy port parameters</li><li>Returns both <code>httpProxyPort</code> and <code>socksProxyPort</code> in the bridge configuration (lines 375327-375328)</li><li>Environment variables configured for gRPC, Docker, and Cloud SDK to use SOCKS proxies</li><li>Infrastructure is in place but not active due to sandbox being disabled</li><li><strong>Evidence</strong>: <code>gBB()</code> signature changed from <code>(A)</code> to <code>(A, B)</code> at line 375277, with new return structure including both ports</li></ul>
+<p><strong>Note:</strong> This enhancement will only be effective when the sandbox system is re-enabled.</p>
+    </article>
+    <article class="card" id="improved-async-cleanup-for-proxy-servers">
+      <div class="card-top">
+        <h3>Improved Async Cleanup for Proxy Servers <a class="anchor" href="#improved-async-cleanup-for-proxy-servers">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Proxy server cleanup is now properly awaited and handles both HTTP and SOCKS5 proxies.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>YC0()</code> at line 375687 now uses <code>Promise.all()</code> to wait for all proxies to shut down</li><li>HTTP proxy cleanup properly awaited instead of fire-and-forget</li><li>SOCKS proxy cleanup added for the new proxy type (lines 375714-375722)</li><li>Both proxies shut down in parallel for faster cleanup</li><li>Prevents race conditions and leaked proxy processes during shutdown</li><li><strong>Evidence</strong>: <code>YC0()</code> at line 375687 changed from synchronous to async with Promise-based cleanup</li></ul>
+<p><strong>Impact:</strong> More reliable shutdown process with no leaked background processes.</p>
+    </article>
+    <article class="card" id="aws-bedrock-sdk-updated">
+      <div class="card-top">
+        <h3>AWS Bedrock SDK Updated <a class="anchor" href="#aws-bedrock-sdk-updated">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Internal AWS Bedrock SDK dependencies refreshed with updated function identifiers.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Approximately 8,498 function names were renamed due to bundler minification changes</li><li>No functional changes to AWS SDK behavior</li><li>Removed variables <code>Hl1</code>, <code>if0</code>, <code>trA</code> and added equivalents <code>Nl1</code>, <code>af0</code>, <code>prA</code></li><li>All AWS Bedrock command classes and serialization functions updated</li><li><strong>Evidence</strong>: Variables at lines 5314-5390 show minified name changes</li></ul>
+<p><strong>Impact:</strong> No user-visible changes; internal dependency maintenance only.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

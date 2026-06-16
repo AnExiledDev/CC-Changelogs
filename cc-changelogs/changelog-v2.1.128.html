@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.128 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.128."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.128</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.128</span></h1>
+<p class="sub">Claude Code 2.1.128 adds a feature-flagged way to turn team onboarding guides into share links, adds a managed setting for organizations to disable Remote Control, and improves several background-session recovery paths. It also tightens provider-specific messaging for Channels/Fast Mode, expands session-only plugin handling, and makes large/media tool results fail more clearly instead of surfacing confusing output.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.126 → v2.1.128</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">5</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="team-onboarding-guide-sharing-gradual-rollout">
+      <div class="card-top">
+        <h3>Team Onboarding Guide Sharing [Gradual Rollout] <a class="anchor" href="#team-onboarding-guide-sharing-gradual-rollout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The built-in team onboarding flow can now upload <code>ONBOARDING.md</code> and return a Claude Code share link for teammates.</p>
+<div class="blabel">Usage</div>
+<pre><code>/team-onboarding</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The existing onboarding guide flow now has a <code>ShareOnboardingGuide</code> tool that uploads <code>ONBOARDING.md</code>.</li><li>The tool supports three modes: <code>check</code>, <code>update</code>, and <code>create</code>.</li><li>If a guide already exists for the org, Claude asks whether to update the existing link or create a new one.</li><li>The guide must be in the current directory and under 64 KB.</li><li>This is gated by <code>tengu_flint_harbor_share</code>, so not every user will see it yet.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Team onboarding share tool and rollout gate (search for <code>"ShareOnboardingGuide"</code> and <code>"tengu_flint_harbor_share"</code>)</p>
+    </article>
+    <article class="card" id="managed-remote-control-disable-setting">
+      <div class="card-top">
+        <h3>Managed Remote Control Disable Setting <a class="anchor" href="#managed-remote-control-disable-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Organizations can now disable Remote Control centrally through managed settings.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;disableRemoteControl&quot;: true
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The new setting disables <code>claude.ai/code</code>, <code>claude remote-control</code>, <code>--remote-control</code>, <code>--rc</code>, auto-start, and the in-session Remote Control toggle.</li><li>When policy blocks the feature, users now see a specific managed-setting error instead of a generic Remote Control denial.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Managed setting schema and policy error (search for <code>"disableRemoteControl"</code> and <code>"Remote Control is disabled by your organization's policy (managed setting </code>disableRemoteControl<code>)."</code>)</p>
+    </article>
+    <article class="card" id="background-session-recovery-and-cleanup">
+      <div class="card-top">
+        <h3>Background Session Recovery and Cleanup <a class="anchor" href="#background-session-recovery-and-cleanup">#</a></h3>
+      </div>
+      <p>Claude Code is better at recovering background sessions that stall, crash, or lose their supervisor connection.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude attach &lt;id&gt;
+claude respawn &lt;id&gt;
+claude respawn --all
+claude rm &lt;id&gt;</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>attach</code> now attempts to wake sessions that report <code>ENOJOB</code>, reconnects through a transient service when possible, and gives clearer messages when a session moved, exited, or cannot be reattached.</li><li>Startup stalls can now trigger an automatic worker restart before giving up.</li><li><code>respawn</code> and <code>rm</code> now have explicit <code>--help</code> output.</li><li><code>rm</code> keeps changed worktrees instead of blindly removing them when uncommitted changes are present.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Background recovery messages (search for <code>"Session not responding — restarting it…"</code>, <code>"Usage: claude respawn &lt;id&gt;|--all"</code>, and <code>"Worktree has uncommitted changes — kept at"</code>)</p>
+    </article>
+    <article class="card" id="session-only-plugin-zip-loading">
+      <div class="card-top">
+        <h3>Session-Only Plugin Zip Loading <a class="anchor" href="#session-only-plugin-zip-loading">#</a></h3>
+      </div>
+      <p><code>--plugin-dir</code> now explicitly supports <code>.zip</code> files and reports when an inline plugin zip is extracted.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --plugin-dir ./my-plugin.zip</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Help text now documents repeatable directory or zip loading.</li><li>Zip extraction emits debug output, making plugin load failures easier to diagnose.</li><li>Existing managed-setting checks still apply to session-only plugins.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin flag help and zip extraction path (search for <code>"Load a plugin from a directory or .zip"</code> and <code>"Extracted inline plugin zip to"</code>)</p>
+    </article>
+    <article class="card" id="mcp-tool-search-handles-late-connecting-servers-better-gradu">
+      <div class="card-top">
+        <h3>MCP Tool Search Handles Late-Connecting Servers Better [Gradual Rollout] <a class="anchor" href="#mcp-tool-search-handles-late-connecting-servers-better-gradu">#</a></h3>
+      </div>
+      <p>Tool search can now refresh MCP clients and retry selection/search when matching tools may still be arriving from connecting servers.</p>
+<div class="blabel">Details</div>
+<ul><li>When enabled, direct <code>select:&lt;tool_name&gt;</code> can retry after an MCP refresh.</li><li>Keyword searches can also refresh before declaring that no tools match.</li><li>Claude receives clearer guidance that connecting MCP servers may expose tools shortly.</li><li>This behavior is gated by <code>tengu_ashen_kelp</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Deferred tool refresh behavior (search for <code>"ToolSearchTool: partial select after MCP refresh"</code> and <code>"tengu_ashen_kelp"</code>)</p>
+    </article>
+    <article class="card" id="clearer-provider-restrictions-for-channels-and-fast-mode">
+      <div class="card-top">
+        <h3>Clearer Provider Restrictions for Channels and Fast Mode <a class="anchor" href="#clearer-provider-restrictions-for-channels-and-fast-mode">#</a></h3>
+      </div>
+      <p>Provider-specific features now explain why they are unavailable instead of showing generic auth or availability errors.</p>
+<div class="blabel">Details</div>
+<ul><li>Channels now say they are unavailable on Bedrock, Vertex, or Foundry.</li><li>Fast Mode now says it is only available when using the Anthropic API directly.</li><li>Bedrock setup text consistently says “Amazon Bedrock.”</li></ul>
+<div class="blabel">Evidence</div>
+<p>Provider-specific messages (search for <code>"Channels are not available on Bedrock, Vertex, or Foundry"</code> and <code>"Fast mode is only available when using the Anthropic API directly"</code>)</p>
+    </article>
+    <article class="card" id="effort-selection-defaults-back-to-auto">
+      <div class="card-top">
+        <h3>Effort Selection Defaults Back to Auto <a class="anchor" href="#effort-selection-defaults-back-to-auto">#</a></h3>
+      </div>
+      <p>Clearing effort now reports and applies <code>auto</code> instead of saying it set effort to <code>max</code>.</p>
+<div class="blabel">Usage</div>
+<pre><code>/effort auto</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The cache-warning dialog now uses “Change effort level?” when only effort changes.</li><li>Remote sessions get clearer messaging when an effort setting cannot reach the remote process.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Effort reset and cache warning text (search for <code>"Effort level set to auto"</code> and <code>"Change effort level?"</code>)</p>
+    </article>
+    <article class="card" id="better-large-input-and-media-result-messages">
+      <div class="card-top">
+        <h3>Better Large Input and Media Result Messages <a class="anchor" href="#better-large-input-and-media-result-messages">#</a></h3>
+      </div>
+      <p>Claude Code now explains size and media limits more directly.</p>
+<div class="blabel">Details</div>
+<ul><li>Piped stdin that exceeds the size cap tells users to pass large content as a file path.</li><li>Oversized remote requests tell users to shorten the prompt or send it in parts.</li><li>Media rejected by the API is replaced with an explicit placeholder instead of failing opaquely.</li><li>PDF content returned by inner <code>Read</code> calls can be surfaced as document content blocks.</li></ul>
+<div class="blabel">Evidence</div>
+<p>User-facing limit messages (search for <code>"piped stdin input exceeds"</code>, <code>"request exceeds"</code>, <code>"(media removed — rejected by API)"</code>, and <code>"PDFs returned by inner Read calls"</code>)</p>
+    </article>
+    <article class="card" id="background-fleet-labels-are-more-action-oriented">
+      <div class="card-top">
+        <h3>Background Fleet Labels Are More Action-Oriented <a class="anchor" href="#background-fleet-labels-are-more-action-oriented">#</a></h3>
+      </div>
+      <p>Blocked background work is now labeled as “Needs input,” making it clearer that user action is required.</p>
+<div class="blabel">Evidence</div>
+<p>Fleet status label rename (search for <code>"Needs input"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Auto mode fallback now suggests <code>/compact</code> when classifier context is too large, and stage-2 classifier errors say retrying often succeeds. Evidence: Auto mode fallback messages (search for <code>"Auto mode classifier transcript exceeded context window — falling back to manual approval (try /compact to reduce conversation size)"</code> and <code>"Stage 2 classifier error - blocking based on stage 1 assessment (usually transient — retrying often succeeds)"</code>)</li></ul>
+<ul><li>Voice input now pauses after repeated early failures instead of repeatedly starting failing sessions. Evidence: Voice circuit breaker (search for <code>"Voice input is failing repeatedly and has been paused"</code>)</li></ul>
+<ul><li>Remote egress gateway environments now propagate Google Cloud auth and CA certificate variables, improving GCP tooling inside proxied remote sessions. Evidence: GCP proxy environment propagation (search for <code>"CLOUDSDK_AUTH_ACCESS_TOKEN"</code> and <code>"CLOUDSDK_CORE_CUSTOM_CA_CERTS_FILE"</code>)</li></ul>
+<ul><li>MCP configuration now rejects reserved internal server names with clearer guidance. Evidence: Reserved MCP name validation (search for <code>"is a reserved MCP name"</code> and <code>"Rename this server in your MCP config"</code>)</li></ul>
+<ul><li>GitHub PR status fetching drops <code>mergeStateStatus</code> from the GraphQL fragment and adds REST status-list fallback strings, reducing reliance on a fragile PR field. Evidence: PR status query change (search for <code>"fragment pr on PullRequest"</code> and <code>"[ghPrStatus] REST list"</code>)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

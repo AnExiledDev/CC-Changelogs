@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.15 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.15."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.15</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.15</span></h1>
+<p class="sub">Version 2.0.15 introduces a new <strong>AskUserQuestion</strong> tool that allows Claude to ask multiple-choice questions during execution, enhances async hook support with stderr capture, and improves marketplace plugin error handling with structured error tracking.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.14 → v2.0.15</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="askuserquestion-tool">
+      <div class="card-top">
+        <h3>AskUserQuestion Tool <a class="anchor" href="#askuserquestion-tool">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A new tool that enables Claude to ask users multiple-choice questions during task execution to gather preferences, clarify ambiguity, or make implementation decisions.</p>
+<p><strong>How to use:</strong></p>
+<pre><code>// Claude can now use this tool to ask questions like:
+{
+  &quot;questions&quot;: [
+    {
+      &quot;question&quot;: &quot;Which library should we use for date formatting?&quot;,
+      &quot;header&quot;: &quot;Library&quot;,
+      &quot;options&quot;: [
+        {&quot;label&quot;: &quot;date-fns&quot;, &quot;description&quot;: &quot;Modern, modular&quot;},
+        {&quot;label&quot;: &quot;moment&quot;, &quot;description&quot;: &quot;Widely used, large&quot;}
+      ]
+    }
+  ]
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Supports 1-4 questions per tool use with 2-4 options each</li><li>Users can always select "Other" to provide custom text input</li><li>Set <code>multiSelect: true</code> to allow multiple answers per question</li><li>Includes navigation UI with question progress indicators</li><li>Questions have a header (max 12 characters) for display in the progress bar</li><li><strong>Evidence:</strong> New tool definition at <code>T6Q = "AskUserQuestion"</code> at line 404665, tool implementation at line 405857 in function <code>Tn1()</code></li></ul>
+    </article>
+    <article class="card" id="async-hook-stderr-capture">
+      <div class="card-top">
+        <h3>Async Hook Stderr Capture <a class="anchor" href="#async-hook-stderr-capture">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Async hooks now capture and track stderr output separately from stdout, providing better visibility into hook errors and warnings.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Hook state now includes dedicated <code>stderr</code> field initialized as empty string</li><li>New function <code>$wA()</code> at line 72330 adds stderr to async hook process tracking</li><li>Hook registration function <code>CwA()</code> at line 72298 initializes stderr field at line 72318</li><li>Stderr stream is now monitored alongside stdout for background hook processes</li><li><strong>Evidence:</strong> Previously hooks only tracked <code>stdout</code>, now both <code>stdout</code> and <code>stderr</code> fields exist in hook state (line 72318)</li></ul>
+    </article>
+    <article class="card" id="marketplace-plugin-error-tracking">
+      <div class="card-top">
+        <h3>Marketplace Plugin Error Tracking <a class="anchor" href="#marketplace-plugin-error-tracking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Plugin loading now uses structured error tracking with specific error types and detailed context, making it easier to diagnose marketplace installation issues.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New error types: <code>path-not-found</code> (for missing component files) and <code>generic-error</code> (for other failures)</li><li>Error objects include plugin name, source, path, and component type (commands/agents/skills)</li><li>Function <code>AD6()</code> at line 223462 now accepts error array parameter and accumulates errors</li><li>Each missing file is tracked with metadata: <code>{ type: "path-not-found", source, plugin, path, component }</code></li><li>Provides actionable error messages like "Check that the marketplace entry has the correct path"</li><li><strong>Evidence:</strong> v2.0.14 function <code>zV6()</code> at line 222943 only logged warnings; v2.0.15 function <code>AD6()</code> pushes structured error objects (lines 223537-543, 223567-573, 223593-599)</li></ul>
+    </article>
+    <article class="card" id="original-working-directory-protection">
+      <div class="card-top">
+        <h3>Original Working Directory Protection <a class="anchor" href="#original-working-directory-protection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> File scanning now automatically excludes the original working directory when the process has changed directories, preventing unintended file access.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>H7B()</code> at line 275861 checks if current directory differs from startup directory</li><li>If different, adds <code>originalCwd</code> to ignore paths list (lines 275873-276)</li><li>Prevents Claude Code from scanning the launch directory when operating in a different location</li><li><strong>Evidence:</strong> v2.0.14 function <code>s3B()</code> at line 275176 had static ignore list; v2.0.15 adds dynamic <code>originalCwd</code> logic</li></ul>
+    </article>
+    <article class="card" id="write-tool-file-caching">
+      <div class="card-top">
+        <h3>Write Tool File Caching <a class="anchor" href="#write-tool-file-caching">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The conversation context file cache now tracks Write tool results in addition to Read tool results, improving context awareness.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>HMQ()</code> at line 460001 now accepts file paths from both Read and Write tools</li><li>Caches file content from Write operations with timestamps</li><li>Helps maintain accurate file state tracking across tool uses</li><li>Path normalization now works for both read and write operations</li><li><strong>Evidence:</strong> v2.0.14 function <code>yLQ()</code> at line 458431 only tracked Read tool (check at line 458451); v2.0.15 tracks both Read and Write tools (Write check added at lines 460014-460020)</li></ul>
+    </article>
+    <article class="card" id="improved-marketplace-status-messages">
+      <div class="card-top">
+        <h3>Improved Marketplace Status Messages <a class="anchor" href="#improved-marketplace-status-messages">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Git operations during marketplace installation/update now show clearer progress messages.</p>
+<p><strong>Details:</strong></p>
+<ul><li>"Updating existing marketplace cache…" instead of "Running: git pull"</li><li>"Update failed, cleaning up and re-cloning…" for clearer failure messaging</li><li>"Cloning repository: [url]" instead of "Running: git clone [url]"</li><li>"Clone complete, validating marketplace…" confirms successful completion</li><li><strong>Evidence:</strong> Function <code>Df1()</code> at line 222621 uses <code>QT()</code> helper with improved messages (lines 222636, 222650, 222651)</li></ul>
+    </article>
+    <article class="card" id="select-component-enhancements">
+      <div class="card-top">
+        <h3>Select Component Enhancements <a class="anchor" href="#select-component-enhancements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The interactive select component now supports inline text input fields as options, enabling mixed multiple-choice and text input in a single selection UI.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New "input" option type alongside existing "text" options</li><li>Options can have <code>type: "input"</code> with <code>placeholder</code> and <code>initialValue</code> properties</li><li>New <code>compact-vertical</code> layout mode for better description display</li><li>Component <code>F01</code> at line 145146 renders input fields with focus state management</li><li>Multi-select component <code>_GB</code> at line 282823 supports input options with checkboxes</li><li><strong>Evidence:</strong> Function <code>TA()</code> at line 145236 now handles <code>type: "input"</code> options (checks at lines 145558, 145643, 145723)</li></ul>
+    </article>
+    <article class="card" id="command-flag-obfuscation-detection">
+      <div class="card-top">
+        <h3>Command Flag Obfuscation Detection <a class="anchor" href="#command-flag-obfuscation-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Fixed quote handling in command security checks to properly detect obfuscated flags with escaped characters.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>Ck6()</code> at line 274379 now tracks quote state and escape sequences</li><li>Added escape sequence tracking with <code>Y</code> flag (lines 274396-274402)</li><li>Properly handles single quotes (<code>'</code>) and double quotes (<code>"</code>) separately (lines 274403-274410)</li><li>Checks <code>fullyUnquotedContent</code> instead of <code>originalCommand</code> for better accuracy (line 274433)</li><li>Prevents false positives from legitimate quoted strings in command arguments</li><li><strong>Evidence:</strong> v2.0.14 function <code>y_6()</code> at line 273725 had simpler quote detection; v2.0.15 adds stateful quote and escape tracking (lines 274389-274411)</li></ul>
+    </article>
+    <article class="card" id="hook-function-signature-improvements">
+      <div class="card-top">
+        <h3>Hook Function Signature Improvements <a class="anchor" href="#hook-function-signature-improvements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Hook execution functions now use clearer parameter naming with object destructuring for better code maintainability.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>tX9()</code> at line 73192 uses named parameters: <code>{ toolUseID, hook, hookInput, signal }</code></li><li>Function <code>r40()</code> at line 72973 uses named parameters: <code>{ hookInput, matchQuery, signal, timeoutMs }</code></li><li>Replaces positional parameters with descriptive object properties</li><li><strong>Evidence:</strong> v2.0.14 used positional parameters <code>HX9(A, B, Q, Z)</code> at line 73080 and <code>S40(A, B, Q, Z)</code> at line 72895</li></ul>
+    </article>
+    <article class="card" id="permission-ui-component-refactoring">
+      <div class="card-top">
+        <h3>Permission UI Component Refactoring <a class="anchor" href="#permission-ui-component-refactoring">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Tool permission confirmation component optimized with React hooks for better performance.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>Uu()</code> at line 387386 now uses <code>useMemo</code> for telemetry data (line 387407)</li><li>Uses custom hook <code>JE()</code> for permission tracking</li><li>Replaces direct function call <code>Aq()</code> with memoized approach</li><li><strong>Evidence:</strong> v2.0.14 function <code>Yu()</code> at line 386492 called <code>Aq()</code> directly; v2.0.15 memoizes with <code>useMemo</code></li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

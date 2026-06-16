@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.67 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.67."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.67</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.67</span></h1>
+<p class="sub">This is a model lifecycle management release. Users configured with Sonnet 4.5 are automatically migrated to Sonnet 4.6, and users with legacy Opus model strings are migrated to the canonical "opus" alias. Opus 4.6's default medium effort level is now extended to Max and Team plan users, not just Pro.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.66 → v2.1.67</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="automatic-sonnet-4-5-sonnet-4-6-migration">
+      <div class="card-top">
+        <h3>Automatic Sonnet 4.5 → Sonnet 4.6 Migration <a class="anchor" href="#automatic-sonnet-4-5-sonnet-4-6-migration">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Users whose model setting references <code>claude-sonnet-4-5-20250929</code> (or its <code>[1m]</code> extended-thinking variant) are automatically migrated to <code>sonnet</code> (or <code>sonnet[1m]</code>). A notification "Model updated to Sonnet 4.6" is shown briefly after the migration.</p>
+<div class="blabel">Details</div>
+<ul><li>Applies only to first-party (claude.ai-authenticated) users on Pro, Max, or Team plans</li><li>Extended thinking mode (<code>[1m]</code>) is preserved during migration</li><li>Users who have already started at least one session will see the notification; brand-new users will not</li></ul>
+<div class="blabel">Evidence</div>
+<p>Sonnet 4.5 to 4.6 migration (search for <code>"tengu_sonnet45_to_46_migration"</code> and <code>"Model updated to Sonnet 4.6"</code>)</p>
+    </article>
+    <article class="card" id="automatic-legacy-opus-model-string-migration">
+      <div class="card-top">
+        <h3>Automatic Legacy Opus Model String Migration <a class="anchor" href="#automatic-legacy-opus-model-string-migration">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Users configured with explicit old-format Opus model IDs (<code>claude-opus-4-20250514</code>, <code>claude-opus-4-1-20250805</code>, <code>claude-opus-4-0</code>, <code>claude-opus-4-1</code>) are automatically migrated to the canonical <code>opus</code> alias. A notification "Model updated to Opus 4.6" is shown briefly after the migration.</p>
+<div class="blabel">Details</div>
+<ul><li>Applies to first-party users only</li><li>A new allowlist (<code>fXz</code>) defines the four legacy Opus model strings subject to migration</li><li>The previous Opus 4.5 → Pro migration notification ("Model updated to Opus 4.5") has been replaced by this updated path</li></ul>
+<div class="blabel">Evidence</div>
+<p>Legacy Opus migration (search for <code>"tengu_legacy_opus_migration"</code> and <code>"legacyOpusMigrationTimestamp"</code>)</p>
+    </article>
+    <article class="card" id="opus-4-6-medium-effort-default-extended-to-max-and-team-plan">
+      <div class="card-top">
+        <h3>Opus 4.6 Medium Effort Default Extended to Max and Team Plans <a class="anchor" href="#opus-4-6-medium-effort-default-extended-to-max-and-team-plan">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The automatic "medium" effort level default for Opus 4.6 previously applied only to Pro plan users. It now also applies to Max plan users and eligible Team plan users.</p>
+<div class="blabel">Details</div>
+<ul><li>The previous condition checked only for <code>plan === "pro"</code> (via <code>Yb6()</code>)</li><li>The new condition checks <code>LK6() || my() || By()</code>, which covers Pro, Max, and qualifying Team plans</li><li>A new notification "Opus 4.6 effort updated to medium" is displayed when the effort migration occurs for existing users</li></ul>
+<div class="blabel">Evidence</div>
+<p>Expanded plan check in effort default — <code>BX6()</code> function (search for <code>"opus-4-6"</code> near <code>"medium"</code> and <code>"Opus 4.6 effort updated to medium"</code>)</p>
+    </article>
+    <article class="card" id="effort-callout-suppressed-for-first-time-users">
+      <div class="card-top">
+        <h3>Effort Callout Suppressed for First-Time Users <a class="anchor" href="#effort-callout-suppressed-for-first-time-users">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The effort level information callout for Opus 4.6 is now automatically dismissed on a user's very first session, avoiding unnecessary friction for new users.</p>
+<div class="blabel">Details</div>
+<ul><li>When <code>numStartups &lt;= 1</code>, the callout is skipped and <code>effortCalloutDismissed</code> is set to <code>true</code> immediately</li><li>Existing users who have had multiple sessions will continue to see the callout as before (if not previously dismissed)</li></ul>
+<div class="blabel">Evidence</div>
+<p>First-startup guard in effort callout — <code>ahq()</code> function (search for <code>"effortCalloutDismissed"</code> near <code>"numStartups"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.86 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.86."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.86</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.86</span></h1>
+<p class="sub">Version 1.0.86 introduces a context usage visualization command, enhances file permission handling with intelligent suggestions and git config protection, and improves the trust dialog UI for better clarity and security awareness.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.85 → v1.0.86</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="context-usage-visualization">
+      <div class="card-top">
+        <h3>Context Usage Visualization <a class="anchor" href="#context-usage-visualization">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New <code>/context</code> command that displays current token usage as a colored grid <strong>How to use:</strong></p>
+<pre><code># In your Claude Code session, type:
+/context</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Shows a visual grid where each square represents a portion of your context window</li><li>Different colors indicate different categories (system prompt, tools, messages, etc.)</li><li>Displays detailed breakdowns including memory files, MCP tools, and custom agents</li><li>Grid size adapts based on model capacity (20x10 for ≥1M token models, 10x10 otherwise)</li><li>Helps identify what's consuming context and why you might hit limits</li></ul>
+    </article>
+    <article class="card" id="git-configuration-file-protection">
+      <div class="card-top">
+        <h3>Git Configuration File Protection <a class="anchor" href="#git-configuration-file-protection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added security protection for <code>.git/config</code> and <code>.gitconfig</code> files <strong>How to use:</strong></p>
+<pre><code># Claude will now ask for explicit permission before editing:
+# - .git/config files in repositories
+# - .gitconfig files (global git configuration)</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Prevents potential code execution via git configuration files</li><li>Requires explicit user permission to edit these sensitive files</li><li>Protection covers both repository-level and global git configurations</li><li>Provides clear explanation about why permission is needed</li></ul>
+    </article>
+    <article class="card" id="intelligent-permission-suggestions">
+      <div class="card-top">
+        <h3>Intelligent Permission Suggestions <a class="anchor" href="#intelligent-permission-suggestions">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Context-aware suggestions when Claude requests file permissions <strong>How to use:</strong></p>
+<pre><code># When Claude needs file access, you&#x27;ll see smart suggestions like:
+# For reading: &quot;Allow reading from /directory/** during this session&quot;
+# For writing: &quot;Allow all edits in /directory/ during this session&quot;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Different suggestions for read vs write operations</li><li>Suggests appropriate permission scope based on the operation</li><li>Can suggest switching to "acceptEdits" mode for write operations</li><li>Provides rules that can be applied to efficiently grant permissions</li></ul>
+    </article>
+    <article class="card" id="enhanced-trust-dialog">
+      <div class="card-top">
+        <h3>Enhanced Trust Dialog <a class="anchor" href="#enhanced-trust-dialog">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Simplified and consolidated the project trust dialog <strong>Previous behavior:</strong> Multiple separate warnings with complex dynamic options <strong>New behavior:</strong> Single unified warning with clear execution source listing <strong>Impact:</strong></p>
+<ul><li>Clearer messaging about security risks</li><li>Better organization showing what allows execution (MCP servers, settings files, commands)</li><li>Simplified to just "Yes, proceed" or "No, exit" options</li><li>Shows configuration sources in a more digestible format</li></ul>
+    </article>
+    <article class="card" id="todo-list-persistence">
+      <div class="card-top">
+        <h3>Todo List Persistence <a class="anchor" href="#todo-list-persistence">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Todos are now saved to disk when modified <strong>Previous behavior:</strong> Todos only existed in memory during the session <strong>New behavior:</strong> Todos persist to JSON files on disk (though not automatically loaded on restart) <strong>Impact:</strong></p>
+<ul><li>Todo changes are saved for potential future recovery</li><li>TodoWrite tool now enforces keeping at least one task in_progress</li><li>Visual feedback simplified - completed tasks always show in green</li></ul>
+    </article>
+    <article class="card" id="todo-list-feature-flag-system">
+      <div class="card-top">
+        <h3>Todo List Feature Flag System <a class="anchor" href="#todo-list-feature-flag-system">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> TodoWrite tool now controlled by runtime feature flag instead of hardcoded visibility <strong>Previous behavior:</strong> TodoWrite had hardcoded visibility conditions <strong>New behavior:</strong> Todo list visibility controlled by <code>todoFeatureEnabled</code> feature flag (defaults to disabled) <strong>Implementation:</strong> Tool inclusion controlled by dynamic feature flag system rather than hardcoded conditions <strong>Impact:</strong></p>
+<ul><li>Todos become opt-in feature rather than always-on</li><li>Tool functionality remains fully implemented but filtered out at runtime by default</li><li>Users must explicitly enable todo feature to see todo list management</li><li>Creates configurable task management system</li><li>Todos still persist to disk and function when enabled</li></ul>
+    </article>
+    <article class="card" id="smart-todo-display-hidden-implementation">
+      <div class="card-top">
+        <h3>Smart Todo Display (Hidden Implementation) <a class="anchor" href="#smart-todo-display-hidden-implementation">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Improved todo list visualization with intelligent truncation (for internal use) <strong>Previous behavior:</strong> Simple list display without truncation <strong>New behavior:</strong> Shows up to 4 most relevant items with counts for hidden items <strong>Impact:</strong> (Note: These improvements exist in code but users never see them due to display removal)</p>
+<ul><li>Prioritizes showing in-progress tasks</li><li>Displays "... +N done" for multiple completed tasks</li><li>Shows "... +N more" for remaining tasks</li><li>Would keep focus on active work while maintaining context (if visible)</li></ul>
+    </article>
+    <article class="card" id="permission-prompt-clarity">
+      <div class="card-top">
+        <h3>Permission Prompt Clarity <a class="anchor" href="#permission-prompt-clarity">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Operation-specific permission messages <strong>Previous behavior:</strong> Generic permission messages for all operations <strong>New behavior:</strong> Different messages for read vs write operations <strong>Impact:</strong></p>
+<ul><li>"Allow reading from /directory/" for read operations</li><li>"Allow all edits in /directory/" for write operations</li><li>Clearer about what permissions are being granted</li><li>Better session-based permission options</li></ul>
+    </article>
+    <article class="card" id="attachment-message-grouping">
+      <div class="card-top">
+        <h3>Attachment Message Grouping <a class="anchor" href="#attachment-message-grouping">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Improved handling of file attachments in conversations <strong>Previous behavior:</strong> Attachments could be separated from their context <strong>New behavior:</strong> Attachments are properly grouped with associated messages <strong>Impact:</strong></p>
+<ul><li>File attachments stay with their relevant assistant or user messages</li><li>Prevents context loss when processing conversations with attachments</li><li>Better message organization for complex conversations</li></ul>
+    </article>
+    <article class="card" id="fixed-spinner-words-configuration-structure">
+      <div class="card-top">
+        <h3>Fixed: Spinner Words Configuration Structure <a class="anchor" href="#fixed-spinner-words-configuration-structure">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Spinner words were stored as a plain array limiting extensibility</li><li><strong>Cause:</strong> Original implementation didn't account for future configuration needs</li><li><strong>Resolution:</strong> Restructured as an object with <code>words</code> property allowing future expansion</li><li><strong>Affected versions:</strong> All versions prior to 1.0.86</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

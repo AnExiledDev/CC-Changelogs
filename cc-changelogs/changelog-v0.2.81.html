@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.81 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.81."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.81</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.81</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.80 → v0.2.81</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.81 Changelog</p>
+    </article>
+    <article class="card" id="new-dynamic-pricing-calculation">
+      <div class="card-top">
+        <h3>New Dynamic Pricing Calculation <a class="anchor" href="#new-dynamic-pricing-calculation">#</a></h3>
+      </div>
+      <ul><li><strong>Added pricing configuration system</strong> that maps model names to token costs</li><li><strong>New <code>Fi1</code> function</strong> calculates total costs based on input/output tokens and prompt cache usage</li><li>Pricing structure includes:</li><li>Input tokens</li><li>Output tokens</li><li>Prompt cache write tokens</li><li>Prompt cache read tokens</li></ul>
+    </article>
+    <article class="card" id="model-name-extraction">
+      <div class="card-top">
+        <h3>Model Name Extraction <a class="anchor" href="#model-name-extraction">#</a></h3>
+      </div>
+      <ul><li><strong>New <code>Kg</code> function</strong> extracts model identifiers from strings using pattern matching</li><li>Recognizes Claude model naming format: <code>claude-X-Y-name</code></li></ul>
+    </article>
+    <article class="card" id="vscode-extension-renamed">
+      <div class="card-top">
+        <h3>VSCode Extension Renamed <a class="anchor" href="#vscode-extension-renamed">#</a></h3>
+      </div>
+      <ul><li>Extension filename changed from <code>mcp.vsix</code> to <code>claude-code.vsix</code></li><li>Added new extension identifier: <code>anthropic.claude-code</code></li></ul>
+    </article>
+    <article class="card" id="installation-function-enhancement">
+      <div class="card-top">
+        <h3>Installation Function Enhancement <a class="anchor" href="#installation-function-enhancement">#</a></h3>
+      </div>
+      <ul><li><strong>Replaced <code>wo6</code> with <code>Fo6</code></strong> for extension installation</li><li>Added <code>tm1</code> callback function (currently a no-op placeholder)</li><li>Installation now calls <code>tm1</code> after successful extension install for each terminal type</li></ul>
+    </article>
+    <article class="card" id="example-usage">
+      <div class="card-top">
+        <h3>Example Usage <a class="anchor" href="#example-usage">#</a></h3>
+      </div>
+      <p>When installing the Claude Code extension in VSCode:</p>
+<pre><code># Previously would install:
+code --install-extension /path/to/vendor/mcp.vsix
+
+# Now installs:
+code --install-extension /path/to/vendor/claude-code.vsix</code></pre>
+    </article>
+    <article class="card" id="removed-constants">
+      <div class="card-top">
+        <h3>Removed Constants <a class="anchor" href="#removed-constants">#</a></h3>
+      </div>
+      <ul><li>Removed hardcoded pricing values (<code>fR2</code>, <code>e53</code>, <code>G63</code>, <code>I63</code>, <code>W63</code>, <code>vR2</code>, <code>R63</code>)</li><li>Removed unused model identifier <code>MN9</code> (claude-3-7-sonnet-20250219)</li><li>Removed safety supervisor message constant <code>Zi1</code></li><li>Removed unused numeric constant <code>yi1</code></li></ul>
+    </article>
+    <article class="card" id="import-optimizations">
+      <div class="card-top">
+        <h3>Import Optimizations <a class="anchor" href="#import-optimizations">#</a></h3>
+      </div>
+      <ul><li>Consolidated stream imports to use named imports from "stream" module</li><li>Replaced direct process import with named import from "node:process"</li></ul>
+    </article>
+    <article class="card" id="new-variables">
+      <div class="card-top">
+        <h3>New Variables <a class="anchor" href="#new-variables">#</a></h3>
+      </div>
+      <ul><li><code>LS2</code>: Added to track array length (appears to be <code>pn1.length</code>)</li><li><code>sm1</code>: Extension identifier string "anthropic.claude-code"</li></ul>
+    </article>
+    <article class="card" id="stream-handling">
+      <div class="card-top">
+        <h3>Stream Handling <a class="anchor" href="#stream-handling">#</a></h3>
+      </div>
+      <ul><li>Changed from default import to named import <code>PassThrough as xm9</code></li><li>Better aligned with Node.js module best practices</li></ul>
+<p>This update focuses on making the pricing system more flexible and maintainable while updating the extension management system to use the new Claude Code branding.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

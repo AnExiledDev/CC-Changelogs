@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.76 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.76."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.76</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.76</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.74 → v0.2.76</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.76 Changelog</p>
+    </article>
+    <article class="card" id="enhanced-configuration-management">
+      <div class="card-top">
+        <h3>Enhanced Configuration Management <a class="anchor" href="#enhanced-configuration-management">#</a></h3>
+      </div>
+      <p>The <code>claude config</code> command has been significantly improved with a full suite of subcommands for managing both project-level and global configurations:</p>
+<ul><li><strong><code>claude config get &lt;key&gt;</code></strong> - Retrieve a specific configuration value</li></ul>
+<pre><code>  # Get a project-level config value
+  claude config get apiKey
+  
+  # Get a global config value
+  claude config get -g theme</code></pre>
+<ul><li><strong><code>claude config set &lt;key&gt; &lt;value&gt;</code></strong> - Set a configuration value</li></ul>
+<pre><code>  # Set project-level configuration
+  claude config set apiKey &quot;sk-ant-...&quot;
+  
+  # Set global theme configuration
+  claude config set -g theme dark</code></pre>
+<ul><li><strong><code>claude config list</code></strong> (alias: <code>ls</code>) - Display all configuration values</li></ul>
+<pre><code>  # List project configurations
+  claude config list
+  
+  # List global configurations
+  claude config list -g</code></pre>
+<ul><li><strong><code>claude config add &lt;key&gt; &lt;values...&gt;</code></strong> - Add items to array-type configurations</li></ul>
+<pre><code>  # Add multiple values to an array config
+  claude config add allowedDomains example.com api.example.com
+  
+  # Add to global array config
+  claude config add -g trustedSources github.com gitlab.com</code></pre>
+<ul><li><strong><code>claude config remove &lt;key&gt; [values...]</code></strong> (alias: <code>rm</code>) - Remove configuration values or specific items from arrays</li></ul>
+<pre><code>  # Remove an entire config key
+  claude config remove apiKey
+  
+  # Remove specific values from an array
+  claude config remove allowedDomains example.com
+  
+  # Remove from global config
+  claude config remove -g theme</code></pre>
+<p>All configuration commands support the <code>-g, --global</code> flag to operate on global settings instead of project-specific ones.</p>
+    </article>
+    <article class="card" id="mcp-server-integration">
+      <div class="card-top">
+        <h3>MCP Server Integration <a class="anchor" href="#mcp-server-integration">#</a></h3>
+      </div>
+      <p>New Model Context Protocol (MCP) support has been added:</p>
+<ul><li><strong><code>claude mcp serve</code></strong> - Start the Claude Code MCP server for enhanced integrations</li></ul>
+<pre><code>  claude mcp serve</code></pre>
+    </article>
+    <article class="card" id="theme-configuration-support">
+      <div class="card-top">
+        <h3>Theme Configuration Support <a class="anchor" href="#theme-configuration-support">#</a></h3>
+      </div>
+      <p>The configuration system now explicitly supports theme customization, with dark theme available as a configuration option.</p>
+    </article>
+    <article class="card" id="array-configuration-management">
+      <div class="card-top">
+        <h3>Array Configuration Management <a class="anchor" href="#array-configuration-management">#</a></h3>
+      </div>
+      <p>Configuration values can now be arrays, with dedicated <code>add</code> and <code>remove</code> commands for managing list-based settings. This enables more flexible configuration of features like allowed domains, trusted sources, or custom command lists.</p>
+    </article>
+    <article class="card" id="code-structure-updates">
+      <div class="card-top">
+        <h3>Code Structure Updates <a class="anchor" href="#code-structure-updates">#</a></h3>
+      </div>
+      <ul><li>Removed 86 functions and added 477 new functions, indicating significant internal refactoring</li><li>Overall structural similarity of 92.9% maintained with the previous version</li><li>Enhanced modularization with 6,705 total declarations (up from 6,314)</li></ul>
+    </article>
+    <article class="card" id="removed-dependencies">
+      <div class="card-top">
+        <h3>Removed Dependencies <a class="anchor" href="#removed-dependencies">#</a></h3>
+      </div>
+      <p>Several file system and process-related imports have been consolidated or removed, suggesting improved code organization and reduced redundancy.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The configuration system maintains separate project-level and global settings</li><li>Project configurations take precedence over global configurations when both exist</li><li>The new array configuration support enables more complex configuration scenarios</li><li>MCP server integration opens possibilities for extended tool capabilities and integrations</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

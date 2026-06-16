@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.25 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.25."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.25</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.25</span></h1>
+<p class="sub">Version 2.0.25 introduces session-only plugin loading via <code>--plugin-dir</code>, adds session titles to memory templates for better organization, and enhances editor integration with Sublime Text wait flag support.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.24 → v2.0.25</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="session-only-plugin-loading">
+      <div class="card-top">
+        <h3>Session-Only Plugin Loading <a class="anchor" href="#session-only-plugin-loading">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Load plugins from local directories for the current session without permanently installing them <strong>How to use:</strong></p>
+<pre><code># Load plugins from one or more directories
+claude --plugin-dir ./my-plugins --plugin-dir ../shared-plugins
+
+# Plugins are active only for this session
+claude --plugin-dir /path/to/custom/plugins chat</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Plugins loaded with <code>--plugin-dir</code> are marked with <code>@inline</code> source designation</li><li>Multiple plugin directories can be specified by repeating the flag</li><li>Plugins are loaded after standard installed plugins</li><li>Path validation occurs before loading - non-existent paths are logged and skipped</li><li>Session plugins persist only for the current command execution</li><li><strong>Evidence</strong>: <code>Td6()</code> function at line 264116, <code>GQA()</code> at line 3778, <code>YQA()</code> at line 3781, CLI option at line 475753 in v2.0.25</li></ul>
+    </article>
+    <article class="card" id="session-title-in-memory-template">
+      <div class="card-top">
+        <h3>Session Title in Memory Template <a class="anchor" href="#session-title-in-memory-template">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Session memory now includes a dedicated title section for quick identification <strong>How to use:</strong> The session memory agent automatically generates a "Session Title" section when creating or updating session notes:</p>
+<pre><code># Session Title
+_A short and distinctive 5-10 word descriptive title for the session. Super info dense, no filler_</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Appears as the first section in session memory notes</li><li>Designed to be information-dense and distinctive</li><li>Makes it easier to identify and navigate between different work sessions</li><li>Complements the existing 7 sections (Task specification, Files and Functions, etc.)</li><li><strong>Evidence</strong>: Template variable <code>ng8</code> at line 467211 in v2.0.25 (vs <code>dg8</code> at line 467131 in v2.0.24)</li></ul>
+    </article>
+    <article class="card" id="environment-variable-for-session-memory-model-selection">
+      <div class="card-top">
+        <h3>Environment Variable for Session Memory Model Selection <a class="anchor" href="#environment-variable-for-session-memory-model-selection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Control which AI model handles session memory updates via environment variable <strong>How to use:</strong></p>
+<pre><code># Use Haiku for faster, more cost-effective session memory updates
+export USE_HAIKU_SESSION_MEMORY=1
+claude chat
+
+# Default behavior (Sonnet) - no environment variable needed
+claude chat</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Defaults to Sonnet for highest quality session memory extraction</li><li>Set <code>USE_HAIKU_SESSION_MEMORY=1</code> to use Haiku for faster, cheaper updates</li><li>Useful for rapid iteration or cost-conscious workflows</li><li><strong>Evidence</strong>: <code>Gu8()</code> function at line 467294 in v2.0.25 uses conditional model selection vs inline object at line 467224 in v2.0.24</li></ul>
+    </article>
+    <article class="card" id="enhanced-editor-wait-flag-support">
+      <div class="card-top">
+        <h3>Enhanced Editor Wait Flag Support <a class="anchor" href="#enhanced-editor-wait-flag-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved external editor integration now supports Sublime Text with proper blocking behavior <strong>Details:</strong></p>
+<ul><li>VS Code continues to use <code>code -w</code> for blocking behavior</li><li>Sublime Text now properly configured with <code>subl --wait</code></li><li>Refactored from inline conditional to extensible configuration map</li><li>Makes future editor additions straightforward</li><li><strong>Evidence</strong>: <code>Fy8</code> configuration map at line 431215 with usage at line 431189 in v2.0.25 vs inline ternary at line 431126 in v2.0.24</li></ul>
+    </article>
+    <article class="card" id="debug-log-path-display">
+      <div class="card-top">
+        <h3>Debug Log Path Display <a class="anchor" href="#debug-log-path-display">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Debug mode now shows the actual log file path instead of the symlink <strong>Details:</strong></p>
+<ul><li>Previously displayed: <code>~/.claude/debug/latest</code> (symlink)</li><li>Now displays: <code>~/.claude/debug/1234567890.txt</code> (actual file)</li><li>Makes it clearer which specific file is being written to</li><li>Improves troubleshooting when multiple debug sessions exist</li><li><strong>Evidence</strong>: <code>fc()</code> function at line 3821 used at lines 441483 and 441622 in v2.0.25</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Improvements</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-improvements">
+      <ul><li>Refactored Node.js module imports for better code organization</li><li>Separated session memory template structure from update instructions</li><li>Streamlined debug logging path resolution logic</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

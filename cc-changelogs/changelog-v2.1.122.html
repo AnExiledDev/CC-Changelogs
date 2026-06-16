@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.122 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.122."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.122</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.122</span></h1>
+<p class="sub">This release adds Cmd+K clear screen support, MCP long-running task tracking, a new "bash_command" event type for remote sessions, and "investigate first" system prompt injection gated behind <code>tengu_slate_harrier</code>. It also introduces the <code>ANTHROPIC_BEDROCK_SERVICE_TIER</code> environment variable for Bedrock users, improves MCP server duplicate detection with user-facing guidance, adds <code>--bg</code> safety guards, and reduces the Opus 4.7 image resolution limit from 2576px to 2000px.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.121 → v2.1.122</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">31</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">28 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="cmd-k-clear-screen">
+      <div class="card-top">
+        <h3>Cmd+K Clear Screen <a class="anchor" href="#cmd-k-clear-screen">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Adds a <code>Cmd+K</code> keyboard shortcut (macOS) mapped to a new <code>chat:clearScreen</code> action, providing a way to visually clear the terminal display without losing conversation context.</p>
+<p>Usage: Press <code>Cmd+K</code> in the chat input to clear the screen. This is separate from <code>Ctrl+L</code> (clear input), which only empties the input field.</p>
+<div class="blabel">Details</div>
+<ul><li>Bound as <code>"cmd+k": "chat:clearScreen"</code> in the default keybindings</li><li>On iTerm and Apple Terminal, the feature also probes for external clears (e.g. via Cmd+K in the terminal itself) and automatically redraws the UI when an outside wipe is detected</li><li>The clear screen action triggers <code>/clear</code> internally</li><li>A brief "clear" hint is shown before the action takes effect</li></ul>
+<div class="blabel">Evidence</div>
+<p>New keybinding action (search for <code>"chat:clearScreen"</code>) and external wipe detection (search for <code>"probeExternalClear"</code>)</p>
+    </article>
+    <article class="card" id="mcp-long-running-task-tracking">
+      <div class="card-top">
+        <h3>MCP Long-Running Task Tracking <a class="anchor" href="#mcp-long-running-task-tracking">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Adds infrastructure to track, poll, persist, and resume MCP tasks that run asynchronously on MCP servers using the experimental tasks API.</p>
+<div class="blabel">Details</div>
+<ul><li>When a tool call spawns an MCP task, Claude Code now registers it in a task registry and polls the server for status updates</li><li>Task metadata is persisted to disk at <code>&lt;session-dir&gt;/mcp-tasks/mcp-task-&lt;id&gt;.meta.json</code> so tasks survive session restarts</li><li>On resume, previously-running MCP tasks are reconnected to their servers and polling resumes</li><li>Task status updates (completed, failed, cancelled) are injected back into the conversation as task-notification messages</li><li>The status bar shows <code>1 MCP task</code> (or similar) during active polling</li><li>Supports kill/cancel from the client side</li></ul>
+<div class="blabel">Evidence</div>
+<p>Full task lifecycle management (search for <code>"mcp_task"</code>, <code>"restoreMcpTasks"</code>, <code>"removeMcpTaskMetadata"</code>, <code>"Task was cancelled by the server."</code>)</p>
+    </article>
+    <article class="card" id="remote-session-bash-command-event">
+      <div class="card-top">
+        <h3>Remote Session Bash Command Event <a class="anchor" href="#remote-session-bash-command-event">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Adds a new <code>bash_command</code> event type that allows remote clients (e.g. Claude Code Remote) to dispatch shell commands directly to a session without going through the model.</p>
+<div class="blabel">Details</div>
+<ul><li>The event schema includes a <code>command</code> string and optional <code>cwd</code> for the working directory</li><li>Executed via a one-shot <code>/bin/sh -c</code> (or <code>pwsh</code> on Windows) subprocess, bypassing the model entirely</li><li>Output includes stdout, stderr, and exit code wrapped in XML tags</li><li>This allows CCR clients that surface a dedicated terminal UI to run shell commands natively</li></ul>
+<div class="blabel">Evidence</div>
+<p>New Zod schema with <code>type: "bash_command"</code> (search for <code>"bash_command"</code>) and handler function <code>sendBashCommand</code> (search for <code>"[RemoteSessionManager] Sending bash_command to session"</code>)</p>
+    </article>
+    <article class="card" id="bedrock-service-tier-support">
+      <div class="card-top">
+        <h3>Bedrock Service Tier Support <a class="anchor" href="#bedrock-service-tier-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Adds support for the <code>ANTHROPIC_BEDROCK_SERVICE_TIER</code> environment variable, which lets Bedrock users specify a service tier via a custom request header.</p>
+<div class="blabel">Usage</div>
+<pre><code>export ANTHROPIC_BEDROCK_SERVICE_TIER=&quot;on-demand&quot;
+claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When set, the value is passed as the <code>X-Amzn-Bedrock-Service-Tier</code> header on all Bedrock API requests</li><li>Displayed in the connection info (e.g. <code>/config</code> or status display) as "Bedrock service tier"</li></ul>
+<div class="blabel">Evidence</div>
+<p>New env var handling (search for <code>"ANTHROPIC_BEDROCK_SERVICE_TIER"</code>) and display label (search for <code>"Bedrock service tier"</code>)</p>
+    </article>
+    <article class="card" id="background-job-safety-guards">
+      <div class="card-top">
+        <h3>Background Job Safety Guards <a class="anchor" href="#background-job-safety-guards">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Adds upfront validation for <code>--bg</code> jobs that require specific permission modes, preventing silent failures when prerequisites are not met.</p>
+<div class="blabel">Details</div>
+<ul><li>Running <code>--bg</code> with <code>--permission-mode auto</code> now requires having opted in interactively first. If not, the error message reads: <code>--bg with auto mode requires opting in first. Run 'claude --permission-mode auto' once interactively.</code></li><li>Running <code>--bg</code> with <code>--dangerously-skip-permissions</code> now requires having accepted the disclaimer interactively first. The error message reads: <code>--bg with bypassPermissions requires accepting the disclaimer first. Run 'claude --dangerously-skip-permissions' once interactively.</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>New validation function (search for <code>"--bg with auto mode requires"</code> and <code>"--bg with bypassPermissions requires"</code>)</p>
+    </article>
+    <article class="card" id="mcp-server-duplicate-detection-ui">
+      <div class="card-top">
+        <h3>MCP Server Duplicate Detection UI <a class="anchor" href="#mcp-server-duplicate-detection-ui">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When a connector-type MCP server would duplicate an already-configured server, Claude Code now shows it as "hidden" with actionable guidance on how to switch to the alternative.</p>
+<div class="blabel">Details</div>
+<ul><li>Hidden servers display as <code>&lt;name&gt; · ○ hidden — same URL as your server '&lt;duplicateOf&gt;'</code></li><li>Depending on where the duplicate is configured, users see specific instructions:</li><li>Plugin servers: "To use this connector instead, disable the plugin server in /plugins"</li><li>Local/user/project config: "To use this connector instead: <code>claude mcp remove &lt;name&gt;</code>"</li><li>Dynamic (via <code>--mcp-config</code>): "To use this connector instead, drop it from your --mcp-config flag"</li><li>Enterprise/managed: "An admin-managed server takes precedence here"</li><li>Tracks <code>duplicateOf</code> and <code>duplicateOfScope</code> for each suppressed server</li></ul>
+<div class="blabel">Evidence</div>
+<p>Duplicate hint rendering (search for <code>"hidden \u2014 same URL as your server"</code>) and scope-based guidance (search for <code>"claude mcp remove"</code>, <code>"An admin-managed server takes precedence here"</code>)</p>
+    </article>
+    <article class="card" id="web-search-isolation-exemption-for-mcp-servers">
+      <div class="card-top">
+        <h3>Web Search Isolation Exemption for MCP Servers <a class="anchor" href="#web-search-isolation-exemption-for-mcp-servers">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Adds a new <code>webSearchIsolationExemptMcpServers</code> init config field that lets specific MCP servers bypass the web search / connector isolation latch.</p>
+<div class="blabel">Details</div>
+<ul><li>Accepts an array of MCP server names</li><li>These servers are unioned with the built-in infrastructure server list, so they remain accessible even when the isolation latch is engaged</li><li>Marked as <code>@internal</code> — intended for SDK/API integrators, not end-user configuration</li></ul>
+<div class="blabel">Evidence</div>
+<p>New schema field (search for <code>"webSearchIsolationExemptMcpServers"</code>)</p>
+    </article>
+    <article class="card" id="workspace-reserved-as-mcp-server-name">
+      <div class="card-top">
+        <h3>"workspace" Reserved as MCP Server Name <a class="anchor" href="#workspace-reserved-as-mcp-server-name">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The name <code>"workspace"</code> is now reserved and cannot be used when adding a custom MCP server.</p>
+<div class="blabel">Details</div>
+<ul><li>Attempting to add an MCP server named "workspace" will throw: <code>Cannot add MCP server "workspace": this name is reserved.</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>New reserved name check (search for <code>xeH = "workspace"</code> at line ~55807)</p>
+    </article>
+    <article class="card" id="ai-generated-session-titles">
+      <div class="card-top">
+        <h3>AI-Generated Session Titles <a class="anchor" href="#ai-generated-session-titles">#</a></h3>
+      </div>
+      <p>The "aiTitle" system, which generates session titles automatically, has been significantly expanded in this release. Sessions now track both a user-set <code>customTitle</code> and an auto-generated <code>aiTitle</code> separately. The AI title is persisted in the session journal, displayed in the resume picker, and used as the terminal title when no user-set title exists. The <code>/resume</code> list now shows sessions with AI-generated titles even if the user never set a custom title.</p>
+<div class="blabel">Evidence</div>
+<p>New <code>currentSessionAiTitle</code> field and <code>"type":"ai-title"</code> journal entries (search for <code>"ai-title"</code>, <code>"aiTitle"</code>)</p>
+    </article>
+    <article class="card" id="fast-mode-tag-in-input-box-border">
+      <div class="card-top">
+        <h3>Fast Mode Tag in Input Box Border <a class="anchor" href="#fast-mode-tag-in-input-box-border">#</a></h3>
+      </div>
+      <p>The input box border now displays a mode indicator tag (e.g. the model name and <code>/fast</code> toggle state) inline in the top-right corner of the border, replacing the previous approach. This is rendered by the new <code>OZ5</code> component.</p>
+<div class="blabel">Evidence</div>
+<p>New border tag component (search for <code>fastModeTag</code> in the <code>OZ5</code> function at line ~629655)</p>
+    </article>
+    <article class="card" id="reduced-opus-4-7-image-resolution-limit">
+      <div class="card-top">
+        <h3>Reduced Opus 4.7 Image Resolution Limit <a class="anchor" href="#reduced-opus-4-7-image-resolution-limit">#</a></h3>
+      </div>
+      <p>The maximum image dimension for <code>claude-opus-4-7</code> has been reduced from 2576×2576 to 2000×2000 pixels, which may reduce token usage for image-heavy conversations.</p>
+<div class="blabel">Evidence</div>
+<p>Changed constant (search for <code>maxWidth: 2000, maxHeight: 2000</code>)</p>
+    </article>
+    <article class="card" id="improved-mcp-oauth-error-recovery">
+      <div class="card-top">
+        <h3>Improved MCP OAuth Error Recovery <a class="anchor" href="#improved-mcp-oauth-error-recovery">#</a></h3>
+      </div>
+      <p>When an OAuth <code>invalid_grant</code> error is encountered, Claude Code now proactively clears the stale refresh token from both the file-based and config-based credential stores, rather than leaving it to fail on every subsequent request. This should reduce repeated auth failures after token expiration.</p>
+<div class="blabel">Evidence</div>
+<p>New <code>invalid_grant</code> detection and token clearing (search for <code>"invalid_grant"</code>, <code>"tengu_oauth_refresh_token_cleared_invalid_grant"</code>, <code>"tengu_wif_user_oauth_refresh_token_cleared"</code>)</p>
+    </article>
+    <article class="card" id="improved-mcp-authentication-error-messages">
+      <div class="card-top">
+        <h3>Improved MCP Authentication Error Messages <a class="anchor" href="#improved-mcp-authentication-error-messages">#</a></h3>
+      </div>
+      <p>MCP server authentication error messages have been rewritten to be more specific and actionable:</p>
+<ul><li>Old: "Authentication successful, but server still requires authentication. You may need to manually restart Claude Code."</li><li>New: "Tried reconnecting, but &lt;name&gt; is still unauthorized. Make sure the browser sign-in completed, then try again from /mcp."</li><li>Old: "Authentication successful, but server reconnection failed."</li><li>New: "Tried reconnecting to &lt;name&gt;, but the connection failed. Restart Claude Code to retry."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Improved error messages (search for <code>"Tried reconnecting, but"</code>, <code>"Tried reconnecting to"</code>)</p>
+    </article>
+    <article class="card" id="background-worker-crash-visibility">
+      <div class="card-top">
+        <h3>Background Worker Crash Visibility <a class="anchor" href="#background-worker-crash-visibility">#</a></h3>
+      </div>
+      <p>When a background worker crashes and is respawning, a visible message is now written to the worker's output stream: <code>[worker crashed (&lt;reason&gt;) — respawning…]</code>. Previously, crashes were silent from the user's perspective.</p>
+<div class="blabel">Evidence</div>
+<p>New crash notification (search for <code>"[worker crashed ("</code>)</p>
+    </article>
+    <article class="card" id="background-worker-respawn-with-session-continuity">
+      <div class="card-top">
+        <h3>Background Worker Respawn with Session Continuity <a class="anchor" href="#background-worker-respawn-with-session-continuity">#</a></h3>
+      </div>
+      <p>Background workers now track a <code>resumeSessionId</code> separately from <code>sessionId</code>, allowing a respawned worker to resume the correct session even if internal state has been updated. The respawn flag list is also persisted and restored on crash recovery, ensuring workers re-launch with the correct CLI flags.</p>
+<div class="blabel">Evidence</div>
+<p>New <code>resumeSessionId</code> field (search for <code>"resumeSessionId"</code>) and flag persistence (search for <code>"respawnFlags"</code>)</p>
+    </article>
+    <article class="card" id="piped-stdin-size-warning">
+      <div class="card-top">
+        <h3>Piped Stdin Size Warning <a class="anchor" href="#piped-stdin-size-warning">#</a></h3>
+      </div>
+      <p>When piping content into Claude Code, if the input exceeds the internal limit (1 MB), the excess is now silently truncated and a warning is printed to stderr: <code>warning: piped stdin exceeds &lt;limit&gt; bytes, truncated</code>. Previously, very large piped inputs could cause issues.</p>
+<div class="blabel">Evidence</div>
+<p>New stdin truncation handler (search for <code>"piped stdin exceeds"</code>)</p>
+    </article>
+    <article class="card" id="improved-docker-command-safety-checks">
+      <div class="card-top">
+        <h3>Improved Docker Command Safety Checks <a class="anchor" href="#improved-docker-command-safety-checks">#</a></h3>
+      </div>
+      <p>Docker <code>logs</code> and <code>inspect</code> commands now check for dangerous global flags like <code>--host</code>, <code>--context</code>, <code>--tlscacert</code>, <code>--tlscert</code>, and <code>--tlskey</code> that could redirect the Docker daemon connection. These flags will now trigger permission prompts.</p>
+<div class="blabel">Evidence</div>
+<p>New Docker global flag checking (search for <code>"--tlscacert"</code>)</p>
+    </article>
+    <article class="card" id="improved-find-command-safety-checks">
+      <div class="card-top">
+        <h3>Improved <code>find</code> Command Safety Checks <a class="anchor" href="#improved-find-command-safety-checks">#</a></h3>
+      </div>
+      <p>The <code>find</code> command's safe-flag list has been expanded to include <code>-D</code>, <code>-f</code>, <code>-flags</code>, <code>-Bnewer</code>, <code>-Btime</code>, <code>-Bmin</code>, <code>-files0-from</code>, and <code>-xattrname</code>. Additionally, the <code>test</code>/<code>[</code>/<code>[[</code> builtins now flag <code>-t</code> operands with non-numeric values as potentially dangerous, since bash/zsh can arithmetically evaluate identifiers that may trigger command execution.</p>
+<div class="blabel">Evidence</div>
+<p>Expanded find flags (search for <code>"-files0-from"</code>, <code>"-xattrname"</code>) and test safety (search for <code>"operand is non-numeric"</code>)</p>
+    </article>
+    <article class="card" id="text-cursor-navigation-handles-placeholders">
+      <div class="card-top">
+        <h3>Text Cursor Navigation Handles Placeholders <a class="anchor" href="#text-cursor-navigation-handles-placeholders">#</a></h3>
+      </div>
+      <p>The text input cursor now correctly navigates around multi-character placeholder tokens like <code>[Pasted text #1]</code>, <code>[Image #1]</code>, and <code>[...Truncated text #1]</code> as atomic units. Word-movement commands (w, b, e in vim mode and Ctrl+arrows) skip over these placeholders rather than stepping through them character-by-character.</p>
+<div class="blabel">Evidence</div>
+<p>New placeholder-aware cursor movement (search for <code>"placeholderEndingAt"</code>, <code>"placeholderStartingAt"</code>, <code>"snapOutOfPlaceholder"</code>)</p>
+    </article>
+    <article class="card" id="certificate-validation-basicconstraints-check">
+      <div class="card-top">
+        <h3>Certificate Validation: basicConstraints Check <a class="anchor" href="#certificate-validation-basicconstraints-check">#</a></h3>
+      </div>
+      <p>TLS certificate validation now explicitly checks for the <code>basicConstraints</code> extension. Certificates missing this extension are rejected with: "Certificate is missing basicConstraints extension and cannot be used as a CA."</p>
+<div class="blabel">Evidence</div>
+<p>New validation check (search for <code>"Certificate is missing basicConstraints extension"</code>)</p>
+    </article>
+    <article class="card" id="plan-mode-prompt-consolidation">
+      <div class="card-top">
+        <h3>Plan Mode Prompt Consolidation <a class="anchor" href="#plan-mode-prompt-consolidation">#</a></h3>
+      </div>
+      <p>The three separate plan mode phase-4 prompt variants (controlled by <code>tengu_pewter_ledger</code> returning "trim", "cut", or "cap") have been removed. The feature flag <code>tengu_pewter_ledger</code> is no longer read. Plan mode now uses a single consolidated prompt.</p>
+<div class="blabel">Evidence</div>
+<p>Removed <code>A98()</code> function and <code>pU1</code>/<code>BU1</code>/<code>FU1</code> prompt variants (previously searched for <code>"tengu_pewter_ledger"</code> — now absent from v2.1.122)</p>
+    </article>
+    <article class="card" id="removed-loopautoenabled-setting">
+      <div class="card-top">
+        <h3>Removed <code>loopAutoEnabled</code> Setting <a class="anchor" href="#removed-loopautoenabled-setting">#</a></h3>
+      </div>
+      <p>The <code>loopAutoEnabled</code> user setting has been removed from the persisted settings list.</p>
+<div class="blabel">Evidence</div>
+<p>Removed from settings list (search for <code>"loopAutoEnabled"</code> — absent from v2.1.122)</p>
+    </article>
+    <article class="card" id="worker-init-put-retry-logic">
+      <div class="card-top">
+        <h3>Worker Init PUT Retry Logic <a class="anchor" href="#worker-init-put-retry-logic">#</a></h3>
+      </div>
+      <p>The daemon worker initialization PUT request now retries up to 3 times with exponential backoff (500ms base, max 30s) before giving up. Previously, a single failure would immediately throw. A telemetry event <code>tengu_bg_pty_unavailable</code> is logged if all retries are exhausted.</p>
+<div class="blabel">Evidence</div>
+<p>New retry logic in worker init (search for <code>"cli_worker_init_put_retries_exhausted"</code>)</p>
+    </article>
+    <article class="card" id="background-process-sigterm-escalation">
+      <div class="card-top">
+        <h3>Background Process SIGTERM Escalation <a class="anchor" href="#background-process-sigterm-escalation">#</a></h3>
+      </div>
+      <p>When killing a background shell process with SIGTERM, if the process doesn't exit within 5 seconds, it's now automatically escalated to SIGKILL. This prevents zombie processes from lingering indefinitely.</p>
+<div class="blabel">Evidence</div>
+<p>New SIGKILL escalation timeout in the pty manager (visible in the <code>yM8</code> structural change adding a 5000ms timeout for SIGTERM→SIGKILL escalation)</p>
+    </article>
+    <article class="card" id="api-request-detail-logging">
+      <div class="card-top">
+        <h3>API Request Detail Logging <a class="anchor" href="#api-request-detail-logging">#</a></h3>
+      </div>
+      <p>When verbose logging is enabled, Claude Code now logs detailed API request metadata including model, thinking config, output config, temperature, and beta flags as <code>[API REQUEST DETAIL]</code>.</p>
+<div class="blabel">Evidence</div>
+<p>New verbose logging (search for <code>"[API REQUEST DETAIL]"</code>)</p>
+    </article>
+    <article class="card" id="mcp-server-input-request-shows-task-id">
+      <div class="card-top">
+        <h3>MCP Server Input Request Shows Task ID <a class="anchor" href="#mcp-server-input-request-shows-task-id">#</a></h3>
+      </div>
+      <p>When an MCP server requests user input, the dialog title now includes a truncated task ID (e.g. <code>MCP server "foo" requests your input (task abc12345)</code>) to help distinguish between multiple concurrent requests.</p>
+<div class="blabel">Evidence</div>
+<p>Task ID in MCP input dialog (visible in <code>ZP5</code> structural change appending task ID to title)</p>
+    </article>
+    <article class="card" id="improved-url-pattern-matching-for-permissions">
+      <div class="card-top">
+        <h3>Improved URL Pattern Matching for Permissions <a class="anchor" href="#improved-url-pattern-matching-for-permissions">#</a></h3>
+      </div>
+      <p>The URL pattern matching system used for web fetch permissions has been rewritten with more robust handling. It now uses a placeholder-based approach for wildcards, properly handles protocols, ports, and paths, and falls back to regex matching when the pattern isn't a valid URL.</p>
+<div class="blabel">Evidence</div>
+<p>New <code>WY$</code> function with comprehensive URL matching (search for <code>"zzwildcard"</code>)</p>
+    </article>
+    <article class="card" id="caps-lock-tooltip">
+      <div class="card-top">
+        <h3>"Caps Lock" Tooltip <a class="anchor" href="#caps-lock-tooltip">#</a></h3>
+      </div>
+      <p>A new informational string "Caps Lock is not delivered to terminal applications" has been added, likely shown as a tooltip or hint when relevant.</p>
+<div class="blabel">Evidence</div>
+<p>New string (search for <code>"Caps Lock is not delivered"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed an issue where <code>exit</code>/<code>quit</code> typed in bash reply mode would incorrectly trigger the session exit handler. The check now only applies when in prompt mode, not bash mode. (search for <code>"bash" &amp;&amp; !v &amp;&amp; f38.includes</code>)</li></ul>
+<ul><li>Fixed phantom parent UUID handling during transcript persistence — when a <code>sourceToolAssistantUUID</code> references a UUID not present in the current write set, it's now detected and logged via <code>tengu_phantom_parent_write</code> telemetry rather than silently creating a dangling reference. (search for <code>"tengu_phantom_parent_write"</code>)</li></ul>
+<ul><li>Fixed transcript walk to detect and gracefully handle phantom parent references that point to non-existent slots, logging <code>tengu_transcript_phantom_parent</code> telemetry and falling back to the full transcript instead of potentially producing an incomplete view. (search for <code>"tengu_transcript_phantom_parent"</code>)</li></ul>
+<ul><li>Fixed the <code>/branch</code> (fork) operation to respect the actual message ordering from the current session, ensuring forked sessions preserve the correct conversation flow. (search for <code>GQ7</code> which now takes messages as a parameter)</li></ul>
+<ul><li>Fixed RSA signature verification to enforce minimum PKCS#1 v1.5 padding length (8 bytes), preventing potential signature forgery attacks. Added <code>_skipPaddingChecks</code> option for backward compatibility. (search for <code>"_skipPaddingChecks"</code>)</li></ul>
+<ul><li>Fixed ed25519 signature verification to check scalar values are within the valid range, rejecting signatures with out-of-range S values. (search for <code>"Jg1"</code> in the ed25519 verification path)</li></ul>
+<ul><li>Fixed BigInteger <code>modInverse</code> to handle zero input correctly, returning <code>ZERO</code> instead of potentially entering an infinite loop. (search for <code>"this.signum() == 0"</code> in the <code>sp_</code> function)</li></ul>
+<ul><li>Fixed semver prerelease identifier parsing to check numeric identifiers before non-numeric, matching the correct semver specification order. (search for <code>"PRERELEASEIDENTIFIER"</code> in the structural change)</li></ul>
+    </article>
+    <article class="card" id="investigate-first-system-prompt-gradual-rollout">
+      <div class="card-top">
+        <h3>"Investigate First" System Prompt [Gradual Rollout] <a class="anchor" href="#investigate-first-system-prompt-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new system prompt injection that instructs Claude to investigate before asking clarifying questions, gated behind the <code>tengu_slate_harrier</code> feature flag and configurable via <code>CLAUDE_CODE_INVESTIGATE_FIRST</code> environment variable.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_slate_harrier</code> (defaults to <code>"off"</code>). Only applies when using <code>claude-opus-4-7</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Two modes: <code>"additive"</code> (adds investigation guidance to the existing "executing actions with care" prompt) and <code>"compact"</code> (uses a shorter version of the actions prompt plus investigation guidance)</li><li>In both modes, adds: "Asking the user a clarifying question has a cost: it interrupts them... Before asking, spend up to a minute on read-only investigation (grep the codebase, check docs, search memory) so your question is specific."</li><li>Can be overridden via <code>CLAUDE_CODE_INVESTIGATE_FIRST=additive|compact|off</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Feature flag check (search for <code>"tengu_slate_harrier"</code>) and env var (search for <code>"CLAUDE_CODE_INVESTIGATE_FIRST"</code>)</p>
+    </article>
+    <article class="card" id="new-init-flow-gradual-rollout">
+      <div class="card-top">
+        <h3>New Init Flow [Gradual Rollout] <a class="anchor" href="#new-init-flow-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new initialization/onboarding flow, controlled by both the <code>CLAUDE_CODE_NEW_INIT</code> environment variable and the new <code>tengu_new_init</code> feature flag.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_new_init</code> (defaults to <code>false</code>).</p>
+<div class="blabel">Details</div>
+<ul><li>The flag was previously only checkable via env var; now it can also be server-controlled via the <code>tengu_new_init</code> feature flag</li><li>The actual new init experience is not yet visible in this diff</li></ul>
+<div class="blabel">Evidence</div>
+<p>Dual-check function (search for <code>"CLAUDE_CODE_NEW_INIT"</code> and <code>"tengu_new_init"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The <code>--autocompact</code> flag string now appears in the codebase, suggesting auto-compaction may be controllable as a CLI flag in the future. The implementation appears to be connected to existing compaction infrastructure with <code>CLAUDE_AUTOCOMPACT_PCT_OVERRIDE</code> and <code>CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE</code> environment variables.</li><li>The <code>loopAutoEnabled</code> user setting has been removed. If you relied on this setting, it no longer has any effect.</li><li>The Opus 4.7 image resolution limit change from 2576px to 2000px may affect workflows that rely on high-resolution image analysis.</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

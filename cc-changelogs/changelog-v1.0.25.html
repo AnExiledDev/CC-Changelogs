@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.25 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.25."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.25</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.25</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.24 → v1.0.25</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.25 Changelog</p>
+    </article>
+    <article class="card" id="enhanced-terminal-support">
+      <div class="card-top">
+        <h3>Enhanced Terminal Support <a class="anchor" href="#enhanced-terminal-support">#</a></h3>
+      </div>
+      <ul><li><strong>Improved Ghostty terminal compatibility</strong>: Added specific spinner character set for Ghostty terminal (<code>TERM=xterm-ghostty</code>), providing better visual feedback during operations</li></ul>
+    </article>
+    <article class="card" id="workspace-permissions-tab">
+      <div class="card-top">
+        <h3>Workspace Permissions Tab <a class="anchor" href="#workspace-permissions-tab">#</a></h3>
+      </div>
+      <ul><li><strong>New "Workspace" permissions tab</strong>: Added alongside the existing "Allow" and "Deny" tabs in the permissions interface</li><li>Allows users to manage which directories Claude can access</li><li>Provides granular control over file system access permissions</li><li>Navigate between tabs using Tab or arrow keys</li></ul>
+    </article>
+    <article class="card" id="directory-management-in-permissions">
+      <div class="card-top">
+        <h3>️ Directory Management in Permissions <a class="anchor" href="#directory-management-in-permissions">#</a></h3>
+      </div>
+      <ul><li><strong>Add directories to workspace</strong>: New interactive flow to add directories that Claude can read and edit</li><li>Access via the Workspace tab in permissions</li><li>Enter directory paths interactively</li><li>Clear feedback when directories are added or removed</li></ul>
+<ul><li><strong>Remove directories from workspace</strong>: Easily remove previously added directories</li><li>Visual confirmation dialog before removal</li><li>Shows which directory will be removed from Claude's access</li></ul>
+    </article>
+    <article class="card" id="improved-path-configuration">
+      <div class="card-top">
+        <h3>️ Improved PATH Configuration <a class="anchor" href="#improved-path-configuration">#</a></h3>
+      </div>
+      <ul><li><strong>Better PATH setup for ~/.local/bin</strong>: Enhanced the installation process to properly configure PATH</li><li>Detects if ~/.local/bin is already in PATH</li><li>Handles cases where PATH is configured but not loaded in current shell</li><li>Removes old <code>alias claude</code> entries automatically</li><li>Provides clearer instructions for shell configuration</li><li>Example output: "Added ~/.local/bin to PATH in ~/.zshrc. You may need to restart your shell or run: source ~/.zshrc"</li></ul>
+    </article>
+    <article class="card" id="custom-command-enhancements">
+      <div class="card-top">
+        <h3>Custom Command Enhancements <a class="anchor" href="#custom-command-enhancements">#</a></h3>
+      </div>
+      <ul><li><strong>Frontmatter parsing</strong>: Custom commands now support YAML-style frontmatter in markdown files</li></ul>
+<pre><code>  title: My Command
+  description: Does something useful
+  
+  Command content here...</code></pre>
+<ul><li><strong>Inline bash execution</strong>: Execute bash commands directly within custom command markdown</li><li>Block syntax: <code> </code>`<code>!echo "Hello from command"</code>`<code> </code></li><li>Inline syntax: `<code> !</code>date<code> </code>`</li><li>Commands are validated and executed with proper permissions</li><li>Output is inserted directly into the rendered content</li></ul>
+    </article>
+    <article class="card" id="better-output-formatting">
+      <div class="card-top">
+        <h3>Better Output Formatting <a class="anchor" href="#better-output-formatting">#</a></h3>
+      </div>
+      <ul><li><strong>Improved line wrapping</strong>: Long lines in output are now properly wrapped at terminal width boundaries</li><li><strong>Enhanced truncation display</strong>: When output is truncated, shows more accurate line counts</li></ul>
+    </article>
+    <article class="card" id="terminal-reset">
+      <div class="card-top">
+        <h3>Terminal Reset <a class="anchor" href="#terminal-reset">#</a></h3>
+      </div>
+      <ul><li>Fixed incomplete terminal reset sequence by adding proper termination (<code>\x1B[0m\x1B(B</code>)</li></ul>
+    </article>
+    <article class="card" id="version-parsing">
+      <div class="card-top">
+        <h3>Version Parsing <a class="anchor" href="#version-parsing">#</a></h3>
+      </div>
+      <ul><li>Added robust version string parsing to handle edge cases in version comparisons</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>️ Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>Modularized color inversion logic for better theme support</li><li>Improved git repository root detection with fallback mechanisms</li><li>Enhanced custom command discovery to check both global and project-local directories</li></ul>
+    </article>
+    <article class="card" id="analytics">
+      <div class="card-top">
+        <h3>Analytics <a class="anchor" href="#analytics">#</a></h3>
+      </div>
+      <ul><li>Added "command" to tracked context types for better usage insights</li></ul>
+    </article>
+    <article class="card" id="managing-workspace-directories">
+      <div class="card-top">
+        <h3>Managing Workspace Directories <a class="anchor" href="#managing-workspace-directories">#</a></h3>
+      </div>
+      <pre><code># In Claude Code, navigate to permissions
+# Select the &quot;Workspace&quot; tab
+# Choose &quot;Add directory...&quot;
+# Enter: /home/user/my-project
+# Claude can now read and edit files in that directory</code></pre>
+    </article>
+    <article class="card" id="using-custom-commands-with-bash-execution">
+      <div class="card-top">
+        <h3>Using Custom Commands with Bash Execution <a class="anchor" href="#using-custom-commands-with-bash-execution">#</a></h3>
+      </div>
+      <p>Create a custom command file with inline bash:</p>
+<pre><code>title: System Info
+description: Shows current system information
+
+Current user: !`whoami`
+Current directory: !`pwd`
+
+System details:</code></pre>
+<p>uname -a df -h</p>
+<pre><code></code></pre>
+<p>The bash commands will execute when the custom command is invoked, with output inserted into the response.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

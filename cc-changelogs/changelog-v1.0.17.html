@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.17 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.17."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.17</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.17</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.16 → v1.0.17</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.17 Changelog</p>
+    </article>
+    <article class="card" id="enhanced-status-command">
+      <div class="card-top">
+        <h3>Enhanced Status Command <a class="anchor" href="#enhanced-status-command">#</a></h3>
+      </div>
+      <p>The <code>claude status</code> command has been refactored to use React hooks for better performance and reliability. The status display now loads asynchronously and updates dynamically as information becomes available.</p>
+    </article>
+    <article class="card" id="simplified-update-process">
+      <div class="card-top">
+        <h3>Simplified Update Process <a class="anchor" href="#simplified-update-process">#</a></h3>
+      </div>
+      <p>The automatic update and fallback mechanism has been streamlined. The launcher script (claude.sh) has been updated to version 0.0.7 with cleaner logic for managing Claude installations.</p>
+    </article>
+    <article class="card" id="state-management-improvements">
+      <div class="card-top">
+        <h3>State Management Improvements <a class="anchor" href="#state-management-improvements">#</a></h3>
+      </div>
+      <p>The application now uses a centralized state management hook (<code>k3()</code>) instead of separate state calls, providing more consistent behavior across the interface.</p>
+    </article>
+    <article class="card" id="mcp-model-context-protocol-integration">
+      <div class="card-top">
+        <h3>MCP (Model Context Protocol) Integration <a class="anchor" href="#mcp-model-context-protocol-integration">#</a></h3>
+      </div>
+      <ul><li>MCP clients, tools, commands, and resources are now managed through a centralized state object</li><li>Better integration with the global state management system</li><li>More efficient handling of MCP client connections</li></ul>
+    </article>
+    <article class="card" id="performance-optimizations">
+      <div class="card-top">
+        <h3>Performance Optimizations <a class="anchor" href="#performance-optimizations">#</a></h3>
+      </div>
+      <ul><li>Replaced synchronous status section generation with asynchronous loading</li><li>Status sections now render progressively as data becomes available</li><li>Reduced unnecessary file system operations during launcher setup</li></ul>
+    </article>
+    <article class="card" id="code-quality">
+      <div class="card-top">
+        <h3>Code Quality <a class="anchor" href="#code-quality">#</a></h3>
+      </div>
+      <ul><li>Removed redundant symlink management code (<code>dH5</code> function and related logic)</li><li>Simplified the launcher installation process by removing the "known-good" and "latest" symlink complexity</li><li>Better separation of concerns in the main UI component</li></ul>
+    </article>
+    <article class="card" id="import-changes">
+      <div class="card-top">
+        <h3>Import Changes <a class="anchor" href="#import-changes">#</a></h3>
+      </div>
+      <ul><li>Added focused import for <code>cwd</code> from <code>node:process</code> instead of importing the entire module</li><li>Changed stream import to use named import <code>PassThrough</code> for better tree-shaking</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential race conditions in status display updates</li><li>Improved error handling in the launcher setup process</li><li>Better cleanup of temporary files and symlinks</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Version Updates</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="version-updates">
+      <ul><li>Claude CLI launcher script updated from v0.0.6 to v0.0.7</li><li>Application version bumped to 1.0.17</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

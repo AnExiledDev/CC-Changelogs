@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.51 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.51."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.51</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.51</span></h1>
+<p class="sub">This release introduces the <code>/commit-push-pr</code> command for one-step PR creation with Claude Code attribution stats, a substantially rebuilt Remote Control bridge for controlling CLI sessions from claude.ai/code, enterprise MDM (Mobile Device Management) settings support on macOS and Windows, and significantly expanded auto-approve safe command lists for Docker Compose, ripgrep, pyright, and more.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.50 → v2.1.51</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">14 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="commit-push-pr-command">
+      <div class="card-top">
+        <h3><code>/commit-push-pr</code> Command <a class="anchor" href="#commit-push-pr-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new built-in slash command that creates a branch, commits staged changes, pushes to origin, and opens (or updates) a pull request — all in a single action.</p>
+<div class="blabel">Usage</div>
+<pre><code># Inside a Claude Code session:
+/commit-push-pr
+/commit-push-pr add reviewer @teammate</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Automatically detects the base branch and creates a feature branch using your username prefix</li><li>Drafts a commit message following your repository's commit style</li><li>Creates or updates a PR with summary, test plan, and changelog sections</li><li>Includes enhanced PR attribution: <code>🤖 Generated with Claude Code (X% N-shotted by claude-model-name, M memories recalled)</code></li><li>If CLAUDE.md references Slack channels, optionally posts the PR URL via Slack MCP tools</li><li>Auto-approves the git and GitHub CLI commands needed (no manual permission prompts)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill definition with <code>name: "commit-push-pr"</code> and <code>description: "Commit, push, and open a PR"</code> (search for <code>"/commit-push-pr"</code>)</p>
+    </article>
+    <article class="card" id="worktreeinclude-file-support">
+      <div class="card-top">
+        <h3><code>.worktreeinclude</code> File Support <a class="anchor" href="#worktreeinclude-file-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new configuration file that specifies gitignored files to copy into git worktrees, solving the problem of missing config files or local secrets in worktree-based workflows.</p>
+<div class="blabel">Usage</div>
+<pre><code># Create .worktreeinclude in your project root
+# List gitignored files/patterns that should be copied to worktrees:
+.env
+.env.local
+config/local.json</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Placed at the project root alongside <code>.gitignore</code></li><li>When a worktree is created, files matching <code>.worktreeinclude</code> patterns that are also gitignored are automatically copied from the main working directory into the worktree</li><li>Blank lines and lines starting with <code>#</code> are treated as comments</li><li>Uses <code>git ls-files --others --ignored --exclude-from=.worktreeinclude</code> to identify matching files</li></ul>
+<div class="blabel">Evidence</div>
+<p>New function <code>lc4</code> reads <code>.worktreeinclude</code> and copies files (search for <code>".worktreeinclude"</code>)</p>
+    </article>
+    <article class="card" id="enterprise-mdm-settings-support">
+      <div class="card-top">
+        <h3>Enterprise MDM Settings Support <a class="anchor" href="#enterprise-mdm-settings-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code can now read enterprise-managed configuration policies from platform-native MDM (Mobile Device Management) sources, enabling IT administrators to enforce organizational settings.</p>
+<div class="blabel">Details</div>
+<ul><li>macOS: Reads managed preferences from <code>/Library/Managed Preferences/com.anthropic.claudecode.plist</code> (device-level and per-user)</li><li>Windows: Reads registry keys from <code>HKLM\SOFTWARE\Policies\ClaudeCode</code> and <code>HKCU\SOFTWARE\Policies\ClaudeCode</code></li><li>Falls back to file-based managed settings (<code>managed-settings.json</code>) on other platforms</li><li>Polls for MDM settings changes every 30 minutes and applies updates live</li><li>Settings are parsed through the same Zod schema validation as regular settings</li></ul>
+<div class="blabel">Evidence</div>
+<p>Domain identifier <code>"com.anthropic.claudecode"</code>, registry paths <code>"HKLM\\SOFTWARE\\Policies\\ClaudeCode"</code>, function <code>pE1()</code> reads platform-specific MDM sources (search for <code>"com.anthropic.claudecode"</code>)</p>
+    </article>
+    <article class="card" id="expanded-safe-command-auto-approval">
+      <div class="card-top">
+        <h3>Expanded Safe Command Auto-Approval <a class="anchor" href="#expanded-safe-command-auto-approval">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The bash permission classifier now auto-approves significantly more read-only commands without prompting the user.</p>
+<div class="blabel">Details</div>
+<ul><li>Docker Compose: <code>docker compose ps</code>, <code>docker compose logs</code>, <code>docker compose top</code>, <code>docker compose config</code></li><li>Docker: <code>docker logs</code>, <code>docker inspect</code> (with safe flag validation)</li><li>Ripgrep (<code>rg</code>): comprehensive flag support for search operations</li><li>Pyright: type-checking with safe flags (blocks <code>--watch</code> mode)</li><li>Package managers: <code>npm list</code>, <code>pip list</code> with safe flags</li><li>Version checks: <code>node -v</code>, <code>npm -v</code>, <code>python --version</code>, <code>python3 --version</code></li><li>Python removed from the "suspicious command" blocklist — <code>python</code> and <code>python3</code> are no longer flagged</li></ul>
+<div class="blabel">Evidence</div>
+<p>New safe command definitions for <code>"docker compose ps"</code>, <code>"docker compose logs"</code>, <code>rg</code>, <code>pyright</code>, <code>"npm list"</code>, <code>"pip list"</code> (search for <code>"docker compose ps"</code>)</p>
+    </article>
+    <article class="card" id="brace-expansion-security-check">
+      <div class="card-top">
+        <h3>Brace Expansion Security Check <a class="anchor" href="#brace-expansion-security-check">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Commands containing shell brace expansion patterns (e.g., <code>{a,b}</code> or <code>{1..5}</code>) are now detected and flagged, preventing potential command injection through expansion tricks.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects balanced brace pairs containing commas or range operators (<code>..</code>)</li><li>Properly handles nested braces and escaped characters</li><li>Blocks commands where brace expansion could alter command parsing</li></ul>
+<div class="blabel">Evidence</div>
+<p>New function <code>ve9()</code> performs brace detection; error message <code>"Command contains brace expansion that could alter command parsing"</code> (search for <code>"brace expansion"</code>)</p>
+    </article>
+    <article class="card" id="remote-control-bridge-overhaul">
+      <div class="card-top">
+        <h3>Remote Control Bridge Overhaul <a class="anchor" href="#remote-control-bridge-overhaul">#</a></h3>
+      </div>
+      <p>The Remote Control feature (<code>/remote-control</code>) has been substantially rebuilt with a full bridge architecture for controlling CLI sessions from claude.ai/code. The feature flag was changed from <code>tengu_worktree_mode</code> to <code>tengu_ccr_bridge</code>, and the implementation now includes:</p>
+<ul><li>Full work-polling loop with session spawn/teardown lifecycle</li><li>WebSocket-based session ingress for real-time communication</li><li>QR code display (togglable with spacebar) for quick mobile connection</li><li>Automatic OAuth token refresh with JWT expiry tracking</li><li>Environment registration, deregistration, and re-registration on failure</li><li>Reconnection with exponential backoff and error budget</li><li>Session activity tracking (tool starts, text output, results)</li><li><code>remoteControlAtStartup</code> setting to auto-enable Remote Control for all sessions</li><li><code>allow_remote_sessions</code> policy for organization-level control</li></ul>
+<div class="blabel">Evidence</div>
+<p>Feature flag <code>tengu_ccr_bridge</code>, command definition <code>name: "remote-control"</code> with aliases <code>["rc"]</code> (search for <code>"tengu_ccr_bridge"</code>)</p>
+    </article>
+    <article class="card" id="llm-based-memory-retrieval">
+      <div class="card-top">
+        <h3>LLM-Based Memory Retrieval <a class="anchor" href="#llm-based-memory-retrieval">#</a></h3>
+      </div>
+      <p>The memory system has been redesigned to use LLM-based retrieval instead of grep-based keyword search. Previously, memories were found by extracting search terms and grep-matching against markdown files. Now:</p>
+<ul><li>Memories are listed with filenames and descriptions</li><li>An LLM selects the most relevant memories (up to 5) based on the user's query</li><li>Memories already read via the <code>Read</code> tool in the current conversation are filtered out to avoid duplication</li><li>Memory files support a <code>description</code> frontmatter field for better retrieval</li></ul>
+<div class="blabel">Evidence</div>
+<p>Selection prompt <code>"You are selecting relevant memories for a user's query..."</code> and function <code>x8q</code> for deduplication (search for <code>"You are selecting relevant memories"</code>)</p>
+    </article>
+    <article class="card" id="mcp-oauth-improvements">
+      <div class="card-top">
+        <h3>MCP OAuth Improvements <a class="anchor" href="#mcp-oauth-improvements">#</a></h3>
+      </div>
+      <ul><li>Step-up scopes are now persisted across auth revocations, preventing users from having to re-authorize expanded permissions</li><li>OAuth discovery state (authorization server URL, resource metadata) is cached to avoid repeated discovery requests</li><li>New <code>skipBrowserOpen</code> option for headless environments — logs the authorization URL instead of opening a browser</li><li><code>preserveStepUpState</code> flag during MCP authentication prevents loss of elevated permissions</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>"Persisted step-up scope:"</code> log message, <code>"Saving discovery state"</code> log message (search for <code>"Persisted step-up scope"</code>)</p>
+    </article>
+    <article class="card" id="websocket-transport-enhancements">
+      <div class="card-top">
+        <h3>WebSocket Transport Enhancements <a class="anchor" href="#websocket-transport-enhancements">#</a></h3>
+      </div>
+      <ul><li>New <code>autoReconnect</code> option to disable automatic reconnection (useful for bridge sessions that manage their own lifecycle)</li><li><code>onConnect</code> callback fires when connection is established</li><li><code>getStateLabel()</code> exposes current connection state</li><li>Close callbacks now receive the WebSocket close code for better error handling</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>autoReconnect</code> parameter in constructor, new <code>setOnConnect</code> and <code>getStateLabel</code> methods (search for <code>"autoReconnect"</code>)</p>
+    </article>
+    <article class="card" id="model-selector-version-hints">
+      <div class="card-top">
+        <h3>Model Selector Version Hints <a class="anchor" href="#model-selector-version-hints">#</a></h3>
+      </div>
+      <p>When selecting a model in the CLI, if you have a pinned older model version (e.g., <code>claude-sonnet-4-5</code>), the selector now shows a helpful hint like "Newer version available · select Sonnet for claude-sonnet-4-6", guiding you to the latest version.</p>
+<div class="blabel">Evidence</div>
+<p>Function <code>o_z</code> returns <code>description: "Newer version available · select ${alias} for ${currentVersionName}"</code> (search for <code>"Newer version available"</code>)</p>
+    </article>
+    <article class="card" id="plugin-registry-and-version-support">
+      <div class="card-top">
+        <h3>Plugin Registry and Version Support <a class="anchor" href="#plugin-registry-and-version-support">#</a></h3>
+      </div>
+      <p>npm-sourced plugins now accept <code>--registry</code> and <code>--version</code> options, allowing installation from private registries or pinning to specific versions.</p>
+<div class="blabel">Evidence</div>
+<p>Plugin install function now passes <code>{ registry: A.registry, version: A.version }</code> (search for <code>"--registry"</code>)</p>
+    </article>
+    <article class="card" id="workspace-trust-enforcement-for-hooks">
+      <div class="card-top">
+        <h3>Workspace Trust Enforcement for Hooks <a class="anchor" href="#workspace-trust-enforcement-for-hooks">#</a></h3>
+      </div>
+      <p>StatusLine and FileSuggestion hook commands now verify workspace trust before executing. If the workspace trust dialog hasn't been accepted, these hooks are skipped with a warning, preventing untrusted workspaces from running arbitrary hook commands.</p>
+<div class="blabel">Evidence</div>
+<p><code>"Skipping StatusLine command execution - workspace trust not accepted"</code> and <code>"Skipping FileSuggestion command execution - workspace trust not accepted"</code> (search for <code>"workspace trust not accepted"</code>)</p>
+    </article>
+    <article class="card" id="vim-mode-esc-fix">
+      <div class="card-top">
+        <h3>Vim Mode ESC Fix <a class="anchor" href="#vim-mode-esc-fix">#</a></h3>
+      </div>
+      <p>Pressing Escape in Vim NORMAL mode now properly resets the command state to idle, fixing cases where partial command sequences could leave the input in an unexpected state.</p>
+<div class="blabel">Evidence</div>
+<p>New condition <code>if (M.escape &amp;&amp; W.mode === "NORMAL")</code> resets to <code>{ mode: "NORMAL", command: { type: "idle" } }</code> (search for <code>"NORMAL"</code> in the Vim handler)</p>
+    </article>
+    <article class="card" id="duplicate-permission-response-handling">
+      <div class="card-top">
+        <h3>Duplicate Permission Response Handling <a class="anchor" href="#duplicate-permission-response-handling">#</a></h3>
+      </div>
+      <p>The structured transport now tracks resolved tool-use IDs and silently ignores duplicate <code>control_response</code> messages, preventing race conditions where a late-arriving permission response could cause errors.</p>
+<div class="blabel">Evidence</div>
+<p><code>"Ignoring duplicate control_response for already-resolved toolUseID="</code> (search for <code>"Ignoring duplicate control_response"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed notification content rendering crash when <code>content</code> is not a string — now returns <code>null</code> gracefully instead of attempting to render non-string content (search for <code>"typeof $ !== \"string\""</code>)</li><li>Removed the "Denied by auto mode classifier" banner that previously displayed when permissions were auto-denied, reducing UI noise</li><li>Permission rule normalization now properly trims and normalizes stored rules when checking against new requests, preventing duplicate or stale rules (search for <code>"r5(nX(j))"</code>)</li><li>HTTP hooks now properly skip when conditions aren't met instead of potentially erroring (search for <code>"Skipping HTTP hook"</code>)</li></ul>
+    </article>
+    <article class="card" id="smart-tool-deferral-gradual-rollout">
+      <div class="card-top">
+        <h3>Smart Tool Deferral [Gradual Rollout] <a class="anchor" href="#smart-tool-deferral-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>An intelligent tool deferral system that tracks your tool usage patterns and only defers tools you haven't used recently, keeping frequently-used tools immediately available.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged behind <code>tengu_coral_whistle</code> (default: <code>true</code>)</p>
+<div class="blabel">Details</div>
+<ul><li>Tracks tool usage count and last-used timestamp in config (<code>toolUsage</code>)</li><li>Uses a 7-day half-life decay function to compute a "recency-weighted usage score"</li><li>Tools below the threshold are deferred (loaded on demand via ToolSearch)</li><li>MCP tools are always deferred regardless of this flag</li><li>When enabled, the <code>shouldDefer</code> flag on a tool triggers the usage-based check</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>tengu_coral_whistle</code> feature flag, functions <code>h84</code> (track usage), <code>I84</code> (compute score with decay), <code>b84</code> (check threshold) (search for <code>"tengu_coral_whistle"</code>)</p>
+    </article>
+    <article class="card" id="multiple-stubbed-commands-in-development">
+      <div class="card-top">
+        <h3>Multiple Stubbed Commands [In Development] <a class="anchor" href="#multiple-stubbed-commands-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>Several new slash command slots have been added as stubs (<code>isEnabled: () =&gt; !1, isHidden: !0</code>), indicating upcoming features. At least 15 new stub commands were added in this version, suggesting significant new functionality in the pipeline.</p>
+<div class="blabel">Evidence</div>
+<p>Multiple <code>{ isEnabled: () =&gt; !1, isHidden: !0, name: "stub" }</code> definitions throughout the added code</p>
+    </article>
+    <article class="card" id="built-in-claude-api-agent-sdk-skill-in-development">
+      <div class="card-top">
+        <h3>Built-in Claude API / Agent SDK Skill [In Development] <a class="anchor" href="#built-in-claude-api-agent-sdk-skill-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A comprehensive built-in skill for helping users build LLM-powered applications with Claude, including code examples for Python, TypeScript, Java, Go, Ruby, C#, PHP, and cURL.</p>
+<div class="blabel">Status</div>
+<p>Added as part of the skills system, contains full documentation for:</p>
+<ul><li>All current Claude models (Opus 4.6, Sonnet 4.6, Haiku 4.5)</li><li>Adaptive thinking, effort parameter, compaction</li><li>Tool use, streaming, batches, files API</li><li>Agent SDK patterns</li><li>Language-specific SDK examples including a new C# SDK section</li></ul>
+<div class="blabel">Evidence</div>
+<p>Large string literal beginning with <code>"# Building LLM-Powered Applications with Claude"</code> (search for <code>"Building LLM-Powered Applications with Claude"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

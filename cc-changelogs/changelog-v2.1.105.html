@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.105 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.105."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.105</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.105</span></h1>
+<p class="sub">This release significantly overhauls the worktree experience (enter existing worktrees), adds a <code>/doctor</code> diagnostics screen with auto-fix, introduces plugin monitors for background event streaming, and rewrites the <code>/btw</code> panel with a "fork to session" action. Think Back / Year in Review has been removed. Internally, session memory compaction and time-based microcompaction are replaced by a new reactive compaction system (currently feature-flagged), and a session recap feature is shipping dark.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.104 → v2.1.105</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">23</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">8</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">11</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enter-existing-worktrees">
+      <div class="card-top">
+        <h3>Enter Existing Worktrees <a class="anchor" href="#enter-existing-worktrees">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>EnterWorktree</code> tool now accepts a <code>path</code> parameter to switch into an existing linked worktree instead of always creating a new one.</p>
+<div class="blabel">Usage</div>
+<pre><code>/worktree          # create a new worktree (existing behavior)
+# or, via the model:
+EnterWorktree(path: &quot;/path/to/existing-worktree&quot;)</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The <code>path</code> must be a registered worktree of the current repo (shown by <code>git worktree list</code>)</li><li>Mutually exclusive with the <code>name</code> parameter — specify one or the other</li><li>A safety check prevents removing worktrees that were entered (not created) by <code>EnterWorktree</code></li><li>The exit flow returns you to the original working directory</li><li>New UI messages: "Entering worktree", "Cleaning up worktree (no pending changes)…", "This session entered an existing worktree"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Worktree <code>path</code> parameter (search for <code>"Path to an existing worktree"</code>) and enter-existing safety check (search for <code>"enteredExisting"</code>)</p>
+    </article>
+    <article class="card" id="doctor-diagnostics-with-auto-fix">
+      <div class="card-top">
+        <h3>/doctor Diagnostics with Auto-Fix <a class="anchor" href="#doctor-diagnostics-with-auto-fix">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>/doctor</code> command has been rewritten as a comprehensive diagnostic dashboard with a new keybinding to auto-fix detected issues.</p>
+<div class="blabel">Usage</div>
+<pre><code>/doctor            # open diagnostics screen
+f                  # press f to ask Claude to fix the reported issues</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Displays installation info, ripgrep status, update channel, auto-update permissions</li><li>Aggregates warnings from multiple sources: CLAUDE.md context usage, agent parse errors, plugin errors, keybinding issues, MCP server health, unreachable permission rules, invalid settings, version locks</li><li>New tree-view UI with severity-colored messages and suggested fixes</li><li>"f to fix with Claude" sends the diagnostics output to a prompt: "Help me fix the issues reported by /doctor below"</li><li>Read-only checks run without confirmation; destructive fixes require explicit user approval</li></ul>
+<div class="blabel">Evidence</div>
+<p>Doctor command context (search for <code>"doctor:fix"</code>) and fix prompt (search for <code>"Help me fix the issues"</code>)</p>
+    </article>
+    <article class="card" id="plugin-monitors-background-watch-scripts">
+      <div class="card-top">
+        <h3>Plugin Monitors (Background Watch Scripts) <a class="anchor" href="#plugin-monitors-background-watch-scripts">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Plugins can now define persistent background monitors that stream events into the conversation as <code>&lt;task_notification&gt;</code> events.</p>
+<div class="blabel">Details</div>
+<ul><li>Define monitors in a <code>monitors/monitors.json</code> file at the plugin root, or inline via the <code>monitors</code> field in <code>plugin.json</code></li><li>Each monitor has: <code>id</code> (unique within plugin), <code>description</code>, <code>command</code> (shell command), and an <code>armTrigger</code></li><li>Arm triggers control when monitors start:</li><li><code>"always"</code> — arms at session start and on plugin reload</li><li><code>"on-skill-invoke:&lt;skill&gt;"</code> — arms the first time a specific skill is dispatched</li><li>Each stdout line from the monitor command becomes a notification; stderr goes to an output file</li><li>Monitor IDs are deduped to prevent duplicate spawns on reload</li><li>Session-scoped: monitors stop when the session ends</li></ul>
+<div class="blabel">Evidence</div>
+<p>Monitor schema (search for <code>"monitors.json"</code>) and arm triggers (search for <code>"on-skill-invoke"</code>)</p>
+    </article>
+    <article class="card" id="btw-fork-to-full-session">
+      <div class="card-top">
+        <h3>/btw Fork to Full Session <a class="anchor" href="#btw-fork-to-full-session">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>After receiving a <code>/btw</code> side-question response, press <code>f</code> to fork it into a full independent conversation session.</p>
+<div class="blabel">Usage</div>
+<pre><code>/btw what&#x27;s the syntax for Python decorators?
+# ... response appears ...
+# Press f to fork into a new session with this context
+# Press Esc to dismiss as before</code></pre>
+<div class="blabel">Details</div>
+<ul><li>New keybinding: <code>f to fork</code> shown in the <code>/btw</code> footer when a response is available</li><li>Forks the /btw context into a new session via <code>branchAndResume</code></li><li>Shows "Forking into a new session…" status while the fork is in progress</li><li>Previous /btw questions in the session are now shown as a collapsed history: "(+N earlier /btw)"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Fork keybinding (search for <code>"f to fork"</code>) and fork status (search for <code>"Forking into a new session"</code>)</p>
+    </article>
+    <article class="card" id="text-selection-keybindings">
+      <div class="card-top">
+        <h3>Text Selection Keybindings <a class="anchor" href="#text-selection-keybindings">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Six new keybinding actions for extending text selections in the input editor.</p>
+<div class="blabel">Details</div>
+<ul><li><code>selection:extendUp</code> — shift+up</li><li><code>selection:extendDown</code> — shift+down</li><li><code>selection:extendLeft</code> — shift+left</li><li><code>selection:extendRight</code> — shift+right</li><li><code>selection:extendLineStart</code> — shift+home</li><li><code>selection:extendLineEnd</code> — shift+end</li><li>These are customizable via <code>~/.claude/keybindings.json</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Selection keybindings (search for <code>"selection:extendDown"</code>)</p>
+    </article>
+    <article class="card" id="multi-repository-checkout-support">
+      <div class="card-top">
+        <h3>Multi-Repository Checkout Support <a class="anchor" href="#multi-repository-checkout-support">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Two new environment variables let you configure Claude Code for multi-repo development workflows.</p>
+<div class="blabel">Usage</div>
+<pre><code>export CLAUDE_CODE_REPO_CHECKOUTS=&#x27;{&quot;frontend&quot;: &quot;/home/user/frontend&quot;, &quot;backend&quot;: &quot;/home/user/backend&quot;}&#x27;
+export CLAUDE_CODE_BASE_REFS=&#x27;{&quot;frontend&quot;: &quot;origin/main&quot;, &quot;backend&quot;: &quot;origin/develop&quot;}&#x27;
+claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>CLAUDE_CODE_REPO_CHECKOUTS</code> — JSON map of name-to-path entries for repository checkouts. Claude Code tracks branches across all configured repos.</li><li><code>CLAUDE_CODE_BASE_REFS</code> — JSON map specifying the base git ref for each checkout (used for diff comparisons and bundle generation).</li><li>Both values are cached per session with singleton initialization.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Repo checkouts env var (search for <code>"CLAUDE_CODE_REPO_CHECKOUTS"</code>) and base refs (search for <code>"CLAUDE_CODE_BASE_REFS"</code>)</p>
+    </article>
+    <article class="card" id="skill-listing-configuration">
+      <div class="card-top">
+        <h3>Skill Listing Configuration <a class="anchor" href="#skill-listing-configuration">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>New settings to control how skills are presented to Claude in the system prompt, giving users fine-grained control over context usage.</p>
+<div class="blabel">Details</div>
+<ul><li><code>skillListingMaxDescChars</code> (default: 1536) — Per-skill description character cap. Descriptions longer than this are truncated.</li><li><code>skillListingBudgetFraction</code> (default: 0.01 = 1%) — Fraction of the context window reserved for the skill listing. When the listing exceeds this, descriptions are shortened to fit.</li><li><code>skillOverrides</code> — Per-skill visibility override keyed by skill name. Values:</li><li><code>"on"</code> — full listing (default)</li><li><code>"name-only"</code> — listed without description</li><li><code>"user-invocable-only"</code> — hidden from the model but still available via <code>/name</code></li><li><code>"off"</code> — hidden from both model and user</li><li>These settings can be configured at policy, flag, project, user, and local settings levels.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill listing settings (search for <code>"skillListingMaxDescChars"</code>) and overrides (search for <code>"skillOverrides"</code>)</p>
+    </article>
+    <article class="card" id="custom-subagent-status-lines">
+      <div class="card-top">
+        <h3>Custom Subagent Status Lines <a class="anchor" href="#custom-subagent-status-lines">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Plugins can now define a custom status line command that generates per-subagent status displayed in the agent panel.</p>
+<div class="blabel">Details</div>
+<ul><li>Configure via the <code>subagentStatusLine</code> field in plugin settings (allowlisted alongside <code>agent</code>)</li><li>The command receives task metadata as JSON on stdin and should emit JSON lines on stdout</li><li>Displays custom status per-teammate in the agent panel UI</li></ul>
+<div class="blabel">Evidence</div>
+<p>Subagent status line (search for <code>"subagentStatusLine"</code>)</p>
+    </article>
+    <article class="card" id="plugin-dependency-installation">
+      <div class="card-top">
+        <h3>Plugin Dependency Installation <a class="anchor" href="#plugin-dependency-installation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Plugins can now declare dependencies on other marketplace plugins that are automatically installed.</p>
+<div class="blabel">Details</div>
+<ul><li>Controlled via <code>allowedDependencyMarketplaces</code> in marketplace configuration</li><li>Only the root marketplace's allowlist applies — no transitive trust</li><li>Shows installation progress: "Installing plugin dependencies: [name]"</li><li>Reports success, failure, or warnings per dependency</li><li>Skips yarn/pnpm lockfiles (not supported; only bun and npm)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Dependency installation (search for <code>"Installing plugin dependencies"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">14 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="proactive-alias-for-loop">
+      <div class="card-top">
+        <h3>/proactive Alias for /loop <a class="anchor" href="#proactive-alias-for-loop">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>/loop</code> command now has <code>/proactive</code> as an alias, making the autonomous loop feature more discoverable.</p>
+<div class="blabel">Evidence</div>
+<p>Alias definition (search for <code>"proactive"</code> near <code>aliases</code>)</p>
+    </article>
+    <article class="card" id="git-credential-redaction">
+      <div class="card-top">
+        <h3>Git Credential Redaction <a class="anchor" href="#git-credential-redaction">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Git remote URLs containing credentials are now automatically redacted in logs and debug output, preventing accidental exposure of authentication tokens.</p>
+<div class="blabel">Evidence</div>
+<p>Credential redaction (search for <code>"redactGitRemoteCredentials"</code>)</p>
+    </article>
+    <article class="card" id="plugin-path-traversal-protection">
+      <div class="card-top">
+        <h3>Plugin Path Traversal Protection <a class="anchor" href="#plugin-path-traversal-protection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Plugins can no longer use <code>..</code> path segments to reference files outside their plugin directory. This is enforced for:</p>
+<ul><li>Plugin file resolution (plugin.json paths)</li><li>Marketplace name validation</li><li>Package references</li></ul>
+<div class="blabel">Evidence</div>
+<p>Path traversal checks (search for <code>"path-traversal"</code>)</p>
+    </article>
+    <article class="card" id="precompact-hook-support">
+      <div class="card-top">
+        <h3>PreCompact Hook Support <a class="anchor" href="#precompact-hook-support">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Conversation compaction now respects a <code>PreCompact</code> hook. If the hook blocks, compaction is skipped with the message "Compaction blocked by PreCompact hook." This gives users control over when context compression occurs.</p>
+<div class="blabel">Evidence</div>
+<p>Hook integration (search for <code>"Compaction blocked by PreCompact hook"</code>)</p>
+    </article>
+    <article class="card" id="improved-tool-call-error-handling">
+      <div class="card-top">
+        <h3>Improved Tool Call Error Handling <a class="anchor" href="#improved-tool-call-error-handling">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When the model's tool call cannot be parsed, a clearer error message is now returned: "The model's tool call could not be parsed (retry also failed). Your tool call was malformed and could not be parsed. Please retry."</p>
+<div class="blabel">Evidence</div>
+<p>Error message (search for <code>"model's tool call could not be parsed"</code>)</p>
+    </article>
+    <article class="card" id="ultrareview-billing-overhaul">
+      <div class="card-top">
+        <h3>Ultrareview Billing Overhaul <a class="anchor" href="#ultrareview-billing-overhaul">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Ultrareview billing now uses a server-driven preflight check that returns <code>proceed</code>, <code>blocked</code>, or <code>confirm</code> states, replacing the old client-side quota check. The blocked state shows an actionable message; the confirm state shows a dialog with billing details (e.g., "This review bills as usage (~$10)").</p>
+<div class="blabel">Evidence</div>
+<p>Preflight endpoint (search for <code>"/v1/ultrareview/preflight"</code>)</p>
+    </article>
+    <article class="card" id="worktree-ui-polish">
+      <div class="card-top">
+        <h3>Worktree UI Polish <a class="anchor" href="#worktree-ui-polish">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li>"Entering worktree" and "Cleaning up worktree (no pending changes)…" replace the old "Creating worktree…" and "Exiting worktree…" messages</li><li>Background tasks are now shown in the worktree exit dialog</li><li>"Switched to worktree" message is now context-aware (no longer appends "on branch" unconditionally)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Worktree messages (search for <code>"Entering worktree"</code> and <code>"Cleaning up worktree"</code>)</p>
+    </article>
+    <article class="card" id="tmux-focus-events-diagnostic">
+      <div class="card-top">
+        <h3>Tmux Focus-Events Diagnostic <a class="anchor" href="#tmux-focus-events-diagnostic">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>/doctor</code> output now detects when tmux <code>focus-events</code> is off and shows a suggestion: "add 'set -g focus-events on' to ~/.tmux.conf and reattach for focus tracking."</p>
+<div class="blabel">Evidence</div>
+<p>Tmux diagnostic (search for <code>"tmux focus-events off"</code>)</p>
+    </article>
+    <article class="card" id="model-deprecation-warnings">
+      <div class="card-top">
+        <h3>Model Deprecation Warnings <a class="anchor" href="#model-deprecation-warnings">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new warning system notifies users when their configured model is approaching or past its retirement date, including the deprecation date and a suggestion to switch.</p>
+<div class="blabel">Evidence</div>
+<p>Deprecation warning generator (search for <code>"was retired on"</code>)</p>
+    </article>
+    <article class="card" id="improved-mcp-large-output-handling">
+      <div class="card-top">
+        <h3>Improved MCP Large Output Handling <a class="anchor" href="#improved-mcp-large-output-handling">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The MCP tool result processor now provides format-specific guidance for large outputs. For JSON files, it suggests using <code>jq</code> for targeted queries. For text files, it suggests <code>grep</code>. For analysis tasks, it recommends using the Task tool to process the file in an isolated subagent context.</p>
+<div class="blabel">Evidence</div>
+<p>Format-specific guidance (search for <code>"first probe the structure"</code>)</p>
+    </article>
+    <article class="card" id="hyperlink-detection-improvements">
+      <div class="card-top">
+        <h3>Hyperlink Detection Improvements <a class="anchor" href="#hyperlink-detection-improvements">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Terminal hyperlink support detection is improved with broader terminal emulator recognition, including checks for <code>TERM_PROGRAM</code>, <code>LC_TERMINAL</code>, and Kitty terminal detection.</p>
+<div class="blabel">Evidence</div>
+<p>Hyperlink detection (search for <code>"supportsHyperlink"</code>)</p>
+    </article>
+    <article class="card" id="event-loop-stall-detection">
+      <div class="card-top">
+        <h3>Event Loop Stall Detection <a class="anchor" href="#event-loop-stall-detection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new internal diagnostic detects event loop stalls (blocked main thread) and logs them with memory statistics. This helps diagnose performance issues and detect sleep/wake transitions.</p>
+<div class="blabel">Evidence</div>
+<p>Stall detector (search for <code>"event-loop-stall"</code>)</p>
+    </article>
+    <article class="card" id="managed-agents-documentation">
+      <div class="card-top">
+        <h3>Managed Agents Documentation <a class="anchor" href="#managed-agents-documentation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Comprehensive documentation has been embedded for the Managed Agents API, covering:</p>
+<ul><li>cURL/HTTP endpoint reference</li><li>Python and TypeScript SDK examples</li><li>Core concepts (agent lifecycle, sessions, environments)</li><li>Event streaming and session steering</li><li>Tools and skills configuration</li><li>Interactive onboarding script</li></ul>
+<div class="blabel">Evidence</div>
+<p>Managed Agents docs (search for <code>"Managed Agents"</code>)</p>
+    </article>
+    <article class="card" id="skills-dialog-rewrite">
+      <div class="card-top">
+        <h3>Skills Dialog Rewrite <a class="anchor" href="#skills-dialog-rewrite">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The skills dialog has been completely rewritten with:</p>
+<ul><li>Toggle states per skill: on / name-only / user-invocable-only / off</li><li>Source and override indicator (policy, flag, author)</li><li>Improved keyboard navigation with scroll windowing</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skills dialog toggle states (search for <code>"user-invocable-only"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed worktree safety: prevents removing worktrees that were entered (not created) via <code>EnterWorktree</code>, avoiding accidental deletion of shared worktrees (search for <code>"enteredExisting"</code>)</li><li>Fixed stream handling for socket writes by deferring <code>stream.end()</code> until the write buffer is fully drained, preventing truncated output (search for <code>"endAfterDrain"</code>)</li><li>Added defensive null check for <code>prePlanMode</code> property to prevent crashes when the property is undefined (search for <code>"prePlanMode"</code>)</li><li>Fixed array last-element access using <code>.at(-1)</code> instead of manual indexing, preventing potential off-by-one errors</li><li>Added type safety check for non-Array inputs to token counting function, returning 0 instead of throwing (search for <code>"Array.isArray"</code>)</li><li>Fixed async cleanup race condition in caffeinate (sleep prevention) by capturing the reference before try-finally blocks</li><li>Added optional chaining for <code>querier.onResponse()</code> to prevent null reference crashes</li><li>Fixed UNC path permission checks to allow certain whitelisted UNC paths that pass security validation</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Removals</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="think-back-year-in-review">
+      <div class="card-top">
+        <h3>Think Back / Year in Review <a class="anchor" href="#think-back-year-in-review">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The Think Back feature ("Your 2025 Claude Code Year in Review" ASCII animation) has been completely removed — all plugin detection, animation generation, player scripts, and associated slash commands are gone.</p>
+<div class="blabel">Evidence</div>
+<p>Removed strings (search for <code>"thinkback"</code> returns 0 results in new version)</p>
+    </article>
+    <article class="card" id="proactive-auto-enable-setting">
+      <div class="card-top">
+        <h3>Proactive Auto-Enable Setting <a class="anchor" href="#proactive-auto-enable-setting">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The <code>proactive.autoEnable</code> setting (which controlled whether autonomous background operation was auto-activated at launch) has been removed. The <code>/proactive</code> alias for <code>/loop</code> replaces the previous configuration approach.</p>
+<div class="blabel">Evidence</div>
+<p>Setting removed (search for <code>"autoEnable"</code> near proactive in old file only)</p>
+    </article>
+    <article class="card" id="time-based-microcompaction">
+      <div class="card-top">
+        <h3>Time-Based Microcompaction <a class="anchor" href="#time-based-microcompaction">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The time-based microcompaction system (<code>tengu_time_based_microcompact</code>, <code>tengu_slate_heron</code>) — which cleared old tool results when a time gap was detected — has been completely removed.</p>
+<div class="blabel">Evidence</div>
+<p>Removed telemetry event and feature flag (search for <code>"TIME-BASED MC"</code> or <code>"tengu_slate_heron"</code>)</p>
+    </article>
+    <article class="card" id="session-memory-compaction">
+      <div class="card-top">
+        <h3>Session Memory Compaction <a class="anchor" href="#session-memory-compaction">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The <code>tengu_sm_compact</code> session memory compaction system, which automatically truncated conversation history using a token-counting approach, has been removed. It is replaced by the new reactive compaction system (see In Development section).</p>
+<div class="blabel">Evidence</div>
+<p>Removed orchestrator (search for <code>"tengu_sm_compact"</code> returns 0 results in new version)</p>
+    </article>
+    <article class="card" id="plugin-enable-cli-command">
+      <div class="card-top">
+        <h3>Plugin Enable CLI Command <a class="anchor" href="#plugin-enable-cli-command">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The <code>claude plugin enable</code> CLI command has been removed. Plugin management is now handled through the <code>/plugin</code> slash command.</p>
+<div class="blabel">Evidence</div>
+<p>Removed function <code>G$A</code> (search for <code>"Enabling plugin"</code> returns 0 results in new version)</p>
+    </article>
+    <article class="card" id="plugin-validate-and-update-marketplace-cli-commands">
+      <div class="card-top">
+        <h3>Plugin Validate and Update Marketplace CLI Commands <a class="anchor" href="#plugin-validate-and-update-marketplace-cli-commands">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The <code>claude plugin validate</code> and <code>claude plugin update-marketplace</code> CLI commands have been removed.</p>
+<div class="blabel">Evidence</div>
+<p>Removed functions <code>H$A</code> and <code>W$A</code> (search for <code>"Installing marketplace"</code> returns 0 results in new version)</p>
+    </article>
+    <article class="card" id="mcp-tool-classification-lists">
+      <div class="card-top">
+        <h3>MCP Tool Classification Lists <a class="anchor" href="#mcp-tool-classification-lists">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The large static classification lists (500+ MCP tool names categorized as "search" or "read") have been removed. The classification likely uses a different approach now.</p>
+<div class="blabel">Evidence</div>
+<p>Removed sets <code>fVz</code> and <code>TVz</code> (search for <code>"slack_search_public"</code> returns 0 results in new version)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
+    </article>
+    <article class="card" id="reactive-compaction-gradual-rollout">
+      <div class="card-top">
+        <h3>Reactive Compaction [Gradual Rollout] <a class="anchor" href="#reactive-compaction-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new conversation compaction system that automatically summarizes older messages when the prompt exceeds context limits, using binary search to find the optimal compaction boundary.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged behind <code>tengu_cobalt_raccoon</code> (default: false). Disabled in non-interactive mode.</p>
+<div class="blabel">Details</div>
+<ul><li>Replaces the removed <code>tengu_sm_compact</code> system with a more sophisticated approach</li><li>Uses binary search to determine how many message groups to preserve vs. summarize</li><li>Sends older messages to a model fork for summarization</li><li>Includes retry logic (strips media on size errors), empty-response detection, and PreCompact hook support</li><li>Extensive telemetry: trigger, success, duration, pre/post token counts, group counts</li><li>When enabled, triggers automatically during conversation turns when token limits are approached</li></ul>
+<div class="blabel">Evidence</div>
+<p>Feature gate (search for <code>"tengu_cobalt_raccoon"</code>) returns <code>!1</code> (false) as default</p>
+    </article>
+    <article class="card" id="session-recap-away-summary-gradual-rollout">
+      <div class="card-top">
+        <h3>Session Recap (Away Summary) [Gradual Rollout] <a class="anchor" href="#session-recap-away-summary-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When you return to a session after being away for 5+ minutes, Claude generates a brief recap of where things left off.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged behind <code>tengu_sedge_lantern</code> (default: false). Can be force-enabled with <code>CLAUDE_CODE_ENABLE_AWAY_SUMMARY=1</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Tracks focus/blur events to detect when the user steps away</li><li>On return, generates a recap: "under 40 words, 1-2 plain sentences, no markdown. Lead with the overall goal and current task, then the one next action."</li><li>Toggleable in <code>/config</code> via <code>awaySummaryEnabled</code> setting (when the flag is on)</li><li>Recap can be cancelled, and shows "No recap available" if generation fails</li><li>A <code>/recap</code> command is also available to manually trigger a recap</li><li>SDK event: <code>memory_recall</code> emitted when memories are surfaced</li></ul>
+<p>Orphaned Tip: ⚠️ Users who get the flag enabled may see "(disable recaps in /config)" — but the feature doesn't work unless the flag is active.</p>
+<div class="blabel">Evidence</div>
+<p>Feature gate (search for <code>"tengu_sedge_lantern"</code>) and env override (search for <code>"CLAUDE_CODE_ENABLE_AWAY_SUMMARY"</code>)</p>
+    </article>
+    <article class="card" id="memory-rating-survey-in-development">
+      <div class="card-top">
+        <h3>Memory Rating Survey [In Development] <a class="anchor" href="#memory-rating-survey-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A "Did this help? (optional)" prompt allowing users to rate recalled memories as good or bad.</p>
+<div class="blabel">Status</div>
+<p>Stubbed — the gate function <code>H_5()</code> always returns <code>!1</code> (false). The UI components (rating buttons with thumbs up/down hover states) are fully built but unreachable.</p>
+<div class="blabel">Details</div>
+<ul><li>Rating buttons component exists with [Good]/[Bad] options</li><li>Keyboard shortcuts (+ and - keys) are wired up for rating</li><li>The infrastructure includes both memory-specific and general feedback survey paths</li><li>General feedback survey is also gated behind <code>tengu_dunwich_bell</code> (default: false)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Stubbed gate (search for <code>"Did this help?"</code>) and gate function returning <code>!1</code></p>
+    </article>
+    <article class="card" id="prompt-cache-break-detection-in-development">
+      <div class="card-top">
+        <h3>Prompt Cache Break Detection [In Development] <a class="anchor" href="#prompt-cache-break-detection-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Internal diagnostic that detects when the prompt cache is invalidated between API calls, identifying the cause (system prompt change, tool schema change, model change, TTL expiry).</p>
+<div class="blabel">Status</div>
+<p>Active internally for telemetry only (<code>tengu_prompt_cache_break</code> event). Not user-visible.</p>
+<div class="blabel">Details</div>
+<ul><li>Snapshots system prompt, tools, and model between requests</li><li>When a cache break is detected, classifies the cause: system prompt changed, tools changed, model changed, betas changed, possible 5min or 1h TTL expiry, or unknown</li><li>Logs <code>[PROMPT CACHE BREAK]</code> with cause details</li><li>Helps Anthropic optimize prompt caching behavior</li></ul>
+<div class="blabel">Evidence</div>
+<p>Cache break detection (search for <code>"PROMPT CACHE BREAK"</code> and <code>"tengu_prompt_cache_break"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

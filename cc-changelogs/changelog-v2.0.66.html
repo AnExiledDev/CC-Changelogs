@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.66 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.66."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.66</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.66</span></h1>
+<p class="sub">This release introduces a new PID-based version locking system for more reliable updates, adds extra usage request capabilities for team/enterprise users, implements a prompt stash feature with <code>Ctrl+S</code>, and includes LSP (Language Server Protocol) server manager support for enhanced code intelligence.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.65 → v2.0.66</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">16 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="prompt-stash-ctrl-s">
+      <div class="card-top">
+        <h3>Prompt Stash (<code>Ctrl+S</code>) <a class="anchor" href="#prompt-stash-ctrl-s">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Save your current prompt input and retrieve it later - useful when you want to temporarily switch to a different task without losing your in-progress prompt. <strong>How to use:</strong></p>
+<pre><code># With text in prompt, press Ctrl+S to stash it
+# Later, with empty prompt, press Ctrl+S to restore</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Stash indicator appears when you have a saved prompt</li><li>First-time users see a hint after deleting significant text</li><li><strong>Evidence</strong>: <code>$()</code> function at line 21215-21220, stash hint logic at <code>$A.current</code> tracking</li></ul>
+    </article>
+    <article class="card" id="extra-usage-requests-for-teams-enterprise">
+      <div class="card-top">
+        <h3>Extra Usage Requests for Teams/Enterprise <a class="anchor" href="#extra-usage-requests-for-teams-enterprise">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Team and enterprise users can now request extra usage allocation from their organization admins directly from the CLI. <strong>How to use:</strong></p>
+<pre><code>/extra-usage</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Sends a <code>limit_increase</code> request to your organization administrator</li><li>Checks for existing pending requests to prevent duplicates</li><li>Different messaging for enabling vs increasing extra usage</li><li><strong>Evidence</strong>: <code>Sz2()</code> at line 425819, <code>xz2()</code> at line 425825, command handler at line 425842+</li></ul>
+    </article>
+    <article class="card" id="lsp-server-manager">
+      <div class="card-top">
+        <h3>LSP Server Manager <a class="anchor" href="#lsp-server-manager">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Full Language Server Protocol integration for enhanced code intelligence capabilities. <strong>How to use:</strong> Configure in <code>.lsp.json</code> files in your project or plugins. <strong>Details:</strong></p>
+<ul><li>Automatic server initialization based on file extensions</li><li>Supports <code>textDocument/didOpen</code>, <code>didChange</code>, <code>didSave</code>, <code>didClose</code> notifications</li><li>Configurable <code>extensionToLanguage</code> mapping per server</li><li>Tracks open files to avoid duplicate notifications</li><li><strong>Evidence</strong>: <code>$qB()</code> (LSP SERVER MANAGER) at line 285468, config loading at line 14717-14760</li></ul>
+    </article>
+    <article class="card" id="remote-agent-tasks">
+      <div class="card-top">
+        <h3>Remote Agent Tasks <a class="anchor" href="#remote-agent-tasks">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Support for remote agent task execution and monitoring. <strong>Details:</strong></p>
+<ul><li>New <code>remote_agent</code> task type alongside <code>local_agent</code> and <code>local_bash</code></li><li>Progress monitoring with delta summaries</li><li>Task notifications when remote tasks complete/fail</li><li><strong>Evidence</strong>: <code>RemoteAgentTask</code> at line 355509, <code>FJ8()</code> notification function at line 355382</li></ul>
+    </article>
+    <article class="card" id="browser-control-flags">
+      <div class="card-top">
+        <h3>Browser Control Flags <a class="anchor" href="#browser-control-flags">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Explicit control over Chrome browser usage for authentication flows. <strong>How to use:</strong></p>
+<pre><code>claude --chrome        # Force Chrome usage
+claude --no-chrome     # Prevent Chrome usage</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Useful when multiple browsers are installed</li><li>Controls authentication and web-based flows</li><li><strong>Evidence</strong>: <code>d85()</code> at line 16281-16282</li></ul>
+    </article>
+    <article class="card" id="pid-based-version-locking">
+      <div class="card-top">
+        <h3>PID-Based Version Locking <a class="anchor" href="#pid-based-version-locking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> More reliable version lock system that tracks process IDs instead of just file modification times. <strong>Details:</strong></p>
+<ul><li>Detects if locking process is actually running</li><li>Better stale lock cleanup on startup</li><li>Enhanced error reporting showing which PID holds a lock</li><li>Automatic cleanup of locks from crashed processes</li><li>Feature-flagged via <code>tengu_pid_based_version_locking</code></li><li><strong>Evidence</strong>: <code>ai()</code> at line 397742, <code>K91()</code> at line 397747, <code>V91()</code> cleanup at line 397896</li></ul>
+    </article>
+    <article class="card" id="plugin-caching-improvements">
+      <div class="card-top">
+        <h3>Plugin Caching Improvements <a class="anchor" href="#plugin-caching-improvements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced plugin cache handling with empty directory detection and <code>.lsp.json</code>/<code>.mcp.json</code> file support. <strong>Details:</strong></p>
+<ul><li>Removes empty cache directories before re-caching</li><li>Copies <code>.mcp.json</code> and <code>.lsp.json</code> files from plugins</li><li>Better error handling when cache copy fails</li><li><strong>Evidence</strong>: <code>UsA()</code> at line 259791, empty dir check at line 20246-20249, config file copy at line 20292-20296</li></ul>
+    </article>
+    <article class="card" id="plugin-file-migration">
+      <div class="card-top">
+        <h3>Plugin File Migration <a class="anchor" href="#plugin-file-migration">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatic migration of plugin metadata files. <strong>Details:</strong></p>
+<ul><li>Renames <code>installed_plugins_v2.json</code> to <code>installed_plugins.json</code></li><li>Converts V1 format to V2 format automatically</li><li>Cleans up orphaned plugin cache directories</li><li><strong>Evidence</strong>: Log message at line 16307, migration function around line 441936</li></ul>
+    </article>
+    <article class="card" id="ide-connection-ux">
+      <div class="card-top">
+        <h3>IDE Connection UX <a class="anchor" href="#ide-connection-ux">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved prompts and messaging for IDE auto-connect configuration. <strong>Details:</strong></p>
+<ul><li>New confirmation dialog: "Do you wish to disable auto-connect to IDE?"</li><li>Better help text: "You can also configure this in /config or with the --ide flag"</li><li>Tip shown when no IDE connected: "You can enable auto-connect to IDE in /config or with the --ide flag"</li><li><strong>Evidence</strong>: Dialog at line 16472, tip at line 19792</li></ul>
+    </article>
+    <article class="card" id="glob-pattern-improvements">
+      <div class="card-top">
+        <h3>Glob Pattern Improvements <a class="anchor" href="#glob-pattern-improvements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Better handling of glob patterns with directory prefixes. <strong>Details:</strong></p>
+<ul><li>Extracts base directory from patterns like <code>src/**/*.ts</code></li><li>Passes relative pattern to ripgrep for more accurate matching</li><li><strong>Evidence</strong>: <code>GRB()</code> at line 489713, <code>EK5()</code> pattern extraction</li></ul>
+    </article>
+    <article class="card" id="update-lock-error-reporting">
+      <div class="card-top">
+        <h3>Update Lock Error Reporting <a class="anchor" href="#update-lock-error-reporting">#</a></h3>
+      </div>
+      <p><strong>What:</strong> When updates fail due to locks, the error now includes which process ID is blocking. <strong>Details:</strong></p>
+<ul><li>Returns structured <code>{success, lockHolderPid}</code> instead of boolean</li><li>Helps debug update failures in multi-instance scenarios</li><li><strong>Evidence</strong>: Lock failure handling returning <code>lockHolderPid</code> in update function</li></ul>
+    </article>
+    <article class="card" id="think-back-year-in-review-feature">
+      <div class="card-top">
+        <h3>Think-back/Year in Review Feature <a class="anchor" href="#think-back-year-in-review-feature">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New <code>/think-back</code> command for viewing your Claude Code year in review animation. <strong>Details:</strong></p>
+<ul><li>Installs thinkback plugin automatically</li><li>Supports edit, fix, and regenerate modes</li><li>Companion <code>/thinkback-play</code> command</li><li><strong>Evidence</strong>: Command definitions at lines 16872-16995, skill invocation prompts at line 16846-16850</li></ul>
+    </article>
+    <article class="card" id="message-management">
+      <div class="card-top">
+        <h3>Message Management <a class="anchor" href="#message-management">#</a></h3>
+      </div>
+      <ul><li>Added <code>removeMessageByUuid()</code> function for removing specific messages from conversation history</li><li><strong>Evidence</strong>: <code>Kn1()</code> at line 286854, <code>removeMessageByUuid()</code> at line 18839</li></ul>
+    </article>
+    <article class="card" id="mcp-server-status-detection">
+      <div class="card-top">
+        <h3>MCP Server Status Detection <a class="anchor" href="#mcp-server-status-detection">#</a></h3>
+      </div>
+      <ul><li>Added detection for "unknown" server status with <code>Op1()</code> helper</li><li><strong>Evidence</strong>: <code>Op1()</code> at line 260849, <code>xHB = "unknown"</code> at line 260852</li></ul>
+    </article>
+    <article class="card" id="semver-library-update">
+      <div class="card-top">
+        <h3>Semver Library Update <a class="anchor" href="#semver-library-update">#</a></h3>
+      </div>
+      <ul><li>Updated semver parsing and comparison utilities</li><li>Added new comparison functions and range handling</li><li><strong>Evidence</strong>: New semver exports at line 14508-14554</li></ul>
+    </article>
+    <article class="card" id="file-cache-size">
+      <div class="card-top">
+        <h3>File Cache Size <a class="anchor" href="#file-cache-size">#</a></h3>
+      </div>
+      <ul><li>Added 50MB (<code>52428800</code> bytes) constant for file size limits</li><li><strong>Evidence</strong>: <code>Tw8</code> at line 393122</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

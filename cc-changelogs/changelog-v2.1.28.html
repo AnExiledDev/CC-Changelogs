@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.28 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.28."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.28</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.28</span></h1>
+<p class="sub">Version 2.1.28 is a maintenance release with one internal refactoring change: the removal of the <code>saved_hook_context</code> session persistence layer. No new features, commands, flags, settings, or feature flags were added. The 252,000-line diff is almost entirely minifier variable renaming.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.27 → v2.1.28</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="simplified-hook-context-session-persistence">
+      <div class="card-top">
+        <h3>Simplified Hook Context Session Persistence <a class="anchor" href="#simplified-hook-context-session-persistence">#</a></h3>
+      </div>
+      <p>The internal mechanism for persisting hook additional context to session logs has been simplified. Previously, <code>hook_additional_context</code> attachment messages were serialized into a special <code>saved_hook_context</code> format when writing to the session log, then deserialized back when loading a session. This intermediate format has been removed; hook context messages now follow the same persistence path as all other messages.</p>
+<p>As part of this change, the message filter applied before saving was also simplified. For non-Anthropic internal users, all attachment-type messages (including hook additional context) are now filtered out before being written to the session log. Previously, hook additional context was explicitly preserved while other attachment types were filtered.</p>
+<p>In practice, this means hook context injected by hooks (e.g., from <code>SessionStart</code>, <code>PreToolUse</code>, <code>PostToolUse</code> hooks) is no longer persisted across session resume for external users. This is unlikely to affect most users, as hook context is primarily relevant within a single session.</p>
+<div class="blabel">Evidence</div>
+<p>Removal of <code>saved_hook_context</code> serialization layer (search for <code>"saved_hook_context"</code> in v2.1.27 -- absent from v2.1.28). Message filter simplification visible in the function that previously checked <code>q.attachment.type === "hook_additional_context"</code> (search for <code>"hook_additional_context"</code> in the session persistence area around line ~513044 in v2.1.28).</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p><strong>Build Information:</strong></p>
+<ul><li>Version: 2.1.27 -&gt; 2.1.28</li><li>Build Time: 2026-01-30T19:50:44Z -&gt; 2026-01-31T18:41:01Z</li><li>Build Number: 2130 -&gt; 2223</li></ul>
+<p><strong>Technical Details:</strong></p>
+<p>The diff consists of:</p>
+<ol><li>Version string and build timestamp updates</li><li>Removal of <code>saved_hook_context</code> save/load code (~64 net lines removed)</li><li>Approximately 52,000 lines of minifier variable/function identifier renames</li></ol>
+<p>No new <code>tengu_<em></code> feature flags, <code>CLAUDE_CODE_</em></code> environment variables, <code>.describe()</code> settings, slash commands, CLI flags, or user-facing string literals were added. Users upgrading from 2.1.27 to 2.1.28 will experience no observable behavioral differences in normal usage.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.32 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.32."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.32</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.32</span></h1>
+<p class="sub">This release introduces <strong>Claude Opus 4.6</strong> as the new flagship model with 1M context window, adds a <strong>"Summarize from here"</strong> feature for targeted conversation compaction, expands session IDs to accept tagged identifiers beyond UUIDs, and simplifies Agent Teams by removing the join request workflow. The Discovery onboarding tutorial system has been removed entirely.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.31 → v2.1.32</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">13</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="claude-opus-4-6-support">
+      <div class="card-top">
+        <h3>Claude Opus 4.6 Support <a class="anchor" href="#claude-opus-4-6-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Opus 4.6 is now available as the most capable model for complex coding work, featuring a 1M token context window.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --model opus
+# Or within a session:
+/model</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Opus 4.6 with 1M context window supports longer sessions with large codebases</li><li>Uses rate limits faster than Sonnet</li><li>Available via <code>/model</code> command or <code>--model opus</code> flag</li><li>Model selection updated in plan mode: "Opus 4.6 in plan mode, Sonnet 4.5 otherwise"</li><li>First-party model ID: <code>claude-opus-4-6</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Model definitions (search for <code>"claude-opus-4-6"</code> and <code>"Opus 4.6"</code>)</p>
+    </article>
+    <article class="card" id="summarize-from-here">
+      <div class="card-top">
+        <h3>Summarize from Here <a class="anchor" href="#summarize-from-here">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Summarize your conversation from a specific point, rather than compacting the entire history.</p>
+<div class="blabel">Usage</div>
+<ul><li>Navigate to any message in the transcript (Ctrl+O)</li><li>Select "Summarize from here" option</li><li>Optionally add context for the summary</li><li>Messages from that point onward are summarized</li></ul>
+<div class="blabel">Details</div>
+<ul><li>Provides targeted compaction control</li><li>Shows "Summarizing…" indicator during operation</li><li>Displays "Conversation summarized (Ctrl+O for history)" notification on completion</li><li>Prevents summarizing when there's nothing after the selected message</li></ul>
+<div class="blabel">Evidence</div>
+<p>Summarize feature UI (search for <code>"Summarize from here"</code>)</p>
+    </article>
+    <article class="card" id="tagged-session-ids">
+      <div class="card-top">
+        <h3>Tagged Session IDs <a class="anchor" href="#tagged-session-ids">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Session IDs now accept tagged identifiers in addition to UUIDs, enabling more flexible session management.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --session-id my-project-session
+claude --resume my-project-session</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Session ID format expanded from UUID-only to "UUID or tagged ID"</li><li>Error message updated: "Must be a valid UUID or tagged ID"</li><li>Makes resuming sessions easier with memorable identifiers</li></ul>
+<div class="blabel">Evidence</div>
+<p>Session ID validation (search for <code>"tagged ID"</code>)</p>
+    </article>
+    <article class="card" id="custom-oauth-url-support">
+      <div class="card-top">
+        <h3>Custom OAuth URL Support <a class="anchor" href="#custom-oauth-url-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Enterprise deployments can now configure custom OAuth endpoints via environment variable.</p>
+<div class="blabel">Usage</div>
+<pre><code>export CLAUDE_CODE_CUSTOM_OAUTH_URL=&quot;https://your-oauth-endpoint.com&quot;
+claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Only approved endpoints are permitted</li><li>Error thrown if endpoint is not on the allow list: "CLAUDE_CODE_CUSTOM_OAUTH_URL is not an approved endpoint"</li><li>Supports FedRAMP endpoints (<code>claude.fedstart.com</code>, <code>claude-staging.fedstart.com</code>)</li></ul>
+<div class="blabel">Evidence</div>
+<p>OAuth configuration (search for <code>"CLAUDE_CODE_CUSTOM_OAUTH_URL"</code>)</p>
+    </article>
+    <article class="card" id="50-free-extra-usage-promotion">
+      <div class="card-top">
+        <h3>$50 Free Extra Usage Promotion <a class="anchor" href="#50-free-extra-usage-promotion">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New promotional offer tied to Opus 4.6 launch—$50 of free extra usage.</p>
+<div class="blabel">Usage</div>
+<ul><li>Promotion displayed alongside Opus 4.6 availability notices</li><li>Access via <code>/extra-usage</code> command</li></ul>
+<div class="blabel">Details</div>
+<ul><li>Announcement: "Opus 4.6 is here · $50 free extra usage"</li><li>Integrated into the referral program: "Share Claude Code and earn $50 of extra usage"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Extra usage promotion (search for <code>"$50 free extra usage"</code>)</p>
+    </article>
+    <article class="card" id="agent-teams-simplified">
+      <div class="card-top">
+        <h3>Agent Teams Simplified <a class="anchor" href="#agent-teams-simplified">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The Agent Teams join request workflow has been removed, simplifying team operations to just spawn and cleanup.</p>
+<div class="blabel">Details</div>
+<ul><li>Removed operations: <code>discoverTeams</code>, <code>requestJoin</code>, <code>approveJoin</code>, <code>rejectJoin</code></li><li>New simplified description: "Operation: spawnTeam to create a team, cleanup to remove team and task directories"</li><li>Task assignment now uses <code>TaskUpdate</code> with <code>owner</code> parameter instead of <code>TeammateTool</code>'s <code>assignTask</code></li><li>Terminology change: "swarm" → "team" in documentation</li></ul>
+<div class="blabel">Evidence</div>
+<p>TeammateTool operations (search for <code>"spawnTeam to create a team, cleanup"</code>)</p>
+    </article>
+    <article class="card" id="mcp-error-handling-improvements">
+      <div class="card-top">
+        <h3>MCP Error Handling Improvements <a class="anchor" href="#mcp-error-handling-improvements">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Better error messages for MCP (Model Context Protocol) server connection issues.</p>
+<div class="blabel">Details</div>
+<ul><li>New error categories: "MCP connection timeout", "MCP server not connected", "MCP tool timeout", "MCP tool unexpected response format"</li><li>System prompt now notes: "MCP servers connect/disconnect between turns"</li></ul>
+<div class="blabel">Evidence</div>
+<p>MCP error messages (search for <code>"MCP connection timeout"</code>)</p>
+    </article>
+    <article class="card" id="memory-md-guidance-updated">
+      <div class="card-top">
+        <h3>MEMORY.md Guidance Updated <a class="anchor" href="#memory-md-guidance-updated">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Improved guidance for managing the MEMORY.md file with recommendations for separate topic files.</p>
+<div class="blabel">Details</div>
+<ul><li>New recommendation: "Create separate topic files (e.g., <code>debugging.md</code>, <code>patterns.md</code>) for detailed notes and link to them from MEMORY.md"</li><li>Warning when MEMORY.md is too long: "Move detailed content into separate topic files and keep MEMORY.md as a concise index"</li><li>Documentation clarifies: "MEMORY.md is read from disk each turn and can be edited by the model"</li></ul>
+<div class="blabel">Evidence</div>
+<p>MEMORY.md guidance (search for <code>"separate topic files"</code>)</p>
+    </article>
+    <article class="card" id="image-attachment-display">
+      <div class="card-top">
+        <h3>Image Attachment Display <a class="anchor" href="#image-attachment-display">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Clearer indication when images are attached to messages.</p>
+<div class="blabel">Details</div>
+<ul><li>New display text: "(Image attached)" and "(See attached image)"</li><li>Provides visual confirmation of image context</li></ul>
+<div class="blabel">Evidence</div>
+<p>Image attachment labels (search for <code>"Image attached"</code>)</p>
+    </article>
+    <article class="card" id="symlink-target-visibility">
+      <div class="card-top">
+        <h3>Symlink Target Visibility <a class="anchor" href="#symlink-target-visibility">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When editing files through symlinks, the UI now shows the actual target path.</p>
+<div class="blabel">Details</div>
+<ul><li>Shows "Symlink target: [path]" for symlinked files</li><li>For targets outside working directory: "This will modify [path] (outside working directory) via a symlink"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Symlink display (search for <code>"Symlink target:"</code>)</p>
+    </article>
+    <article class="card" id="improved-session-resume-messages">
+      <div class="card-top">
+        <h3>Improved Session Resume Messages <a class="anchor" href="#improved-session-resume-messages">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Better error handling when resuming sessions with unavailable agent configurations.</p>
+<div class="blabel">Details</div>
+<ul><li>New message: 'Resumed session had agent "[name]" but it is no longer available. Using default behavior.'</li><li>Graceful fallback instead of failure</li></ul>
+<div class="blabel">Evidence</div>
+<p>Session resume handling (search for <code>"but it is no longer available"</code>)</p>
+    </article>
+    <article class="card" id="model-issue-error-messages">
+      <div class="card-top">
+        <h3>Model Issue Error Messages <a class="anchor" href="#model-issue-error-messages">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New error message when a selected model is unavailable or inaccessible.</p>
+<div class="blabel">Details</div>
+<ul><li>Message: "There's an issue with the selected model ([model]). It may not exist or you may not have access to it."</li><li>Suggests using <code>--model</code> flag or <code>/model</code> command to select a different model</li></ul>
+<div class="blabel">Evidence</div>
+<p>Model error handling (search for <code>"There's an issue with the selected model"</code>)</p>
+    </article>
+    <article class="card" id="background-agent-summarization">
+      <div class="card-top">
+        <h3>Background Agent Summarization <a class="anchor" href="#background-agent-summarization">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New internal system for background summarization of agent contexts.</p>
+<div class="blabel">Details</div>
+<ul><li>AgentSummary system manages automatic context summarization for long-running agents</li><li>Timer-based summarization with proper cleanup on stop</li></ul>
+<div class="blabel">Evidence</div>
+<p>Agent summarization (search for <code>"[AgentSummary]"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed YAML frontmatter parsing error messages to include more context (search for <code>"Failed to parse YAML frontmatter"</code>)</li><li>Changed "was killed" to "was stopped" in task termination messages for clearer UX (search for <code>"was stopped"</code>)</li><li>Fixed "User aborted" message for permission denial flow (search for <code>"User aborted"</code>)</li><li>Updated ellipsis in "Teleporting to session" from "..." to "…" for typographic consistency</li></ul>
+    </article>
+    <article class="card" id="discovery-onboarding-system">
+      <div class="card-top">
+        <h3>Discovery Onboarding System <a class="anchor" href="#discovery-onboarding-system">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The "Discover Claude Code" feature tutorial system has been removed entirely:</p>
+<ul><li>Removed categories: "Quick Wins", "10x Your Speed", "Level Up Your Code", "Make It Yours", "Power User", and others</li><li>Removed all associated tips and progress tracking</li><li>Removes approximately 60+ onboarding tutorial strings</li></ul>
+<p>This was an interactive feature discovery system that guided users through Claude Code capabilities. Its removal suggests this functionality may be moving elsewhere (e.g., documentation or web).</p>
+<div class="blabel">Evidence</div>
+<p>Onboarding categories (search for <code>"Quick Wins"</code> in old version)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

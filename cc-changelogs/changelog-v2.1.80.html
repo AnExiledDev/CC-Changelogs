@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.80 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.80."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.80</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.80</span></h1>
+<p class="sub">This release introduces <strong>Channels</strong>, a new system for MCP servers to push inbound notifications into Claude Code sessions, along with the <strong><code>/schedule</code> command</strong> for creating and managing remote agents (triggers) that run on cron schedules in Anthropic's cloud. It also adds a comprehensive <strong>Bash tool output compressor</strong> that intelligently summarizes verbose command outputs, a <strong>message actions navigation system</strong> for browsing and copying transcript messages, and support for <strong>inline marketplace definitions</strong> in settings.json.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.79 → v2.1.80</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">20</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">20 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="channels-mcp-inbound-push-notifications">
+      <div class="card-top">
+        <h3>Channels (MCP Inbound Push Notifications) <a class="anchor" href="#channels-mcp-inbound-push-notifications">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new system that allows MCP servers to push notifications directly into your Claude Code session, enabling real-time event-driven workflows.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --channels server1 server2</code></pre>
+<div class="blabel">Details</div>
+<ul><li>MCP servers that declare the <code>claude/channel</code> capability can send <code>notifications/claude/channel</code> messages that appear in your session</li><li>Use <code>--channels &lt;servers...&gt;</code> to specify which servers may push notifications</li><li>Use <code>--dangerously-load-development-channels &lt;servers...&gt;</code> for local development of channel-enabled servers (shows a confirmation dialog at startup)</li><li>Requires claude.ai authentication (<code>/login</code>)</li><li>Org administrators can control availability via the <code>channelsEnabled</code> managed setting</li><li>Plugin-based channels must be on an approved allowlist (controlled by the <code>tengu_harbor</code> feature flag and <code>tengu_harbor_ledger</code>)</li><li>A warning is displayed: "Experimental · inbound messages will be pushed into this session, this carries prompt injection risks"</li><li>Channel messages are rendered with a <code>←</code> prefix showing the source server name</li></ul>
+<div class="blabel">Evidence</div>
+<p>Channel notification system — <code>notifications/claude/channel</code> protocol (search for <code>"claude/channel"</code>)</p>
+    </article>
+    <article class="card" id="schedule-command-remote-agent-triggers">
+      <div class="card-top">
+        <h3>/schedule Command (Remote Agent Triggers) <a class="anchor" href="#schedule-command-remote-agent-triggers">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Schedule, update, list, or run remote Claude Code agents that execute on cron schedules in Anthropic's cloud infrastructure.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude /schedule
+claude /schedule &quot;run tests every morning&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Each trigger spawns a fully isolated remote session (CCR) with its own git checkout, tools, and optional MCP connections</li><li>Supports four operations: create, update, list, and run triggers via the <code>/v1/code/triggers</code> API</li><li>Can connect to GitHub repos (via the Claude GitHub App or token sync) and MCP connectors from claude.ai</li><li>Automatically creates environments if none exist</li><li>Includes git bundle uploading to seed remote sessions with your local code (including uncommitted changes)</li><li>Requires claude.ai authentication (API-only accounts are not supported)</li><li>Cron expressions are in UTC; the skill converts local times automatically</li><li>Cannot delete triggers from CLI — directs users to https://claude.ai/code/scheduled</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schedule remote agents skill (search for <code>"Schedule Remote Agents"</code> and <code>"/v1/code/triggers"</code>)</p>
+    </article>
+    <article class="card" id="bash-tool-output-compressor">
+      <div class="card-top">
+        <h3>Bash Tool Output Compressor <a class="anchor" href="#bash-tool-output-compressor">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>An intelligent output compression system that recognizes common CLI commands and summarizes their verbose output to save context window space.</p>
+<div class="blabel">Details</div>
+<ul><li>Automatically detects command types by parsing the shell command and applies type-specific compression:</li><li><strong>git status</strong>: Strips hint lines, collapses clean repos to "clean"</li><li><strong>git diff/show</strong>: Summarizes per-file with <code>+N -N</code> counts, truncates hunks</li><li><strong>git log</strong>: Limits line length and total output</li><li><strong>git branch</strong>: Groups local/remote, deduplicates</li><li><strong>git commit/push/pull</strong>: Extracts only key status lines</li><li><strong>Test runners</strong> (pytest, jest, vitest, cargo test, go test): Extracts pass/fail summary and failure details</li><li><strong>Linters/type checkers</strong> (tsc, eslint, ruff, mypy, clippy): Keeps only error/warning lines</li><li><strong>Package managers</strong> (npm/pip/brew install): Strips download progress noise</li><li><strong>grep/rg</strong>: Restructures into <code>N matches in M files</code> with per-file groupings</li><li><strong>ls -l</strong>: Strips metadata, shows <code>dir/</code> and <code>file size</code> format with extension summary</li><li><strong>cat/file reads</strong>: Truncates long files, keeps definition-like lines</li><li><strong>JSON output</strong> (gh api, etc.): Prunes boilerplate URL fields (<code>followers_url</code>, <code>repos_url</code>, etc.)</li><li><strong>Docker/kubectl logs</strong>: Deduplicates repeated log lines</li><li><strong>Tables</strong> (docker ps, kubectl get, psql): Limits row count</li><li>Handles piped commands (e.g., <code>cmd | head -5</code>) and compound commands (<code>&amp;&amp;</code>, <code>;</code>, <code>||</code>)</li><li>Only compresses when savings exceed a minimum threshold</li></ul>
+<div class="blabel">Evidence</div>
+<p>Command classifier and compressor system (search for <code>"git-status"</code>, <code>"git-diff"</code>, <code>"test"</code>, <code>"error-only"</code> as case labels in the switch statement)</p>
+    </article>
+    <article class="card" id="message-actions-navigation">
+      <div class="card-top">
+        <h3>Message Actions Navigation <a class="anchor" href="#message-actions-navigation">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new keyboard-driven system for navigating between messages in the transcript and performing actions like copying message content or tool arguments.</p>
+<div class="blabel">Details</div>
+<ul><li>Navigate messages: prev/next, prev-user/next-user, top/bottom</li><li>Actions available per message type:</li><li><strong><code>c</code></strong> — copy message content (all message types)</li><li><strong><code>p</code></strong> — copy tool argument (e.g., file path for Read/Edit, command for Bash, pattern for Grep)</li><li><strong><code>e</code></strong> — edit a user message</li><li><strong>Enter</strong> — expand/collapse grouped tool uses, attachments, and system messages</li><li>Messages in the active actions view get a subtle background highlight (<code>messageActionsBackground</code>)</li><li>Escape collapses the expanded view, Ctrl+C exits message actions entirely</li><li>Strips <code>&lt;system-reminder&gt;</code> tags when copying user message content</li></ul>
+<div class="blabel">Evidence</div>
+<p>Message actions keybinding system (search for <code>"messageActions:prev"</code> and <code>"messageActionsBackground"</code>)</p>
+    </article>
+    <article class="card" id="inline-marketplace-definitions-in-settings">
+      <div class="card-top">
+        <h3>Inline Marketplace Definitions in Settings <a class="anchor" href="#inline-marketplace-definitions-in-settings">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Define plugin marketplaces directly in <code>settings.json</code> using a new <code>"settings"</code> source type, without needing an external repository.</p>
+<div class="blabel">Details</div>
+<ul><li>Add marketplace definitions inline via the <code>extraKnownMarketplaces</code> config with <code>source: "settings"</code></li><li>The reconciler writes a synthetic <code>marketplace.json</code> to the cache directory</li><li>Plugins must use remote sources (github, git-subdir, npm, url, pip) — relative paths are not supported</li><li>Reserved official marketplace names (anthropic, claude, etc.) cannot be used with settings sources</li><li>Marketplace name must match the <code>extraKnownMarketplaces</code> key</li></ul>
+<div class="blabel">Evidence</div>
+<p>Settings source marketplace schema (search for <code>"source: \"settings\""</code> and <code>"Inline marketplace manifest defined directly in settings.json"</code>)</p>
+    </article>
+    <article class="card" id="effort-level-display-enhancement">
+      <div class="card-top">
+        <h3>Effort Level Display Enhancement <a class="anchor" href="#effort-level-display-enhancement">#</a></h3>
+      </div>
+      <p>The effort status bar message now shows the currently computed effort level when effort is set to "auto". Instead of just <code>Effort level: auto</code>, you now see <code>Effort level: auto (currently high)</code> (or medium/low), giving better visibility into what the model is actually using. Additionally, a new recommendation dialog suggests medium effort for Opus to balance speed, intelligence, and rate limits.</p>
+<div class="blabel">Evidence</div>
+<p>Updated effort display (search for <code>"Effort level: auto (currently"</code> and <code>"We recommend medium effort for Opus"</code>)</p>
+    </article>
+    <article class="card" id="improved-agent-memory-scope-labels">
+      <div class="card-top">
+        <h3>Improved Agent Memory Scope Labels <a class="anchor" href="#improved-agent-memory-scope-labels">#</a></h3>
+      </div>
+      <p>The agent memory enablement prompt now uses clearer scope labels: "User scope (~/.claude/agent-memory/)" and "Project scope (.claude/agent-memory/)" instead of the previous generic "Enable" labels, making it easier to understand where memories will be stored.</p>
+<div class="blabel">Evidence</div>
+<p>Updated scope labels (search for <code>"User scope (~/.claude/agent-memory/) (Recommended)"</code> and <code>"Project scope (.claude/agent-memory/) (Recommended)"</code>)</p>
+    </article>
+    <article class="card" id="improved-memory-staleness-guidance">
+      <div class="card-top">
+        <h3>Improved Memory Staleness Guidance <a class="anchor" href="#improved-memory-staleness-guidance">#</a></h3>
+      </div>
+      <p>The system prompt guidance for handling memories has been updated to emphasize verifying memories against current state before acting on them, rather than simply trusting what was true when the memory was written.</p>
+<div class="blabel">Evidence</div>
+<p>Updated memory instruction (search for <code>"Memory records can become stale over time"</code>)</p>
+    </article>
+    <article class="card" id="search-highlighting-from-end">
+      <div class="card-top">
+        <h3>Search Highlighting from End <a class="anchor" href="#search-highlighting-from-end">#</a></h3>
+      </div>
+      <p>The terminal search highlighting system now supports searching from the end of the buffer, improving the search experience when looking for recent content.</p>
+<div class="blabel">Evidence</div>
+<p>New <code>searchHighlightFromEnd</code> property (search for <code>"searchHighlightFromEnd"</code>)</p>
+    </article>
+    <article class="card" id="rust-file-index-skip-optimization">
+      <div class="card-top">
+        <h3>Rust File Index Skip Optimization <a class="anchor" href="#rust-file-index-skip-optimization">#</a></h3>
+      </div>
+      <p>The file indexer now detects when tracked paths haven't changed and skips unnecessary Rust index rebuilds, improving startup and refresh performance for projects using the Rust-based file indexer.</p>
+<div class="blabel">Evidence</div>
+<p>Index rebuild skip messages (search for <code>"[FileIndex] skipped Rust index rebuild"</code>)</p>
+    </article>
+    <article class="card" id="git-index-based-file-cache-invalidation">
+      <div class="card-top">
+        <h3>Git Index-Based File Cache Invalidation <a class="anchor" href="#git-index-based-file-cache-invalidation">#</a></h3>
+      </div>
+      <p>The file index cache now checks the <code>.git/index</code> modification time to intelligently invalidate and refresh the file listing only when the git index actually changes, rather than on a fixed timer.</p>
+<div class="blabel">Evidence</div>
+<p>Git index mtime check in file cache refresh (search for <code>".git", "index"</code> in the <code>RnY</code> function)</p>
+    </article>
+    <article class="card" id="history-search-navigation-with-up-arrow">
+      <div class="card-top">
+        <h3>History Search Navigation with Up Arrow <a class="anchor" href="#history-search-navigation-with-up-arrow">#</a></h3>
+      </div>
+      <p>A new <code>historySearch:navUp</code> keybinding (bound to the Up arrow key) allows navigating upward through history search results, complementing the existing search controls.</p>
+<div class="blabel">Evidence</div>
+<p>New keybinding (search for <code>"historySearch:navUp"</code>)</p>
+    </article>
+    <article class="card" id="attachments-navigation-to-messages">
+      <div class="card-top">
+        <h3>Attachments Navigation to Messages <a class="anchor" href="#attachments-navigation-to-messages">#</a></h3>
+      </div>
+      <p>A new <code>attachments:toMessages</code> keybinding (bound to the Up arrow key) allows navigating from the attachments area directly into the message transcript, improving keyboard-driven navigation flow.</p>
+<div class="blabel">Evidence</div>
+<p>New keybinding (search for <code>"attachments:toMessages"</code>)</p>
+    </article>
+    <article class="card" id="open-in-editor-with-line-number-support">
+      <div class="card-top">
+        <h3>Open in Editor with Line Number Support <a class="anchor" href="#open-in-editor-with-line-number-support">#</a></h3>
+      </div>
+      <p>The open-in-editor feature now supports jumping to specific line numbers across different editors. GUI editors (like VS Code, Sublime) use their native line-jump flags, while terminal editors (like vim, nano) use <code>+N</code> syntax. The editor spawning handles both detached GUI processes and inline terminal editors with alternate screen management.</p>
+<div class="blabel">Evidence</div>
+<p>Editor spawning with line support (search for <code>"editor spawn failed"</code>)</p>
+    </article>
+    <article class="card" id="chunked-transcript-export">
+      <div class="card-top">
+        <h3>Chunked Transcript Export <a class="anchor" href="#chunked-transcript-export">#</a></h3>
+      </div>
+      <p>Transcript export now renders in chunks using a <code>renderRange</code> system, enabling streaming/progressive rendering of large transcripts instead of rendering everything at once.</p>
+<div class="blabel">Evidence</div>
+<p>Chunked rendering via <code>renderRange</code> (search for <code>"renderRange"</code>)</p>
+    </article>
+    <article class="card" id="improved-tab-focus-management">
+      <div class="card-top">
+        <h3>Improved Tab Focus Management <a class="anchor" href="#improved-tab-focus-management">#</a></h3>
+      </div>
+      <p>The focus management system has been refactored. Tab/Shift+Tab now properly cycles focus between interactive elements, and the focus manager is attached to the root node rather than being a standalone entity. The keyboard dispatch system now handles Tab key for focus cycling when not consumed by other handlers.</p>
+<div class="blabel">Evidence</div>
+<p>Focus management changes (search for <code>"focusManager"</code> and <code>"focusNext"</code>)</p>
+    </article>
+    <article class="card" id="github-app-installation-token-sync-checks">
+      <div class="card-top">
+        <h3>GitHub App Installation &amp; Token Sync Checks <a class="anchor" href="#github-app-installation-token-sync-checks">#</a></h3>
+      </div>
+      <p>New infrastructure checks whether the Claude GitHub App is installed on a repository and whether the user's GitHub token is synced via web-setup. These checks support the <code>/schedule</code> command's ability to determine if remote agents can access specific repos.</p>
+<div class="blabel">Evidence</div>
+<p>GitHub checks (search for <code>"checkGithubAppInstalled"</code> and <code>"checkGithubTokenSynced"</code>)</p>
+    </article>
+    <article class="card" id="git-bundle-upload-for-remote-sessions">
+      <div class="card-top">
+        <h3>Git Bundle Upload for Remote Sessions <a class="anchor" href="#git-bundle-upload-for-remote-sessions">#</a></h3>
+      </div>
+      <p>A new git bundle creation and upload system captures the current repository state (including uncommitted work via <code>git stash create</code>) and uploads it as a seed bundle for remote CCR sessions. Supports automatic fallback from <code>--all</code> to <code>HEAD</code>-only bundles when the full bundle exceeds size limits.</p>
+<div class="blabel">Evidence</div>
+<p>Bundle upload system (search for <code>"git bundle create"</code> and <code>"_source_seed.bundle"</code>)</p>
+    </article>
+    <article class="card" id="fine-grained-tool-streaming-guard">
+      <div class="card-top">
+        <h3>Fine-Grained Tool Streaming Guard <a class="anchor" href="#fine-grained-tool-streaming-guard">#</a></h3>
+      </div>
+      <p>The <code>eager_input_streaming</code> feature for fine-grained tool streaming is now gated to only activate for first-party connections that support extended notifications, preventing incompatible configurations.</p>
+<div class="blabel">Evidence</div>
+<p>Guard conditions added (search for <code>"tengu_fgts"</code> in the structural diff)</p>
+    </article>
+    <article class="card" id="vercel-plugin-tip">
+      <div class="card-top">
+        <h3>Vercel Plugin Tip <a class="anchor" href="#vercel-plugin-tip">#</a></h3>
+      </div>
+      <p>A new tip suggests installing the Vercel plugin when working with Vercel projects: "Working with Vercel? Install the vercel plugin."</p>
+<div class="blabel">Evidence</div>
+<p>Vercel tip (search for <code>"Working with Vercel? Install the vercel plugin"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed mouse wheel event parsing for the legacy X10 mouse protocol (6-byte <code>\x1B[M</code> sequences), ensuring scroll events are correctly recognized in more terminal emulators (search for <code>"\x1B[M"</code> in the mouse parser)</li></ul>
+<ul><li>Fixed Kitty keyboard protocol detection to require digit after <code>[</code> prefix, preventing false matches on other escape sequences (search for <code>"/^\\[\\d/.test(K)"</code>)</li></ul>
+<ul><li>Fixed <code>async</code> declaration for project rules loading function (<code>dV1</code>/<code>FV1</code>), which was missing the <code>async</code> keyword (search for <code>"async function dV1"</code>)</li></ul>
+<ul><li>Config panel now wrapped in <code>Suspense</code> boundary, preventing crashes from lazy-loaded components (search for <code>"Suspense"</code> near config panel)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.44 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.44."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.44</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.44</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.43 → v1.0.44</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p>Based on my analysis of the diff file, here's the detailed changelog for Claude Code version 1.0.44:</p>
+    </article>
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>1. <strong>Export Conversation Command</strong> 🆕</h4>
+<ul><li>Added new <code>/export</code> command to save conversation history</li><li>Usage: <code>/export [filename]</code> or just <code>/export</code></li><li>Export methods:</li><li><strong>Copy to clipboard</strong> - Copies the entire conversation to system clipboard</li><li><strong>Save to file</strong> - Saves conversation as a text file in the current directory</li><li>Automatically generates filename based on conversation content and timestamp if not specified</li><li>Example: <code>conversation-2024-12-16-implement-dark-mode.txt</code></li></ul>
+<h4>2. <strong>Process Suspension Support (Ctrl+Z)</strong> 🆕</h4>
+<ul><li>Added ability to suspend Claude Code using <code>Ctrl+Z</code> (like traditional Unix applications)</li><li>When suspended, displays: "Claude Code has been suspended. Run <code>fg</code> to bring Claude Code back."</li><li>Resume with <code>fg</code> command to return to Claude Code</li><li>Note: <code>Ctrl+U</code> now handles undo operations (previously <code>Ctrl+Z</code>)</li></ul>
+<h4>3. <strong>GitHub Actions OAuth Authentication</strong> 🆕</h4>
+<ul><li>Added OAuth token support for GitHub Actions setup</li><li>New authentication flow creates long-lived tokens (1 year expiry)</li><li>Stores OAuth tokens as <code>CLAUDE_CODE_OAUTH_TOKEN</code> secret</li><li>Environment variable support: <code>CLAUDE_CODE_OAUTH_TOKEN</code></li><li>Improved security for GitHub Actions integration</li></ul>
+<h4>4. <strong>MCP Resource Management Improvements</strong></h4>
+<ul><li>Enhanced MCP (Model Context Protocol) resource handling</li><li>New resource listing and reading capabilities</li><li>Better integration with MCP servers and resources</li><li>Support for <code>strictMcpConfig</code> parameter for stricter configuration validation</li></ul>
+    </article>
+    <article class="card" id="enhancements">
+      <div class="card-top">
+        <h3>Enhancements <a class="anchor" href="#enhancements">#</a></h3>
+      </div>
+      <h4>GitHub Actions Integration</h4>
+<ul><li>Added <code>actions: read</code> permission to workflow templates</li><li>Enables Claude to read CI/CD results on pull requests</li><li>Improved visibility into build and test status</li><li>Updated GitHub Actions setup flow with better error handling</li><li>New OAuth token option in setup wizard for users without API keys</li></ul>
+<h4>Tool Improvements</h4>
+<ul><li><strong>Removed TodoRead tool</strong> - Todo functionality streamlined</li><li>Better handling of tool permissions and validation</li><li>Improved MCP tool discovery and execution</li><li>Enhanced structured output formats for various tools</li></ul>
+<h4>UI/UX Improvements</h4>
+<ul><li>Better handling of long input with automatic text truncation</li><li>Improved clipboard integration across platforms</li><li>Enhanced error messages with platform-specific instructions</li><li>Smoother OAuth authentication flow with visual feedback</li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <h4>Authentication</h4>
+<ul><li>New OAuth flow implementation with:</li><li>Browser-based authentication</li><li>Automatic token storage</li><li>Refresh token support</li><li>1-year token expiry option</li><li>Support for inference-only OAuth tokens</li><li>Better token validation and error handling</li></ul>
+<h4>Platform Support</h4>
+<ul><li>Improved clipboard commands for different platforms:</li><li>macOS: <code>pbcopy</code></li><li>Windows: <code>clip</code></li><li>Linux: <code>xclip</code> or <code>wl-copy</code></li><li>WSL: <code>clip.exe</code></li></ul>
+<h4>Error Handling</h4>
+<ul><li>Better error messages for:</li><li>Failed clipboard operations</li><li>OAuth authentication issues</li><li>GitHub Actions setup problems</li><li>Platform-specific troubleshooting instructions</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed issues with stream handling in various tools</li><li>Improved stability of GitHub Actions setup process</li><li>Better handling of suspended/resumed state</li><li>Fixed edge cases in conversation export</li></ul>
+    </article>
+    <article class="card" id="internal-improvements">
+      <div class="card-top">
+        <h3>Internal Improvements <a class="anchor" href="#internal-improvements">#</a></h3>
+      </div>
+      <ul><li>Cleaner separation of OAuth and API key authentication paths</li><li>Better state management for complex workflows</li><li>Improved error tracking and telemetry</li><li>Enhanced TypeScript type definitions</li></ul>
+    </article>
+    <article class="card" id="breaking-changes">
+      <div class="card-top">
+        <h3>Breaking Changes <a class="anchor" href="#breaking-changes">#</a></h3>
+      </div>
+      <ul><li><code>TodoRead</code> tool has been removed - todo functionality integrated differently</li><li><code>Ctrl+Z</code> now suspends the application instead of undo (use <code>Ctrl+U</code> for undo)</li></ul>
+    </article>
+    <article class="card" id="notes-for-users">
+      <div class="card-top">
+        <h3>Notes for Users <a class="anchor" href="#notes-for-users">#</a></h3>
+      </div>
+      <ol><li><strong>Exporting Conversations</strong>: Use <code>/export</code> to save important conversations or share them with others. The export includes all messages, tool uses, and responses in a readable format.</li></ol>
+<ol><li><strong>GitHub Actions Setup</strong>: When setting up GitHub Actions, you can now choose between:</li></ol>
+<ul><li>Using an existing Anthropic API key</li><li>Creating a new API key</li><li>Using OAuth authentication (recommended for better security)</li></ul>
+<ol><li><strong>Process Control</strong>: The new suspend/resume feature works like traditional Unix applications, making Claude Code more familiar for terminal users.</li></ol>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

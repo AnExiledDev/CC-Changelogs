@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.19 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.19."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.19</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.19</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.18 → v1.0.19</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">4</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.19 Changelog</p>
+    </article>
+    <article class="card" id="mcp-resource-support-mentions">
+      <div class="card-top">
+        <h3>MCP Resource Support (@mentions) <a class="anchor" href="#mcp-resource-support-mentions">#</a></h3>
+      </div>
+      <ul><li><strong>New @mention syntax for MCP resources</strong>: You can now reference MCP (Model Context Protocol) resources directly in your messages using the <code>@server:resource</code> syntax</li><li>Example: <code>@myserver:config.json</code> to reference a config file from an MCP server</li><li>Resources are automatically fetched and included as context when mentioned</li><li>Autocomplete support for discovering available MCP resources (up to 15 suggestions)</li></ul>
+    </article>
+    <article class="card" id="agent-specific-todo-lists">
+      <div class="card-top">
+        <h3>Agent-Specific Todo Lists <a class="anchor" href="#agent-specific-todo-lists">#</a></h3>
+      </div>
+      <ul><li><strong>Isolated todo lists per agent</strong>: When using the Task tool to spawn sub-agents, each agent now maintains its own separate todo list</li><li>Todo lists are stored as <code>{session-id}-agent-{agent-id}.json</code> files</li><li>Prevents todo list conflicts between parent and child agents</li><li>Each agent can track its own progress independently</li></ul>
+    </article>
+    <article class="card" id="compact-summary-messages">
+      <div class="card-top">
+        <h3>Compact Summary Messages <a class="anchor" href="#compact-summary-messages">#</a></h3>
+      </div>
+      <ul><li><strong>New compact summary display</strong>: A new message type that shows condensed summaries of long responses</li><li>Displays "Compact summary" header with the summarized content</li><li>In transcript view, shows the full summary text</li><li>In other views, shows hint "(ctrl+r to expand)" for accessing full content</li></ul>
+    </article>
+    <article class="card" id="enhanced-text-editing">
+      <div class="card-top">
+        <h3>Enhanced Text Editing <a class="anchor" href="#enhanced-text-editing">#</a></h3>
+      </div>
+      <h4>Logical Line Navigation</h4>
+<ul><li><strong>New logical line movement commands</strong>: Navigate by actual line breaks rather than wrapped lines</li><li><code>upLogicalLine()</code>: Move cursor up one logical line (to previous newline)</li><li><code>downLogicalLine()</code>: Move cursor down one logical line (to next newline)</li><li><code>startOfLogicalLine()</code>: Jump to start of current logical line</li><li><code>endOfLogicalLine()</code>: Jump to end of current logical line</li><li><code>firstNonBlankInLogicalLine()</code>: Jump to first non-whitespace character in logical line</li><li><code>deleteToLogicalLineEnd()</code>: Delete from cursor to end of logical line</li></ul>
+<p>These commands are useful when working with long lines that wrap in the terminal, allowing navigation based on actual line breaks in the text rather than visual line wrapping.</p>
+    </article>
+    <article class="card" id="shell-command-execution">
+      <div class="card-top">
+        <h3>Shell Command Execution <a class="anchor" href="#shell-command-execution">#</a></h3>
+      </div>
+      <ul><li><strong>Background process management</strong>: Enhanced support for running commands in the background</li><li>New <code>moveToBackground()</code> function for shell commands</li><li>Returns shell ID when moving a process to background</li><li>Example output: "Command running in background (shell ID: 123)"</li></ul>
+    </article>
+    <article class="card" id="command-metadata">
+      <div class="card-top">
+        <h3>Command Metadata <a class="anchor" href="#command-metadata">#</a></h3>
+      </div>
+      <ul><li><strong>Read-only command flagging</strong>: Commands can now be marked as <code>read_only</code></li><li>New <code>read_only</code> boolean field in command schemas</li><li>Helps identify commands that won't modify the filesystem or make network calls</li><li>Improves command safety and permission handling</li></ul>
+    </article>
+    <article class="card" id="performance">
+      <div class="card-top">
+        <h3>Performance <a class="anchor" href="#performance">#</a></h3>
+      </div>
+      <ul><li><strong>Adaptive connection checking</strong>: Connection status polling interval now adjusts based on environment</li><li>Default: 1 second polling interval</li><li>Extended to 30 seconds in certain runtime environments for reduced overhead</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed duplicate comment issue in codebase</li><li>Improved file path handling for agent-specific data storage</li><li>Enhanced error handling for MCP resource fetching</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-changes">
+      <ul><li>Removed unused stream imports and process-related functions</li><li>Consolidated file storage paths for better organization</li><li>Added UUID generation support for unique identifiers</li><li>Improved sandbox detection (though currently disabled by default)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.24 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.24."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.24</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.24</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.23 → v1.0.24</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Tool Execution Hooks</h4>
+<p>Version 1.0.24 introduces a powerful hooks system that allows you to run custom commands before and after tool executions. This feature enables advanced workflows, custom validations, and integrations.</p>
+<p><strong>Configuration:</strong> Add hooks to your <code>~/.claude/claude.json</code> file:</p>
+<pre><code>{
+  &quot;hooks&quot;: {
+    &quot;PreToolUse&quot;: [
+      {
+        &quot;matcher&quot;: &quot;Edit|Write&quot;,
+        &quot;hooks&quot;: [
+          {
+            &quot;type&quot;: &quot;command&quot;,
+            &quot;command&quot;: &quot;pre-edit-validator.sh&quot;
+          }
+        ]
+      }
+    ],
+    &quot;PostToolUse&quot;: [
+      {
+        &quot;matcher&quot;: &quot;Bash&quot;,
+        &quot;hooks&quot;: [
+          {
+            &quot;type&quot;: &quot;command&quot;,
+            &quot;command&quot;: &quot;log-bash-commands.sh&quot;
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+<p><strong>Hook Types:</strong></p>
+<ul><li><strong>PreToolUse</strong>: Executes before a tool runs</li><li>Receives tool arguments as JSON input</li><li>Exit code 0: Continues normally (output not shown)</li><li>Exit code 2: Shows stderr to Claude and blocks the tool execution</li><li>Other exit codes: Shows stderr to user but continues</li></ul>
+<ul><li><strong>PostToolUse</strong>: Executes after a tool completes</li><li>Receives JSON with "inputs" (tool arguments) and "response" (tool result)</li><li>Exit code 0: Output shown in transcript mode (Ctrl-R)</li><li>Exit code 2: Shows stderr to Claude immediately</li><li>Other exit codes: Shows stderr to user only</li></ul>
+<ul><li><strong>Notification</strong>: Triggers when notifications are sent</li></ul>
+<p><strong>Example Use Cases:</strong></p>
+<ul><li>Pre-commit hooks before file edits</li><li>Security validation before running commands</li><li>Logging and auditing tool usage</li><li>Custom linting or formatting checks</li><li>Integration with external systems</li></ul>
+<h4>OAuth Flow Improvements</h4>
+<p>The OAuth authentication flow now provides better visibility into the authorization process:</p>
+<ul><li>The authorization URL is now accessible programmatically during the flow</li><li>Improved error handling for OAuth client configuration issues</li><li>Better cleanup of invalid OAuth credentials when authentication fails</li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <ul><li>Replaced direct stream imports with more specific imports (<code>PassThrough</code> from stream module)</li><li>Updated process import to use named import (<code>cwd</code> from node:process)</li><li>Enhanced OAuth flow to accept a callback for receiving the authorization URL</li><li>Multiple new internal variables added for improved functionality</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed OAuth error handling to properly clean up invalid client credentials</li><li>Improved error messages and logging throughout the OAuth flow</li></ul>
+<p>This release focuses on extensibility and developer experience, with the hooks system being the standout feature that enables powerful customization of Claude Code's behavior.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

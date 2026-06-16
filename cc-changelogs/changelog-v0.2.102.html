@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.102 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.102."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.102</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.102</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.101 → v0.2.102</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.102 Changelog</p>
+    </article>
+    <article class="card" id="enhanced-paste-reference-system">
+      <div class="card-top">
+        <h3>Enhanced Paste Reference System <a class="anchor" href="#enhanced-paste-reference-system">#</a></h3>
+      </div>
+      <p>The paste functionality has been significantly improved with a new reference system that allows users to reference multiple pasted items (both text and images) within a single conversation.</p>
+<p><strong>New paste reference format:</strong></p>
+<ul><li>Text pastes: <code>[Pasted text #1 +100 lines]</code> - Shows paste ID and line count</li><li>Images: <code>[Image #1]</code> - Shows image ID</li></ul>
+<p><strong>How it works:</strong> When you paste multiple items during a conversation, Claude Code now assigns unique IDs to each paste. This allows you to reference specific pastes later in the conversation by their ID number.</p>
+    </article>
+    <article class="card" id="improved-directory-handling">
+      <div class="card-top">
+        <h3>Improved Directory Handling <a class="anchor" href="#improved-directory-handling">#</a></h3>
+      </div>
+      <p>The <code>isDirEmptySync</code> function now includes an existence check before checking if a directory is empty. This prevents errors when working with non-existent directories.</p>
+<pre><code>// Old behavior: Would error if directory doesn&#x27;t exist
+function isDirEmptySync(path) {
+  return fs.isDirEmptySync(path);
+}
+
+// New behavior: Returns true for non-existent directories
+function isDirEmptySync(path) {
+  if (!fs.existsSync(path)) return true;
+  return fs.isDirEmptySync(path);
+}</code></pre>
+    </article>
+    <article class="card" id="command-execution-enhancement">
+      <div class="card-top">
+        <h3>Command Execution Enhancement <a class="anchor" href="#command-execution-enhancement">#</a></h3>
+      </div>
+      <p>The slash command system now properly propagates the <code>shouldQuery</code> flag from command handlers. This allows custom commands to control whether their output should trigger a follow-up query to Claude.</p>
+<p><strong>Example usage:</strong></p>
+<pre><code># Custom commands can now return both messages and control query behavior
+/my-command some arguments
+# The command can decide whether Claude should process the result further</code></pre>
+    </article>
+    <article class="card" id="better-thinking-mode-detection">
+      <div class="card-top">
+        <h3>Better Thinking Mode Detection <a class="anchor" href="#better-thinking-mode-detection">#</a></h3>
+      </div>
+      <p>The "thinking" feature detection has been improved to use proper word boundary regex patterns instead of simple string includes. This prevents false positives when these keywords appear as part of other words.</p>
+<p><strong>Thinking triggers (with proper word boundaries):</strong></p>
+<ul><li>"think" → 4,000 tokens</li><li>"think hard", "think deeply", "megathink" → 10,000 tokens</li><li>"think harder", "ultrathink" → 31,999 tokens</li></ul>
+    </article>
+    <article class="card" id="history-navigation-updates">
+      <div class="card-top">
+        <h3>History Navigation Updates <a class="anchor" href="#history-navigation-updates">#</a></h3>
+      </div>
+      <p>The command history system now properly tracks pasted content alongside commands, maintaining the association between prompts and their pasted attachments when navigating through history with arrow keys.</p>
+    </article>
+    <article class="card" id="import-optimizations">
+      <div class="card-top">
+        <h3>Import Optimizations <a class="anchor" href="#import-optimizations">#</a></h3>
+      </div>
+      <ul><li>Removed unused <code>stream</code> import</li><li>Removed duplicate <code>node:process</code> import</li><li>Added targeted import for <code>cwd</code> from <code>node:process</code></li><li>Added <code>PassThrough</code> stream import where needed</li></ul>
+    </article>
+    <article class="card" id="new-internal-functions">
+      <div class="card-top">
+        <h3>New Internal Functions <a class="anchor" href="#new-internal-functions">#</a></h3>
+      </div>
+      <ul><li><code>El5</code>: Filters user messages for processing</li><li><code>wo1</code>: Formats pasted text references</li><li><code>FQ6</code>: Formats image references</li><li><code>IQ6</code>: Extracts paste references from text</li><li><code>dI1</code>: Processes conversation history with paste content</li><li><code>ke5</code>: Compares paste content objects for equality</li></ul>
+<p>These changes improve the overall robustness of paste handling, command execution, and user interaction within Claude Code.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

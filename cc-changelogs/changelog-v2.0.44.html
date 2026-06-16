@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.44 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.44."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.44</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.44</span></h1>
+<p class="sub">Version 2.0.44 introduces an experimental reasoning effort control feature that allows Claude to adjust its reasoning depth based on experiment configuration. This is gated behind a Statsig experiment flag and enables testing different trade-offs between response speed and thoroughness.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.43 → v2.0.44</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">2</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="experimental-reasoning-effort-control">
+      <div class="card-top">
+        <h3>Experimental Reasoning Effort Control <a class="anchor" href="#experimental-reasoning-effort-control">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A new system that allows Claude to dynamically adjust how much reasoning it applies to tasks based on an experiment-controlled effort level.</p>
+<p><strong>How it works:</strong> This feature is controlled by the Statsig experiment flag <code>tengu_effort_exp</code> with parameter <code>tengu_effort_level</code>. When enabled, it accepts three levels:</p>
+<ul><li><code>low</code> (maps to effort value 45)</li><li><code>medium</code> (maps to effort value 75)</li><li><code>high</code> (maps to effort value 99)</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>The feature automatically injects reasoning effort instructions into Claude's system prompt when the experiment is active</li><li>Lower effort values prioritize faster, more efficient responses</li><li>Higher effort values enable maximum reasoning and thoroughness</li><li>The effort scale ranges from 0-100, with Claude instructed to vary reasoning depth accordingly</li><li>This is an A/B test feature - only users enrolled in the Statsig experiment will have access</li><li><strong>Evidence</strong>: <code>function sQI() at line 470523</code>, <code>aQI mapping at line 470940</code>, <code>system prompt integration at line 470717</code></li></ul>
+<p><strong>Technical implementation:</strong></p>
+<ul><li>New function <code>sQI()</code> reads experiment configuration and generates reasoning effort instructions</li><li>Mapping object <code>aQI = { low: 45, medium: 75, high: 99 }</code> converts string levels to numeric values</li><li>The generated <code>&lt;reasoning_effort&gt;</code> XML tag is appended to the system prompt array</li><li>Experiment values are retrieved via the Statsig client using the <code>d3()</code> helper function</li></ul>
+    </article>
+    <article class="card" id="module-system-refactoring">
+      <div class="card-top">
+        <h3>Module System Refactoring <a class="anchor" href="#module-system-refactoring">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Significant restructuring of module initialization and dependencies</p>
+<p><strong>Details:</strong></p>
+<ul><li>The module initialization variable was renamed from <code>LQ</code> to <code>Pr</code></li><li>Initialization dependencies were completely reorganized with different function calls</li><li>Usage of the initialization function was reduced from 69 call sites to 6, suggesting more efficient lazy loading or granular initialization</li><li>Import statements were reorganized by the bundler, but no functional changes to imports were made</li><li><strong>Evidence</strong>: <code>variable Pr at line 470923</code> (previously <code>LQ at line 480763</code> in v2.0.43)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

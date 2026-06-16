@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.39 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.39."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.39</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.39</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.38 → v1.0.39</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.39 Changelog</p>
+    </article>
+    <article class="card" id="activity-tracking-system">
+      <div class="card-top">
+        <h3>Activity Tracking System <a class="anchor" href="#activity-tracking-system">#</a></h3>
+      </div>
+      <ul><li>Added comprehensive activity tracking to monitor user and CLI operation timings</li><li>New <code>cp</code> class tracks active operations and distinguishes between user activity and CLI activity</li><li>Automatically records activity durations for analytics purposes</li><li>5-second timeout for user activity detection</li></ul>
+    </article>
+    <article class="card" id="checkpointing-system">
+      <div class="card-top">
+        <h3>Checkpointing System <a class="anchor" href="#checkpointing-system">#</a></h3>
+      </div>
+      <ul><li><strong>New checkpoint feature</strong> for saving and restoring project states within git repositories</li><li>Automatically creates shadow git repositories in <code>.claude/checkpoints/</code> for tracking changes</li><li>Commands available (implementation details):</li><li>Save checkpoints with custom labels</li><li>Restore to previous checkpoints with automatic backup</li><li>List all checkpoints in reverse chronological order</li><li>Checkpoints are stored per git repository using SHA-256 hashing of the repository path</li></ul>
+    </article>
+    <article class="card" id="interactive-mode-detection">
+      <div class="card-top">
+        <h3>Interactive Mode Detection <a class="anchor" href="#interactive-mode-detection">#</a></h3>
+      </div>
+      <ul><li>Added functions to detect and manage interactive vs non-interactive sessions:</li><li><code>d91()</code> - Check if running in non-interactive mode</li><li><code>yBA()</code> - Check if running in interactive mode</li><li><code>kBA()</code> - Set interactive mode</li><li><code>xBA()</code> - Get client type</li><li><code>vBA()</code> - Set client type</li><li>Client types supported: "cli", "github-action", "sdk-typescript", "sdk-cli"</li></ul>
+    </article>
+    <article class="card" id="model-support">
+      <div class="card-top">
+        <h3>Model Support <a class="anchor" href="#model-support">#</a></h3>
+      </div>
+      <ul><li>Enhanced model name display in <code>Cj()</code> function</li><li>Now properly displays names for all Claude models:</li><li>Opus 4</li><li>Sonnet 4</li><li>Sonnet 3.7</li><li>Sonnet 3.5</li><li>Haiku 3.5</li></ul>
+    </article>
+    <article class="card" id="ide-detection">
+      <div class="card-top">
+        <h3>IDE Detection <a class="anchor" href="#ide-detection">#</a></h3>
+      </div>
+      <ul><li>Added support for Android Studio in IDE detection</li><li>JetBrains IDE list now includes "androidstudio"</li></ul>
+    </article>
+    <article class="card" id="command-detection">
+      <div class="card-top">
+        <h3>Command Detection <a class="anchor" href="#command-detection">#</a></h3>
+      </div>
+      <ul><li>Improved command availability checking with new <code>ih()</code> function</li><li>Uses proper executable path resolution before checking file permissions</li></ul>
+    </article>
+    <article class="card" id="version-update">
+      <div class="card-top">
+        <h3>Version Update <a class="anchor" href="#version-update">#</a></h3>
+      </div>
+      <ul><li>Updated to version 0.55.1 (internal version tracking)</li><li>Main version updated to 1.0.39</li></ul>
+    </article>
+    <article class="card" id="new-dependencies">
+      <div class="card-top">
+        <h3>New Dependencies <a class="anchor" href="#new-dependencies">#</a></h3>
+      </div>
+      <ul><li>Added several internal utility modules for HTTP handling, base64 encoding, and query string building</li><li>New imports for crypto functions (<code>createHash</code>, <code>randomBytes</code>)</li><li>Added <code>PassThrough</code> stream support</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>Refactored installer diagnostics (<code>YT5</code> function) with simplified logic</li><li>Removed several unused functions:</li><li><code>ph</code> - Command availability checker (replaced by <code>ih</code>)</li><li><code>UA6</code> - IDE detection helper (replaced by <code>R06</code>)</li><li><code>Qw0</code> - String splitting function</li><li><code>z9A</code> - Shell configuration finder</li><li><code>wx2</code> - Version display formatter (replaced by <code>$v2</code>)</li><li><code>uO5</code> - Permission description helper (replaced by <code>dP5</code>)</li></ul>
+    </article>
+    <article class="card" id="session-management">
+      <div class="card-top">
+        <h3>Session Management <a class="anchor" href="#session-management">#</a></h3>
+      </div>
+      <ul><li>Enhanced <code>Kw0</code> class (formerly <code>lz0</code>) to support checkpoints</li><li>Session logs now include checkpoint entries</li><li>Added <code>getAllCheckpoints()</code> method to retrieve checkpoints for a session</li><li>Modified log entry structure to handle checkpoint type</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed duplicate import statements</li><li>Improved error handling in checkpoint operations</li><li>Better process detection on macOS (returns null immediately instead of attempting detection)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Usage Examples</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="usage-examples">
+      <p>While the checkpoint system is integrated into the codebase, it would typically be used through CLI commands (exact command syntax would depend on the CLI implementation):</p>
+<pre><code># Save a checkpoint with a custom label
+claude checkpoint save &quot;Before major refactoring&quot;
+
+# List all checkpoints
+claude checkpoint list
+
+# Restore to a previous checkpoint
+claude checkpoint restore &lt;checkpoint-id&gt;</code></pre>
+<p>The activity tracking and interactive mode detection work automatically in the background to provide better analytics and adapt behavior based on the execution context.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

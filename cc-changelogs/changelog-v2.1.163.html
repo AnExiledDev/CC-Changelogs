@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.163 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.163."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.163</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.163</span></h1>
+<p class="sub">This release adds two new hook events (<code>SubagentStop</code> and a formal <code>Stop</code> hook output schema with <code>additionalContext</code>), organization-level version enforcement via <code>requiredMinimumVersion</code>/<code>requiredMaximumVersion</code> policy settings, and new <code>/plugin list</code> filter flags. Under the hood, the workflow VM received substantial security hardening against hostile Proxy objects crossing the VM boundary, and OAuth 401 recovery was improved for remote sessions.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.140 → v2.1.163</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">4</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">14 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="subagentstop-hook-event">
+      <div class="card-top">
+        <h3>SubagentStop Hook Event <a class="anchor" href="#subagentstop-hook-event">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new hook event fires when a subagent finishes, complementing the existing <code>Stop</code> event which fires when the main conversation agent finishes. The hook output's <code>additionalContext</code> field is delivered back to the subagent so it can continue and act on the feedback.</p>
+<div class="blabel">Details</div>
+<ul><li>Event name: <code>SubagentStop</code></li><li>Available for command-based and prompt-based hooks</li><li>Hook output schema: <code>{ hookEventName: "SubagentStop", additionalContext?: string }</code></li><li><code>additionalContext</code> is non-error feedback; the subagent continues execution so it can act on it</li><li>Prompt-based hooks now also explicitly support <code>SubagentStop</code> alongside <code>Stop</code>, <code>UserPromptSubmit</code>, and <code>PreToolUse</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema literal for the new event (search for <code>"Hook-specific output for the SubagentStop event"</code>)</p>
+    </article>
+    <article class="card" id="stop-hook-output-schema-with-additionalcontext">
+      <div class="card-top">
+        <h3>Stop Hook Output Schema with additionalContext <a class="anchor" href="#stop-hook-output-schema-with-additionalcontext">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>Stop</code> hook event now has a formal output schema with an <code>additionalContext</code> field, allowing hooks to send feedback to the model after it finishes a response so the conversation continues.</p>
+<div class="blabel">Details</div>
+<ul><li>Hook output schema: <code>{ hookEventName: "Stop", additionalContext?: string }</code></li><li><code>additionalContext</code> is non-error feedback delivered to the model; the conversation continues so the model can act on it</li><li>Previously, the Stop hook output schema was not separately defined — it now matches the SubagentStop pattern</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema description (search for <code>"Hook-specific output for the Stop event. additionalContext is non-error feedback"</code>)</p>
+    </article>
+    <article class="card" id="organization-version-enforcement-requiredminimumversion-requ">
+      <div class="card-top">
+        <h3>Organization Version Enforcement (requiredMinimumVersion / requiredMaximumVersion) <a class="anchor" href="#organization-version-enforcement-requiredminimumversion-requ">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Administrators can now enforce a minimum and/or maximum Claude Code version through managed policy settings. If the running version is outside the allowed range, Claude Code exits at startup with instructions on how to update or downgrade.</p>
+<div class="blabel">Details</div>
+<ul><li><code>requiredMinimumVersion</code>: If the running version is older than this value, Claude Code exits with a message to update using the organization's approved method.</li><li><code>requiredMaximumVersion</code>: If the running version is newer than this value, Claude Code exits with a message to install an approved version (<code>claude install &lt;version&gt;</code> may also work).</li><li>Both settings are only enforced from managed/policy settings (<code>managed-settings.json</code> / MDM). They have no effect in user or project settings.</li><li>Exempt commands: <code>update</code>, <code>install</code>, and <code>doctor</code> bypass the version check so users can fix the problem.</li><li>Invalid semver values are logged as errors and ignored rather than blocking startup.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Version check at startup (search for <code>"is older than the minimum version required by your organization"</code> and <code>"is newer than the maximum version allowed by your organization"</code>)</p>
+    </article>
+    <article class="card" id="plugin-list-enabled-and-disabled-filters">
+      <div class="card-top">
+        <h3>/plugin list --enabled and --disabled Filters <a class="anchor" href="#plugin-list-enabled-and-disabled-filters">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>/plugin list</code> command now accepts <code>--enabled</code> and <code>--disabled</code> flags to filter the output to only installed plugins matching the requested state.</p>
+<div class="blabel">Usage</div>
+<pre><code>/plugin list --enabled    # show only enabled plugins
+/plugin list --disabled   # show only disabled plugins
+/plugin list              # show all installed plugins (unchanged)</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Enabled/disabled status is shown as <code>✓ enabled</code> or <code>✗ disabled</code> per plugin entry.</li><li>If no plugins match the filter, a short message like "No disabled plugins." is shown.</li><li>Plugin entries also show version and scope where available.</li><li>A pending-reload indicator <code>— run /reload-plugins to apply</code> appears when the in-memory state differs from what would be loaded on next start.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Filter flag in command rendering (search for <code>"/plugin list [--enabled|--disabled] - List installed plugins"</code>)</p>
+    </article>
+    <article class="card" id="expanded-media-type-support-for-file-uploads">
+      <div class="card-top">
+        <h3>Expanded Media Type Support for File Uploads <a class="anchor" href="#expanded-media-type-support-for-file-uploads">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The file upload system now recognizes additional image, video, and audio formats.</p>
+<div class="blabel">Details</div>
+<ul><li>New image formats: HEIC (<code>.heic</code>), HEIF (<code>.heif</code>), AVIF (<code>.avif</code>), TIFF (<code>.tif</code>, <code>.tiff</code>), ICO (<code>.ico</code>)</li><li>New video formats: QuickTime/MOV (<code>.mov</code>), AVI (<code>.avi</code>), MKV (<code>.mkv</code>), M4V (<code>.m4v</code>)</li><li>New audio format: FLAC (<code>.flac</code>)</li><li>These MIME types are now served correctly when uploading files via the browser integration and Chrome tool</li></ul>
+<div class="blabel">Evidence</div>
+<p>MIME type map additions (search for <code>"image/heic"</code>, <code>"video/quicktime"</code>, <code>"audio/flac"</code>)</p>
+    </article>
+    <article class="card" id="reload-plugins-cache-impact-warning">
+      <div class="card-top">
+        <h3>/reload-plugins Cache Impact Warning <a class="anchor" href="#reload-plugins-cache-impact-warning">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When <code>/reload-plugins</code> would add or remove MCP servers (changing the tool list), Claude Code now warns that the next message will re-read the whole conversation instead of using the prompt cache, and prompts you to confirm with <code>--force</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>The warning shows how many MCP servers changed, or the specific server name if only one changed.</li><li>Use <code>/reload-plugins --force</code> to apply immediately and skip the warning.</li><li>If ToolSearch is active and the model supports it, the warning is suppressed (tool-search mode handles dynamic tools without cache invalidation).</li></ul>
+<div class="blabel">Evidence</div>
+<p>Warning message (search for <code>"This reload changes MCP tools"</code> and <code>"Run /reload-plugins --force to apply"</code>)</p>
+    </article>
+    <article class="card" id="oauth-401-recovery-for-remote-sessions">
+      <div class="card-top">
+        <h3>OAuth 401 Recovery for Remote Sessions <a class="anchor" href="#oauth-401-recovery-for-remote-sessions">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Remote sessions now wait for a rotated OAuth token after receiving a 401 error, instead of immediately propagating the failure.</p>
+<div class="blabel">Details</div>
+<ul><li>Wait time is controlled by <code>CLAUDE_CODE_OAUTH_401_WAIT_MS</code> (default: 60,000 ms = 60 seconds for remote sessions, 0 for local sessions).</li><li>If a valid, non-failed token appears within the timeout window, the request is retried automatically.</li><li>For remote child sessions (workers), <code>CLAUDE_CODE_AUTH_FAIL_EXIT_MS</code> (default: 600,000 ms = 10 minutes) controls how long to tolerate unrecovered 401s before exiting with a message to the runner to recycle the session with fresh credentials.</li><li>The "failed access token" (the specific token that got the 401) is tracked so a rotation to an identical token value is not treated as a recovery.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Recovery function (search for <code>"OAuth 401 recovery: waiting up to"</code> and <code>"OAuth 401 unrecovered past CLAUDE_CODE_AUTH_FAIL_EXIT_MS"</code>)</p>
+    </article>
+    <article class="card" id="workflow-vm-security-hardening">
+      <div class="card-top">
+        <h3>Workflow VM Security Hardening <a class="anchor" href="#workflow-vm-security-hardening">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The workflow VM execution environment was substantially hardened against Proxy-based attacks that could cross the JavaScript VM sandbox boundary.</p>
+<div class="blabel">Details</div>
+<ul><li>Arrays crossing the VM boundary are now deep-cloned inside the VM sandbox. The array length is read once (preventing a Proxy <code>length</code> getter that increments from causing an infinite loop on the host thread).</li><li>The maximum array length crossing the boundary is capped; exceeding it throws a clear error rather than hanging.</li><li>Functions are never cloned across the boundary (they become <code>undefined</code>).</li><li>A private <code>_CAP</code> symbol on boundary-cap errors prevents hostile Proxy traps from intercepting and suppressing the error.</li><li>The <code>budget</code> object passed to workflows now uses <code>__proto__: null</code> to prevent prototype chain pollution.</li><li><code>agent</code>, <code>parallel</code>, <code>pipeline</code>, <code>workflow</code>, and <code>args</code> are injected into the VM context via <code>Object.defineProperty</code> with proper wrapping rather than being in the initial context literal.</li><li>The <code>args</code> value is serialized with <code>JSON.stringify</code>/<code>JSON.parse</code> through the VM context to prevent host-side Proxy objects from being accessible inside the script.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Cross-VM clone code (search for <code>"array length is not a safe integer across the workflow VM boundary"</code>)</p>
+    </article>
+    <article class="card" id="workflow-script-static-validation-via-ast">
+      <div class="card-top">
+        <h3>Workflow Script Static Validation via AST <a class="anchor" href="#workflow-script-static-validation-via-ast">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Workflow scripts are now parsed with the Acorn JavaScript parser (including the <code>acorn-walk</code> tree traversal library) for accurate static validation before execution.</p>
+<div class="blabel">Details</div>
+<ul><li><code>'with' statements</code> are rejected: <code>SyntaxError: 'with' statements are not supported in workflow scripts.</code></li><li><code>'await using' declarations</code> are rejected: <code>SyntaxError: 'await using' declarations are not supported in workflow scripts.</code></li><li>Identifiers starting with the internal prefix are rejected: <code>SyntaxError: Identifier '&lt;name&gt;' is reserved.</code></li><li><code>import()</code> expressions are disallowed.</li><li>The AST-based approach replaces simpler regex-based checks and properly handles edge cases like <code>await</code> inside async arrow functions with expression bodies.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Error messages (search for <code>"'with' statements are not supported in workflow scripts."</code> and <code>"'await using' declarations are not supported in workflow scripts."</code>)</p>
+    </article>
+    <article class="card" id="mcp-server-failure-notification">
+      <div class="card-top">
+        <h3>MCP Server Failure Notification <a class="anchor" href="#mcp-server-failure-notification">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When MCP servers fail to connect or need authentication at startup, a structured tree notification now appears listing each affected server with its status and error details.</p>
+<div class="blabel">Details</div>
+<ul><li>The notification identifies whether each server needs authentication, has a config issue, or has failed for another reason.</li><li>Shows a summary count: <code>N MCP server(s) not connected — run /mcp to authenticate, retry, or see details:</code></li><li>Servers requiring authentication are highlighted as errors; others as warnings.</li><li>Excludes IDE-attached servers (<code>sse-ide</code>, <code>ws-ide</code> types) and servers that are marked as claudeai-proxy.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Notification text (search for <code>"MCP server(s) not connected — run /mcp to authenticate, retry, or see details:"</code>)</p>
+    </article>
+    <article class="card" id="builtin-mcp-servers-ignored-in-plugin-config">
+      <div class="card-top">
+        <h3>Builtin MCP Servers Ignored in Plugin Config <a class="anchor" href="#builtin-mcp-servers-ignored-in-plugin-config">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>MCP server entries declared in plugin configs that refer to CLI-owned builtin servers are now silently ignored with a debug log, rather than causing a conflict or error.</p>
+<div class="blabel">Evidence</div>
+<p>Log message (search for <code>"Builtin server is CLI-owned; ignored"</code>)</p>
+    </article>
+    <article class="card" id="plugin-lsp-extension-conflict-detection">
+      <div class="card-top">
+        <h3>Plugin LSP Extension Conflict Detection <a class="anchor" href="#plugin-lsp-extension-conflict-detection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now detects when two or more plugins declare LSP servers claiming the same file extension, and reports the conflict rather than silently picking one.</p>
+<div class="blabel">Details</div>
+<ul><li>Conflicts are reported as <code>lsp-extension-conflict</code> warnings, including which plugin and server name is active for the extension vs. the newcomer.</li><li>The first plugin to register an extension wins; subsequent claims for the same extension are flagged.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Conflict detection function (search for <code>" declares two LSP servers for"</code> in LSP warnings or <code>"already registered a server for that extension"</code>)</p>
+    </article>
+    <article class="card" id="hermetic-mode-mcp-config-filtering">
+      <div class="card-top">
+        <h3>Hermetic Mode MCP Config Filtering <a class="anchor" href="#hermetic-mode-mcp-config-filtering">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>MCP servers passed via <code>--mcp-config</code> CLI flags are now properly blocked when running in hermetic mode, with a warning log listing the ignored servers.</p>
+<div class="blabel">Evidence</div>
+<p>Warning message (search for <code>"ignored in hermetic mode:"</code>)</p>
+    </article>
+    <article class="card" id="tmpdir-sandbox-documentation-clarified">
+      <div class="card-top">
+        <h3>$TMPDIR Sandbox Documentation Clarified <a class="anchor" href="#tmpdir-sandbox-documentation-clarified">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The system prompt instruction about using <code>$TMPDIR</code> for temporary files now correctly states that <code>TMPDIR</code> is set to the sandbox-writable directory specifically in sandbox mode (the old wording implied it was set in both sandboxed and unsandboxed contexts).</p>
+<div class="blabel">Evidence</div>
+<p>Updated instruction text (search for <code>"TMPDIR is automatically set to the correct sandbox-writable directory in sandbox mode"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Path traversal via symlinks with <code>..</code> segments is now detected correctly in the git-controlled directory check. The old implementation could miss cases where a symlink in the path was followed by a <code>..</code> component that escaped the intended root. (search for <code>"would overwrite tracked literal"</code> near the symlink traversal logic)</li></ul>
+<ul><li>The <code>fetchSession</code> error log is now counter-based, reporting "N times in a row" rather than always showing a fixed count. Previously the message was hardcoded as "10 times in a row." (search for <code>"fetchSession failed"</code>)</li></ul>
+<ul><li>Bridge <code>setMode</code> commands that are rejected (invalid mode) now fall back to <code>'default'</code> mode with a warning instead of leaving the bridge in an indeterminate state. (search for <code>"bridge setMode '"</code> and <code>"rejected ("</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
+    </article>
+    <article class="card" id="settings-panel-category-reorganization-in-development">
+      <div class="card-top">
+        <h3>Settings Panel Category Reorganization [In Development] <a class="anchor" href="#settings-panel-category-reorganization-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A complete reorganization of the <code>/config</code> settings panel into named groups — Appearance, Model &amp; output, Display, Input &amp; controls, Connections, Advanced, Experimental, Internal — replacing the flat list of settings.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_maple_sundial</code> (defaults to false).</p>
+<div class="blabel">Details</div>
+<ul><li>Settings like <code>autoScrollEnabled</code>, <code>terminalProgressBarEnabled</code>, <code>showTurnDuration</code>, and <code>prStatusFooterEnabled</code> move to a Display group.</li><li><code>editorMode</code>, <code>copyOnSelect</code>, <code>fileCheckpointingEnabled</code>, and workflow-related toggles move to Input &amp; controls.</li><li>MCP/IDE connection settings move to Connections.</li><li>Experimental settings (<code>switchModelsOnFlag</code>, <code>showMessageTimestamps</code>, <code>teammateMode</code>) get their own section.</li><li>The <code>snipEnabled</code> and <code>snipDebug</code> settings appear in an Internal group.</li><li><code>/vim</code> and <code>/output-style</code> commands show a "moved to /config" redirect message when the flag is active.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Category map gated on <code>tengu_maple_sundial</code> (search for <code>"Model &amp; output"</code> near the settings group map)</p>
+    </article>
+    <article class="card" id="slash-command-menu-kind-lanes-in-development">
+      <div class="card-top">
+        <h3>Slash Command Menu Kind Lanes [In Development] <a class="anchor" href="#slash-command-menu-kind-lanes-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A visual grouping of slash commands in the menu that separates config commands, action commands, info commands, and agent commands into distinct lanes.</p>
+<div class="blabel">Status</div>
+<p>Gated by <code>tengu_mint_lanes</code> feature flag or <code>CLAUDE_CODE_ENABLE_MENU_KIND_LANES</code> environment variable (both default off).</p>
+<div class="blabel">Details</div>
+<ul><li>Commands are classified as <code>config</code> (settings-changing), <code>action</code> (one-off operations), <code>info</code> (read-only queries), and <code>agent</code> (background agent launchers).</li><li>Source labels (<code>project</code>, <code>org</code>, <code>plugin</code>) appear on applicable commands.</li><li>The classification map covers all known slash commands.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Classification map (search for <code>"CLAUDE_CODE_ENABLE_MENU_KIND_LANES"</code>)</p>
+    </article>
+    <article class="card" id="velvet-falcon-model-detection-in-development">
+      <div class="card-top">
+        <h3>Velvet Falcon Model Detection [In Development] <a class="anchor" href="#velvet-falcon-model-detection-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure to detect and handle a new internal model variant identified as "velvet falcon."</p>
+<div class="blabel">Status</div>
+<p>Gated by <code>tengu_velvet_falcon_model</code> feature flag; also overrideable via <code>CLAUDE_CODE_VELVET_FALCON</code> environment variable.</p>
+<div class="blabel">Details</div>
+<ul><li>The model string is fetched from <code>clientDataCache.velvet_falcon_model</code> first, then from the feature flag.</li><li>Detection returns true when the session's model string includes the configured identifier.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Detection function (search for <code>"tengu_velvet_falcon_model"</code> and <code>"CLAUDE_CODE_VELVET_FALCON"</code>)</p>
+    </article>
+    <article class="card" id="subscription-switch-notice-in-development">
+      <div class="card-top">
+        <h3>Subscription Switch Notice [In Development] <a class="anchor" href="#subscription-switch-notice-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A UI component that encourages users on a usage-based (API/console) account to activate their existing Claude subscription plan with Claude Code instead.</p>
+<div class="blabel">Status</div>
+<p>Shown based on a new <code>seenNotifications["subscription-switch"]</code> counter — only appears to users who have not yet seen it the configured number of times. The display logic is wired up but gated on subscription type detection.</p>
+<div class="blabel">Details</div>
+<ul><li>Shows: "Use your existing Claude [Pro/Max/Team] plan with Claude Code · /login to activate"</li><li>Impression count is stored in local config under <code>seenNotifications</code>.</li><li>Telemetry event: <code>tengu_switch_to_subscription_notice_shown</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>UI component text (search for <code>"Use your existing Claude "</code> and <code>"/login to activate"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.163.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.163.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

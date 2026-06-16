@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.48 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.48."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.48</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.48</span></h1>
+<p class="sub">This release introduces a major new worktree workflow for isolated development, adds HTTP hooks and a new ConfigChange hook event, and removes the experimental MCP-CLI feature. Users can now work in git worktrees with optional tmux integration, and exclude specific CLAUDE.md files using glob patterns.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.47 → v2.1.48</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">11 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="git-worktree-mode">
+      <div class="card-top">
+        <h3>Git Worktree Mode <a class="anchor" href="#git-worktree-mode">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Create and work in isolated git worktrees directly from Claude Code, with full session management and cleanup prompts.</p>
+<div class="blabel">Usage</div>
+<pre><code># Start Claude Code with a new worktree
+claude --worktree
+claude -w
+
+# Start with a named worktree
+claude --worktree=my-feature
+
+# Combine with tmux for parallel sessions
+claude --worktree --tmux</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Creates a new git worktree in <code>.claude/worktrees/</code> with a dedicated branch based on HEAD</li><li>Automatically switches the session's working directory to the worktree</li><li>On session exit, prompts to keep or remove the worktree and associated tmux session</li><li>Symlinks configured directories (like <code>node_modules</code>) from main repo to avoid disk bloat</li><li>Copies <code>settings.local.json</code> and configures git hooks from the main repository</li><li>The worktree branch is automatically deleted when removing the worktree</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>-w, --worktree [name]</code> flag and CreateWorktree tool (search for <code>"Create a new git worktree for this session"</code>)</p>
+    </article>
+    <article class="card" id="createworktree-tool">
+      <div class="card-top">
+        <h3>CreateWorktree Tool <a class="anchor" href="#createworktree-tool">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new built-in tool that allows Claude to create worktrees mid-session when users request isolated work.</p>
+<div class="blabel">Usage</div>
+<pre><code>User: &quot;Start a worktree for this feature&quot;
+User: &quot;Work in isolation on a separate branch&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Tool activates when user asks to "work in isolation" or "start a worktree"</li><li>Must be in a git repository and not already in a worktree</li><li>Creates worktree with optional custom name</li><li>Session automatically switches to the new worktree directory</li></ul>
+<div class="blabel">Evidence</div>
+<p>Tool description (search for <code>"Use this tool when the user asks to work in isolation"</code>)</p>
+    </article>
+    <article class="card" id="http-hooks">
+      <div class="card-top">
+        <h3>HTTP Hooks <a class="anchor" href="#http-hooks">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new hook type that sends HTTP POST requests instead of executing shell commands, enabling webhook-style integrations.</p>
+<p>Usage (in settings.json or CLAUDE.md):</p>
+<pre><code>{
+  &quot;hooks&quot;: {
+    &quot;PreToolUse&quot;: [{
+      &quot;type&quot;: &quot;http&quot;,
+      &quot;url&quot;: &quot;https://your-server.com/hook&quot;,
+      &quot;headers&quot;: {
+        &quot;Authorization&quot;: &quot;Bearer $MY_TOKEN&quot;
+      },
+      &quot;timeout&quot;: 30
+    }]
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Supports environment variable expansion in headers (<code>$VAR_NAME</code> or <code>${VAR_NAME}</code> syntax)</li><li>Configurable timeout per request</li><li>JSON response parsing with optional logging</li><li>Works with all hook events including the new ConfigChange event</li></ul>
+<div class="blabel">Evidence</div>
+<p>New http hook type definition (search for <code>"HTTP hook type"</code>)</p>
+    </article>
+    <article class="card" id="configchange-hook-event">
+      <div class="card-top">
+        <h3>ConfigChange Hook Event <a class="anchor" href="#configchange-hook-event">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new hook event that fires when configuration files change during a session, allowing validation and blocking of config changes.</p>
+<div class="blabel">Details</div>
+<ul><li>Fires when skills, settings, or CLAUDE.md files are modified</li><li>Can block changes by returning exit code 2</li><li>Input includes source (user_settings, project_settings, etc.) and file_path</li><li>Useful for enforcing configuration policies</li></ul>
+<div class="blabel">Evidence</div>
+<p>New ConfigChange hook event (search for <code>"ConfigChange"</code>)</p>
+    </article>
+    <article class="card" id="claude-md-exclude-patterns">
+      <div class="card-top">
+        <h3>CLAUDE.md Exclude Patterns <a class="anchor" href="#claude-md-exclude-patterns">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Exclude specific CLAUDE.md files from loading using glob patterns or absolute paths.</p>
+<p>Usage (in settings.json):</p>
+<pre><code>{
+  &quot;memory&quot;: {
+    &quot;excludePatterns&quot;: [
+      &quot;/home/user/monorepo/CLAUDE.md&quot;,
+      &quot;**/node_modules/**/CLAUDE.md&quot;,
+      &quot;**/some-dir/.claude/rules/**&quot;
+    ]
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Uses picomatch for glob pattern matching</li><li>Patterns match against absolute file paths</li><li>Only applies to User, Project, and Local memory types (Managed/policy files cannot be excluded)</li></ul>
+<div class="blabel">Evidence</div>
+<p>New excludePatterns setting (search for <code>"Glob patterns or absolute paths of CLAUDE.md files to exclude from loading"</code>)</p>
+    </article>
+    <article class="card" id="tmux-integration-for-worktrees">
+      <div class="card-top">
+        <h3>Tmux Integration for Worktrees <a class="anchor" href="#tmux-integration-for-worktrees">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Automatically create tmux sessions when starting worktrees, with iTerm2 native pane support.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --worktree --tmux
+claude -w --tmux=classic  # Use traditional tmux instead of iTerm2 integration</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Creates a tmux session for parallel worktree work</li><li>Uses iTerm2 native panes when available for better integration</li><li>Use <code>--tmux=classic</code> for traditional tmux behavior</li><li>Session management options on exit: keep both, keep worktree only, or remove all</li></ul>
+<div class="blabel">Evidence</div>
+<p>New --tmux flag (search for <code>"Create a tmux session for the worktree"</code>)</p>
+    </article>
+    <article class="card" id="model-capability-descriptions">
+      <div class="card-top">
+        <h3>Model Capability Descriptions <a class="anchor" href="#model-capability-descriptions">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added explicit descriptions for model thinking capabilities in the schema.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>effortLevels</code> field describes available effort levels for models</li><li>New <code>supportsAdaptiveThinking</code> field indicates whether a model supports adaptive thinking (Claude decides when and how much to think)</li></ul>
+<div class="blabel">Evidence</div>
+<p>New schema descriptions (search for <code>"Whether this model supports adaptive thinking"</code>)</p>
+    </article>
+    <article class="card" id="git-diff-for-issue-creation">
+      <div class="card-top">
+        <h3>Git Diff for Issue Creation <a class="anchor" href="#git-diff-for-issue-creation">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Improved git diff generation when creating issues, with better handling of edge cases.</p>
+<div class="blabel">Details</div>
+<ul><li>Handles shallow clones gracefully with HEAD-only mode</li><li>Falls back to HEAD-only mode when no remote or merge-base is found</li><li>Captures untracked files with size limits (500MB per file, 5GB total)</li><li>Excludes binary files from untracked file capture</li><li>Filters out excessively large files automatically</li></ul>
+<div class="blabel">Evidence</div>
+<p>New shallow clone detection (search for <code>"Shallow clone detected, using HEAD-only mode for issue"</code>)</p>
+    </article>
+    <article class="card" id="mcp-server-authentication-caching">
+      <div class="card-top">
+        <h3>MCP Server Authentication Caching <a class="anchor" href="#mcp-server-authentication-caching">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Caches MCP servers that need authentication to reduce redundant connection attempts.</p>
+<div class="blabel">Details</div>
+<ul><li>Stores needs-auth status in <code>mcp-needs-auth-cache.json</code></li><li>Skips connection attempts for cached servers</li><li>Logged as "Skipping connection (cached needs-auth)"</li></ul>
+<div class="blabel">Evidence</div>
+<p>New cache file (search for <code>"mcp-needs-auth-cache.json"</code>)</p>
+    </article>
+    <article class="card" id="background-agent-ux-improvements">
+      <div class="card-top">
+        <h3>Background Agent UX Improvements <a class="anchor" href="#background-agent-ux-improvements">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Better messaging for background agent management.</p>
+<div class="blabel">Details</div>
+<ul><li>New "Press again to kill all background agents" message for confirmation</li><li>Clearer output file instructions</li></ul>
+<div class="blabel">Evidence</div>
+<p>New UI text (search for <code>"Press again to kill all background agents"</code>)</p>
+    </article>
+    <article class="card" id="ide-opening-feedback">
+      <div class="card-top">
+        <h3>IDE Opening Feedback <a class="anchor" href="#ide-opening-feedback">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Better feedback when opening worktrees or projects in IDEs.</p>
+<div class="blabel">Details</div>
+<ul><li>Clearer messages for manual IDE opening</li><li>Specific messaging for worktree vs project contexts</li></ul>
+<div class="blabel">Evidence</div>
+<p>New message handling (search for <code>"Please open the"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed path traversal detection (search for <code>"path traversal detected"</code>)</li><li>Added validation for non-empty strings and patterns (search for <code>"Expected a non-empty string"</code>)</li></ul>
+    </article>
+    <article class="card" id="mcp-cli-removed">
+      <div class="card-top">
+        <h3>MCP-CLI Removed <a class="anchor" href="#mcp-cli-removed">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The experimental <code>mcp-cli</code> command-line interface for MCP servers has been removed.</p>
+<div class="blabel">Details</div>
+<ul><li>The <code>ENABLE_EXPERIMENTAL_MCP_CLI</code> environment variable is no longer recognized</li><li>The <code>mcp-cli</code> command (info, call, servers, tools, grep, resources, read) is removed</li><li>MCP tools continue to work through the normal tool interface</li></ul>
+<p>Impact: If you relied on <code>mcp-cli</code> commands in bash scripts or hooks, migrate to using MCP tools through Claude's standard tool interface.</p>
+<div class="blabel">Evidence</div>
+<p>Removal of mcp-cli infrastructure (removed strings: <code>"mcp-cli info"</code>, <code>"mcp-cli call"</code>, <code>"ENABLE_EXPERIMENTAL_MCP_CLI"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The worktree feature requires being in a git repository and having git installed. Tmux integration requires tmux to be installed (<code>sudo apt install tmux</code> on Linux). iTerm2 users will get native pane integration when using <code>--tmux</code> without the <code>=classic</code> suffix.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

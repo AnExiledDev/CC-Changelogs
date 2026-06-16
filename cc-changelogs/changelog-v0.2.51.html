@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.51 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.51."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.51</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.51</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.50 → v0.2.51</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Local Installation Migration Tool</h4>
+<p>A new command <code>migrate-installer</code> has been added to help users migrate from global npm installation to a local installation in their home directory. This provides better isolation and avoids global dependency conflicts.</p>
+<p><strong>Usage:</strong></p>
+<pre><code>claude migrate-installer</code></pre>
+<p>This interactive command will:</p>
+<ol><li>Install Claude CLI locally to <code>~/.claude/local/</code></li><li>Set up shell aliases for the <code>claude</code> command</li><li>Uninstall the global npm package</li></ol>
+<p>The migration process includes progress tracking and error handling, with telemetry to monitor success rates.</p>
+<h4>Enhanced Memory Management UI</h4>
+<p>The memory management interface has been completely redesigned with a more user-friendly selection system:</p>
+<ul><li><strong>Visual improvements</strong>: Better layout with clear descriptions and examples for each memory type</li><li><strong>Three memory locations</strong>:</li><li><strong>Project memory</strong> - Stored in <code>./CLAUDE.md</code> (checked into version control)</li><li><strong>Project memory (local)</strong> - Stored in <code>./CLAUDE.local.md</code> (gitignored)</li><li><strong>User memory</strong> - Stored in <code>~/.claude/CLAUDE.md</code> (global across all projects)</li><li><strong>Interactive selection</strong>: Use arrow keys to navigate between options with visual feedback</li><li><strong>Helpful examples</strong>: Each memory type now shows concrete usage examples</li></ul>
+<h4>MCP Server Approval System</h4>
+<p>New security features for MCP (Model Context Protocol) servers detected in project <code>.mcp.json</code> files:</p>
+<ul><li><strong>Batch approval</strong>: When multiple MCP servers are detected, users can select which ones to enable using a checkbox interface</li><li><strong>Single server approval</strong>: For projects with one MCP server, a simple yes/no prompt</li><li><strong>Security warnings</strong>: Clear explanations about MCP server capabilities and risks</li><li><strong>Persistent choices</strong>: Approved/rejected servers are saved and remembered</li><li><strong>Management command</strong>: Users can reset their choices with <code>claude mcp reset-project-choices</code></li></ul>
+<p><strong>Interactive prompts:</strong></p>
+<ul><li>Space to select/deselect servers</li><li>Enter to confirm selections</li><li>Escape to reject all servers</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Enhanced URL Detection and Handling</h4>
+<ul><li><strong>Improved URL extraction</strong>: Now detects both full URLs and domain names (e.g., <code>example.com</code> will be converted to <code>https://example.com</code>)</li><li><strong>HTTP to HTTPS upgrade</strong>: HTTP URLs are automatically upgraded to HTTPS for security</li><li><strong>Better redirect handling</strong>: Only allows redirects that add "www." to the hostname for security</li><li><strong>Placeholder system</strong>: URLs in content are replaced with placeholders during processing to avoid false matches</li></ul>
+<h4>WebFetch Tool Updates</h4>
+<ul><li>Added guidance to prefer MCP-provided web fetch tools when available</li><li>Updated security notes about URL validation</li><li>Improved error messages for domain restrictions</li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <h4>️ Infrastructure Updates</h4>
+<ul><li>Added proper handling for Node.js inspector/debugger detection</li><li>Improved telemetry for tracking migration success</li><li>Better error handling in the initialization process</li><li>Enhanced process exit handling with proper cleanup</li></ul>
+<h4>Security Enhancements</h4>
+<ul><li>Stricter URL validation removing protocol restrictions (now accepts both HTTP and HTTPS)</li><li>Better domain validation for web fetching</li><li>Enhanced MCP server security with explicit user approval required</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed memory type selection UI to use proper dropdown components instead of manual navigation</li><li>Improved error handling during local installation migration</li><li>Better cleanup of interrupted processes</li></ul>
+    </article>
+    <article class="card" id="internal-changes">
+      <div class="card-top">
+        <h3>Internal Changes <a class="anchor" href="#internal-changes">#</a></h3>
+      </div>
+      <ul><li>Added new utility functions for stream handling (<code>sU4</code>, <code>IR4</code>, <code>ZR4</code>, <code>WR4</code>)</li><li>Improved partition utility with <code>JR4</code> for array splitting</li><li>Enhanced token counting with <code>eO2</code> function</li><li>Better component organization with dedicated UI components for MCP approval</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

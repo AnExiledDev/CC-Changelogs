@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.9 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.9."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.9</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.9</span></h1>
+<p class="sub">Version 2.0.9 introduces Skills support for the plugin system, allowing developers to create reusable AI behaviors. Additionally, post-tool-hook feedback is now properly surfaced to the AI model as user messages, improving context awareness and response quality.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.8 → v2.0.9</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="skills-support-for-plugins">
+      <div class="card-top">
+        <h3>Skills Support for Plugins <a class="anchor" href="#skills-support-for-plugins">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Plugins can now include "skills" - reusable AI behaviors defined in markdown files that can be loaded and executed by Claude Code.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Create a skills directory in your plugin
+~/.claude/plugins/my-plugin/skills/my-skill/SKILL.md
+
+# Or specify custom paths in your plugin manifest
+{
+  &quot;name&quot;: &quot;my-plugin&quot;,
+  &quot;skills&quot;: [&quot;custom-skills-dir&quot;, &quot;another-skills-dir&quot;]
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Skills are loaded from subdirectories containing <code>SKILL.md</code> files</li><li>By default, looks for a <code>skills/</code> directory in your plugin root</li><li>Custom paths can be specified in the plugin manifest using the <code>skills</code> field (single path or array)</li><li>Each skill directory should contain a <code>SKILL.md</code> file with frontmatter and content</li><li>Skills are processed similarly to commands and agents but with <code>isSkillMode: true</code></li><li><strong>Evidence</strong>: <code>hMB() at line 422839</code>, <code>skillsPath property at line 377365</code>, <code>isSkillMode flag at line 422855</code></li></ul>
+    </article>
+    <article class="card" id="api-client-fetch-override">
+      <div class="card-top">
+        <h3>API Client Fetch Override <a class="anchor" href="#api-client-fetch-override">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Internal enhancement allowing custom fetch implementations to be injected into the API client for testing or custom network handling.</p>
+<p><strong>Details:</strong></p>
+<ul><li>The API client factory function (<code>fF()</code>) now accepts an optional <code>fetchOverride</code> parameter</li><li>Replaces previous hardcoded fetch selection logic</li><li>Primarily used internally but enables advanced customization scenarios</li><li><strong>Evidence</strong>: <code>fF() at line 376120</code>, fetch override usage at lines 411360 and 432771</li></ul>
+    </article>
+    <article class="card" id="enhanced-post-tool-hook-feedback-handling">
+      <div class="card-top">
+        <h3>Enhanced Post-Tool-Hook Feedback Handling <a class="anchor" href="#enhanced-post-tool-hook-feedback-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Feedback from post-tool-use hooks is now properly converted to user messages, making it visible to the AI model for improved context awareness.</p>
+<p><strong>How it works now:</strong></p>
+<ul><li>Post-tool-hook feedback creates messages with subtype <code>"post_tool_hook_feedback"</code></li><li>These messages are automatically converted to user messages during processing</li><li>The AI model can now reference and build upon hook outputs in subsequent responses</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Previously, hook feedback was treated as generic "informational" system messages</li><li>New dedicated functions: <code>eb1()</code> creates the feedback messages, <code>fPB()</code> identifies them</li><li>Conversion happens in message processing pipeline via <code>AD5()</code> function</li><li>Includes dedicated UI rendering function <code>h2B()</code> for displaying feedback</li><li><strong>Evidence</strong>: <code>fPB() at line 436505</code>, <code>eb1() at line 437160</code>, conversion logic at line 436513, <code>h2B() rendering at line 405844</code></li></ul>
+    </article>
+    <article class="card" id="grove-notice-grace-period-enforcement">
+      <div class="card-top">
+        <h3>Grove Notice Grace Period Enforcement <a class="anchor" href="#grove-notice-grace-period-enforcement">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The Grove climate contribution notice display logic now respects a grace period flag, allowing more persistent display of important notices.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>When <code>notice_is_grace_period</code> is <code>false</code>, notices are shown regardless of previous user dismissals</li><li>Grace period defaults to <code>true</code>, maintaining existing behavior</li><li>After grace period ends, users see notices even if previously dismissed</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Affects the timing of when Grove-related notices appear in the CLI</li><li>Allows for more aggressive communication of important announcements after initial grace period</li><li><strong>Evidence</strong>: <code>GBB() at line 407802</code> (previously <code>m2B() at line 407357</code> in v2.0.8), new grace period check at line 407805</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Updated AWS Bedrock SDK client code with new type definitions</li><li>Refactored helper functions including <code>DFB()</code> (replaces <code>tXB()</code>) for local command message checking</li><li>Function renames: <code>vF()</code> → <code>fF()</code>, <code>m2B()</code> → <code>GBB()</code>, <code>HH5()</code> → <code>AD5()</code></li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

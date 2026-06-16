@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.115 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.115."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.115</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.115</span></h1>
+<p class="sub">This release adds rainbow color support to the color theme system and improves thinking detection toggle behavior to be more predictable and user-controlled.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.114 → v1.0.115</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="rainbow-color-palette">
+      <div class="card-top">
+        <h3>Rainbow Color Palette <a class="anchor" href="#rainbow-color-palette">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added a complete rainbow color palette to all theme variants (light, dark, and custom themes)</p>
+<p><strong>Details:</strong></p>
+<ul><li>Seven new rainbow colors: red, orange, yellow, green, blue, indigo, violet</li><li>Each color includes both normal and shimmer variants for animated effects</li><li>Colors added to theme objects: <code>gq9</code> at line 360299, <code>uq9</code> at line 360354, <code>hq9</code> at line 360244, <code>dq9</code> at line 360464, <code>mq9</code> at line 360409, <code>cq9</code> at line 360519</li><li>Example color values:</li><li><code>rainbow_red</code>: "rgb(235,95,87)"</li><li><code>rainbow_orange</code>: "rgb(245,139,87)"</li><li><code>rainbow_yellow</code>: "rgb(250,195,95)"</li><li>And corresponding shimmer variants for each</li></ul>
+    </article>
+    <article class="card" id="rainbow-color-arrays-and-helper-functions">
+      <div class="card-top">
+        <h3>Rainbow Color Arrays and Helper Functions <a class="anchor" href="#rainbow-color-arrays-and-helper-functions">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New infrastructure for cycling through rainbow colors</p>
+<p><strong>How to use:</strong> The system now includes:</p>
+<ul><li><code>Cj9</code> array at line 365972: Contains the seven rainbow color names for cycling</li><li><code>Uj9</code> array at line 365981: Contains the seven rainbow shimmer color names</li><li><code>m61()</code> function at line 365993: Cycles through rainbow colors by index</li><li><code>Ew1()</code> function at line 365990: Checks if a string matches "ultrathink" (case-insensitive)</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>The <code>m61(index, useShimmer)</code> function takes an index and optional shimmer flag, returning the appropriate rainbow color name</li><li>Uses modulo arithmetic to cycle through colors: <code>Q[A % Q.length]</code></li><li><strong>Evidence</strong>: <code>m61() at line 365993</code>, <code>Ew1() at line 365990</code>, <code>Cj9 at line 365972</code>, <code>Uj9 at line 365981</code></li></ul>
+    </article>
+    <article class="card" id="thinking-detection-toggle-behavior">
+      <div class="card-top">
+        <h3>Thinking Detection Toggle Behavior <a class="anchor" href="#thinking-detection-toggle-behavior">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved how the thinking detection disabled state works when users toggle it on/off</p>
+<p><strong>Details:</strong></p>
+<ul><li>Removed automatic re-enabling of thinking when users clear thinking tokens from input (previously in <code>useEffect</code> at line 437586-437588 in v1.0.114)</li><li>Introduced computed "effective disabled" state (<code>i1</code> at line 437849) that only treats thinking as disabled when both:</li></ul>
+<ol><li>User has disabled thinking, AND</li><li>Thinking tokens are present in the input</li></ol>
+<ul><li>Visual feedback (border colors, shimmer effects) now shows thinking detection state more accurately</li><li>User preference for disabled thinking now persists instead of being automatically reset</li><li><strong>Evidence</strong>: <code>i1 variable at line 437849 in Yp5()</code>, removed <code>useEffect</code> from previous version</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Refactored imports for better tree-shaking and bundle optimization</p>
+<p><strong>Details:</strong></p>
+<ul><li>Changed <code>node:process</code> import from default to named import for <code>cwd()</code> function</li><li>Import structure: <code>import { cwd as TNA } from "node:process"</code> at line 361351</li><li>Import structure: <code>import { PassThrough as xi5 } from "stream"</code> at line 442117</li><li>No functional changes, just more efficient bundling</li><li><strong>Evidence</strong>: <code>import { cwd as TNA } at line 361351</code>, <code>import { PassThrough as xi5 } at line 442117</code></li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

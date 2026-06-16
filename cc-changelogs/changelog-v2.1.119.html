@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.119 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.119."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.119</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.119</span></h1>
+<p class="sub">This is a major release that introduces the <strong>Claude Daemon</strong> — a persistent background service with installable system service support (launchd/systemd), interactive management via the new <code>claude agents</code> fleet view, and a complete suite of CLI commands (<code>claude attach</code>, <code>claude kill</code>, <code>claude logs</code>, <code>claude rm</code>). It adds three new scheduled routines (morning check-in, catch-up, pre-meeting check-in) alongside the enhanced dream/memory consolidation system. Significant new settings, MCP tool name validation, session pinning, and many new SDK options round out the release.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.118 → v2.1.119</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">34</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">30 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="fleet-view-claude-agents">
+      <div class="card-top">
+        <h3>Fleet View (<code>claude agents</code>) <a class="anchor" href="#fleet-view-claude-agents">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A full-screen interactive TUI dashboard for managing all background agent sessions from a single place.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude agents</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Displays all background sessions with live status: working, blocked, done, idle</li><li>Jobs can be grouped by <strong>directory</strong> or <strong>state</strong> (toggle with <code>Ctrl+S</code>)</li><li>Sessions can be <strong>pinned</strong> to the top of the list (<code>Ctrl+T</code>) for quick access; pins persist across sessions in <code>.pins.json</code></li><li>Sessions can be <strong>renamed</strong> inline (<code>Ctrl+R</code>)</li><li>Sessions can be <strong>deleted</strong> (<code>Ctrl+X</code> to arm, press again to confirm; also stops running sessions)</li><li>Sessions can be <strong>reordered</strong> within a group (<code>Shift+Up/Down</code>)</li><li>A <strong>peek panel</strong> (<code>Space</code>) shows a split-view with reply input and session details</li><li>An <strong>input field</strong> at the bottom lets you describe a new task to dispatch a new agent session — supports <code>@template</code> autocomplete and <code>/skill</code> slash commands</li><li>PR status integration: for jobs monitoring PRs, shows CI pass/fail, review status, additions/deletions</li><li>Quick-open numbered sessions with <code>Cmd+1-9</code></li><li>Help panel via <code>?</code> shows all keybindings</li><li>Empty state shows helpful suggestions: "paste a link, or 'review PR #123 for bugs' · 'fix the failing test' · 'babysit my PR until CI passes'"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Fleet view system (search for <code>"claude agents"</code>, <code>".fleetview-heartbeat"</code>, <code>"Agents here keep running"</code>)</p>
+    </article>
+    <article class="card" id="cli-commands-for-background-session-management">
+      <div class="card-top">
+        <h3>CLI Commands for Background Session Management <a class="anchor" href="#cli-commands-for-background-session-management">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A suite of new top-level CLI commands for managing background sessions without entering the interactive fleet view.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude attach &lt;id&gt;    # Attach to a running background session
+claude kill &lt;id&gt;      # Stop a background session
+claude logs &lt;id&gt;      # Show recent output from a session
+claude rm &lt;id&gt;        # Remove worktree and job state for a stopped session
+claude respawn &lt;id&gt;   # Respawn an exited session</code></pre>
+<div class="blabel">Details</div>
+<ul><li>After backgrounding a session, these commands are displayed as a quick reference</li><li><code>claude kill</code> retains the worktree (if used); prints <code>"worktree retained at &lt;path&gt;"</code> with a hint to use <code>claude rm &lt;id&gt;</code> for full cleanup</li><li><code>claude rm</code> removes both the worktree and job state files</li><li><code>claude respawn --all</code> respawns all exited sessions at once</li></ul>
+<div class="blabel">Evidence</div>
+<p>Session management commands (search for <code>"claude attach &lt;id&gt;"</code>, <code>"claude kill &lt;id&gt;"</code>, <code>"claude rm &lt;id&gt;"</code>, <code>"claude logs &lt;id&gt;"</code>)</p>
+    </article>
+    <article class="card" id="daemon-service-management-claude-daemon-install-uninstall">
+      <div class="card-top">
+        <h3>Daemon Service Management (<code>claude daemon install/uninstall</code>) <a class="anchor" href="#daemon-service-management-claude-daemon-install-uninstall">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Install the Claude daemon as a persistent system service (launchd on macOS, systemd on Linux) so it runs automatically on boot and survives terminal closures.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude daemon install     # Install as a system service
+claude daemon uninstall   # Remove the system service
+claude daemon start       # Start the daemon
+claude daemon stop        # Stop the daemon
+claude daemon restart     # Restart the daemon
+claude daemon status      # Show daemon status and PID
+claude daemon log         # View daemon logs</code></pre>
+<div class="blabel">Details</div>
+<ul><li>On macOS, installs as a launchd agent (<code>com.anthropic.claude-daemon</code>)</li><li>On Linux, installs as a systemd user unit with <code>Restart=always</code> and rate limiting (10 bursts per 60s)</li><li>The daemon manages all background workers: scheduled tasks, remote control servers, assistants, and heartbeat workers</li><li>Hot-reloads <code>daemon.json</code> configuration automatically (chokidar watcher with debounce)</li><li>Centralized OAuth token management — proactively refreshes tokens, broadcasts to workers via IPC</li><li>If headless auth fails, writes <code>daemon-auth-status.json</code> and sends a desktop notification prompting <code>claude auth login</code></li><li>Logs to <code>~/.claude/daemon.log</code></li><li>Idle exit: daemon shuts down after a configurable period with no clients (unless installed as a service)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Daemon service management (search for <code>"Install service"</code>, <code>"Uninstall service"</code>, <code>"com.anthropic.claude-daemon"</code>, <code>"daemon.status.json"</code>)</p>
+    </article>
+    <article class="card" id="daemon-configuration-daemon-json">
+      <div class="card-top">
+        <h3>Daemon Configuration (<code>daemon.json</code>) <a class="anchor" href="#daemon-configuration-daemon-json">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new JSON configuration file at <code>~/.claude/daemon.json</code> that defines persistent background workers.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;scheduled&quot;: [{
+    &quot;tasks&quot;: [{
+      &quot;id&quot;: &quot;my-task&quot;,
+      &quot;cron&quot;: &quot;*/30 * * * *&quot;,
+      &quot;prompt&quot;: &quot;Check for new issues&quot;,
+      &quot;directory&quot;: &quot;/path/to/project&quot;,
+      &quot;permissionMode&quot;: &quot;dontAsk&quot;
+    }],
+    &quot;maxConcurrent&quot;: 1
+  }],
+  &quot;remoteControl&quot;: [{
+    &quot;dir&quot;: &quot;/path/to/project&quot;,
+    &quot;spawnMode&quot;: &quot;worktree&quot;,
+    &quot;capacity&quot;: 32
+  }]
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Worker kinds: <code>scheduled</code> (cron tasks), <code>remoteControl</code> (bridge to claude.ai), <code>heartbeat</code> (health monitoring)</li><li>Configuration changes are hot-reloaded — the daemon diffs old vs new config and starts/stops/restarts only changed workers</li><li>Unknown config keys are reported but don't block startup</li><li>Interactive management via the <code>/daemon</code> slash command with tabbed UI for Scheduled Tasks, Remote Control, and Assistants</li><li>Each tab supports add, edit, remove, enable/disable operations with inline forms</li></ul>
+<div class="blabel">Evidence</div>
+<p>Daemon configuration system (search for <code>"daemon.json"</code>, <code>"config validation failed"</code>, <code>"config reload failed"</code>)</p>
+    </article>
+    <article class="card" id="interactive-daemon-hub-daemon">
+      <div class="card-top">
+        <h3>Interactive Daemon Hub (<code>/daemon</code>) <a class="anchor" href="#interactive-daemon-hub-daemon">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new slash command providing a tabbed interactive UI for managing daemon services.</p>
+<div class="blabel">Usage</div>
+<pre><code>/daemon</code></pre>
+<div class="blabel">Details</div>
+<ul><li><strong>Scheduled</strong> tab: lists all scheduled tasks with cron expression, directory, prompt, enabled/disabled status, permission mode, model, and timeout. Supports enable/disable, edit, and remove actions</li><li><strong>Remote Control</strong> tab: lists remote-control servers with directory, spawn mode, and running status</li><li><strong>Assistants</strong> tab: shows assistant entries with options to restart, clear conversation history, and uninstall</li><li><strong>New Scheduled Task</strong> form: accepts prompt, schedule (intervals like <code>5m</code>, <code>2h</code>, <code>1d</code> or cron expressions with live human-readable preview), directory, auto-generated ID, permission mode, and model selection</li><li><strong>New Remote Control Server</strong> form: accepts directory (with trust check), name, and spawn mode (same-dir or worktree)</li><li><strong>New Assistant</strong> form: accepts directory, name, permission mode, and model</li><li>Service management buttons: Install, Uninstall, Start, Stop, Restart</li></ul>
+<div class="blabel">Evidence</div>
+<p>Daemon hub UI (search for <code>"Claude Daemon"</code>, <code>"New Scheduled Task"</code>, <code>"New Remote Control Server"</code>)</p>
+    </article>
+    <article class="card" id="morning-check-in-routine">
+      <div class="card-top">
+        <h3>Morning Check-In Routine <a class="anchor" href="#morning-check-in-routine">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>An automated morning briefing that fires before the workday begins, pulling calendar events, overnight messages, and priority items.</p>
+<div class="blabel">Details</div>
+<ul><li>Fires at a random time between 7:00-8:59am daily (randomized to avoid thundering herd)</li><li>Installed as a permanent scheduled task when an assistant is set up</li><li>Reviews today's calendar events, identifies prep needs, and schedules dynamic pre-meeting check-ins</li><li>Scans overnight inbox for unread email and chat mentions from important contacts</li><li>Identifies the single most important priority for the day</li><li>Outputs a concise brief: calendar summary, items needing attention, and top priority</li><li>Time guard: skips if fired more than 2 hours after configured work start time</li><li>Registered as the skill <code>/morning-checkin</code> at <code>.claude/skills/morning-checkin/SKILL.md</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Morning check-in routine (search for <code>"morning-checkin"</code>, <code>"/morning-checkin"</code>)</p>
+    </article>
+    <article class="card" id="catch-up-routine">
+      <div class="card-top">
+        <h3>Catch-Up Routine <a class="anchor" href="#catch-up-routine">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A periodic ambient awareness system that checks on tracked priorities every 2 hours during work hours.</p>
+<div class="blabel">Details</div>
+<ul><li>Fires every 2 hours via cron (<code>0 <em>/2 </em> <em> </em></code>)</li><li>Respects configurable quiet hours (default: 9am-5pm Mon-Fri) — silently exits outside that window</li><li>Maintains a persistent priority list in <code>.claude/catch-up-state.json</code> tracking: <code>priorities</code>, <code>lastSnapshot</code>, <code>lastRunAt</code>, and <code>noiseFloor</code></li><li>On first run, bootstraps 2-3 priorities from <code>CLAUDE.md</code> and connected tools</li><li>For each priority: checks if state has changed since last snapshot across source control, chat, email, calendar, docs, and issue tracking</li><li>Triages findings into: assistant-can-act, user-should-act, FYI, or suppress</li><li>When calendar events are found, dynamically schedules one-shot <code>/pre-meeting-checkin</code> tasks 2-15 minutes before each event</li><li>If nothing is actionable, outputs <code>"Nothing actionable."</code> and the main agent won't relay it</li><li>Learns over time: promotes new items, prunes resolved ones, demotes unchanged items</li></ul>
+<div class="blabel">Evidence</div>
+<p>Catch-up routine (search for <code>"catch-up-state.json"</code>, <code>"/catch-up"</code>)</p>
+    </article>
+    <article class="card" id="pre-meeting-check-in-routine">
+      <div class="card-top">
+        <h3>Pre-Meeting Check-In Routine <a class="anchor" href="#pre-meeting-check-in-routine">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A dynamically-scheduled notification that fires 2-15 minutes before calendar events with meeting context and prep materials.</p>
+<div class="blabel">Details</div>
+<ul><li>Not on a fixed schedule — created as one-shot cron tasks by the morning check-in and catch-up routines</li><li>Assembles: meeting document outline (if linked), recent chat/email context related to attendees, open questions from priorities, and notes from previous occurrences of recurring meetings</li><li>Sends a notification directly to the user (runs in <code>main</code> context, not <code>fork</code>)</li><li>Output format: meeting title, time to start, attendees, doc link, relevant context, and open items</li><li>Offers to draft talking points or agenda but doesn't do so unasked</li></ul>
+<div class="blabel">Evidence</div>
+<p>Pre-meeting check-in routine (search for <code>"pre-meeting-checkin"</code>, <code>"/pre-meeting-checkin"</code>)</p>
+    </article>
+    <article class="card" id="background-session-lifecycle-ui">
+      <div class="card-top">
+        <h3>Background Session Lifecycle UI <a class="anchor" href="#background-session-lifecycle-ui">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New interactive UI flows for backgrounding, detaching, and managing the lifecycle of sessions.</p>
+<div class="blabel">Details</div>
+<ul><li><strong>Background confirmation dialog</strong>: when backgrounding a session, shows "Background this session?" with options to keep running or detach</li><li><code>Backgrounding…</code> progress indicator while the session is being forked to the background daemon</li><li>After backgrounding: shows helper commands (<code>claude agents</code>, <code>claude attach</code>, <code>claude kill</code>, <code>claude logs</code>)</li><li><strong>Detach prompt</strong>: "Detach (keep running)" option to leave a session while it continues in the background</li><li><strong>Warning for running tasks</strong>: "Background anyway (tasks will be abandoned)" when background tasks are active</li><li><strong>Nothing to background</strong>: shows "Nothing to background yet — send a message first" if no conversation exists</li><li><strong>Cannot background</strong>: shows "Cannot background — session persistence is disabled" when persistence is off</li><li>Session status labels: <code>"idle — waiting for trigger"</code>, <code>"idle — attach to send a prompt"</code>, <code>"actively progressing on the task"</code>, <code>"stopped from session"</code></li><li>Exit command description updated: "Exit the CLI (in a background session: detach or stop)"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Background session UI (search for <code>"Background this session?"</code>, <code>"Backgrounding"</code>, <code>"Nothing to background yet"</code>, <code>"Leave background session"</code>)</p>
+    </article>
+    <article class="card" id="daemon-assistant-scaffolding">
+      <div class="card-top">
+        <h3>Daemon Assistant Scaffolding <a class="anchor" href="#daemon-assistant-scaffolding">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When setting up a daemon assistant, Claude Code scaffolds a complete directory structure with skill files, scheduled tasks, memory system, and personality templates.</p>
+<div class="blabel">Details</div>
+<ul><li>Creates <code>.claude/agents/assistant.md</code> — a voice-and-values template defining Claude's personality ("Warm, not performative / Smart, not showy / Direct, not blunt / Collaborative, not obedient")</li><li>Creates <code>CLAUDE.md</code> at the project root — a user profile template with fields for name, timezone, work schedule, communication preferences, and catch-up hours</li><li>Sets up skill directories for all four routines: <code>dream</code>, <code>catch-up</code>, <code>morning-checkin</code>, <code>pre-meeting-checkin</code></li><li>Pre-populates <code>.claude/scheduled_tasks.json</code> with three permanent tasks</li><li>Initializes <code>.claude/catch-up-state.json</code> with empty state</li><li>Memory directory established at <code>~/.claude/projects/&lt;hash&gt;/memory/</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Assistant scaffolding (search for <code>"assistant.md"</code>, <code>"voice and values"</code>, <code>"About The User"</code>)</p>
+    </article>
+    <article class="card" id="session-pinning-in-fleet-view">
+      <div class="card-top">
+        <h3>Session Pinning in Fleet View <a class="anchor" href="#session-pinning-in-fleet-view">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Pin important sessions to the top of the fleet view for quick access.</p>
+<div class="blabel">Usage</div>
+<p>In the <code>claude agents</code> view, press <code>Ctrl+T</code> on any session to pin/unpin it.</p>
+<div class="blabel">Details</div>
+<ul><li>Pinned sessions appear in a "Pinned" group at the top of the list</li><li>Pins persist across sessions via <code>.pins.json</code> in the global config directory</li><li>Auto-expands the pinned group when pinning a new session</li><li>Available via <code>Ctrl+T</code> keybinding in the fleet view</li></ul>
+<div class="blabel">Evidence</div>
+<p>Session pinning (search for <code>".pins.json"</code>, <code>"pin to top"</code>, <code>"ctrl+t to pin"</code>)</p>
+    </article>
+    <article class="card" id="remote-control-server-configuration">
+      <div class="card-top">
+        <h3>Remote Control Server Configuration <a class="anchor" href="#remote-control-server-configuration">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Configure Remote Control bridge servers as persistent daemon workers, making sessions accessible from claude.ai.</p>
+<div class="blabel">Details</div>
+<ul><li>Configured via <code>daemon.json</code> under the <code>remoteControl</code> key</li><li>Each server maps a local directory to a Remote Control endpoint</li><li><strong>Spawn mode</strong>: <code>same-dir</code> (default) shares the directory, <code>worktree</code> gives each session its own git worktree</li><li>Configurable capacity (default 32 concurrent sessions), permission mode, sandbox mode, and session timeout</li><li>Sessions can be created on daemon start with <code>createSessionOnStart: true</code></li><li>Manages the Remote Control bridge headlessly with automatic OAuth token management</li></ul>
+<div class="blabel">Evidence</div>
+<p>Remote control server configuration (search for <code>"remote-control server"</code>, <code>"New Remote Control Server"</code>, <code>"spawnMode"</code>)</p>
+    </article>
+    <article class="card" id="new-settings">
+      <div class="card-top">
+        <h3>New Settings <a class="anchor" href="#new-settings">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Several new user-configurable settings have been added.</p>
+<div class="blabel">Details</div>
+<ul><li><code>prUrlTemplate</code> — URL template for PR links in the footer badge and inline messages. Supports placeholders: <code>{host}</code>, <code>{owner}</code>, <code>{repo}</code>, <code>{number}</code>, <code>{url}</code>. Example: <code>"https://reviews.example.com/{owner}/{repo}/pull/{number}"</code> (search for <code>"URL template for PR links"</code>)</li><li><code>theme</code> — now documented with <code>.describe("Color theme for the UI")</code> (search for <code>"Color theme for the UI"</code>)</li><li><code>fileCheckpointingEnabled</code> — now documented with <code>.describe("Snapshot files before edits so /rewind can restore them")</code> (search for <code>"Snapshot files before edits"</code>)</li><li><code>timestampMessages</code> — stamps each assistant message with its arrival time, described as <code>'Show "Cooked for Nm Ns" after each assistant turn'</code> (search for <code>"Cooked for"</code>)</li><li><code>todoTrackingEnabled</code> — enables the todo/task tracking panel, described as <code>"Enable the todo / task tracking panel"</code> (search for <code>"Enable the todo"</code>)</li><li><code>notificationChannel</code> — preferred OS notification channel (search for <code>"Preferred OS notification channel"</code>)</li><li><code>showFullToolOutput</code> — shows full tool output instead of truncated summaries (search for <code>"Show full tool output"</code>)</li><li><code>keybindingMode</code> — key binding mode for the prompt input (search for <code>"Key binding mode"</code>)</li><li><code>remoteControlAtStartup</code> — start Remote Control bridge automatically each session (already existed, now with description)</li><li><code>autoUploadSessions</code> — mirror local sessions to claude.ai as view-only (already existed, now with description)</li></ul>
+<div class="blabel">Evidence</div>
+<p>New settings (search for the <code>.describe(</code> strings listed above)</p>
+    </article>
+    <article class="card" id="auto-compact-interactive-configuration-autocompact">
+      <div class="card-top">
+        <h3>Auto-Compact Interactive Configuration (<code>/autocompact</code>) <a class="anchor" href="#auto-compact-interactive-configuration-autocompact">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new slash command with both interactive slider UI and text-mode for configuring the auto-compact window size.</p>
+<div class="blabel">Usage</div>
+<pre><code>/autocompact           # Opens interactive slider dialog
+/autocompact 500k      # Sets window to 500,000 tokens
+/autocompact auto      # Resets to automatic (recommended)</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Interactive mode: slider with up/down arrows, wrapping to "Auto" at boundaries</li><li>Accepts token values in various formats: <code>500k</code>, <code>200000</code>, <code>200</code> (shorthand for 200,000), range 100k-1M</li><li>Reset with: <code>auto</code>, <code>reset</code>, <code>unset</code>, or <code>default</code></li><li>Displays current window size, source (env var, settings, or auto), and whether it's capped by the model limit</li><li>Shows warnings when: auto-compact is disabled, env var <code>CLAUDE_CODE_AUTO_COMPACT_WINDOW</code> takes precedence, or when overriding auto</li><li>Strongly recommends the auto setting: "The auto setting picks a window tuned for your model and is strongly recommended for the best cost and performance."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Auto-compact configuration (search for <code>"Auto-compact Window"</code>, <code>"Configure the auto-compact window size"</code>, <code>"CLAUDE_CODE_AUTO_COMPACT_WINDOW"</code>)</p>
+    </article>
+    <article class="card" id="mcp-tool-name-validation">
+      <div class="card-top">
+        <h3>MCP Tool Name Validation <a class="anchor" href="#mcp-tool-name-validation">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now validates MCP tool names against the emerging MCP naming standard and warns about non-conforming names.</p>
+<div class="blabel">Details</div>
+<ul><li><strong>Hard failures</strong> (tool rejected): empty names, names exceeding 128 characters, names with characters outside <code>[A-Za-z0-9._-]</code></li><li><strong>Soft warnings</strong> (tool registered but warning logged): names with spaces, commas, leading/trailing dashes or dots</li><li>Warning output references the MCP specification proposal: [SEP: Specify Format for Tool Names](https://github.com/modelcontextprotocol/modelcontextprotocol/issues/986)</li><li>Registration proceeds for soft warnings: "Tool registration will proceed, but this may cause compatibility issues."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Tool name validation (search for <code>"Tool name validation warning"</code>, <code>"Tool name contains invalid characters"</code>, <code>"Allowed characters are"</code>)</p>
+    </article>
+    <article class="card" id="spawn-mode-for-worktree-isolation">
+      <div class="card-top">
+        <h3>Spawn Mode for Worktree Isolation <a class="anchor" href="#spawn-mode-for-worktree-isolation">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Background sessions and remote control servers can now be configured to use git worktree isolation, giving each session its own isolated copy of the repository.</p>
+<div class="blabel">Details</div>
+<ul><li>Configured via <code>--spawn-mode worktree</code> or in daemon.json <code>spawnMode: "worktree"</code></li><li>System prompt injected for worktree sessions: "This is a git worktree — an isolated copy of the repository"</li><li>Agents in worktree mode are instructed to call <code>EnterWorktree</code> as their first action</li><li>Session records now carry <code>worktreePath</code>, <code>worktreeBranch</code>, and <code>worktreeHookBased</code> fields</li><li>After killing a worktree session, the worktree is retained with a hint to use <code>claude rm</code> for cleanup</li></ul>
+<div class="blabel">Evidence</div>
+<p>Worktree spawn mode (search for <code>"--spawn-mode"</code>, <code>"spawnMode"</code>, <code>"worktree retained at"</code>)</p>
+    </article>
+    <article class="card" id="json-path-flag-for-daemon">
+      <div class="card-top">
+        <h3><code>--json-path</code> Flag for Daemon <a class="anchor" href="#json-path-flag-for-daemon">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New CLI flag to override the default daemon configuration file path.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude daemon --json-path=/path/to/custom-daemon.json run</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Default path remains <code>~/.claude/daemon.json</code></li><li>Useful for running multiple daemon instances with different configurations</li><li>Also exposed in service installation (ExecStart includes <code>--json-path</code>)</li></ul>
+<div class="blabel">Evidence</div>
+<p>JSON path flag (search for <code>"--json-path"</code>)</p>
+    </article>
+    <article class="card" id="setting-sources-flag">
+      <div class="card-top">
+        <h3><code>--setting-sources</code> Flag <a class="anchor" href="#setting-sources-flag">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New CLI flag to control which settings sources are loaded.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --setting-sources=user,project,local</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Comma-separated list of setting sources: <code>user</code>, <code>project</code>, <code>local</code></li><li>Allows restricting which settings layers are applied for a session</li></ul>
+<div class="blabel">Evidence</div>
+<p>Setting sources flag (search for <code>"--setting-sources"</code>, <code>"Comma-separated list of setting sources"</code>)</p>
+    </article>
+    <article class="card" id="mcp-completion-support-mcpcompletable">
+      <div class="card-top">
+        <h3>MCP Completion Support (<code>McpCompletable</code>) <a class="anchor" href="#mcp-completion-support-mcpcompletable">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added support for MCP completion/autocomplete of prompts and resource templates.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>McpCompletable</code> type registered as <code>Symbol.for("mcp.completable")</code></li><li>Validates completion request types: prompts must use <code>ref/prompt</code>, resource templates must use <code>ref/resource</code></li><li>Provides structured error messages: "Expected CompleteRequestPrompt, but got ..." / "Expected CompleteRequestResourceTemplate, but got ..."</li></ul>
+<div class="blabel">Evidence</div>
+<p>MCP completions (search for <code>"McpCompletable"</code>, <code>"mcp.completable"</code>, <code>"Expected CompleteRequestPrompt"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-dream-memory-consolidation">
+      <div class="card-top">
+        <h3>Enhanced Dream/Memory Consolidation <a class="anchor" href="#enhanced-dream-memory-consolidation">#</a></h3>
+      </div>
+      <p>The dream routine has been upgraded from simple hardcoded prompts to a structured 4-phase SKILL.md with explicit protocol:</p>
+<ul><li><strong>Phase 1 (Preparation)</strong>: Reviews <code>logs/YYYY/MM/YYYY-MM-DD.md</code> entries and session transcripts</li><li><strong>Phase 2 (Topics)</strong>: Extracts events, lessons, and decisions into topic files (<code>&lt;topic-slug&gt;.md</code>)</li><li><strong>Phase 3 (Rules &amp; Learnings)</strong>: Records painful/inefficient experiences and user frustrations in <code>learnings/&lt;learning-slug&gt;.md</code></li><li><strong>Phase 4 (Prioritization &amp; Pruning)</strong>: Keeps <code>MEMORY.md</code> under 200 lines, removes stale entries, adds newly important ones</li><li>Now scheduled as a permanent task at a random time between 1:00-4:59am</li></ul>
+<div class="blabel">Evidence</div>
+<p>Dream SKILL.md (search for <code>"Nightly reflection and consolidation"</code>, <code>"Prioritization and Pruning"</code>)</p>
+    </article>
+    <article class="card" id="revised-usage-limit-messaging">
+      <div class="card-top">
+        <h3>Revised Usage Limit Messaging <a class="anchor" href="#revised-usage-limit-messaging">#</a></h3>
+      </div>
+      <p>Usage limit messages have been updated to use "usage allocation" terminology for certain seat types:</p>
+<ul><li>"Your usage allocation has been disabled by your admin" (new)</li><li>"Now using your usage allocation" / "You're now using your usage allocation" (new)</li><li>"Your seat type doesn't include usage" / "Your seat type doesn't include extra usage" (new)</li><li>"Your org is out of usage · add funds to continue" / "· contact your admin" (new)</li><li>"Your group's usage limit is set to $0" (new)</li><li>Removed: "Request extra usage", "Switch to extra usage"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated usage strings (search for <code>"usage allocation"</code>, <code>"Your seat type doesn't include"</code>)</p>
+    </article>
+    <article class="card" id="improved-epipe-eio-error-handling">
+      <div class="card-top">
+        <h3>Improved EPIPE/EIO Error Handling <a class="anchor" href="#improved-epipe-eio-error-handling">#</a></h3>
+      </div>
+      <p>The stdout/stderr error handler now handles <code>EIO</code> in addition to <code>EPIPE</code>, and properly triggers a graceful exit callback when stdout encounters these errors.</p>
+<div class="blabel">Evidence</div>
+<p>Stream error handling (search for <code>"EIO"</code> in <code>hJ8</code> function near line ~8728)</p>
+    </article>
+    <article class="card" id="skill-tool-description-update">
+      <div class="card-top">
+        <h3>Skill Tool Description Update <a class="anchor" href="#skill-tool-description-update">#</a></h3>
+      </div>
+      <p>The Skill tool description has been updated to clarify <code>skill</code> parameter usage:</p>
+<ul><li>Removed: "Set <code>skill</code> to the exact name of an available skill (no leading slash)"</li><li>Added: "Only invoke a skill that appears in that list, or one the user explicitly typed as <code>/&lt;name&gt;</code> in their message. Never guess or invent a skill name from training data"</li><li>Added the concept of <code>plugin:skill</code> fully qualified names for plugin-namespaced skills</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill tool description (search for <code>"Never guess or invent a skill name"</code>)</p>
+    </article>
+    <article class="card" id="slash-command-aliases">
+      <div class="card-top">
+        <h3>Slash Command Aliases <a class="anchor" href="#slash-command-aliases">#</a></h3>
+      </div>
+      <p>Slash commands now support explicit alias definitions with the description: "Alternate names that resolve to this command (e.g., /cost and /stats both resolve to /usage)".</p>
+<div class="blabel">Evidence</div>
+<p>Command aliases (search for <code>"Alternate names that resolve to this command"</code>)</p>
+    </article>
+    <article class="card" id="stale-file-notification">
+      <div class="card-top">
+        <h3>Stale File Notification <a class="anchor" href="#stale-file-notification">#</a></h3>
+      </div>
+      <p>When a file has been modified on disk after Claude last read it, users now see a warning: "is now stale relative to disk — Read it again if you need current contents."</p>
+<div class="blabel">Evidence</div>
+<p>Stale file warning (search for <code>"is now stale relative to disk"</code>)</p>
+    </article>
+    <article class="card" id="fast-mode-switching-in-remote-sessions">
+      <div class="card-top">
+        <h3>Fast Mode Switching in Remote Sessions <a class="anchor" href="#fast-mode-switching-in-remote-sessions">#</a></h3>
+      </div>
+      <p>Remote sessions now give a more specific error when trying to switch models: "Model picker shows local options in remote sessions — use /model &lt;name&gt; instead" and "Fast mode switching in remote sessions is coming soon — set at session creation for now".</p>
+<div class="blabel">Evidence</div>
+<p>Remote model switching (search for <code>"remote-model-picker-unavailable"</code>, <code>"Fast mode switching in remote sessions"</code>)</p>
+    </article>
+    <article class="card" id="pro-trial-lifecycle">
+      <div class="card-top">
+        <h3>Pro Trial Lifecycle <a class="anchor" href="#pro-trial-lifecycle">#</a></h3>
+      </div>
+      <p>The Pro trial flow now includes:</p>
+<ul><li>Trial start screen: "Your Pro plan includes N days of Claude Code"</li><li>Interactive confirmation: "Press Enter to start your trial"</li><li>Progress indicator: "Starting your trial..."</li><li>Error handling: "Couldn't start your trial. Press Enter to continue."</li><li>Trial duration display: "Trial: N day(s) left" in the status area</li><li>Trial expiration route at <code>/pro-trial-expired</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Pro trial lifecycle (search for <code>"Pro trial started"</code>, <code>"Your Pro plan includes"</code>, <code>"Starting your trial"</code>)</p>
+    </article>
+    <article class="card" id="sdk-enhancements">
+      <div class="card-top">
+        <h3>SDK Enhancements <a class="anchor" href="#sdk-enhancements">#</a></h3>
+      </div>
+      <p>Several new options are available for the Agent SDK:</p>
+<ul><li><code>askUserQuestion.previewFormat</code> exposed via <code>CLAUDE_CODE_QUESTION_PREVIEW_FORMAT</code> env var</li><li><code>canUseTool</code> callback for dynamic tool permission decisions (mutually exclusive with <code>permissionPromptToolName</code>)</li><li><code>getOAuthToken</code> callback for custom OAuth token provision</li><li>Input/output validation with structured error messages: "Input validation error: Invalid arguments for tool" / "Output validation error: Invalid structured content for tool"</li><li>Tool annotations support via Zod schemas</li><li><code>taskSupport</code> for tools: <code>"required"</code> (needs task augmentation) vs <code>"forbidden"</code> (must use <code>registerTool()</code> instead)</li></ul>
+<div class="blabel">Evidence</div>
+<p>SDK enhancements (search for <code>"CLAUDE_CODE_QUESTION_PREVIEW_FORMAT"</code>, <code>"canUseTool callback"</code>, <code>"Output validation error"</code>)</p>
+    </article>
+    <article class="card" id="improved-zod-schema-support">
+      <div class="card-top">
+        <h3>Improved Zod Schema Support <a class="anchor" href="#improved-zod-schema-support">#</a></h3>
+      </div>
+      <p>Added support for Zod Mini (<code>ZodMiniType</code>, <code>ZodMiniObject</code>) alongside existing Zod schemas, with automatic detection and mixed-version handling. The system now throws a clear error on mixed versions: "Mixed Zod versions detected in object shape."</p>
+<div class="blabel">Evidence</div>
+<p>Zod Mini support (search for <code>"ZodMiniType"</code>, <code>"ZodMiniObject"</code>, <code>"Mixed Zod versions"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-json-schema-generation">
+      <div class="card-top">
+        <h3>Enhanced JSON Schema Generation <a class="anchor" href="#enhanced-json-schema-generation">#</a></h3>
+      </div>
+      <p>Significantly expanded <code>zodToJsonSchema</code> converter supporting:</p>
+<ul><li><code>jsonSchema2019-09</code> target with <code>unevaluatedProperties</code> support</li><li>OpenAI-specific type handling (<code>OpenAiAnyType</code>) with reference strategies</li><li>Date strategies: <code>format:date-time</code>, <code>format:date</code>, <code>string</code>, <code>integer</code> (unix-time)</li><li>Email strategies: <code>format:email</code>, <code>format:idn-email</code>, <code>pattern:zod</code></li><li>Base64 strategy: <code>contentEncoding:base64</code></li><li>Warning messages for OpenAI compatibility: "Warning: OpenAI may not support records in schemas!" / "Warning: OpenAI may not support schemas with unions as roots!"</li></ul>
+<div class="blabel">Evidence</div>
+<p>JSON schema generation (search for <code>"jsonSchema2019-09"</code>, <code>"OpenAiAnyType"</code>, <code>"Warning: OpenAI may not support"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed handling of <code>EPIPE</code> and <code>EIO</code> errors on stdout/stderr — now properly destroys the stream and triggers a graceful exit callback instead of silently failing (search for <code>"EIO"</code>)</li><li>Improved handling of failed daemon connections: "Couldn't reach the daemon — it may be restarting. Press Enter to retry" instead of silent failure (search for <code>"Couldn't reach the daemon"</code>)</li><li>Added protection against recursive Zod schema references: "Recursive reference detected at" (search for <code>"Recursive reference detected"</code>)</li><li>Fixed regex pattern conversion failures with descriptive error: "Could not convert regex pattern at" (search for <code>"Could not convert regex pattern"</code>)</li><li>Added validation for <code>--permission-mode</code> flag values: "must be one of" (search for <code>"--permission-mode must be one of"</code>)</li><li>Added guard against duplicate task IDs: "task ids must be unique" (search for <code>"task ids must be unique"</code>)</li><li>Fixed transcript mirroring with bounded retry (3 attempts with short backoff; timeouts are not retried) to prevent silent data loss (search for <code>"TranscriptMirrorBatcher"</code>)</li><li>Added timeout handling for <code>SessionStore</code> operations: <code>append()</code>, <code>load()</code>, <code>listSessions()</code>, <code>listSubkeys()</code> all now have explicit timeout errors (search for <code>"SessionStore.append() timed out"</code>)</li><li>Fixed speculation pausing for backgrounded shells: "Speculation paused: backgrounded shell" (search for <code>"Speculation paused: backgrounded shell"</code>)</li></ul>
+    </article>
+    <article class="card" id="claude-code-insights-html-report">
+      <div class="card-top">
+        <h3>Claude Code Insights HTML Report <a class="anchor" href="#claude-code-insights-html-report">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The full HTML-based "Claude Code Insights" report generator — which produced an interactive dashboard with charts, project areas, friction analysis, usage patterns, and suggestions — has been removed from the CLI. The removal includes all HTML templates, CSS styles, JavaScript interactivity (timezone selector, collapsible sections, copy buttons), and the data rendering pipeline.</p>
+<div class="blabel">Evidence</div>
+<p>Removed Insights template (search for <code>"Claude Code Insights"</code> — reduced from 5 occurrences to 3 minor references)</p>
+    </article>
+    <article class="card" id="autofix-pr-inline-component">
+      <div class="card-top">
+        <h3>Autofix PR Inline Component <a class="anchor" href="#autofix-pr-inline-component">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The <code>cG1</code> React component for <code>/autofix-pr</code> — which handled inline PR monitoring setup, Remote Control subscription, and session spawning — has been removed from the bundled source. (The broader autofix-pr infrastructure remains, suggesting this was refactored rather than removed entirely.)</p>
+<div class="blabel">Evidence</div>
+<p>Removed autofix-pr component (the <code>cG1</code> function at old line ~472814 is gone; search for <code>"tengu_autofix_pr"</code> still returns hits in both versions)</p>
+    </article>
+    <article class="card" id="init-command-prompt-refactoring">
+      <div class="card-top">
+        <h3>/init Command Prompt Refactoring <a class="anchor" href="#init-command-prompt-refactoring">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The large inline <code>/init</code> command prompt (which guided the multi-phase CLAUDE.md setup flow) has been removed from the bundled source. The <code>/init</code> command likely still exists but its prompt content has been restructured or externalized.</p>
+<div class="blabel">Evidence</div>
+<p>Removed init prompt (the <code>cN1</code> string at old line ~492860 covering Phases 1-8 is gone)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The daemon installation (<code>claude daemon install</code>) creates a system service — users should run <code>claude daemon uninstall</code> before major upgrades if they experience issues with the service</li><li>The <code>daemon.json</code> configuration format is new; there is no migration from previous daemon configurations since the daemon infrastructure was previously minimal</li><li>Scheduled routines (morning-checkin, catch-up, pre-meeting-checkin) are installed when creating a daemon assistant via the <code>/daemon</code> command — they are not automatically enabled for existing setups</li><li>The fleet view (<code>claude agents</code>) replaces the previous "List configured agents" description with "Manage background and configured agents", reflecting its expanded interactive capabilities</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

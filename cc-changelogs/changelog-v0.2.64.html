@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.64 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.64."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.64</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.64</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.62 → v0.2.64</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Tool Call Counter</h4>
+<p>A new visual indicator that displays the number of tool calls being made during interactions. This can be enabled through the <code>showToolCallCount</code> configuration option, helping users track Claude's tool usage in real-time.</p>
+<h4>ULTRACLAUDE.md Support (Experimental)</h4>
+<p>Introduced experimental support for a new user preferences file called <code>ULTRACLAUDE.md</code>. This file:</p>
+<ul><li>Lives in the <code>.claude</code> directory alongside other configuration files</li><li>Provides critical user preferences that override default behavior</li><li>Includes a warning when the file exceeds 1000 characters</li><li>Can be edited using the <code>/memory</code> command</li></ul>
+<p>Example warning display:</p>
+<pre><code>⚠️ ULTRACLAUDE.md exceeds 1000 chars (1234 chars) • /memory to edit</code></pre>
+<h4>Enhanced Permission Debug Info</h4>
+<p>New permission debugging display that shows detailed information about permission decisions:</p>
+<ul><li>Rule-based decisions with their sources (CLI argument, local settings, or project settings)</li><li>Mode information (Default, Accept Edits, or Bypass Permissions)</li><li>Subcommand results with visual checkmarks (✓) or crosses (✗)</li><li>Hierarchical display of permission decision reasons</li></ul>
+<p>Example output:</p>
+<pre><code>Permission debug info:
+✓ read-file
+  ⎿ allow rule from CLI argument
+✗ write-file
+  ⎿ Default mode</code></pre>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Enhanced Instruction System</h4>
+<ul><li>Updated the instruction preamble from "Codebase-specific instructions" to more authoritative language</li><li>New critical user preferences reminder system that seamlessly injects user preferences into conversations</li><li>Preferences are automatically appended to user messages without disrupting the conversation flow</li></ul>
+<h4>️ Stream Processing Enhancement</h4>
+<p>The stream event handler now includes an optional callback for tool use detection, allowing the UI to respond immediately when Claude begins using tools.</p>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <h4>New Utility Functions</h4>
+<ul><li>Added array utility functions for improved performance:</li><li><code>includes()</code> implementation with optimized search</li><li><code>uniqBy()</code> for removing duplicates with custom comparator</li><li>Enhanced array searching with NaN handling</li></ul>
+<h4>Import Reorganization</h4>
+<ul><li>Migrated from direct <code>stream</code> imports to named imports (<code>PassThrough</code>)</li><li>Updated process and OS imports to use modern Node.js module syntax</li><li>Better organization of platform-specific imports (<code>EOL</code>, <code>platform</code>, <code>homedir</code>)</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed potential issues with instruction content injection by properly handling edge cases in message arrays</li><li>Improved error handling for EACCES permission errors with better telemetry</li></ul>
+    </article>
+    <article class="card" id="configuration">
+      <div class="card-top">
+        <h3>Configuration <a class="anchor" href="#configuration">#</a></h3>
+      </div>
+      <p>New configuration option added to the animation settings:</p>
+<pre><code>{
+  useHaiku: false,
+  haikuInterval: 5,
+  thinking: &quot;default&quot;,
+  responding: &quot;default&quot;, 
+  toolUse: &quot;default&quot;,
+  normal: &quot;default&quot;,
+  charAnimation: &quot;none&quot;,
+  showToolCallCount: false  // New option
+}</code></pre>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

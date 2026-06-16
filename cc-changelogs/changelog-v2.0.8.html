@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.8 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.8."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.8</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.8</span></h1>
+<p class="sub">Version 2.0.8 focuses on cleanup and simplification, removing experimental features and completing the migration period for the new permissions system. The beta GitHub Actions workflow template has been removed, the migration helper for legacy settings has been retired, and internal session handling has been streamlined.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.5 → v2.0.8</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="migration-helper-for-legacy-settings-removed">
+      <div class="card-top">
+        <h3>Migration Helper for Legacy Settings Removed <a class="anchor" href="#migration-helper-for-legacy-settings-removed">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The automatic migration from old-style <code>allowedTools</code> and <code>ignorePatterns</code> arrays to the new <code>.claude/settings.local.json</code> permissions format has been removed.</p>
+<p><strong>Context:</strong> In v2.0.5, Claude Code introduced a migration helper (<code>l4A() at line 351970</code>) that automatically converted:</p>
+<ul><li>Old format: <code>allowedTools: ["Read", "Edit"]</code> and <code>ignorePatterns: ["node_modules/**"]</code></li><li>New format: <code>.claude/settings.local.json</code> with permissions rules</li></ul>
+<p><strong>What this means:</strong></p>
+<ul><li>Users upgrading from versions <strong>before v2.0.5</strong> directly to v2.0.8 or later will need to manually migrate their settings</li><li>Users who already upgraded through v2.0.5-v2.0.7 are unaffected (their settings were already migrated)</li><li>The new <code>.claude/settings.local.json</code> permissions format remains fully supported</li></ul>
+<p><strong>Evidence:</strong> Migration functions <code>WdQ() at line 351945</code>, <code>JdQ() at line 351955</code>, and <code>l4A() at line 351970</code> in v2.0.5 are not called in v2.0.8</p>
+    </article>
+    <article class="card" id="beta-github-actions-template-removed">
+      <div class="card-top">
+        <h3>Beta GitHub Actions Template Removed <a class="anchor" href="#beta-github-actions-template-removed">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The beta version workflow template for GitHub Actions integration has been removed. Only the stable <code>@v1</code> template remains.</p>
+<p><strong>How it worked before:</strong> In v2.0.5, users setting up GitHub Actions could choose between two templates:</p>
+<ul><li>Beta version using <code>anthropics/claude-code-action@beta</code></li><li>Stable version using <code>anthropics/claude-code-action@v1</code></li></ul>
+<p><strong>How it works now:</strong> Only the stable <code>@v1</code> template is offered during setup, simplifying the decision for users.</p>
+<p><strong>Evidence:</strong> Beta template found at lines 407475-407659 in v2.0.5, completely absent in v2.0.8 which only contains the v1 template at lines 398115-398165</p>
+    </article>
+    <article class="card" id="non-functional-customnotifycommand-stub-removed">
+      <div class="card-top">
+        <h3>Non-Functional customNotifyCommand Stub Removed <a class="anchor" href="#non-functional-customnotifycommand-stub-removed">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed dead code for custom notification commands that was never actually implemented.</p>
+<p><strong>Details:</strong> The <code>customNotifyCommand</code> configuration option was introduced in v0.2.115 but never functioned—it always contained an early <code>return;</code> statement preventing execution. Users who set this option never received custom notifications as it was silently ignored.</p>
+<p><strong>User impact:</strong> Zero. The feature never worked, so removing it doesn't change behavior.</p>
+<p><strong>Evidence:</strong> Stub function <code>pb6() at line 406840</code> present in v2.0.5, removed completely in v2.0.8 (notification function <code>H01() at line 397504</code> no longer checks for customNotifyCommand)</p>
+    </article>
+    <article class="card" id="session-persistence-deduplication-simplified">
+      <div class="card-top">
+        <h3>Session Persistence Deduplication Simplified <a class="anchor" href="#session-persistence-deduplication-simplified">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed client-side duplicate checking before persisting session entries, relying entirely on server-side validation.</p>
+<p><strong>Technical details:</strong> In v2.0.5, the persist function (<code>K8B() at line 397234</code>) checked a local Map (<code>Dv1</code>) to skip API calls for session entries that had already been sent. In v2.0.8, this optimization was removed from the persist function (<code>KPB() at line 436398</code>), and all entries are now sent to the server.</p>
+<p><strong>Implications:</strong></p>
+<ul><li>Slightly more API calls in scenarios involving duplicate persist attempts</li><li>Server remains authoritative for deduplication via <code>Last-Uuid</code> header validation</li><li>Simpler client logic with fewer edge cases</li></ul>
+<p><strong>Evidence:</strong> Duplicate checking logic at lines 397235-397240 in v2.0.5 is absent from the v2.0.8 persist function</p>
+    </article>
+    <article class="card" id="billing-type-information-added-to-telemetry">
+      <div class="card-top">
+        <h3>Billing Type Information Added to Telemetry <a class="anchor" href="#billing-type-information-added-to-telemetry">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Internal telemetry now includes the organization's billing type alongside subscription type.</p>
+<p><strong>Technical details:</strong> The function that gathers subscription information (<code>nC0() at line 397096</code> in v2.0.8, formerly <code>QN0() at line 406454</code> in v2.0.5) now extracts and includes <code>billingType</code> from the organization data when available.</p>
+<p><strong>User impact:</strong> None visible—this is purely for internal analytics.</p>
+<p><strong>Evidence:</strong> Line 23953 in diff shows addition: <code>if (B?.organization?.billing_type !== void 0) G.billingType = B.organization.billing_type;</code></p>
+    </article>
+    <article class="card" id="updated-github-actions-documentation-links">
+      <div class="card-top">
+        <h3>Updated GitHub Actions Documentation Links <a class="anchor" href="#updated-github-actions-documentation-links">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Documentation URLs in GitHub Actions workflow template comments now point to the dedicated CLI reference instead of the generic SDK page.</p>
+<p><strong>How to use:</strong> When reviewing the generated workflow files, the comments now reference:</p>
+<ul><li><strong>New URL:</strong> <code>https://docs.claude.com/en/docs/claude-code/cli-reference</code></li><li><strong>Old URL:</strong> <code>https://docs.claude.com/en/docs/claude-code/sdk#command-line</code></li></ul>
+<p><strong>Details:</strong> The updated documentation provides more specific guidance for CLI usage in GitHub Actions workflows.</p>
+<p><strong>Evidence:</strong> Updated at lines 398162 and 398261 in v2.0.8 (formerly lines 407707 and 407765 in v2.0.5)</p>
+    </article>
+    <article class="card" id="simplified-github-actions-example">
+      <div class="card-top">
+        <h3>Simplified GitHub Actions Example <a class="anchor" href="#simplified-github-actions-example">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The example <code>claude_args</code> in the workflow template is now clearer and more focused.</p>
+<p><strong>Before:</strong></p>
+<pre><code># claude_args: &#x27;--model claude-opus-4-1-20250805 --allowed-tools Bash(gh pr:*)&#x27;</code></pre>
+<p><strong>After:</strong></p>
+<pre><code># claude_args: &#x27;--allowed-tools Bash(gh pr:*)&#x27;</code></pre>
+<p><strong>Why:</strong> Removing the model specification makes the example less cluttered and focuses on the most common customization (tool permissions).</p>
+<p><strong>Evidence:</strong> Line 398163 in v2.0.8 shows simplified example (compare to line 407708 in v2.0.5)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Version Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="version-notes">
+      <p>This changelog compares v2.0.5 to v2.0.8. Versions 2.0.6 and 2.0.7 are not present in the available archive, so changes may have occurred incrementally across these intermediate releases.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

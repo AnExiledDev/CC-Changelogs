@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.62 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.62."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.62</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.62</span></h1>
+<p class="sub">This is a minimal maintenance release with no user-facing changes. The only functional modification is an internal optimization to prompt cache breakpoint placement, which may improve API cache hit rates.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.61 → v2.1.62</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">1</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="optimized-prompt-cache-breakpoint-placement">
+      <div class="card-top">
+        <h3>Optimized prompt cache breakpoint placement <a class="anchor" href="#optimized-prompt-cache-breakpoint-placement">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Cache breakpoints are now applied to the last two messages in a conversation instead of only the final message, potentially improving cache hit rates with the Anthropic API.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously, only the very last message in a conversation received a cache breakpoint marker</li><li>Now the last two messages both receive cache breakpoints, increasing the likelihood of cache reuse when new messages are appended</li><li>The <code>skipCacheWrite</code> flag now only suppresses the breakpoint on the final message, leaving the second-to-last message always cached</li><li>This is an internal optimization; users may experience marginally faster response times due to improved cache utilization, but no action is required</li></ul>
+<div class="blabel">Evidence</div>
+<p>Cache breakpoint logic in message preparation (search for <code>"tengu_api_cache_breakpoints"</code>) — <code>K$z()</code> at line ~519758</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>This release contains no new features, no bug fixes, no new CLI flags, no new slash commands, and no new feature flags. The <code>tengu_</code> flag count remains unchanged at 938. Structural similarity between v2.1.61 and v2.1.62 is 99.9%, with the remaining differences being import style changes (default imports converted to named imports) and the single cache breakpoint adjustment described above.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

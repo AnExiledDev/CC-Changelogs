@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.8 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.8."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.8</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.8</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.7 → v1.0.8</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.8 Changelog</p>
+    </article>
+    <article class="card" id="mcp-oauth-authentication">
+      <div class="card-top">
+        <h3>MCP OAuth Authentication <a class="anchor" href="#mcp-oauth-authentication">#</a></h3>
+      </div>
+      <ul><li>Added support for OAuth authentication with MCP (Model Context Protocol) servers</li><li>New <code>mcp-auth</code> command for authenticating with servers that require OAuth</li><li>Interactive authentication flow with browser-based login</li><li>Automatic token refresh when tokens expire</li><li>Secure credential storage in the configuration directory</li></ul>
+    </article>
+    <article class="card" id="enhanced-thinking-mode">
+      <div class="card-top">
+        <h3>Enhanced Thinking Mode <a class="anchor" href="#enhanced-thinking-mode">#</a></h3>
+      </div>
+      <ul><li>Expanded multi-language support for thinking mode triggers</li><li>Now supports thinking phrases in 8 languages:</li><li>English: "think", "think harder", "ultrathink", etc.</li><li>Japanese: "考えて", "熟考", "深く考えて"</li><li>Chinese: "思考", "深思", "仔细思考"</li><li>Spanish: "piensa", "piensa más", "piensa profundamente"</li><li>French: "réfléchis", "réfléchis plus", "pense"</li><li>German: "denk", "denk mehr", "denk gründlich"</li><li>Korean: "생각", "심사숙고", "깊이 생각"</li><li>Italian: "pensa", "rifletti", "pensa profondamente"</li><li>Three thinking levels with different token allocations:</li><li>HIGHEST: 31,999 tokens (phrases like "think harder", "ultrathink")</li><li>MIDDLE: 10,000 tokens (phrases like "think deeply", "megathink")</li><li>BASIC: 4,000 tokens (simple "think")</li></ul>
+    </article>
+    <article class="card" id="model-selection-improvements">
+      <div class="card-top">
+        <h3>Model Selection Improvements <a class="anchor" href="#model-selection-improvements">#</a></h3>
+      </div>
+      <ul><li>Better support for Claude Max users with automatic model selection</li><li>Simplified model detection for Pro vs Max subscriptions</li><li>Improved fallback model descriptions based on usage limits</li></ul>
+    </article>
+    <article class="card" id="keyboard-shortcuts">
+      <div class="card-top">
+        <h3>Keyboard Shortcuts <a class="anchor" href="#keyboard-shortcuts">#</a></h3>
+      </div>
+      <ul><li>New <code>Ctrl+E</code> shortcut in transcript mode to toggle a feature (context-dependent)</li><li>Updated newline hints:</li><li>Apple Terminal with Option as Meta: "option + ⏎ for newline"</li><li>Other terminals: "shift + ⏎ for newline" or "\\⏎ for newline"</li></ul>
+    </article>
+    <article class="card" id="edit-tool-improvements">
+      <div class="card-top">
+        <h3>Edit Tool Improvements <a class="anchor" href="#edit-tool-improvements">#</a></h3>
+      </div>
+      <ul><li>Added <code>replace_all</code> parameter to the Edit tool</li><li>When <code>replace_all</code> is true, all occurrences of the old string are replaced</li><li>Default behavior remains single replacement for backwards compatibility</li></ul>
+<p><strong>Example usage:</strong></p>
+<pre><code># Replace all occurrences of a variable name
+claude &quot;Rename all instances of &#x27;oldVariable&#x27; to &#x27;newVariable&#x27; in my code&quot;
+# Claude will use replace_all: true when appropriate</code></pre>
+    </article>
+    <article class="card" id="signal-handling">
+      <div class="card-top">
+        <h3>Signal Handling <a class="anchor" href="#signal-handling">#</a></h3>
+      </div>
+      <ul><li>Improved process signal handling for SIGINT and SIGTERM</li><li>More graceful shutdown when interrupted</li></ul>
+    </article>
+    <article class="card" id="timeout-configuration">
+      <div class="card-top">
+        <h3>Timeout Configuration <a class="anchor" href="#timeout-configuration">#</a></h3>
+      </div>
+      <ul><li>Configurable MCP timeouts via environment variables:</li><li><code>MCP_TIMEOUT</code>: General MCP operation timeout (default: 30 seconds)</li><li><code>MCP_TOOL_TIMEOUT</code>: MCP tool execution timeout (default: 100 seconds)</li></ul>
+    </article>
+    <article class="card" id="debug-logging">
+      <div class="card-top">
+        <h3>Debug Logging <a class="anchor" href="#debug-logging">#</a></h3>
+      </div>
+      <ul><li>Enhanced MCP debug logging with <code>--mcp-debug</code> flag</li><li>Logs are written to structured JSON files for easier debugging</li><li>Each log entry includes timestamp, session ID, and working directory</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed issues with file editing when strings end with newlines</li><li>Improved handling of partial JSON parsing for better error recovery</li><li>Better OAuth token refresh logic with proper error handling</li><li>Fixed race conditions in authentication flows</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Removed several unused functions and variables for cleaner codebase</li><li>Updated prompt caching logic to use function-based configuration</li><li>Improved configuration directory handling with hashing support</li><li>Better separation of Pro/Max user detection logic</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Breaking Changes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="breaking-changes">
+      <p>None - this release maintains full backwards compatibility with v1.0.7.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

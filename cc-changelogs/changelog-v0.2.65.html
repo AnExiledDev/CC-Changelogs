@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.65 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.65."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.65</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.65</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.64 → v0.2.65</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>️ Sandbox Mode for Bash Commands</h4>
+<ul><li><strong>New <code>sandbox</code> parameter</strong> for the Bash tool that enables sandboxed command execution</li><li>Commands run in sandbox mode are executed with restricted permissions - they can read files but cannot write to the filesystem or access the network</li><li><strong>Key benefit</strong>: Commands run with <code>sandbox=true</code> execute immediately without requiring user permission, providing a smoother user experience</li><li><strong>Usage example</strong>: <code>claude --sandbox ls -la</code> (read-only operations run immediately)</li></ul>
+<h4>Enhanced Paste Detection</h4>
+<ul><li>Added support for bracketed paste mode in the terminal</li><li>When pasting multi-line content, Claude Code now properly detects and handles pasted input</li><li>Prevents accidental command execution when pasting code blocks</li></ul>
+<h4>Improved Permission Rules System</h4>
+<ul><li>Enhanced permission management UI with better organization</li><li>New "Add permission rule" dialog for creating custom tool permissions</li><li>Permission rules now support more granular control with specifiers (e.g., <code>Bash(ls:*)</code>)</li><li>Permission rules can be saved to local project settings or shared project settings</li></ul>
+<h4>Release Notes Integration</h4>
+<ul><li>New <code>release-notes</code> command to view changelog directly in the CLI</li><li>Automatically fetches and displays recent version changes</li><li>Falls back to offline changelog if network is unavailable</li><li><strong>Usage</strong>: <code>claude release-notes</code></li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Performance Enhancements</h4>
+<ul><li>Better handling of Unicode text in wrapped terminal output</li><li>Improved text wrapping algorithm that correctly handles normalized Unicode characters</li><li>More efficient handling of large output with JSON formatting support</li></ul>
+<h4>API Retry Logic</h4>
+<ul><li>Enhanced retry mechanism with optional error display control</li><li>New <code>showErrors</code> parameter in retry configuration</li><li>Better handling of API rate limits and context overflow errors</li></ul>
+<h4>User Experience</h4>
+<ul><li>Added desktop notifications for idle sessions (triggers after 30 seconds of inactivity)</li><li>New <code>tipsHistory</code> setting to track displayed tips</li><li>Improved handling of API errors with clearer messaging</li></ul>
+    </article>
+    <article class="card" id="technical-improvements">
+      <div class="card-top">
+        <h3>Technical Improvements <a class="anchor" href="#technical-improvements">#</a></h3>
+      </div>
+      <h4>️ Code Architecture</h4>
+<ul><li>Introduced <code>tree-kill</code> library for better process management</li><li>New <code>eG0</code> class for managing macOS sandbox profiles</li><li>Enhanced signal handling with proper cleanup on process termination</li><li>Improved abort controller management for better command cancellation</li></ul>
+<h4>Tool Updates</h4>
+<ul><li>Bash tool description now dynamically includes sandbox mode instructions</li><li>Better documentation of which commands require write access vs read-only</li><li>Comprehensive lists of commands that should use sandbox mode</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed Unicode normalization issues in text wrapping</li><li>Improved handling of incomplete escape sequences in terminal input</li><li>Better cleanup of temporary sandbox profiles</li><li>Fixed race conditions in process termination</li></ul>
+    </article>
+    <article class="card" id="developer-notes">
+      <div class="card-top">
+        <h3>Developer Notes <a class="anchor" href="#developer-notes">#</a></h3>
+      </div>
+      <ul><li>Added <code>sandbox</code> parameter to Bash tool schema</li><li>New <code>hy()</code> function to check sandbox availability</li><li><code>Jr()</code> function to wrap commands with sandbox execution</li><li>Enhanced process spawning with <code>detached: true</code> option for better process group management</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

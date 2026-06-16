@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.10 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.10."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.10</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.10</span></h1>
+<p class="sub">This release introduces a new "Push to Remote" option in Plan Mode, allowing users to send their implementation plans directly to a Claude.ai remote session for autonomous execution. It also adds support for <code>hostPattern</code> matching in enterprise marketplace configurations, replaces the command path detection mechanism with a more efficient <code>which</code>-based approach, and lays groundwork for Perfetto performance tracing (currently disabled).</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.9 → v2.1.10</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="push-to-remote-from-plan-mode">
+      <div class="card-top">
+        <h3>Push to Remote from Plan Mode <a class="anchor" href="#push-to-remote-from-plan-mode">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Send an implementation plan directly to a cloud-based Claude.ai session that will execute it autonomously.</p>
+<p>Usage: When Claude presents a plan for approval, there's now an option to push the plan to a remote session instead of executing locally. This creates a new remote agent session on Claude.ai that will implement the plan in the cloud.</p>
+<div class="blabel">Details</div>
+<ul><li>Requires being logged in to Claude.ai (not Console)</li><li>Requires the Claude GitHub app to be installed on the repository</li><li>Validates prerequisites before attempting to create the remote session</li><li>Automatically handles uncommitted or unpushed changes via a git dialog</li><li>Creates a remote agent that appears in your session list with an <code>r</code> prefix (e.g., <code>r123456</code>)</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>YA()</code> at line 510466 (plan-to-remote handler, creates session with <code>e2A()</code> and tracks with <code>tengu_plan_exit</code> outcome <code>"yes-push-to-remote"</code>)</p>
+    </article>
+    <article class="card" id="host-pattern-matching-for-enterprise-marketplace-sources">
+      <div class="card-top">
+        <h3>Host Pattern Matching for Enterprise Marketplace Sources <a class="anchor" href="#host-pattern-matching-for-enterprise-marketplace-sources">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Enterprises can now use regex patterns to allow plugin marketplaces from specific domains without listing each one individually.</p>
+<p>Usage: In <code>policySettings.strictKnownMarketplaces</code>, add an entry with <code>source: "hostPattern"</code>:</p>
+<pre><code>{
+  &quot;source&quot;: &quot;hostPattern&quot;,
+  &quot;hostPattern&quot;: &quot;^github\\.mycompany\\.com$&quot;
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Matches the hostname extracted from any marketplace source type</li><li>For GitHub sources, matches against <code>"github.com"</code></li><li>For Git sources (SSH or HTTPS), extracts the hostname from the URL</li><li>Allows enterprise IT to permit all marketplaces from internal GitHub Enterprise instances</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Yn4()</code> at line 91027 (host pattern regex matcher, uses <code>new RegExp(Q.hostPattern).test(B)</code>)</p>
+    </article>
+    <article class="card" id="exitplanmode-tool-parameters-for-remote-sessions">
+      <div class="card-top">
+        <h3>ExitPlanMode Tool Parameters for Remote Sessions <a class="anchor" href="#exitplanmode-tool-parameters-for-remote-sessions">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The ExitPlanMode tool now accepts parameters to indicate the plan was pushed to a remote session.</p>
+<p>Details: New optional parameters:</p>
+<ul><li><code>pushToRemote</code>: Boolean indicating the plan was pushed to remote</li><li><code>remoteSessionId</code>: The ID of the created remote session</li><li><code>remoteSessionUrl</code>: URL to access the remote session</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema at line 416146 (contains <code>pushToRemote</code>, <code>remoteSessionId</code>, <code>remoteSessionUrl</code> parameters)</p>
+    </article>
+    <article class="card" id="improved-command-path-detection">
+      <div class="card-top">
+        <h3>Improved Command Path Detection <a class="anchor" href="#improved-command-path-detection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now uses native <code>which</code> (Unix) or <code>where.exe</code> (Windows) commands instead of the previous <code>findActualExecutable</code> approach for detecting executable paths.</p>
+<div class="blabel">Details</div>
+<ul><li>More efficient and reliable command detection</li><li>Uses <code>Bun.which()</code> when running under Bun runtime</li><li>Falls back to shell-based <code>which</code>/<code>where.exe</code> on other runtimes</li><li>Includes both async (<code>GC()</code>) and sync (<code>d1Q()</code>) variants</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>W94()</code> at line 27476 (new which-based implementation, calls <code>where.exe</code> on Windows, <code>which</code> on Unix)</p>
+    </article>
+    <article class="card" id="reduced-react-devtools-bundle">
+      <div class="card-top">
+        <h3>Reduced React DevTools Bundle <a class="anchor" href="#reduced-react-devtools-bundle">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>React DevTools code has been significantly reduced in the bundle.</p>
+<p>Details: References to React DevTools dropped from 45 to 2 occurrences, removing unused debugging infrastructure.</p>
+<div class="blabel">Evidence</div>
+<p>Removed variable <code>b6B</code> at line 173391 in v2.1.9 (contained <code>__REACT_DEVTOOLS_COMPONENT_FILTERS__</code> setup)</p>
+    </article>
+    <article class="card" id="session-naming-for-autonomous-tasks">
+      <div class="card-top">
+        <h3>Session Naming for Autonomous Tasks <a class="anchor" href="#session-naming-for-autonomous-tasks">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Sessions initiated via autonomous tick-based inputs now display "Autonomous session" as the default title.</p>
+<p>Details: When the first prompt starts with <code>&lt;tick&gt;</code>, the session is labeled "Autonomous session" rather than showing the prompt content.</p>
+<div class="blabel">Evidence</div>
+<p><code>ad()</code> at line 5350 (session title generator, contains <code>B ? "Autonomous session" : ""</code> when <code>firstPrompt?.startsWith("&lt;tick&gt;")</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed plugin hooks skipping when <code>allowManagedHooksOnly</code> is enabled in policy settings (<code>Nh()</code> at line 194862, <code>WW2()</code> at line 314806)</li></ul>
+    </article>
+    <article class="card" id="perfetto-performance-tracing-in-development">
+      <div class="card-top">
+        <h3>Perfetto Performance Tracing [In Development] <a class="anchor" href="#perfetto-performance-tracing-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure for generating Perfetto-compatible trace files to analyze Claude Code performance.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged, returns <code>false</code>. The <code>PERFETTO_TRACING</code> feature gate is disabled.</p>
+<div class="blabel">Details</div>
+<ul><li>Set <code>CLAUDE_CODE_PERFETTO_TRACE=1</code> or provide a file path to enable (once feature flag is enabled)</li><li>Traces include API call timing, time-to-first-token (TTFT), token throughput metrics</li><li>Output in Chrome Trace Event format (<code>trace-{sessionId}.json</code>)</li><li>Tracks per-agent timing with parent-child relationships for nested agent calls</li><li>Includes metadata like input/output token counts, cache hit rates, and errors</li></ul>
+<p><strong>Usage</strong> (when enabled):</p>
+<pre><code>CLAUDE_CODE_PERFETTO_TRACE=1 claude
+# or
+CLAUDE_CODE_PERFETTO_TRACE=/path/to/trace.json claude</code></pre>
+<div class="blabel">Evidence</div>
+<p><code>r_2()</code> at line 356811 (initialization, checks <code>process.env.CLAUDE_CODE_PERFETTO_TRACE</code> but guarded by <code>ix.PERFETTO_TRACING</code> which returns <code>!1</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

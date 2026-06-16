@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.93 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.93."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.93</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.93</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.92 → v0.2.93</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="removed-features">
+      <div class="card-top">
+        <h3>Removed Features <a class="anchor" href="#removed-features">#</a></h3>
+      </div>
+      <h4>Settings Management Functions Removed</h4>
+<ul><li><strong>Removed local and project settings functionality</strong></li><li>Removed <code>Qs4()</code> function that returned the project settings path (<code>.claude/settings.json</code>)</li><li>Removed <code>cy0()</code> function that handled both managed and project settings</li><li>Removed <code>bO1()</code> function that saved settings to files</li><li>Removed <code>R76()</code> function that managed allowed/denied tool rules based on local settings</li><li>Removed <code>Fp5()</code> function that displayed settings information</li></ul>
+<p>This indicates that the settings management system has been refactored or removed entirely in this version.</p>
+<h4>Todo List Read Functionality Removed</h4>
+<ul><li><strong>Removed the <code>TodoRead</code> tool description and implementation</strong></li><li>The tool that allowed reading the current todo list for the session has been removed</li><li>This tool previously allowed checking task status without parameters</li><li>The related UI component <code>n76()</code> for rendering todo lists has also been removed</li></ul>
+    </article>
+    <article class="card" id="added-features">
+      <div class="card-top">
+        <h3>Added Features <a class="anchor" href="#added-features">#</a></h3>
+      </div>
+      <h4>React/UI Framework Integration</h4>
+<p>A significant number of React-related functions have been added, suggesting a major UI framework update or integration:</p>
+<ul><li><strong>Core React Functions</strong>: Added fundamental React utilities like <code>S2()</code> for error handling, <code>eT()</code>, <code>Ex()</code> for event handling</li><li><strong>DOM Manipulation</strong>: Added functions for DOM operations including <code>jx1()</code>, <code>bl()</code>, <code>cl()</code> for element manipulation</li><li><strong>Component Lifecycle</strong>: Added hooks and lifecycle management functions</li><li><strong>Event System</strong>: Enhanced event handling with functions like <code>Ji()</code>, <code>rY9()</code>, <code>tY9()</code>, <code>eY9()</code></li><li><strong>Rendering Pipeline</strong>: Added numerous rendering-related functions for component updates and reconciliation</li></ul>
+<h4>Enhanced Development Tools</h4>
+<ul><li><strong>Error Boundaries</strong>: Added error handling capabilities with functions like <code>Zr0()</code>, <code>Gr0()</code> for better error management</li><li><strong>Performance Monitoring</strong>: Added functions for tracking component render times and performance metrics</li><li><strong>State Management</strong>: Enhanced state management with functions like <code>Va0()</code>, <code>Mi()</code>, <code>DZ1()</code> for hooks implementation</li></ul>
+    </article>
+    <article class="card" id="technical-improvements">
+      <div class="card-top">
+        <h3>Technical Improvements <a class="anchor" href="#technical-improvements">#</a></h3>
+      </div>
+      <h4>Internal Architecture Updates</h4>
+<ul><li>Significant restructuring of the internal architecture with 487 new function additions</li><li>The high structural similarity (92.8%) indicates these are primarily additions rather than replacements</li><li>Most of the new code appears to be React/UI framework related, suggesting a major UI system upgrade</li></ul>
+    </article>
+    <article class="card" id="breaking-changes">
+      <div class="card-top">
+        <h3>Breaking Changes <a class="anchor" href="#breaking-changes">#</a></h3>
+      </div>
+      <ul><li>The removal of the settings management system (<code>localSettings</code> and <code>projectSettings</code>) may break existing workflows that relied on these features</li><li>The removal of the <code>TodoRead</code> tool means users can no longer query their todo list status programmatically</li></ul>
+    </article>
+    <article class="card" id="migration-notes">
+      <div class="card-top">
+        <h3>Migration Notes <a class="anchor" href="#migration-notes">#</a></h3>
+      </div>
+      <ul><li>Users who relied on local or project settings files (<code>.claude/settings.json</code>) will need to adapt to the new configuration system</li><li>The todo list functionality appears to have been streamlined - reading todos may now be integrated differently or removed in favor of a write-only approach</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

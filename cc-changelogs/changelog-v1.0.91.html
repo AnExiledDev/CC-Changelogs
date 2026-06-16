@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.91 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.91."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.91</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.91</span></h1>
+<p class="sub">Version 1.0.91 is a targeted refinement release focused on security enhancements, developer experience improvements, and user interface polish. Key additions include command obfuscation detection, native grep/ripgrep support, GitHub Actions integration templates, and enhanced CLI animations.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.90 → v1.0.91</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">3</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="native-grep-and-ripgrep-support">
+      <div class="card-top">
+        <h3>Native grep and ripgrep Support <a class="anchor" href="#native-grep-and-ripgrep-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added native support for <code>grep</code> and <code>rg</code> (ripgrep) commands within Claude's secure sandbox <strong>How to use:</strong></p>
+<pre><code># Search for patterns in files
+grep &quot;TODO&quot; src/*.js
+rg &quot;function.*async&quot; --type js</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Both commands are treated as read-only operations</li><li>Added to command descriptors and safe commands list</li><li>Integrates with existing path restriction framework</li><li>Eliminates need for shell execution for basic search operations</li></ul>
+    </article>
+    <article class="card" id="command-obfuscation-detection">
+      <div class="card-top">
+        <h3>Command Obfuscation Detection <a class="anchor" href="#command-obfuscation-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New security feature that detects attempts to hide malicious command flags using quotes <strong>Implementation:</strong> New <code>ML6</code> function at <code>archive/pretty/pretty-v1.0.91.js:374835</code> <strong>How it works:</strong></p>
+<pre><code># These patterns will now trigger security prompts:
+rm &quot;-rf&quot; /     # Quoted flag detected
+ls &quot;-&quot;la       # Obfuscated flag pattern detected</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Analyzes command arguments for suspicious quoting patterns</li><li>Prevents sophisticated command injection attempts</li><li>Echo command exempted from checks as inherently safe</li><li>Part of the enhanced command validation pipeline</li></ul>
+    </article>
+    <article class="card" id="github-actions-workflow-templates">
+      <div class="card-top">
+        <h3>GitHub Actions Workflow Templates <a class="anchor" href="#github-actions-workflow-templates">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Pre-configured workflow templates for Claude Code CI/CD integration <strong>Implementation:</strong> Two new templates added:</p>
+<ul><li><code>e_B</code> template for claude.yml workflow</li><li><code>AxB</code> template for claude-review.yml workflow</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Responds to @claude mentions in issues and PR comments</li><li>Uses production <code>anthropics/claude-code-action@v1</code> (upgraded from beta)</li><li>Includes proper permissions and trigger configurations</li><li>Supports both manual triggers and automatic code review</li></ul>
+    </article>
+    <article class="card" id="enhanced-cli-animations">
+      <div class="card-top">
+        <h3>Enhanced CLI Animations <a class="anchor" href="#enhanced-cli-animations">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New shimmer and color interpolation animations for improved visual feedback <strong>Implementation:</strong> New animation functions <code>yN0</code>, <code>xN0</code>, <code>bN0</code>, <code>fN0</code> at <code>archive/pretty/pretty-v1.0.91.js:398709-398954</code> <strong>Details:</strong></p>
+<ul><li>RGB color interpolation for smooth transitions</li><li>Character-by-character glimmer effects</li><li>Sine-wave opacity for natural pulsing animations</li><li>Enhanced visual feedback during tool operations</li></ul>
+    </article>
+    <article class="card" id="todowrite-activeform-ui-display">
+      <div class="card-top">
+        <h3>TodoWrite activeForm UI Display <a class="anchor" href="#todowrite-activeform-ui-display">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Status spinner now displays the <code>activeForm</code> field from in-progress todos <strong>Implementation:</strong> Removed feature flag <code>MQ("false")</code> at <code>archive/pretty/pretty-v1.0.91.js:398916-398919</code> <strong>How it works:</strong></p>
+<ul><li>When a todo is marked as "in_progress", the spinner shows the <code>activeForm</code> text + "…"</li><li>Example: "Fixing authentication bug…" instead of generic loading text</li><li>Provides contextual progress feedback using present continuous tense</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Feature was implemented behind a disabled flag in v1.0.90</li><li>Flag removal in v1.0.91 made the display unconditional</li><li>Completes the TodoWrite enhancement that began with schema changes in v1.0.89</li></ul>
+    </article>
+    <article class="card" id="node-js-warning-monitoring">
+      <div class="card-top">
+        <h3>Node.js Warning Monitoring <a class="anchor" href="#node-js-warning-monitoring">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatic detection and reporting of Node.js runtime warnings <strong>Implementation:</strong> New <code>UN2</code> function and warning patterns at <code>archive/pretty/pretty-v1.0.91.js:356268</code> <strong>Details:</strong></p>
+<ul><li>Specifically monitors MaxListenersExceededWarning events</li><li>Distinguishes between internal vs external warnings</li><li>Tracks occurrence counts for telemetry</li><li>Optional debug logging with <code>CLAUDE_DEBUG=true</code></li></ul>
+    </article>
+    <article class="card" id="oauth-server-reliability">
+      <div class="card-top">
+        <h3>OAuth Server Reliability <a class="anchor" href="#oauth-server-reliability">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced OAuth callback server with dynamic port allocation <strong>Details:</strong></p>
+<ul><li>Server class restructured from <code>zL0</code> to <code>rL0</code></li><li>Now starts on port 0 for OS-assigned available ports</li><li>Prevents port conflicts during authentication flows</li><li>Improved error handling and cleanup with <code>removeAllListeners()</code></li></ul>
+    </article>
+    <article class="card" id="oauth-error-handling">
+      <div class="card-top">
+        <h3>OAuth Error Handling <a class="anchor" href="#oauth-error-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Structured OAuth error classes and better error recovery <strong>Details:</strong></p>
+<ul><li>New error classes: <code>cI</code>, <code>ak1</code>, <code>Ve</code>, <code>Ke</code> for different OAuth failure modes</li><li>Enhanced metadata discovery with fallback mechanisms</li><li>Better handling of various OAuth server implementations</li><li>More robust token exchange processes</li></ul>
+    </article>
+    <article class="card" id="command-argument-processing">
+      <div class="card-top">
+        <h3>Command Argument Processing <a class="anchor" href="#command-argument-processing">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Fixed null pointer exception in command argument filtering <strong>Details:</strong></p>
+<ul><li>Changed filter condition from <code>!B.startsWith("-")</code> to <code>!B?.startsWith("-")</code></li><li>Prevents crashes when processing commands with null/undefined arguments</li><li>Improves robustness of command parsing pipeline</li></ul>
+    </article>
+    <article class="card" id="features-not-new-in-1-0-91">
+      <div class="card-top">
+        <h3>Features NOT New in 1.0.91 <a class="anchor" href="#features-not-new-in-1-0-91">#</a></h3>
+      </div>
+      <p>The following were already present in v1.0.90 and are not new features:</p>
+<ul><li><strong>Statsig Analytics Integration</strong>: Full analytics infrastructure was already implemented</li><li><strong>OAuth Authentication Core</strong>: Basic OAuth functionality existed, only reliability improvements added</li><li><strong>Command Security Framework</strong>: Core security mechanisms were in place, only obfuscation detection added</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Notes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-notes">
+      <ul><li>File structure similarity: 99.1% between versions</li><li>Total changes: 74 additions, 16 deletions, 17 modifications</li><li>Primary focus on security, reliability, and user experience refinements</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

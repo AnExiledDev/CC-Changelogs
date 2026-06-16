@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.10 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.10."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.10</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.10</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.9 → v1.0.10</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Configurable Output Token Limit</h4>
+<ul><li><strong>New environment variable</strong>: <code>CLAUDE_CODE_MAX_OUTPUT_TOKENS</code></li><li>Allows customization of the maximum output tokens for Claude's responses</li><li>Default remains 32,000 tokens for most models</li><li>Automatically set to 8,192 for Claude 3.5 and Haiku models</li><li>Example usage: <code>export CLAUDE_CODE_MAX_OUTPUT_TOKENS=50000</code></li></ul>
+<h4>Enhanced Telemetry and Debugging</h4>
+<ul><li><strong>New environment variable</strong>: <code>OTEL_LOG_USER_PROMPTS</code></li><li>Enables logging of user prompts for debugging purposes</li><li>Example usage: <code>export OTEL_LOG_USER_PROMPTS=1</code></li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Better Web Search Tracking</h4>
+<ul><li>Added comprehensive tracking for server-side tool usage</li><li>New <code>server_tool_use</code> metrics include <code>web_search_requests</code> counter</li><li>Improved usage statistics collection for web searches</li></ul>
+<h4>Enhanced Markdown Rendering</h4>
+<ul><li>Added support for <strong>strikethrough</strong> text formatting in markdown</li><li>Improved table rendering with proper alignment support (left, center, right)</li><li>Better handling of complex table structures with dynamic column width calculation</li><li>Enhanced image rendering in markdown (now shows the URL directly)</li></ul>
+<h4>Performance Optimizations</h4>
+<ul><li>Added UUID v1, v3, v4, and v5 generation utilities for better request tracking</li><li>Improved streaming response handling with better fallback detection</li><li>Added <code>didFallBackToNonStreaming</code> tracking for API responses</li></ul>
+<h4>Security and Error Handling</h4>
+<ul><li>Simplified refusal response handling for policy violations</li><li>Removed OAuth authentication flow for MCP servers (streamlined authentication)</li><li>Better error recovery for streaming tool use</li></ul>
+    </article>
+    <article class="card" id="technical-improvements">
+      <div class="card-top">
+        <h3>Technical Improvements <a class="anchor" href="#technical-improvements">#</a></h3>
+      </div>
+      <h4>Code Organization</h4>
+<ul><li>Consolidated JSON parsing into a reusable utility function (<code>j5</code>)</li><li>Improved message content merging with the new <code>eQ5</code> function</li><li>Enhanced tool input validation and parsing with the <code>Ce</code> function</li><li>Better separation of concerns for API response processing</li></ul>
+<h4>️ Developer Experience</h4>
+<ul><li>Added debug logging function <code>ikA</code> for better troubleshooting</li><li>Improved process working directory access with <code>e70</code> import</li><li>Enhanced date/time formatting utilities with comprehensive locale support</li></ul>
+    </article>
+    <article class="card" id="removed-features">
+      <div class="card-top">
+        <h3>Removed Features <a class="anchor" href="#removed-features">#</a></h3>
+      </div>
+      <h4>Simplified Authentication</h4>
+<ul><li>Removed the complex OAuth authentication dialog for MCP servers</li><li>Removed the <code>mcp-auth</code> command and its associated UI components</li><li>Streamlined MCP server connection process</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed empty model response handling to provide meaningful fallback messages</li><li>Improved tool use input validation to ensure proper string or object format</li><li>Better handling of streaming responses that fall back to non-streaming mode</li></ul>
+    </article>
+    <article class="card" id="internal-changes">
+      <div class="card-top">
+        <h3>Internal Changes <a class="anchor" href="#internal-changes">#</a></h3>
+      </div>
+      <ul><li>Added comprehensive date manipulation utilities from date-fns library</li><li>Improved telemetry data collection with more granular usage metrics</li><li>Enhanced streaming infrastructure with PassThrough stream support</li><li>Better modularization of utility functions</li></ul>
+<p>This version focuses on developer experience improvements, better configurability, and enhanced markdown rendering capabilities while streamlining the authentication process for MCP servers.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.31 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.31."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.31</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.31</span></h1>
+<p class="sub">Version 2.0.31 introduces startup performance profiling capabilities, significantly enhances sed command security validation, and adds support for the latest web-search API. Additionally, internal improvements to diff rendering and telemetry tracking provide better visibility into Claude Code's operations.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.30 → v2.0.31</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="startup-performance-profiling">
+      <div class="card-top">
+        <h3>Startup Performance Profiling <a class="anchor" href="#startup-performance-profiling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Optional profiling system to measure Claude Code's startup performance and memory usage across initialization phases.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Enable startup profiling
+CLAUDE_CODE_PROFILE_STARTUP=1 claude
+
+# The profiling report will automatically display after startup showing:
+# - Time elapsed at each checkpoint (absolute and delta)
+# - Memory usage (RSS and heap) at each checkpoint
+# - Total startup time</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Tracks 30+ checkpoints throughout the startup sequence</li><li>Records both timing (via Node.js <code>perf_hooks</code>) and memory metrics</li><li>Zero overhead when disabled (default)</li><li>Useful for diagnosing slow startup issues or investigating performance regressions</li><li><strong>Evidence</strong>: <code>o5()</code> at line 3881, <code>RB9()</code> at line 3891, <code>B80()</code> at line 3919, profiler initialization in <code>aqA</code> at line 3926</li></ul>
+    </article>
+    <article class="card" id="file-operation-telemetry">
+      <div class="card-top">
+        <h3>File Operation Telemetry <a class="anchor" href="#file-operation-telemetry">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Privacy-preserving telemetry that tracks file operations (read, write, edit) using hashed identifiers.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>File paths are hashed (SHA256, first 16 characters) for anonymization</li><li>File content is hashed (SHA256) to detect duplicate operations</li><li>Operation type and tool name are recorded</li><li>Data sent via existing telemetry infrastructure</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Automatically enabled when telemetry is active</li><li>Only metadata is recorded - actual file paths and content remain private</li><li>Helps Anthropic understand common file operation patterns</li><li><strong>Evidence</strong>: <code>sM()</code> function at line 249864, hash functions <code>Nd8()</code> at line 249858 and <code>Ld8()</code> at line 249861</li></ul>
+    </article>
+    <article class="card" id="web-search-api-update">
+      <div class="card-top">
+        <h3>Web Search API Update <a class="anchor" href="#web-search-api-update">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Support for the new <code>web-search-2025-03-05</code> beta API.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Automatically enabled for Vertex AI platform with Claude 4.x models</li><li>Provides access to updated web search capabilities</li><li>Part of Anthropic's beta features system</li><li><strong>Evidence</strong>: <code>ErB = "web-search-2025-03-05"</code> at line 203723, <code>AT8()</code> function at line 203732</li></ul>
+    </article>
+    <article class="card" id="enhanced-sed-command-validation">
+      <div class="card-top">
+        <h3>Enhanced Sed Command Validation <a class="anchor" href="#enhanced-sed-command-validation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Significantly improved security validation for sed commands to prevent dangerous operations while allowing safe read-only usage.</p>
+<p><strong>How it works:</strong> The validation now uses a comprehensive whitelist approach with multiple layers:</p>
+<ol><li><strong>Pre-parsing flag detection</strong> - Blocks dangerous flag combinations like <code>-ew</code>, <code>-we</code> before parsing</li><li><strong>Whitelist validation</strong> - Only allows two safe patterns:</li></ol>
+<ul><li>Print-only operations with <code>-n</code> flag (e.g., <code>sed -n '1,10p' file.txt</code>)</li><li>Simple substitutions with safe flags (e.g., <code>sed 's/old/new/' file.txt</code>)</li></ul>
+<ol><li><strong>Comprehensive blacklist</strong> - Blocks 15+ dangerous patterns including:</li></ol>
+<ul><li>Write commands (<code>w</code>, <code>W</code>)</li><li>Execute commands (<code>e</code>, <code>E</code>)</li><li>Non-ASCII characters and escape sequences</li><li>Command chaining with semicolons in certain contexts</li><li>Braces, negation operators, and other advanced features</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Builds upon existing sed validation from v2.0.30 (function <code>hoB</code> at line 209135)</li><li>Adds four new validation helpers: <code>Aj8()</code> at line 209202, <code>Bj8()</code> at line 209245, <code>Qj8()</code> at line 209254, <code>Zj8()</code> at line 209384</li><li>New validation function <code>JtB()</code> at line 209288 replaces <code>hoB</code></li><li>Dangerous flag combination detection in <code>Gj8()</code> at line 209345</li><li>Prevents file modification and command execution while allowing safe text processing</li><li><strong>Evidence</strong>: Comparison of <code>hoB()</code> at line 209135 in v2.0.30 vs <code>JtB()</code> at line 209288 in v2.0.31</li></ul>
+    </article>
+    <article class="card" id="diff-rendering-simplification">
+      <div class="card-top">
+        <h3>Diff Rendering Simplification <a class="anchor" href="#diff-rendering-simplification">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Streamlined diff patch rendering with cleaner code and fewer configuration options.</p>
+<p><strong>Changes:</strong></p>
+<ul><li>Removed <code>skipUnchanged</code> and <code>hideLineNumbers</code> parameters from diff rendering</li><li>Eliminated conditional dimmed color variants (<code>diffAddedWordDimmed</code>, <code>diffRemovedWordDimmed</code>)</li><li>Simplified component interface from 7 parameters to 5</li><li>Removed <code>hidden</code> parameter from line number component calls</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Function signature changed from <code>hB6(A, B, Q, I, G, Z, Y)</code> to <code>$Q6(A, B, Q, I, G)</code></li><li>More consistent visual rendering across different diff contexts</li><li><strong>Evidence</strong>: <code>hB6()</code> at line 288996 in v2.0.30 vs <code>$Q6()</code> at line 289176 in v2.0.31; word diff function <code>fB6()</code> at line 288906 in v2.0.30 vs <code>wQ6()</code> at line 289088 in v2.0.31</li></ul>
+    </article>
+    <article class="card" id="settings-loading-profiling">
+      <div class="card-top">
+        <h3>Settings Loading Profiling <a class="anchor" href="#settings-loading-profiling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added profiling checkpoints around settings initialization.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Tracks time spent loading settings from various sources</li><li>Helps identify slow configuration loading</li><li><strong>Evidence</strong>: <code>o5("eagerLoadSettings_start")</code> at line 485096, <code>o5("eagerLoadSettings_end")</code> at line 485107 in function <code>Bo5()</code> at line 485095</li></ul>
+    </article>
+    <article class="card" id="cli-argument-parsing-instrumentation">
+      <div class="card-top">
+        <h3>CLI Argument Parsing Instrumentation <a class="anchor" href="#cli-argument-parsing-instrumentation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added profiling checkpoints before and after CLI argument parsing.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Helps identify overhead from command-line option processing</li><li>Part of the overall startup profiling infrastructure</li><li><strong>Evidence</strong>: <code>o5("cli_before_main_import")</code> at line 486806, <code>o5("cli_after_main_import")</code> at line 486808 in function <code>Wo5()</code> at line 486798</li></ul>
+    </article>
+    <article class="card" id="redirect-operator-quoting">
+      <div class="card-top">
+        <h3>Redirect Operator Quoting <a class="anchor" href="#redirect-operator-quoting">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Fixed shell command quoting logic to correctly handle file descriptor redirects.</p>
+<p><strong>Details:</strong></p>
+<ul><li>File descriptor redirects like <code>2&gt;</code> or <code>2&gt;&gt;</code> are no longer incorrectly quoted</li><li>Prevents errors when redirecting stderr or other file descriptors</li><li><strong>Evidence</strong>: Function <code>ET8()</code> at line 204583 adds check for <code>\d+&gt;&gt;?</code> pattern, replacing <code>bR8()</code> at line 204525 in v2.0.30</li></ul>
+    </article>
+    <article class="card" id="hook-removal-edge-case">
+      <div class="card-top">
+        <h3>Hook Removal Edge Case <a class="anchor" href="#hook-removal-edge-case">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Fixed settings cleanup when removing the last hook from a configuration source.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Ensures <code>hooks</code> object is properly removed when empty</li><li>Prevents empty configuration objects from persisting</li><li><strong>Evidence</strong>: Function <code>rV2()</code> at line 414417 adds proper cleanup logic at lines 414433-414435, improving upon <code>qV2()</code> at line 414128 in v2.0.30</li></ul>
+    </article>
+    <article class="card" id="import-organization">
+      <div class="card-top">
+        <h3>Import Organization <a class="anchor" href="#import-organization">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Consolidated and reorganized various module imports.</p>
+<p><strong>Changes:</strong></p>
+<ul><li>Replaced <code>import Ae from "stream"</code> with <code>import { PassThrough as Lr5 } from "stream"</code> at line 482338</li><li>Replaced <code>import e51 from "node:child_process"</code> with <code>import { execSync as U6Q, spawn as Qd8 } from "node:child_process"</code> at line 249174</li><li>Added <code>import { cwd as hR0 } from "node:process"</code> at line 70725</li><li>Added <code>import { homedir as br5 } from "node:os"</code> at line 484007</li><li>Added <code>import { createHash as pB6, randomBytes as lB6 } from "crypto"</code> at line 286520</li><li>Removed redundant <code>import BP9 from "node:os"</code> and <code>import il2 from "node:process"</code></li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>More explicit imports improve tree-shaking and code clarity</li><li>Reduces namespace pollution from default imports</li></ul>
+    </article>
+    <article class="card" id="color-diff-module-loading">
+      <div class="card-top">
+        <h3>Color Diff Module Loading <a class="anchor" href="#color-diff-module-loading">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Updated native color diff module loading with better error handling.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added async function <code>GVQ()</code> at line 289328 for loading the Rust-based ColorDiff module</li><li>Improved fallback behavior when native module unavailable</li><li>Better logging for debugging color diff issues</li><li><strong>Evidence</strong>: Function <code>GVQ()</code> at line 289328, initialization in <code>uy1</code> at line 289318</li></ul>
+    </article>
+    <article class="card" id="component-refactoring">
+      <div class="card-top">
+        <h3>Component Refactoring <a class="anchor" href="#component-refactoring">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Various minor component and utility function additions.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added <code>BVQ</code> component at line 289014 for diff patch rendering</li><li>Added utility functions: <code>Vc()</code> at line 446305, <code>Qp5()</code> at line 460873, <code>xM2()</code> at line 429780</li><li>Added helper functions for tool management: <code>Gu2()</code> at line 456056, <code>Ve1()</code> at line 456053, <code>Iu2()</code> at line 456048</li></ul>
+<p><strong>Note:</strong> This changelog focuses on user-visible changes and significant internal improvements. Version 2.0.31 includes additional internal refactoring and code organization improvements not detailed here.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

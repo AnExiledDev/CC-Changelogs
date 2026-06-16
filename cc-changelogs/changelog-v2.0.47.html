@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.47 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.47."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.47</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.47</span></h1>
+<p class="sub">Version 2.0.47 introduces remote environment configuration for Teleport users, implements intelligent plan mode parallelism based on subscription tier, and adds automatic image compression to prevent API errors from oversized images.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.46 → v2.0.47</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="remote-environment-configuration">
+      <div class="card-top">
+        <h3>Remote Environment Configuration <a class="anchor" href="#remote-environment-configuration">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New CLI command to configure default remote development environments for Teleport sessions</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Launch interactive environment selector
+claude remote-env</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Interactive UI displays all available remote environments</li><li>Selected environment is saved to local settings as the default</li><li>Configuration persists across sessions</li><li>Environments can also be managed at https://claude.ai/code</li><li>Stores selection in <code>settings.local.json</code> under <code>remote.defaultEnvironmentId</code></li><li><strong>Evidence</strong>: <code>EZ9()</code> at line 489948, <code>zZ9()</code> at line 489984, command registration at line 490139</li></ul>
+    </article>
+    <article class="card" id="automatic-image-compression">
+      <div class="card-top">
+        <h3>Automatic Image Compression <a class="anchor" href="#automatic-image-compression">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Images in conversation context are now automatically compressed when they exceed size limits</p>
+<p><strong>How it works:</strong></p>
+<ul><li>Automatically detects base64-encoded images larger than ~3.9MB</li><li>Compresses using JPEG format via Sharp library</li><li>Preserves original media type metadata</li><li>Prevents API errors from oversized content</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Maximum uncompressed image size: 3,932,160 bytes (~3.9MB)</li><li>Compression threshold: 8,192 bytes</li><li>Only applies to images in conversation context, not uploaded files</li><li>Transparent to users - happens automatically during content processing</li><li><strong>Evidence</strong>: <code>egQ()</code> at line 155776, called from content truncation at line 502920</li></ul>
+    </article>
+    <article class="card" id="plan-mode-exit-state-tracking">
+      <div class="card-top">
+        <h3>Plan Mode Exit State Tracking <a class="anchor" href="#plan-mode-exit-state-tracking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Internal state management to track when users have exited plan mode</p>
+<p><strong>Details:</strong></p>
+<ul><li>Prevents re-prompting about plan mode after explicit exit</li><li>Improves workflow continuity in long sessions</li><li>State persists for the duration of the current session</li><li><strong>Evidence</strong>: <code>qV0()</code> getter at line 2315, <code>og()</code> setter at line 2318</li></ul>
+    </article>
+    <article class="card" id="plan-mode-parallelism-now-tier-based">
+      <div class="card-top">
+        <h3>Plan Mode Parallelism Now Tier-Based <a class="anchor" href="#plan-mode-parallelism-now-tier-based">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Plan mode now adjusts parallel agent count based on subscription tier instead of using a fixed default</p>
+<p><strong>Previous behavior:</strong> All users got 4 parallel agents in plan mode (unless overridden by environment variable)</p>
+<p><strong>New behavior:</strong></p>
+<ul><li><strong>Free tier:</strong> 1 parallel agent (75% reduction)</li><li><strong>Team/Enterprise tier:</strong> 3 parallel agents (25% reduction)</li><li><strong>Max subscription with 20x model:</strong> 3 parallel agents</li><li><strong>Environment variable override:</strong> Still available via <code>CLAUDE_CODE_PLAN_V2_AGENT_COUNT</code> (1-10)</li></ul>
+<p><strong>Impact:</strong></p>
+<ul><li>Free tier users will experience slower plan mode execution</li><li>Premium users retain better parallelism</li><li>Change encourages upgrade to paid tiers for better performance</li><li><strong>Evidence</strong>: <code>JQ2()</code> at line 315736 (was <code>v62()</code> at line 316064 in v2.0.46)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <p>None identified in this release.</p>
+    </article>
+    <article class="card" id="opentelemetry-queue-configuration">
+      <div class="card-top">
+        <h3>OpenTelemetry Queue Configuration <a class="anchor" href="#opentelemetry-queue-configuration">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <ul><li>Added explicit max queue size constant (8,192) for telemetry batching</li><li>Improves observability infrastructure stability</li><li>No user-facing impact</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

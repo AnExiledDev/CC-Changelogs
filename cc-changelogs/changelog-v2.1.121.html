@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.121 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.121."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.121</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.121</span></h1>
+<p class="sub">This release introduces in-app extra usage management (buy credits, set spend limits, configure auto-reload without leaving the CLI), a new <code>claude plugin prune</code> command for cleaning up orphaned plugins, searchable skills dialog, iTerm2 clipboard integration, per-request cost attribution by agent/skill/plugin, and a new <code>updatedToolOutput</code> hook property for modifying tool output before it reaches the model. The daemon also gains significant improvements including pre-warmed spare workers, yield/takeover protocol, and a <code>--keep-workers</code> stop flag.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.120 → v2.1.121</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">34</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">6</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">30 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-app-extra-usage-management">
+      <div class="card-top">
+        <h3>In-App Extra Usage Management <a class="anchor" href="#in-app-extra-usage-management">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Users can now enable extra usage, buy credits, set monthly spend limits, and configure auto-reload directly from within the CLI — no need to visit claude.ai.</p>
+<div class="blabel">Usage</div>
+<pre><code># When you hit a usage limit, the CLI now offers interactive options:
+# - &quot;Continue with extra usage&quot;
+# - &quot;Buy extra usage&quot;
+# - &quot;Adjust monthly limit&quot;
+# - &quot;Set to unlimited&quot;
+# - &quot;Auto-reload&quot; (on/off)
+# - &quot;Manage on claude.ai&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Full payment flow integrated in-terminal, including 3DS verification support</li><li>Set monthly spend limits with real-time enforcement</li><li>Auto-reload automatically buys more credits when balance falls below a configurable threshold</li><li>Shows balance and auto-reload status inline</li><li>Tax calculation and discount display supported</li><li>Links to Anthropic Help Center for extra usage terms</li><li>Not available in essential-traffic-only mode</li></ul>
+<div class="blabel">Evidence</div>
+<p>Extra usage billing flow (search for <code>"Buy extra usage"</code>, <code>"auto-reload"</code>, <code>"/setup_overage_billing"</code>)</p>
+    </article>
+    <article class="card" id="plugin-prune-command">
+      <div class="card-top">
+        <h3>Plugin Prune Command <a class="anchor" href="#plugin-prune-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>claude plugin prune</code> subcommand removes auto-installed plugin dependencies that are no longer needed by any active plugin.</p>
+<div class="blabel">Usage</div>
+<pre><code># List orphaned plugins without removing them
+claude plugin prune --dry-run
+
+# Remove orphans at user scope
+claude plugin prune
+
+# Remove at project scope
+claude plugin prune --scope project
+
+# Skip confirmation prompt (for CI)
+claude plugin prune -y
+
+# Also prune during uninstall
+claude plugin uninstall my-plugin --prune</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Detects auto-installed dependencies that no longer have a parent plugin requiring them</li><li>Supports scopes: user, project, or local</li><li>Dry-run mode shows what would be removed without acting</li><li>Non-TTY environments require <code>-y</code> flag</li><li>Reports which plugins were removed and their count</li><li>Integrates with <code>plugin uninstall --prune</code> for cleanup during uninstall</li><li>Telemetry event <code>tengu_plugin_prune_cli</code> tracks usage</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin prune handler (search for <code>"plugin prune"</code>, <code>"Nothing to prune"</code>, <code>"no longer needed"</code>)</p>
+    </article>
+    <article class="card" id="skills-search-dialog">
+      <div class="card-top">
+        <h3>Skills Search Dialog <a class="anchor" href="#skills-search-dialog">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>/skills</code> dialog now includes a real-time search/filter input, making it easy to find skills by name in large skill sets.</p>
+<div class="blabel">Usage</div>
+<pre><code>/skills
+# Then press / to start searching
+# Type to filter skills by name
+# ↓/Enter to select, Esc to clear search</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Press <code>/</code> to activate search mode within the skills picker</li><li>Shows filtered count (e.g., "3/12 skills") when search is active</li><li>Keyboard hints update contextually: "type to filter · ↓/enter to select · esc to clear"</li><li>Reports "No skills match \"{query}\"" when filter returns empty</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skills search UI (search for <code>"Search skills"</code>, <code>"No skills match"</code>, <code>"type to filter"</code>)</p>
+    </article>
+    <article class="card" id="iterm2-clipboard-integration">
+      <div class="card-top">
+        <h3>iTerm2 Clipboard Integration <a class="anchor" href="#iterm2-clipboard-integration">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now automatically enables the "Applications in terminal may access clipboard" setting in iTerm2, making the <code>/copy</code> command work without manual configuration.</p>
+<div class="blabel">Usage</div>
+<pre><code># Run /terminal-setup in iTerm2 — it now specifically enables clipboard access
+/terminal-setup
+
+# Or just use /copy — Claude will prompt to enable clipboard access if needed</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Detects iTerm2 terminal via <code>TERM_PROGRAM</code> or <code>LC_TERMINAL</code> environment variables</li><li>Writes <code>AllowClipboardAccess</code> preference via <code>defaults write</code> on macOS</li><li>Reports success and reminds user to restart iTerm2</li><li>When connected from iTerm2 via SSH, shows guidance about reaching local clipboard</li><li>Shift+Enter is noted as natively supported in iTerm2 (no configuration needed)</li><li><code>/terminal-setup</code> description dynamically changes to "Enable iTerm2 clipboard access for /copy" in iTerm2</li></ul>
+<div class="blabel">Evidence</div>
+<p>iTerm2 clipboard enablement (search for <code>"AllowClipboardAccess"</code>, <code>"iTerm2 clipboard access already enabled"</code>)</p>
+    </article>
+    <article class="card" id="cost-attribution-by-agent-skill-and-plugin">
+      <div class="card-top">
+        <h3>Cost Attribution by Agent, Skill, and Plugin <a class="anchor" href="#cost-attribution-by-agent-skill-and-plugin">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The usage/cost display now breaks down spending by agent, skill, and plugin, showing what percentage of usage each component consumed.</p>
+<div class="blabel">Details</div>
+<ul><li>API responses now carry <code>attributionAgent</code>, <code>attributionSkill</code>, and <code>attributionPlugin</code> fields</li><li>Costs are accumulated per-request into <code>byAgent</code>, <code>bySkill</code>, and <code>byPlugin</code> maps</li><li>The cost view renders a "Skills, subagents, and plugins" section with percentage breakdown</li><li>Actionable tips appear alongside high-cost items:</li><li>Skills: "Heavy skills can be scoped down or run with a cheaper model via skill frontmatter."</li><li>Plugins: "Review what this plugin contributes — its agents, skills, and MCP tools all count toward your limit."</li><li>Shows "No attribution data yet · accumulates as you use Claude" when no data exists</li></ul>
+<div class="blabel">Evidence</div>
+<p>Attribution tracking (search for <code>"attributionAgent"</code>, <code>"attributionPlugin"</code>, <code>"Skills, subagents, and plugins"</code>)</p>
+    </article>
+    <article class="card" id="updatedtooloutput-hook-property">
+      <div class="card-top">
+        <h3><code>updatedToolOutput</code> Hook Property <a class="anchor" href="#updatedtooloutput-hook-property">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>PostToolUse hooks can now replace tool output for ALL tools (not just MCP tools) via the new <code>updatedToolOutput</code> field.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously, only <code>updatedMCPToolOutput</code> was available, which only worked for MCP tools</li><li>The new <code>updatedToolOutput</code> field works for any tool (Bash, Read, Write, Edit, MCP, etc.)</li><li>The old <code>updatedMCPToolOutput</code> is retained but its description now says "Prefer updatedToolOutput, which works for all tools"</li><li>Validation error if hook output doesn't match expected tool output shape: "PostToolUse hook returned updatedToolOutput that does not match {tool}'s output shape"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Hook output replacement (search for <code>"updatedToolOutput"</code>, <code>"Replaces the tool output before it is sent to the model"</code>)</p>
+    </article>
+    <article class="card" id="mcp-server-alwaysload-option">
+      <div class="card-top">
+        <h3>MCP Server <code>alwaysLoad</code> Option <a class="anchor" href="#mcp-server-alwaysload-option">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New boolean configuration option for MCP servers that forces all tools from a server to always be included in the prompt, bypassing tool search deferral.</p>
+<div class="blabel">Details</div>
+<ul><li>Added to all MCP server config types: stdio, HTTP, and SSE</li><li>When <code>true</code>, tools are never deferred behind tool search</li><li>Equivalent to setting <code>defer_loading: false</code> on the API</li><li>Default behavior: tools are deferred when tool search is enabled</li></ul>
+<div class="blabel">Evidence</div>
+<p>MCP alwaysLoad option (search for <code>"When true, all tools from this server are always included"</code>)</p>
+    </article>
+    <article class="card" id="disable-background-agents-fleet-setting">
+      <div class="card-top">
+        <h3>Disable Background Agents Fleet Setting <a class="anchor" href="#disable-background-agents-fleet-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>disableAgentsFleet</code> setting and <code>CLAUDE_CODE_DISABLE_AGENTS_FLEET</code> environment variable to fully disable the background-agents fleet.</p>
+<div class="blabel">Details</div>
+<ul><li>Disables <code>claude agents</code>, <code>--bg</code>, <code>/background</code>, and the on-demand daemon</li><li>Typically set in managed settings for enterprise environments</li><li>Can be set via environment variable: <code>CLAUDE_CODE_DISABLE_AGENTS_FLEET=1</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Fleet disable option (search for <code>"Disable the background-agents fleet"</code>, <code>"CLAUDE_CODE_DISABLE_AGENTS_FLEET"</code>)</p>
+    </article>
+    <article class="card" id="shell-cwd-recovery">
+      <div class="card-top">
+        <h3>Shell CWD Recovery <a class="anchor" href="#shell-cwd-recovery">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When the shell's current working directory is deleted (e.g., by a branch switch or cleanup), Claude Code now recovers gracefully and informs the user.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects when cwd is removed and recovers to a valid directory</li><li>Shows message: "{path} was deleted; shell cwd recovered to {new path}"</li><li>Advises re-issuing the command from the recovered directory</li></ul>
+<div class="blabel">Evidence</div>
+<p>CWD recovery handler (search for <code>"was deleted; shell cwd recovered"</code>)</p>
+    </article>
+    <article class="card" id="file-read-encoding-parameter">
+      <div class="card-top">
+        <h3>File Read <code>encoding</code> Parameter <a class="anchor" href="#file-read-encoding-parameter">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The Read tool now accepts an <code>encoding</code> parameter, allowing base64 encoding for binary file reads (e.g., images).</p>
+<div class="blabel">Details</div>
+<ul><li>Description: "How to encode the bytes in <code>contents</code>. Defaults to utf-8 (lossy for binary); pass 'base64' to read images."</li><li>Response includes <code>encoding</code> field: "Set when the request asked for base64. Absent means utf-8 — including when an older CLI ignored the request's encoding field."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Read encoding support (search for <code>"How to encode the bytes"</code>)</p>
+    </article>
+    <article class="card" id="daemon-pre-warmed-spare-workers">
+      <div class="card-top">
+        <h3>Daemon Pre-Warmed Spare Workers <a class="anchor" href="#daemon-pre-warmed-spare-workers">#</a></h3>
+      </div>
+      <p>Background agents now use a pre-warmed "spare" worker mechanism (<code>--bg-spare</code>) for faster session startup. When a new background session is requested, the daemon can claim a pre-spawned spare worker instead of cold-starting a new process.</p>
+<div class="blabel">Evidence</div>
+<p>Spare worker system (search for <code>"bg claimed-spare"</code>, <code>"[bg-spare] missing claim sock path"</code>)</p>
+    </article>
+    <article class="card" id="daemon-yield-takeover-protocol">
+      <div class="card-top">
+        <h3>Daemon Yield/Takeover Protocol <a class="anchor" href="#daemon-yield-takeover-protocol">#</a></h3>
+      </div>
+      <p>Transient daemons can now be gracefully displaced by foreground or persistent service daemons. The new daemon asks the existing transient daemon to yield, and background workers are re-adopted without interruption. Messages include "yielding to a foreground/service daemon — bg workers will be re-adopted".</p>
+<div class="blabel">Evidence</div>
+<p>Daemon yield protocol (search for <code>"yielding to a foreground/service daemon"</code>)</p>
+    </article>
+    <article class="card" id="daemon-keep-workers-flag">
+      <div class="card-top">
+        <h3>Daemon <code>--keep-workers</code> Flag <a class="anchor" href="#daemon-keep-workers-flag">#</a></h3>
+      </div>
+      <p><code>claude daemon stop</code> now accepts <code>--keep-workers</code> to leave detached background sessions running when stopping the daemon supervisor. Useful for cleanly upgrading the daemon without interrupting active background work.</p>
+<div class="blabel">Evidence</div>
+<p>Keep-workers flag (search for <code>"--keep-workers"</code>)</p>
+    </article>
+    <article class="card" id="daemon-install-prompt-default-changed">
+      <div class="card-top">
+        <h3>Daemon Install Prompt Default Changed <a class="anchor" href="#daemon-install-prompt-default-changed">#</a></h3>
+      </div>
+      <p>The daemon install prompt changed from <code>[Y/n/never, or 'once' for this login session]</code> to <code>[y/N/never, or 'once' just for now]</code>. The default answer is now <strong>no</strong> (lowercase <code>y</code> vs uppercase <code>Y</code>), making it less aggressive about installing as a persistent service.</p>
+<div class="blabel">Evidence</div>
+<p>Install prompt comparison (search for <code>"Install as a service now?"</code>)</p>
+    </article>
+    <article class="card" id="daemon-peer-uid-security">
+      <div class="card-top">
+        <h3>Daemon Peer UID Security <a class="anchor" href="#daemon-peer-uid-security">#</a></h3>
+      </div>
+      <p>The daemon now validates the UID of connecting peers on the control socket. Connections from different users are rejected with "[daemon] rejecting control connection: peer uid {uid}".</p>
+<div class="blabel">Evidence</div>
+<p>Peer UID validation (search for <code>"[daemon] rejecting control connection: peer uid"</code>)</p>
+    </article>
+    <article class="card" id="daemon-log-rotation">
+      <div class="card-top">
+        <h3>Daemon Log Rotation <a class="anchor" href="#daemon-log-rotation">#</a></h3>
+      </div>
+      <p>The daemon log now supports rotation (creating <code>daemon.log.1</code> when the primary log reaches a size limit) to prevent unbounded log growth.</p>
+<div class="blabel">Evidence</div>
+<p>Log rotation (search for <code>"daemon.log.1"</code>)</p>
+    </article>
+    <article class="card" id="claude-stop-replaces-claude-kill">
+      <div class="card-top">
+        <h3><code>claude stop</code> Replaces <code>claude kill</code> <a class="anchor" href="#claude-stop-replaces-claude-kill">#</a></h3>
+      </div>
+      <p>The command to stop background sessions has been renamed from <code>claude kill</code> to <code>claude stop</code> for clarity. The old <code>claude kill</code> syntax now shows a deprecation message suggesting <code>claude daemon</code> instead.</p>
+<div class="blabel">Evidence</div>
+<p>Command rename (search for <code>"claude stop"</code>, <code>"' is no longer supported — use: claude daemon"</code>)</p>
+    </article>
+    <article class="card" id="claude-daemon-assistant-add-subcommand">
+      <div class="card-top">
+        <h3><code>claude daemon assistant add</code> Subcommand <a class="anchor" href="#claude-daemon-assistant-add-subcommand">#</a></h3>
+      </div>
+      <p>The daemon assistant management command changed from <code>claude daemon assistant -a</code> (flag-based) to <code>claude daemon assistant add &lt;name-or-dir&gt;</code> (subcommand-based). Similarly, <code>claude daemon assistant remove</code> and <code>claude daemon remote-control remove</code> use explicit subcommands.</p>
+<div class="blabel">Evidence</div>
+<p>Subcommand style (search for <code>"claude daemon assistant add"</code>, <code>"usage: claude daemon assistant remove"</code>)</p>
+    </article>
+    <article class="card" id="focus-view-requires-fullscreen-renderer">
+      <div class="card-top">
+        <h3>Focus View Requires Fullscreen Renderer <a class="anchor" href="#focus-view-requires-fullscreen-renderer">#</a></h3>
+      </div>
+      <p>The <code>/focus</code> command now requires the fullscreen renderer (TUI mode) and provides clear guidance on how to enable it. If <code>viewMode</code> is set to <code>"focus"</code> in settings.json, the command warns that it must be removed there before toggling. The <code>viewMode</code> setting now validates against an enum: <code>["default", "verbose", "focus"]</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Focus view requirements (search for <code>"Focus view needs the fullscreen renderer"</code>)</p>
+    </article>
+    <article class="card" id="autocompact-status-display">
+      <div class="card-top">
+        <h3>Autocompact Status Display <a class="anchor" href="#autocompact-status-display">#</a></h3>
+      </div>
+      <p>The autocompact feature now shows its configuration state more clearly in the token counter with the format <code>{tokens} tokens) · /autocompact to configure</code> and logs "Compacting at auto window ({N} tokens)" when triggering.</p>
+<div class="blabel">Evidence</div>
+<p>Autocompact display (search for <code>"/autocompact to configure"</code>, <code>"Compacting at auto window"</code>)</p>
+    </article>
+    <article class="card" id="improved-p-print-flag-description">
+      <div class="card-top">
+        <h3>Improved <code>-p</code> (Print) Flag Description <a class="anchor" href="#improved-p-print-flag-description">#</a></h3>
+      </div>
+      <p>The <code>-p</code> flag description now correctly explains non-interactive mode: "The workspace trust dialog is skipped when Claude is run in non-interactive mode (via -p, or when stdout is not a TTY, e.g. piped or redirected output)" — previously it only mentioned "directories you trust".</p>
+<div class="blabel">Evidence</div>
+<p>Print mode description (search for <code>"non-interactive mode (via -p, or when stdout is not a TTY"</code>)</p>
+    </article>
+    <article class="card" id="remote-session-permission-mode-message">
+      <div class="card-top">
+        <h3>Remote Session Permission Mode Message <a class="anchor" href="#remote-session-permission-mode-message">#</a></h3>
+      </div>
+      <p>Remote sessions now explicitly show "No other permission modes are available in this remote session" when users attempt to change permission modes, making the limitation clear.</p>
+<div class="blabel">Evidence</div>
+<p>Permission restriction (search for <code>"No other permission modes are available"</code>)</p>
+    </article>
+    <article class="card" id="model-picker-guidance-in-remote-sessions">
+      <div class="card-top">
+        <h3>Model Picker Guidance in Remote Sessions <a class="anchor" href="#model-picker-guidance-in-remote-sessions">#</a></h3>
+      </div>
+      <p>The model picker message in remote sessions improved from "use /model &lt;name&gt; instead" to "pass a model name, e.g. /model sonnet" — providing a concrete example.</p>
+<div class="blabel">Evidence</div>
+<p>Model picker message (search for <code>"Model picker shows local options in remote sessions"</code>)</p>
+    </article>
+    <article class="card" id="mcp-oauth-flow-improvements">
+      <div class="card-top">
+        <h3>MCP OAuth Flow Improvements <a class="anchor" href="#mcp-oauth-flow-improvements">#</a></h3>
+      </div>
+      <p>The MCP authentication flow now supports custom <code>redirectUri</code> parameters and provides better error messages for invalid callback URLs: "Invalid callback URL — no authorization code. The flow is still open; retry with the full redirect URL."</p>
+<div class="blabel">Evidence</div>
+<p>OAuth improvements (search for <code>"Invalid callback URL"</code>, <code>"No OAuth flow in progress"</code>)</p>
+    </article>
+    <article class="card" id="background-session-ui-improvements">
+      <div class="card-top">
+        <h3>Background Session UI Improvements <a class="anchor" href="#background-session-ui-improvements">#</a></h3>
+      </div>
+      <ul><li>"Session can't redraw right now — Ctrl+B then d to detach" shown when a background session is busy</li><li>"Session is starting — it will appear once ready. Ctrl+B then d to detach" for sessions that haven't initialized yet</li><li>"Session keeps running. Use /stop to end it." replaces previous messaging</li><li><code>ctrl+x again to delete</code> confirmation before deletion</li><li>Exit description dynamically changes: "Detach from this background session (it keeps running)" in background mode vs "Exit the CLI" normally</li></ul>
+<div class="blabel">Evidence</div>
+<p>Background session messages (search for <code>"Session can't redraw right now"</code>, <code>"ctrl+x again to delete"</code>)</p>
+    </article>
+    <article class="card" id="symlink-safety-improvements">
+      <div class="card-top">
+        <h3>Symlink Safety Improvements <a class="anchor" href="#symlink-safety-improvements">#</a></h3>
+      </div>
+      <ul><li>Settings files that are symlinks are now detected and skipped: "Skipping symlinked settings.local.json"</li><li>Worktree include files that are symlinks are warned: "Skipping symlink in .worktreeinclude"</li><li>Speculation/overlay file copies check for parent directory symlink escapes: "[Speculation] Skipping {path}: parent dir escapes cwd via symlink"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Symlink safety (search for <code>"Skipping symlinked settings.local.json"</code>, <code>"parent dir escapes cwd via symlink"</code>)</p>
+    </article>
+    <article class="card" id="logind-kill-warning-for-ssh-users">
+      <div class="card-top">
+        <h3>Logind Kill Warning for SSH Users <a class="anchor" href="#logind-kill-warning-for-ssh-users">#</a></h3>
+      </div>
+      <p>On Linux systems with <code>KillUserProcesses=yes</code> in logind.conf, Claude now warns SSH users that disconnecting will kill the transient daemon and background jobs, suggesting <code>loginctl enable-linger</code> or <code>claude daemon install</code> as alternatives.</p>
+<div class="blabel">Evidence</div>
+<p>Logind warning (search for <code>"logind KillUserProcesses=yes"</code>)</p>
+    </article>
+    <article class="card" id="google-auth-library-upgrade">
+      <div class="card-top">
+        <h3>Google Auth Library Upgrade <a class="anchor" href="#google-auth-library-upgrade">#</a></h3>
+      </div>
+      <p>The bundled <code>gaxios</code> library upgraded from 6.7.1 to 7.1.4, and <code>google-auth-library</code> was updated with:</p>
+<ul><li>New <code>CertificateSubjectTokenSupplier</code> for mTLS workload identity federation</li><li>New <code>ExternalAccountAuthorizedUserClient</code> credential type</li><li>Certificate-based identity pool credential source (alongside existing file/url types)</li><li><code>GOOGLE_API_CERTIFICATE_CONFIG</code> environment variable for certificate discovery</li><li>Improved error messages for certificate parsing failures</li></ul>
+<div class="blabel">Evidence</div>
+<p>Gaxios upgrade (search for <code>"gaxios"</code>, version <code>"7.1.4"</code>, <code>"certificate_config.json"</code>)</p>
+    </article>
+    <article class="card" id="container-restart-task-recovery">
+      <div class="card-top">
+        <h3>Container Restart Task Recovery <a class="anchor" href="#container-restart-task-recovery">#</a></h3>
+      </div>
+      <p>When a container restarts, Claude now injects a system reminder listing previously-running background tasks that were stopped, with "Re-create them if still needed" guidance.</p>
+<div class="blabel">Evidence</div>
+<p>Container restart recovery (search for <code>"The container was restarted"</code>, <code>"Re-create them if still needed"</code>)</p>
+    </article>
+    <article class="card" id="thinking-type-override-retry">
+      <div class="card-top">
+        <h3>Thinking Type Override Retry <a class="anchor" href="#thinking-type-override-retry">#</a></h3>
+      </div>
+      <p>When a model rejects a thinking type, Claude now logs the rejection and can retry with a different configuration: "[thinking] model rejected thinking.type={type}".</p>
+<div class="blabel">Evidence</div>
+<p>Thinking type retry (search for <code>"retry:thinking-type"</code>, <code>"[thinking] model rejected thinking.type="</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed path traversal detection for file operations — now correctly handles symlink-based escapes: "{path}: parent dir escapes cwd via symlink" replaces the simpler "path traversal detected" (search for <code>"parent dir escapes cwd via symlink"</code>)</li><li>Fixed daemon refusing to stop when a previous worker hadn't acknowledged: "Couldn't stop the previous worker — supervisor may be starting, retry in a moment" (search for <code>"Couldn't stop the previous worker"</code>)</li><li>Fixed stale roster entries after daemon restart: "orphaned background task(s) after restart" cleanup (search for <code>"orphaned background task(s) after restart"</code>)</li><li>Fixed MCP connection manager readiness check: "MCP connection manager not ready — try again in a moment" instead of crashing (search for <code>"MCP connection manager not ready"</code>)</li><li>Fixed daemon version mismatch detection: "and CLI versions differ; restart claude" message for stale daemon connections (search for <code>"and CLI versions differ"</code>)</li><li>Fixed <code>claude daemon</code> display-name collisions: "[claudeai-mcp] Display-name collision on distinct upstreams" now logged as a warning rather than failing silently (search for <code>"Display-name collision on distinct upstreams"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The <code>claude kill</code> command is deprecated. Use <code>claude stop</code> or <code>claude stop &lt;id&gt;</code> instead.</li><li>The daemon install prompt now defaults to <strong>no</strong> — users must explicitly confirm with <code>y</code> to install as a persistent service.</li><li><code>claude daemon assistant -a</code> is no longer available; use <code>claude daemon assistant add</code> subcommand syntax.</li><li><code>updatedMCPToolOutput</code> in PostToolUse hooks is deprecated in favor of the new <code>updatedToolOutput</code> which works for all tool types.</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

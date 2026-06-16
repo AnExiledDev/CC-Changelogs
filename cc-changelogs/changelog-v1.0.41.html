@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.41 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.41."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.41</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.41</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.40 → v1.0.41</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.41 Changelog</p>
+    </article>
+    <article class="card" id="enhanced-hook-system-with-per-command-timeouts">
+      <div class="card-top">
+        <h3>Enhanced Hook System with Per-Command Timeouts <a class="anchor" href="#enhanced-hook-system-with-per-command-timeouts">#</a></h3>
+      </div>
+      <p>The hook execution system now supports individual timeout configurations for each command within a hook. Previously, all commands shared a single global timeout, but now each command can specify its own timeout value.</p>
+<p><strong>Usage Example:</strong> When configuring hooks, you can now specify a timeout for individual commands:</p>
+<pre><code>{
+  &quot;hook_event_name&quot;: &quot;pre-commit&quot;,
+  &quot;commands&quot;: [
+    {
+      &quot;command&quot;: &quot;npm test&quot;,
+      &quot;timeout&quot;: 30  // 30 seconds timeout
+    },
+    {
+      &quot;command&quot;: &quot;npm run lint&quot;,
+      &quot;timeout&quot;: 10  // 10 seconds timeout
+    }
+  ]
+}</code></pre>
+    </article>
+    <article class="card" id="new-subagentstop-hook-event">
+      <div class="card-top">
+        <h3>New SubagentStop Hook Event <a class="anchor" href="#new-subagentstop-hook-event">#</a></h3>
+      </div>
+      <p>A new hook event type <code>SubagentStop</code> has been added to the available hook events. This allows you to configure commands that run when a subagent completes its execution.</p>
+<p><strong>Available hook events now include:</strong></p>
+<ul><li><code>PreToolUse</code> - Before a tool is executed</li><li><code>PostToolUse</code> - After a tool completes</li><li><code>Notification</code> - For notification events</li><li><code>Stop</code> - When the main process stops</li><li><code>SubagentStop</code> - When a subagent completes (NEW)</li></ul>
+    </article>
+    <article class="card" id="hook-input-structure-update">
+      <div class="card-top">
+        <h3>Hook Input Structure Update <a class="anchor" href="#hook-input-structure-update">#</a></h3>
+      </div>
+      <p>The hook system now passes the complete hook configuration object to commands instead of just the <code>userFacingInput</code> field. This provides hooks with more context about the event that triggered them.</p>
+<p><strong>Before:</strong> Hooks received only <code>userFacingInput</code> as JSON <strong>After:</strong> Hooks receive the entire hook configuration object including <code>hook_event_name</code> and other metadata</p>
+    </article>
+    <article class="card" id="import-optimizations">
+      <div class="card-top">
+        <h3>Import Optimizations <a class="anchor" href="#import-optimizations">#</a></h3>
+      </div>
+      <ul><li>Consolidated stream imports to use named imports from <code>node:stream</code> and <code>stream</code> modules</li><li>Optimized process imports to use named import <code>{ cwd }</code> from <code>node:process</code></li><li>Added <code>PassThrough</code> stream imports for improved stream handling</li></ul>
+    </article>
+    <article class="card" id="better-error-handling">
+      <div class="card-top">
+        <h3>Better Error Handling <a class="anchor" href="#better-error-handling">#</a></h3>
+      </div>
+      <ul><li>Individual command timeouts are now properly cleared on both success and failure</li><li>Improved cleanup of abort controllers to prevent memory leaks</li><li>More consistent error reporting across hook executions</li></ul>
+    </article>
+    <article class="card" id="code-structure">
+      <div class="card-top">
+        <h3>Code Structure <a class="anchor" href="#code-structure">#</a></h3>
+      </div>
+      <ul><li>Simplified the global timeout logic by moving timeout handling to individual command execution</li><li>Removed redundant timeout abort message since timeouts are now handled per-command</li><li>Cleaner separation of concerns between hook orchestration and command execution</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

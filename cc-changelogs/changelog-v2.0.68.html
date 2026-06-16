@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.68 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.68."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.68</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.68</span></h1>
+<p class="sub">This release adds security hardening for shell commands that access sensitive environment variables, improves the plan mode UX with cleaner empty plan handling, and introduces support for sandbox permission requests in swarm/teammate workflows. The release also includes various quality-of-life improvements to text input word navigation and the session resume UI.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.67 → v2.0.68</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">14 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="security-check-for-proc-environ-access">
+      <div class="card-top">
+        <h3>Security Check for /proc/*/environ Access <a class="anchor" href="#security-check-for-proc-environ-access">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Commands attempting to access <code>/proc/*/environ</code> paths now trigger an explicit permission prompt, protecting against potential exposure of sensitive environment variables. <strong>Evidence:</strong> <code>NC8()</code> function at line 371017 in v2.0.68 <strong>Details:</strong></p>
+<ul><li>Commands matching <code>/proc/*/environ</code> patterns are detected and flagged</li><li>Users are prompted with a warning: "Command accesses /proc/*/environ which could expose sensitive environment variables"</li><li>Adds telemetry event <code>tengu_bash_security_check_triggered</code> for security auditing</li></ul>
+    </article>
+    <article class="card" id="sandbox-permission-requests-for-swarm-workers">
+      <div class="card-top">
+        <h3>Sandbox Permission Requests for Swarm Workers <a class="anchor" href="#sandbox-permission-requests-for-swarm-workers">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Workers in swarm/teammate mode can now request sandbox network permissions (e.g., host access) from the team lead through the mailbox system. <strong>Evidence:</strong> <code>sandbox_permission_request</code> and <code>sandbox_permission_response</code> message types at lines 355577-355652 <strong>Details:</strong></p>
+<ul><li>New message types: <code>sandbox_permission_request</code> and <code>sandbox_permission_response</code></li><li>Workers can request network access to specific hosts</li><li>Team leads see prompts like "{workerName} needs network access to {host}"</li><li>Responses are routed back through the mailbox polling system</li></ul>
+    </article>
+    <article class="card" id="2m-token-context-window-support">
+      <div class="card-top">
+        <h3>2M Token Context Window Support <a class="anchor" href="#2m-token-context-window-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added support for models with 2 million token context windows. <strong>Evidence:</strong> <code>sN()</code> function at line 1996 in v2.0.68 <strong>Details:</strong></p>
+<ul><li>Models tagged with <code>[2m]</code> now return a 2,000,000 token context limit</li><li>Previous support existed for <code>[1m]</code> (1 million) and default (200,000)</li></ul>
+    </article>
+    <article class="card" id="tool-deny-rules-in-settings">
+      <div class="card-top">
+        <h3>Tool Deny Rules in Settings <a class="anchor" href="#tool-deny-rules-in-settings">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New capability to completely disable specific tools via settings rules. <strong>Evidence:</strong> <code>S_A()</code> function at line 451689 <strong>Details:</strong></p>
+<ul><li>Tools can be filtered out when a deny rule exists with no <code>ruleContent</code></li><li>Allows administrators to disable tools entirely for security or compliance</li></ul>
+    </article>
+    <article class="card" id="plan-mode-empty-plan-handling">
+      <div class="card-top">
+        <h3>Plan Mode Empty Plan Handling <a class="anchor" href="#plan-mode-empty-plan-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> When exiting plan mode without having written a plan, users now see a simplified confirmation dialog instead of the full plan approval UI. <strong>Evidence:</strong> <code>Z32()</code> function at line 394174 <strong>Details:</strong></p>
+<ul><li>New "Exit plan mode?" dialog appears when plan content is empty or whitespace-only</li><li>Cleaner UX with just "Yes/No" options instead of the full workflow</li><li>Message displayed shows "Exited plan mode" for clarity</li></ul>
+    </article>
+    <article class="card" id="word-navigation-using-icu-word-boundaries">
+      <div class="card-top">
+        <h3>Word Navigation Using ICU Word Boundaries <a class="anchor" href="#word-navigation-using-icu-word-boundaries">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Text input word navigation (w, b, e in vim mode) now uses proper Unicode word boundary detection. <strong>Evidence:</strong> Class <code>O3</code> at line 171232 - <code>getWordBoundaries()</code> method <strong>Details:</strong></p>
+<ul><li>Replaced character-by-character word detection with <code>Intl.Segmenter</code>-based word boundaries</li><li>Provides more accurate word movement for international text and code</li><li>Affects <code>nextWord()</code>, <code>prevWord()</code>, and <code>endOfWord()</code> cursor movements</li></ul>
+    </article>
+    <article class="card" id="session-resume-tab-ui-improvements">
+      <div class="card-top">
+        <h3>Session Resume Tab UI Improvements <a class="anchor" href="#session-resume-tab-ui-improvements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The session resume interface now shows a responsive tab bar that dynamically adjusts based on available width. <strong>Evidence:</strong> <code>Jk2()</code> function at line 465910 <strong>Details:</strong></p>
+<ul><li>Tabs truncate intelligently when there are many session tags</li><li>Shows "← N" and "→ N (tab to cycle)" indicators for overflow</li><li>Displays "Resume (All Projects)" when viewing all projects</li><li>Cleaner layout calculation prevents UI overflow</li></ul>
+    </article>
+    <article class="card" id="bom-byte-order-mark-stripping">
+      <div class="card-top">
+        <h3>BOM (Byte Order Mark) Stripping <a class="anchor" href="#bom-byte-order-mark-stripping">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added utility function to strip UTF-8 BOM from file contents. <strong>Evidence:</strong> <code>C9A()</code> function at line 60214 <strong>Details:</strong></p>
+<ul><li>Strips leading <code>\uFEFF</code> character from strings</li><li>Helps handle files with BOM markers more gracefully</li></ul>
+    </article>
+    <article class="card" id="thinkback-plugin-source-change">
+      <div class="card-top">
+        <h3>Thinkback Plugin Source Change <a class="anchor" href="#thinkback-plugin-source-change">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The thinkback plugin source has been updated from <code>claude-code-marketplace</code> to <code>claude-plugins-official</code>. <strong>Evidence:</strong> Variable <code>HI5</code> at line 467595 <strong>Details:</strong></p>
+<ul><li>Repository reference changed from <code>anthropics/claude-code-marketplace</code> to <code>anthropics/claude-plugins-official</code></li><li>Thinkback skill path construction updated accordingly</li></ul>
+    </article>
+    <article class="card" id="session-memory-configuration">
+      <div class="card-top">
+        <h3>Session Memory Configuration <a class="anchor" href="#session-memory-configuration">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Session memory feature now supports configurable thresholds via feature flags. <strong>Evidence:</strong> <code>cm2()</code> function at line 493353 <strong>Details:</strong></p>
+<ul><li>New <code>tengu_sm_config</code> feature flag for configuration</li><li>Configurable parameters: <code>minimumMessageTokensToInit</code>, <code>minimumTokensBetweenUpdate</code>, <code>toolCallsBetweenUpdates</code></li><li>Default values: 10K tokens to init, 5K between updates, 3 tool calls between updates</li></ul>
+    </article>
+    <article class="card" id="api-base-url-validation">
+      <div class="card-top">
+        <h3>API Base URL Validation <a class="anchor" href="#api-base-url-validation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added validation to check if the configured API base URL points to Anthropic's official API. <strong>Evidence:</strong> <code>Ym0()</code> function at line 63996 <strong>Details:</strong></p>
+<ul><li>Validates <code>ANTHROPIC_BASE_URL</code> environment variable</li><li>Used to determine if certain enterprise features should be enabled</li><li>Returns true for <code>api.anthropic.com</code> or when no custom URL is set</li></ul>
+    </article>
+    <article class="card" id="websocket-transport-session-id-logging">
+      <div class="card-top">
+        <h3>WebSocket Transport Session ID Logging <a class="anchor" href="#websocket-transport-session-id-logging">#</a></h3>
+      </div>
+      <p><strong>What:</strong> WebSocket transport now includes session ID in log messages for better debugging. <strong>Evidence:</strong> Class <code>II0</code> at line 497588 <strong>Details:</strong></p>
+<ul><li>Constructor now accepts optional session ID parameter</li><li>Log messages include session context when available</li><li>Helps with debugging connection issues in multi-session scenarios</li></ul>
+    </article>
+    <article class="card" id="internal-refactoring">
+      <div class="card-top">
+        <h3>Internal Refactoring <a class="anchor" href="#internal-refactoring">#</a></h3>
+      </div>
+      <ul><li>Permission sync system refactored to use mailbox-based communication instead of file-based polling</li><li>Removed several deprecated permission sync functions (<code>MH8</code>, <code>j02</code>, <code>OH8</code>, <code>SB1</code>, <code>P02</code>, <code>S02</code>, <code>_H8</code>)</li><li>Inbox polling now handles multiple message types (regular messages, permission requests/responses, sandbox permissions)</li><li>Read/Search message collapsing infrastructure added but not yet enabled (<code>collapsed_read_search</code> type)</li></ul>
+    </article>
+    <article class="card" id="removed">
+      <div class="card-top">
+        <h3>Removed <a class="anchor" href="#removed">#</a></h3>
+      </div>
+      <ul><li><code>SwarmPermissionPoller</code> component removed in favor of unified inbox polling</li><li><code>PermissionLeaderPoller</code> removed in favor of mailbox-based permission handling</li><li>Old file-based permission sync directories and lock files no longer used</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

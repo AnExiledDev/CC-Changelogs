@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.37 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.37."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.37</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.37</span></h1>
+<p class="sub">Version 2.0.37 introduces user feedback for tool rejections, improves telemetry tracking with version normalization and feedback metrics, and enhances proxy support with client certificates for WebSocket connections. The release also includes security refinements for Windows path validation and better session data persistence on process exit.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.36 → v2.0.37</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="tool-rejection-feedback">
+      <div class="card-top">
+        <h3>Tool Rejection Feedback <a class="anchor" href="#tool-rejection-feedback">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Users can now provide feedback text when rejecting a tool use, telling Claude what to do differently.</p>
+<p><strong>How to use:</strong> When Claude requests permission to use a tool and you select "No", you'll see an input field with the placeholder "Tell Claude what to do differently". Your feedback is sent to Claude to guide its next action.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Input field appears in tool permission prompts when rejecting</li><li>Feedback is optional - you can still reject without providing a message</li><li>Claude receives your feedback with context: "The user doesn't want to proceed with this tool use... To tell you how to proceed, the user said: [your message]"</li><li>Telemetry tracks whether feedback was provided via new <code>hasFeedback</code> field</li><li><strong>Evidence</strong>: <code>FKA</code> constant at line 474090, <code>FJQ()</code> component at line 263860, <code>kd()</code> telemetry function at line 352977</li></ul>
+    </article>
+    <article class="card" id="tool-input-examples-beta-tool-examples-2025-10-29">
+      <div class="card-top">
+        <h3>Tool Input Examples Beta (tool-examples-2025-10-29) <a class="anchor" href="#tool-input-examples-beta-tool-examples-2025-10-29">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New beta feature enabling tool definitions to include example inputs.</p>
+<p><strong>How to use:</strong> This feature is automatically enabled for first-party deployments when the <code>tool_use_examples</code> feature flag is active. Tool definitions can now include an <code>input_examples</code> field that gets passed to the Anthropic API.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Beta flag: <code>tool-examples-2025-10-29</code></li><li>Only active when <code>tool_use_examples</code> feature flag is enabled</li><li>Restricted to first-party deployments</li><li>Helps Claude better understand tool usage through few-shot style examples</li><li><strong>Evidence</strong>: <code>dBQ</code> constant at line 216168, feature check in <code>FP1()</code> at line 216221-216222, implementation in <code>_aA()</code> at line 320476-320477</li></ul>
+    </article>
+    <article class="card" id="permission-bypass-notifications">
+      <div class="card-top">
+        <h3>Permission Bypass Notifications <a class="anchor" href="#permission-bypass-notifications">#</a></h3>
+      </div>
+      <p><strong>What:</strong> User-visible notifications when bypass permissions mode is disabled by organization policy or settings.</p>
+<p><strong>How to use:</strong> If you attempt to use <code>--dangerously-skip-permissions</code> or configure bypass permissions mode, and it's disabled by your organization or settings, you'll now see a high-priority notification explaining why.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Two notification messages:</li><li>"Bypass permissions mode was disabled by your organization policy"</li><li>"Bypass permissions mode was disabled by settings"</li><li>Notifications appear in the UI notification queue with high priority</li><li>Previously only logged to console; now user-visible</li><li><strong>Evidence</strong>: <code>xs2()</code> function at line 472394, notification messages at lines 472411 and 472414, queue integration at lines 492477-492488</li></ul>
+    </article>
+    <article class="card" id="client-certificate-support-for-websocket-proxies">
+      <div class="card-top">
+        <h3>Client Certificate Support for WebSocket Proxies <a class="anchor" href="#client-certificate-support-for-websocket-proxies">#</a></h3>
+      </div>
+      <p><strong>What:</strong> WebSocket connections now support HTTPS proxies with client certificate authentication (mTLS).</p>
+<p><strong>How to use:</strong> Configure client certificates via environment variables:</p>
+<pre><code>export CLAUDE_CODE_CLIENT_CERT=/path/to/cert.pem
+export CLAUDE_CODE_CLIENT_KEY=/path/to/key.pem
+export CLAUDE_CODE_CLIENT_KEY_PASSPHRASE=optional_passphrase</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>CFA()</code> function creates per-request proxy agents with certificate support</li><li>Applies to both API requests and WebSocket connections</li><li>Respects proxy bypass rules on a per-URL basis</li><li>Replaces global proxy agent pattern with per-connection agents</li><li><strong>Evidence</strong>: <code>CFA()</code> function at line 151929, WebSocket usage at line 488707, API usage at lines 483464 and 483483</li></ul>
+    </article>
+    <article class="card" id="enhanced-telemetry-system">
+      <div class="card-top">
+        <h3>Enhanced Telemetry System <a class="anchor" href="#enhanced-telemetry-system">#</a></h3>
+      </div>
+      <p><strong>Version Base Tracking:</strong></p>
+<ul><li>New <code>version_base</code> telemetry field normalizes version strings (e.g., "2.0.37-beta" → "2.0.37")</li><li>Enables cleaner analytics aggregation across pre-release versions</li><li><strong>Evidence</strong>: <code>Jo5()</code> function at line 449429, <code>versionBase</code> mapping at line 449396</li></ul>
+<p><strong>Improved Batch Configuration:</strong></p>
+<ul><li>Telemetry export interval increased from 5 seconds to 20 seconds (4x longer)</li><li>New batch size limit of 200 events per export</li><li>Remote configuration support via <code>tengu_1p_event_batch_config</code> dynamic config</li><li>Reduces network overhead and improves performance</li><li><strong>Evidence</strong>: <code>xBI = 20000</code> and <code>vBI = 200</code> at lines 478225-478226, dynamic config in <code>er2()</code> at lines 478169-478173</li></ul>
+<p><strong>Rejection Feedback Tracking:</strong></p>
+<ul><li>New <code>hasFeedback</code> field tracks whether users provided feedback when rejecting tools</li><li>Enables analysis of feature adoption and user engagement</li><li><strong>Evidence</strong>: <code>QZ()</code> function at line 352406, <code>hasFeedback</code> parameter at lines 1000-1002</li></ul>
+    </article>
+    <article class="card" id="session-persistence-improvements">
+      <div class="card-top">
+        <h3>Session Persistence Improvements <a class="anchor" href="#session-persistence-improvements">#</a></h3>
+      </div>
+      <p><strong>Graceful Shutdown:</strong></p>
+<ul><li>Session data now flushes completely before process exit</li><li>Prevents data loss from in-flight writes during termination</li><li>Write tracking system counts pending operations</li><li>Process exit hook calls <code>flush()</code> to wait for completion</li><li><strong>Evidence</strong>: <code>flush()</code> method at line 474250, cleanup registration in <code>mw()</code> at lines 474210-474212, <code>trackWrite()</code> wrapper at line 474242</li></ul>
+    </article>
+    <article class="card" id="expanded-installation-check-control">
+      <div class="card-top">
+        <h3>Expanded Installation Check Control <a class="anchor" href="#expanded-installation-check-control">#</a></h3>
+      </div>
+      <p><strong>DISABLE_INSTALLATION_CHECKS Scope:</strong></p>
+<ul><li>Environment variable now also disables install method mismatch warnings</li><li>Skips checks for npm-local vs config mismatch and native vs config mismatch</li><li>Previously only disabled some checks; now more comprehensive</li><li><strong>Evidence</strong>: Conditional check wrapping at line 373886 in <code>mZ5()</code> function</li></ul>
+    </article>
+    <article class="card" id="windows-path-security-refinement">
+      <div class="card-top">
+        <h3>Windows Path Security Refinement <a class="anchor" href="#windows-path-security-refinement">#</a></h3>
+      </div>
+      <p><strong>Simplified UNC Path Detection:</strong> The Windows UNC path detection was simplified from 8 security checks down to 1 basic pattern check. The new implementation removes specific checks for:</p>
+<ul><li>IPv4 address-based UNC paths (e.g., <code>\\192.168.1.1\share</code>)</li><li>IPv6 address-based UNC paths (e.g., <code>\\[fe80::1]\share</code>)</li><li>WebDAV <code>DavWWWRoot</code> patterns</li><li>SSL/port patterns like <code>@SSL@8080</code></li></ul>
+<p>File operations no longer check for UNC paths at all, while bash command execution retains basic UNC path blocking. The security impact is reduced coverage for IP-based UNC paths and WebDAV-specific attacks.</p>
+<div class="blabel">Evidence</div>
+<p>Old <code>mB1()</code> function at line 469909 (v2.0.36), new <code>i2Q()</code> function at line 222404, file path validation <code>Cr2()</code> at line 474880</p>
+    </article>
+    <article class="card" id="proxy-bypass-architecture">
+      <div class="card-top">
+        <h3>Proxy Bypass Architecture <a class="anchor" href="#proxy-bypass-architecture">#</a></h3>
+      </div>
+      <p>Proxy bypass logic moved from axios interceptors to per-request agent creation via the new <code>CFA()</code> function, providing cleaner separation of concerns and more granular control.</p>
+<div class="blabel">Evidence</div>
+<p><code>CFA()</code> function at line 151929, proxy bypass check <code>QbA()</code> integration</p>
+<p><strong>Note:</strong> Line numbers reference <code>/home/shcv/projects/claude-investigations/archive/claude-code/pretty/pretty-v2.0.37.js</code> unless otherwise specified.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

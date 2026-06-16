@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.91 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.91."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.91</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.91</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.90 → v0.2.91</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>1. Conversation History Database Storage</h4>
+<p>Claude Code now stores conversation history in a local SQLite database, providing persistent storage and better performance for conversation management.</p>
+<ul><li>New database schema includes tables for:</li><li>Base messages with parent-child relationships</li><li>User messages with content and tool results</li><li>Assistant messages with model info, cost, and duration</li><li>Conversation summaries for quick browsing</li></ul>
+<h4>2. Enhanced Conversation Browser</h4>
+<p>The conversation browser has been significantly improved with:</p>
+<ul><li><strong>Automatic conversation summaries</strong>: Claude generates concise 5-10 word titles for each conversation</li><li><strong>Better organization</strong>: Shows modification time, creation time, and message count for each conversation</li><li><strong>Sidechain support</strong>: Properly handles and displays sidechain conversations</li><li><strong>Mixed storage</strong>: Seamlessly combines file-based and database-stored conversations</li></ul>
+<div class="blabel">Example usage</div>
+<pre><code># Browse previous conversations with enhanced UI
+claude --logs</code></pre>
+<p>The browser now displays:</p>
+<ul><li>Modified time (e.g., "2 hours ago")</li><li>Created time</li><li>Number of messages</li><li>Auto-generated summary or first message preview</li><li>Sidechain indicator when applicable</li></ul>
+<h4>3. Claude Max Subscription Integration</h4>
+<p>New support for Claude Max subscriptions with automatic detection and notifications.</p>
+<ul><li>Checks if your account has Claude Max access</li><li>Shows a one-time notification if Claude Max is available</li><li>Prompts to login to activate the subscription</li></ul>
+<p>The notification appears as:</p>
+<pre><code>Your can now use your Claude Max subscription with Claude Code • /login to activate</code></pre>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>1. Relative Time Formatting</h4>
+<p>Added human-friendly relative time display throughout the interface:</p>
+<ul><li>"2 hours ago" instead of timestamps</li><li>"in 5 minutes" for future times</li><li>Narrow format for recent times (e.g., "5m ago", "2h ago")</li></ul>
+<h4>2. Message Filtering</h4>
+<p>New message filtering logic that removes redundant tool use messages from conversation display, making conversations cleaner and easier to read.</p>
+<h4>3. Tool Permission Flow</h4>
+<p>Improved the tool permission dialog flow:</p>
+<ul><li>Better handling of tool rejection scenarios</li><li>More consistent permission context management</li><li>Enhanced file operation permission requests</li></ul>
+    </article>
+    <article class="card" id="api-and-configuration-updates">
+      <div class="card-top">
+        <h3>API and Configuration Updates <a class="anchor" href="#api-and-configuration-updates">#</a></h3>
+      </div>
+      <h4>1. New API Base URL Configuration</h4>
+<p>Added <code>BASE_API_URL</code> to configuration for better API endpoint management:</p>
+<ul><li>Production: <code>https://api.anthropic.com</code></li><li>Development: <code>http://localhost:3000</code></li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <h4>1. Database Migration System</h4>
+<ul><li>Automatic database creation and migration on first use</li><li>Support for both Bun and Node.js SQLite drivers</li><li>Atomic transaction support for data integrity</li></ul>
+<h4>2. Performance Optimizations</h4>
+<ul><li>Parallel loading of conversation summaries</li><li>Efficient database queries with recursive CTEs</li><li>Caching of conversation summaries</li></ul>
+<h4>3. Stream Processing</h4>
+<p>Changed from using <code>Stream</code> to <code>PassThrough</code> for better stream handling compatibility.</p>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed duplicate conversation display issues</li><li>Improved error handling for database operations</li><li>Better handling of malformed conversation files</li><li>Fixed permission dialog edge cases</li></ul>
+    </article>
+    <article class="card" id="internal-changes">
+      <div class="card-top">
+        <h3>Internal Changes <a class="anchor" href="#internal-changes">#</a></h3>
+      </div>
+      <ul><li>Removed several unused functions and imports</li><li>Consolidated message storage logic</li><li>Improved code organization for conversation management</li><li>Enhanced type safety for database operations</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.59 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.59."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.59</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.59</span></h1>
+<p class="sub">This is a major release that introduces <strong>voice dictation mode</strong>, allowing users to hold Space to speak instead of typing. It also adds a new <strong><code>fastModePerSessionOptIn</code> setting</strong> so fast mode resets each session, overhauls the <strong>copy-to-clipboard experience</strong> to let users pick specific code blocks, adds support for <strong><code>CLAUDE_CODE_OAUTH_REFRESH_TOKEN</code></strong> for headless login, and bundles a <strong>ZIP-based plugin caching system</strong> for headless/CI environments. Opus 4.6 model routing via the <code>coral_reef_opus</code> flag is also introduced.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.58 → v2.1.59</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">16 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="voice-dictation-mode">
+      <div class="card-top">
+        <h3>Voice Dictation Mode <a class="anchor" href="#voice-dictation-mode">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Hold the Space bar to dictate text via speech-to-text, with real-time transcription streamed over WebSocket to Claude.ai's <code>/api/ws/speech_to_text/voice_stream</code> endpoint.</p>
+<div class="blabel">Usage</div>
+<pre><code>/voice          # Toggle voice mode on/off</code></pre>
+<p>Then hold Space to record; release to stop. The transcript is injected into the input field.</p>
+<div class="blabel">Details</div>
+<ul><li>Requires a Claude.ai account (OAuth); run <code>/login</code> first if not signed in</li><li>Persisted via the <code>voiceEnabled</code> setting in <code>settings.json</code></li><li>Audio capture uses a bundled native module (<code>audio-capture.node</code>) on macOS/Linux, with fallback to <code>sox</code> (<code>rec</code> command) or <code>arecord</code> on Linux</li><li>Offers guided SoX installation (detects <code>brew</code>, <code>apt-get</code>, <code>dnf</code>, <code>pacman</code>) if no audio tool is found</li><li>Supports a "focus mode" that continuously records when the terminal has focus, flushing each finalized segment immediately</li><li>Cursor displays an animated audio-level indicator (bar graph characters <code> ▁▂▃▄▅▆▇█</code>) with color cycling while recording</li><li>Shows "listening…" while recording and an animated "Voice: processing…" while finalizing</li><li>Supports 11 languages: English, Spanish, French, Japanese, German, Portuguese, Italian, Korean, Chinese, Hindi, Indonesian — configured via the <code>language</code> setting</li><li>Microphone permission checks with platform-specific guidance (macOS: System Settings → Privacy &amp; Security → Microphone; Linux: system audio settings; Windows: Settings → Privacy → Microphone)</li><li>Not available in remote/headless environments — prints helpful message directing users to run locally</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>/voice</code> command (search for <code>"Toggle voice mode"</code>), WebSocket client (search for <code>"/api/ws/speech_to_text/voice_stream"</code>), settings definition (search for <code>"voiceEnabled"</code>)</p>
+<p><strong>[Gradual Rollout]</strong> — Gated behind the <code>tengu_amber_quartz</code> feature flag (defaults to <code>!1</code>/false). The <code>/voice</code> command is hidden when the flag is off. Users with the flag enabled who are logged in to Claude.ai can use this feature.</p>
+    </article>
+    <article class="card" id="headless-login-via-refresh-token">
+      <div class="card-top">
+        <h3>Headless Login via Refresh Token <a class="anchor" href="#headless-login-via-refresh-token">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Log in to Claude Code non-interactively by providing an OAuth refresh token via environment variables, enabling automated CI/CD and headless deployments without a browser.</p>
+<div class="blabel">Usage</div>
+<pre><code>export CLAUDE_CODE_OAUTH_REFRESH_TOKEN=&quot;your-refresh-token&quot;
+export CLAUDE_CODE_OAUTH_SCOPES=&quot;user:inference&quot;
+claude /login</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>CLAUDE_CODE_OAUTH_SCOPES</code> is required when using the refresh token — the CLI exits with a helpful error message if missing</li><li>Scopes should be space-separated (e.g., <code>"user:profile user:inference user:sessions:claude_code user:mcp_servers"</code>)</li><li>Bypasses the browser-based OAuth flow entirely</li></ul>
+<div class="blabel">Evidence</div>
+<p>Refresh token login flow (search for <code>"CLAUDE_CODE_OAUTH_REFRESH_TOKEN"</code>)</p>
+    </article>
+    <article class="card" id="fast-mode-per-session-opt-in-setting">
+      <div class="card-top">
+        <h3>Fast Mode Per-Session Opt-In Setting <a class="anchor" href="#fast-mode-per-session-opt-in-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new <code>fastModePerSessionOptIn</code> setting makes fast mode non-persistent, so each new session starts with fast mode off.</p>
+<div class="blabel">Details</div>
+<ul><li>When <code>true</code>, fast mode does not carry over between sessions — users must re-enable it each session</li><li>Useful for users who want fast mode available but not always on by default</li></ul>
+<div class="blabel">Evidence</div>
+<p>Setting description (search for <code>"When true, fast mode does not persist across sessions"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-copy-to-clipboard">
+      <div class="card-top">
+        <h3>Enhanced Copy to Clipboard <a class="anchor" href="#enhanced-copy-to-clipboard">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The copy command now lets you choose between copying the full response or individual code blocks, with language-aware file extensions for saved snippets.</p>
+<div class="blabel">Details</div>
+<ul><li>When Claude's response contains code blocks, pressing the copy shortcut presents a picker: "Full response" or each individual code block (with language label and line count)</li><li>Falls back to saving to a file (e.g., <code>response.md</code>, <code>copy.py</code>) if clipboard access is unavailable, and shows the file path</li><li>Replaces the old behavior that only copied the full response as markdown</li><li>The old shell-snippet-only copy feature (<code>tengu_snippet_save</code>) has been removed</li></ul>
+<div class="blabel">Evidence</div>
+<p>New UI text (search for <code>"Select content to copy:"</code>), file save (search for <code>"response.md"</code>)</p>
+    </article>
+    <article class="card" id="plugin-zip-cache-system">
+      <div class="card-top">
+        <h3>Plugin ZIP Cache System <a class="anchor" href="#plugin-zip-cache-system">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new ZIP-based caching system for MCP plugins, enabling efficient plugin distribution in headless and CI environments.</p>
+<div class="blabel">Details</div>
+<ul><li>Controlled by the <code>CLAUDE_CODE_PLUGIN_CACHE_DIR</code> environment variable</li><li>Creates versioned ZIP archives of plugin directories (with <code>.zip</code> extension)</li><li>Session-scoped plugin cache directories (<code>claude-plugin-session-*</code>) are automatically created and cleaned up</li><li>Marketplace JSON metadata is persisted alongside plugin ZIPs for offline resolution</li><li>Handles symlink cycles during ZIP creation with cycle detection</li><li>Includes <code>CLAUDE_CODE_DISABLE_OFFICIAL_MARKETPLACE_AUTOINSTALL</code> env var to disable automatic marketplace plugin installation</li></ul>
+<div class="blabel">Evidence</div>
+<p>ZIP cache mode (search for <code>"zip cache mode"</code>), session cache (search for <code>"claude-plugin-session-"</code>)</p>
+    </article>
+    <article class="card" id="vcs-type-detection">
+      <div class="card-top">
+        <h3>VCS Type Detection <a class="anchor" href="#vcs-type-detection">#</a></h3>
+      </div>
+      <p>The platform detection module now identifies the version control system in use. It checks for <code>.git</code> (git), <code>.hg</code> (Mercurial), <code>.svn</code> (SVN), <code>.p4config</code>/<code>P4PORT</code> (Perforce), and <code>$tf</code>/<code>.tfvc</code> (TFS). This information is included in environment telemetry.</p>
+<div class="blabel">Evidence</div>
+<p>VCS detection map (search for <code>"mercurial"</code>, <code>"perforce"</code>)</p>
+    </article>
+    <article class="card" id="linux-distro-metadata-collection">
+      <div class="card-top">
+        <h3>Linux Distro Metadata Collection <a class="anchor" href="#linux-distro-metadata-collection">#</a></h3>
+      </div>
+      <p>On Linux systems, Claude Code now reads <code>/etc/os-release</code> to capture <code>linuxDistroId</code>, <code>linuxDistroVersion</code>, and <code>linuxKernel</code> for improved platform-specific diagnostics.</p>
+<div class="blabel">Evidence</div>
+<p>Distro detection (search for <code>"linuxDistroId"</code>)</p>
+    </article>
+    <article class="card" id="background-task-count-in-turn-duration">
+      <div class="card-top">
+        <h3>Background Task Count in Turn Duration <a class="anchor" href="#background-task-count-in-turn-duration">#</a></h3>
+      </div>
+      <p>The turn duration indicator now shows how many background tasks are still running after each turn (e.g., <code>· 2 background tasks still running ↓</code>), making it easier to track background task activity.</p>
+<div class="blabel">Evidence</div>
+<p>Status line rendering (search for <code>"background task"</code> and <code>"still running"</code>)</p>
+    </article>
+    <article class="card" id="auto-memory-label-no-longer-research-preview">
+      <div class="card-top">
+        <h3>Auto-Memory Label No Longer "Research Preview" <a class="anchor" href="#auto-memory-label-no-longer-research-preview">#</a></h3>
+      </div>
+      <p>The auto-memory feature label has been updated from "Auto-memory (research preview)" to simply "Auto-memory", indicating the feature has graduated from its experimental phase.</p>
+<div class="blabel">Evidence</div>
+<p>String change — removed <code>"Auto-memory (research preview):"</code>, added <code>"Auto-memory:"</code></p>
+    </article>
+    <article class="card" id="mcp-config-file-atomic-writes">
+      <div class="card-top">
+        <h3>MCP Config File Atomic Writes <a class="anchor" href="#mcp-config-file-atomic-writes">#</a></h3>
+      </div>
+      <p>Writing <code>.mcp.json</code> now uses atomic file writes (write to temp file, then rename) to prevent corruption if the process is interrupted mid-write.</p>
+<div class="blabel">Evidence</div>
+<p>Atomic write helper (search for <code>".mcp.json"</code> in added function <code>Vw7</code>)</p>
+    </article>
+    <article class="card" id="mcp-oauth-refresh-lock">
+      <div class="card-top">
+        <h3>MCP OAuth Refresh Lock <a class="anchor" href="#mcp-oauth-refresh-lock">#</a></h3>
+      </div>
+      <p>A new file-based locking mechanism prevents concurrent MCP server OAuth token refreshes from colliding. Lock files (<code>mcp-refresh-*.lock</code>) coordinate between processes with retry logic and timeout handling.</p>
+<div class="blabel">Evidence</div>
+<p>Lock file naming (search for <code>"mcp-refresh-"</code>)</p>
+    </article>
+    <article class="card" id="hook-output-error-message-improvement">
+      <div class="card-top">
+        <h3>Hook Output Error Message Improvement <a class="anchor" href="#hook-output-error-message-improvement">#</a></h3>
+      </div>
+      <p>When a hook produces invalid JSON output, the error message now says "The hook's output was:" (previously "The hook's stdout was:"), more accurately reflecting that output may come from various sources.</p>
+<div class="blabel">Evidence</div>
+<p>Error message (search for <code>"The hook's output was:"</code>)</p>
+    </article>
+    <article class="card" id="working-directory-existence-check">
+      <div class="card-top">
+        <h3>Working Directory Existence Check <a class="anchor" href="#working-directory-existence-check">#</a></h3>
+      </div>
+      <p>Claude Code now detects when its working directory has been deleted and shows a clear error: <code>Working directory "..." no longer exists. Please restart Claude from an existing directory.</code></p>
+<div class="blabel">Evidence</div>
+<p>Error message (search for <code>"no longer exists. Please restart"</code>)</p>
+    </article>
+    <article class="card" id="worktree-cleanup-error-handling">
+      <div class="card-top">
+        <h3>Worktree Cleanup Error Handling <a class="anchor" href="#worktree-cleanup-error-handling">#</a></h3>
+      </div>
+      <p>If git worktree cleanup fails during session exit, the error is now caught and logged (<code>"Worktree cleanup failed, exiting anyway"</code>) instead of potentially blocking shutdown.</p>
+<div class="blabel">Evidence</div>
+<p>Error message (search for <code>"Worktree cleanup failed"</code>)</p>
+    </article>
+    <article class="card" id="repo-text-size-metric">
+      <div class="card-top">
+        <h3>Repo Text Size Metric <a class="anchor" href="#repo-text-size-metric">#</a></h3>
+      </div>
+      <p>A new telemetry metric (<code>tengu_repo_text_file_size</code>) calculates the total byte size of text source files in the repo using <code>git ls-tree</code>. It counts files with common code extensions (.ts, .py, .js, .go, .rs, etc.) to help understand repository scale.</p>
+<div class="blabel">Evidence</div>
+<p>Metric calculation (search for <code>"repoTextSize"</code>)</p>
+    </article>
+    <article class="card" id="session-memory-loading-improvement">
+      <div class="card-top">
+        <h3>Session Memory Loading Improvement <a class="anchor" href="#session-memory-loading-improvement">#</a></h3>
+      </div>
+      <p>Session memory loading now uses async file reading and handles <code>ENOENT</code>/<code>EACCES</code>/<code>EPERM</code> errors gracefully by returning null, instead of synchronously checking file existence first.</p>
+<div class="blabel">Evidence</div>
+<p>Error handling (search for <code>"tengu_session_memory_loaded"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed safe-flag parsing for combined short flags in commands like <code>grep</code> and <code>rg</code> (e.g., <code>-A5</code> is now correctly recognized as <code>-A</code> with value <code>5</code> when <code>-A</code> accepts a number) (search for <code>"grep"</code> and <code>"rg"</code> in function <code>Hn7</code>)</li></ul>
+<ul><li>Improved Remote Control error messaging: users on unsupported plans now see "Error: Remote Control is not yet available on your plan." (search for <code>"Remote Control is not yet available"</code>)</li></ul>
+<ul><li>Fixed <code>line-reference</code> edit operations to properly validate hash mismatches with clear error messages showing expected vs actual hash, preventing silent corruption when files change between reads (search for <code>"LINE#HASH"</code>)</li></ul>
+    </article>
+    <article class="card" id="opus-4-6-model-routing-gradual-rollout">
+      <div class="card-top">
+        <h3>Opus 4.6 Model Routing [Gradual Rollout] <a class="anchor" href="#opus-4-6-model-routing-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure for routing requests to the Opus 4.6 model when a <code>coral_reef_opus</code> feature flag is enabled server-side.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>coral_reef_opus</code></p>
+<div class="blabel">Details</div>
+<ul><li>When <code>coral_reef_opus</code> is <code>"true"</code> and the model string contains <code>"opus-4-6"</code>, a special token limit of 1,000,000 is applied</li><li>Extended output is enabled for matching Opus 4.6 models via the <code>HbA()</code> function</li><li>Gated behind multiple checks: not in test mode, not using custom provider</li></ul>
+<div class="blabel">Evidence</div>
+<p>Model routing (search for <code>"coral_reef_opus"</code>, <code>"opus-4-6"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

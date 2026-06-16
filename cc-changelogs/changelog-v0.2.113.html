@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.113 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.113."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.113</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.113</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.109 → v0.2.113</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="token-usage-tracking-enhancements">
+      <div class="card-top">
+        <h3>Token Usage Tracking Enhancements <a class="anchor" href="#token-usage-tracking-enhancements">#</a></h3>
+      </div>
+      <ul><li><strong>Per-Model Token Tracking</strong>: Improved token usage tracking with breakdown by model instead of aggregated totals</li><li>New display format shows token usage for each model separately</li><li>Format: <code>Model Name: X input, Y output, Z cache read, W cache write</code></li><li><strong>Enhanced Cache Metrics</strong>: Better tracking of cache read and cache creation tokens</li><li>Added functions to separately track cache read input tokens and cache creation input tokens</li><li>More accurate cache usage reporting in API responses</li></ul>
+    </article>
+    <article class="card" id="command-execution-improvements">
+      <div class="card-top">
+        <h3>Command Execution Improvements <a class="anchor" href="#command-execution-improvements">#</a></h3>
+      </div>
+      <ul><li><strong>JSX Command Support</strong>: Enhanced support for <code>local-jsx</code> command type</li><li>Commands can now return JSX components that hide the prompt input (<code>shouldHidePromptInput</code>)</li><li>Better handling of interactive command responses</li></ul>
+    </article>
+    <article class="card" id="performance-metrics">
+      <div class="card-top">
+        <h3>Performance Metrics <a class="anchor" href="#performance-metrics">#</a></h3>
+      </div>
+      <ul><li><strong>Time to First Token (TTFT)</strong>: Added tracking for time to first token in streaming responses</li><li>Measures the time from request start to when the first token is received</li><li>Helps monitor API response latency</li></ul>
+    </article>
+    <article class="card" id="code-cleanup">
+      <div class="card-top">
+        <h3>Code Cleanup <a class="anchor" href="#code-cleanup">#</a></h3>
+      </div>
+      <ul><li><strong>Removed Drizzle ORM Dependencies</strong>: Removed 343 functions related to Drizzle ORM</li><li>Removed database-related modules including table definitions, column builders, and SQL utilities</li><li>Simplified codebase by removing unused database abstraction layers</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li><strong>Message Filtering</strong>: Added filter to exclude progress and attachment messages from certain operations</li><li>Prevents UI clutter from non-content messages</li><li>Improves message handling reliability</li></ul>
+    </article>
+    <article class="card" id="developer-experience">
+      <div class="card-top">
+        <h3>Developer Experience <a class="anchor" href="#developer-experience">#</a></h3>
+      </div>
+      <ul><li><strong>Version Check</strong>: Added function to detect when the configured model differs from the default</li><li>Helps identify configuration mismatches</li><li><strong>VS Code Detection</strong>: Added utility to detect if VS Code is installed on the system</li><li>Enables better IDE integration features</li></ul>
+    </article>
+    <article class="card" id="internal-improvements">
+      <div class="card-top">
+        <h3>Internal Improvements <a class="anchor" href="#internal-improvements">#</a></h3>
+      </div>
+      <ul><li><strong>Async Version Retrieval</strong>: Version information is now fetched asynchronously</li><li><strong>Better Error Handling</strong>: Improved error handling in command execution flow</li><li><strong>Stream Processing</strong>: Enhanced stream handling with PassThrough support for better data flow</li></ul>
+<p>The update focuses on improving observability with detailed token tracking, enhancing command execution capabilities, and cleaning up the codebase by removing unused database-related code.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

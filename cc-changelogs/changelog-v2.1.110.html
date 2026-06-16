@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.110 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.110."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.110</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.110</span></h1>
+<p class="sub">This release adds five new remote workflow slash commands (<code>/autopilot</code>, <code>/bugfix</code>, <code>/dashboard</code>, <code>/docs</code>, <code>/investigate</code>), a <code>/tui</code> command to switch between the classic and flicker-free fullscreen renderer, a <code>/focus</code> command for a minimal transcript view, a PushNotification tool (feature-flagged) for terminal and mobile alerts, plugin favorites, transcript undo, new settings for auto-scroll and external editor context, and the <code>/recap</code> command is now enabled by default. The idle-return ("You've been away") dialog has been removed.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.109 → v2.1.110</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">31</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">7</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">3</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">26 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="tui-command-switch-terminal-renderers">
+      <div class="card-top">
+        <h3><code>/tui</code> Command — Switch Terminal Renderers <a class="anchor" href="#tui-command-switch-terminal-renderers">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New slash command to switch between the classic main-screen renderer and the flicker-free fullscreen alt-screen renderer at runtime, without restarting.</p>
+<div class="blabel">Usage</div>
+<pre><code>/tui fullscreen    # Switch to flicker-free alt-screen rendering (mouse support included)
+/tui default       # Switch back to the classic renderer</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The fullscreen renderer is equivalent to setting <code>CLAUDE_CODE_NO_FLICKER=1</code> but can now be toggled within a session</li><li>A new <code>tui</code> setting is persisted in global config, accepting <code>"default"</code> or <code>"fullscreen"</code></li><li>When switching to fullscreen, you'll see hints about mouse support: click to move your cursor, click to expand collapsed tool results, and text auto-copies on selection</li><li>A new tip ("Try flicker-free rendering, now with mouse support · /tui fullscreen") will appear for users on the classic renderer</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>/tui</code> command handler (search for <code>"Usage: /tui &lt;"</code> and <code>"Set the terminal UI renderer"</code>)</p>
+    </article>
+    <article class="card" id="focus-command-minimal-transcript-view">
+      <div class="card-top">
+        <h3><code>/focus</code> Command — Minimal Transcript View <a class="anchor" href="#focus-command-minimal-transcript-view">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New slash command that toggles a focus view, showing only your prompt, a tool summary, and the final response — hiding intermediate tool calls and verbose output.</p>
+<div class="blabel">Usage</div>
+<pre><code>/focus    # Toggle focus view on/off</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Only available in the fullscreen TUI renderer</li><li>When enabled, displays "Focus view enabled"; when disabled, displays "Focus view disabled"</li><li>Backed by the existing <code>briefTranscript</code> state, now exposed as a convenient slash command</li></ul>
+<div class="blabel">Evidence</div>
+<p>Focus command definition (search for <code>"Toggle focus view"</code>)</p>
+    </article>
+    <article class="card" id="remote-workflow-commands-autopilot-bugfix-dashboard-docs-inv">
+      <div class="card-top">
+        <h3>Remote Workflow Commands (<code>/autopilot</code>, <code>/bugfix</code>, <code>/dashboard</code>, <code>/docs</code>, <code>/investigate</code>) <a class="anchor" href="#remote-workflow-commands-autopilot-bugfix-dashboard-docs-inv">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Five new slash commands that spawn remote Claude Code sessions pre-configured for specific workflows. Each runs headlessly on Anthropic's infrastructure.</p>
+<div class="blabel">Usage</div>
+<pre><code>/autopilot &lt;task description&gt;    # General-purpose autonomous agent
+/bugfix &lt;bug description&gt;        # Reproduce, root-cause, fix, and regression-test a bug
+/dashboard &lt;data sources&gt;        # Design and build a dashboard
+/docs &lt;feature area&gt;             # Discover a feature surface and write/update docs
+/investigate &lt;incident details&gt;  # Root-cause an incident and produce a fix report</code></pre>
+<div class="blabel">Details</div>
+<ul><li>These extend the existing remote session system (previously only <code>/autofix-pr</code> existed)</li><li>Requires the <code>allow_remote_sessions</code> organizational policy to be enabled</li><li>Before spawning, the CLI checks for unpushed local commits and warns: "you have unpushed local commits. The remote session clones from GitHub, so they would not be included."</li><li>If the current branch has no upstream, you'll be prompted to <code>git push -u origin HEAD</code> first</li></ul>
+<div class="blabel">Evidence</div>
+<p>Remote workflow definitions (search for <code>"Spawn a remote session that reproduces"</code> and <code>"Spawn a remote Claude Code session that runs the autopilot"</code>)</p>
+    </article>
+    <article class="card" id="plugin-favorites">
+      <div class="card-top">
+        <h3>Plugin Favorites <a class="anchor" href="#plugin-favorites">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>You can now favorite/unfavorite plugins in the plugin list for quicker access.</p>
+<div class="blabel">Usage</div>
+<ul><li>Press <code>f</code> in the plugin list to toggle a plugin as a favorite</li><li>Favorites are persisted and appear with priority in the list</li><li>The option also appears in the plugin options dialog: "Add to favorites" / "Remove from favorites"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin favorites UI (search for <code>"Add to favorites"</code> and <code>"plugin:favorite"</code>)</p>
+    </article>
+    <article class="card" id="transcript-undo">
+      <div class="card-top">
+        <h3>Transcript Undo <a class="anchor" href="#transcript-undo">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New undo capability in the conversation UI that lets you revert certain actions, such as compaction, memory saves, and feedback surveys.</p>
+<div class="blabel">Details</div>
+<ul><li>An <code>handleUndo</code> callback is now available in post-compact surveys, memory surveys, and feedback components</li><li>Adds a new <code>'pending'</code> state to the transcript state machine for undo transitions</li><li>Also available in the autocomplete/suggestions component</li></ul>
+<div class="blabel">Evidence</div>
+<p>Undo handler wiring (search for <code>"handleUndo"</code>)</p>
+    </article>
+    <article class="card" id="session-rename">
+      <div class="card-top">
+        <h3>Session Rename <a class="anchor" href="#session-rename">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Sessions can now be renamed programmatically via the SDK, and remote sessions automatically get renamed based on their git branch.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>rename_session</code> control action with description: "Sets the user-facing title for the current session."</li><li>Title validation requires non-empty strings</li><li>Remote sessions now include <code>onRenameSession</code> callbacks and <code>parseGitRemote</code> for automatic naming based on the repo branch</li></ul>
+<div class="blabel">Evidence</div>
+<p>Session rename handler (search for <code>"rename_session"</code> and <code>"title must be non-empty"</code>)</p>
+    </article>
+    <article class="card" id="auto-scroll-setting">
+      <div class="card-top">
+        <h3>Auto-Scroll Setting <a class="anchor" href="#auto-scroll-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New user-configurable setting to control automatic scrolling behavior in fullscreen mode.</p>
+<div class="blabel">Details</div>
+<ul><li>Available in Settings panel as "Auto-scroll"</li><li>Description: "Auto-scroll conversation to bottom (fullscreen mode only)"</li><li>Enabled by default</li><li>Toggle via <code>/config</code> or the settings panel</li></ul>
+<div class="blabel">Evidence</div>
+<p>Auto-scroll setting definition (search for <code>"Auto-scroll"</code> and <code>"autoScrollEnabled"</code>)</p>
+    </article>
+    <article class="card" id="external-editor-context-setting">
+      <div class="card-top">
+        <h3>External Editor Context Setting <a class="anchor" href="#external-editor-context-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New setting that includes Claude's last response as commented context when opening the external editor.</p>
+<div class="blabel">Details</div>
+<ul><li>Available in Settings panel as "Show last response in external editor"</li><li>Disabled by default</li><li>When enabled, the external editor will prepend Claude's last response as <code>#</code>-prefixed comment lines above a separator: <code># ─── Write your reply below this line ──────────────────────────</code></li><li>Claude's response is labeled: <code># ─── Claude's last response (for reference; removed on save) ───</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>External editor context setting (search for <code>"Show last response in external editor"</code> and <code>"externalEditorContext"</code>)</p>
+    </article>
+    <article class="card" id="daemon-version-management">
+      <div class="card-top">
+        <h3>Daemon Version Management <a class="anchor" href="#daemon-version-management">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new background daemon system with a lock file (<code>daemon.lock</code>) that manages version consistency and auto-restart.</p>
+<div class="blabel">Details</div>
+<ul><li>The daemon lock file contains a PID and version, enabling version-mismatch detection</li><li>If a running daemon's version differs from the current CLI, it signals a restart: "Signaled claude daemon to restart"</li><li>Lock file validation ensures the process is still alive before taking action</li></ul>
+<div class="blabel">Evidence</div>
+<p>Daemon lock system (search for <code>"daemon.lock"</code> and <code>"Signaled claude daemon to restart"</code>)</p>
+    </article>
+    <article class="card" id="recap-and-away-summary-enabled-by-default">
+      <div class="card-top">
+        <h3><code>/recap</code> and Away Summary Enabled by Default <a class="anchor" href="#recap-and-away-summary-enabled-by-default">#</a></h3>
+      </div>
+      <p>The <code>tengu_sedge_lantern</code> feature flag, which controls both the <code>/recap</code> command and the away-from-session summary, has been changed from defaulting to <code>false</code> to defaulting to <code>true</code>. This means:</p>
+<ul><li>The <code>/recap</code> command (generates a one-line session recap) is now available to all users without needing a feature flag rollout</li><li>The away summary that detects when you've returned to a long session is now on by default</li></ul>
+<div class="blabel">Evidence</div>
+<p>Flag default change from <code>b8("tengu_sedge_lantern", !1)</code> to <code>I8("tengu_sedge_lantern", !0)</code> (search for <code>"tengu_sedge_lantern"</code>)</p>
+    </article>
+    <article class="card" id="idle-return-dialog-removed">
+      <div class="card-top">
+        <h3>Idle-Return Dialog Removed <a class="anchor" href="#idle-return-dialog-removed">#</a></h3>
+      </div>
+      <p>The "You've been away" idle-return dialog (controlled by <code>tengu_willow_mode</code>) has been completely removed from the conversation UI. Previously, when you returned to a session after an idle period, a dialog would appear suggesting you clear context. This is now gone — the away summary feature (above) replaces it with a less intrusive approach.</p>
+<div class="blabel">Evidence</div>
+<p>Removal of the <code>willow_mode</code>/<code>idle-return</code> render branch (search for the removed <code>"idle-return"</code> in changes diff)</p>
+    </article>
+    <article class="card" id="ultrareview-pr-review-mode">
+      <div class="card-top">
+        <h3><code>/ultrareview</code> PR Review Mode <a class="anchor" href="#ultrareview-pr-review-mode">#</a></h3>
+      </div>
+      <p>The <code>/ultrareview</code> command now supports a PR review mode that shows different messaging depending on whether you're reviewing a specific PR or the current branch:</p>
+<ul><li>PR mode: "Reviewing PR #123 fetched from GitHub."</li><li>Branch mode: "Reviewing current branch against main."</li><li>New tip: "Tip: run /ultrareview (no number) to review your current branch instead." / "Tip: run /ultrareview &lt;PR number&gt; to fetch and review a specific GitHub PR instead."</li><li>PR field queries now include <code>additions,deletions</code> for richer review context</li></ul>
+<div class="blabel">Evidence</div>
+<p>PR review mode strings (search for <code>"Reviewing PR #"</code>)</p>
+    </article>
+    <article class="card" id="mcp-server-conflict-detection">
+      <div class="card-top">
+        <h3>MCP Server Conflict Detection <a class="anchor" href="#mcp-server-conflict-detection">#</a></h3>
+      </div>
+      <p>When the same MCP server name is defined in multiple configuration scopes (project, user, etc.) with different endpoints, a warning is now shown with specific remediation guidance.</p>
+<div class="blabel">Details</div>
+<ul><li>Warning: <code>Server "X" is defined in multiple scopes with different endpoints</code></li><li>Suggestion: <code>Keep the correct endpoint and remove the others: \</code>claude mcp remove X -s SCOPE\``</li><li>Shows the <code>[Conflicting scopes]</code> label in <code>/doctor</code> diagnostics</li></ul>
+<div class="blabel">Evidence</div>
+<p>MCP conflict detection (search for <code>"is defined in multiple scopes with different endpoints"</code>)</p>
+    </article>
+    <article class="card" id="mcp-server-not-found-error-improvements">
+      <div class="card-top">
+        <h3>MCP Server Not-Found Error Improvements <a class="anchor" href="#mcp-server-not-found-error-improvements">#</a></h3>
+      </div>
+      <p>When an MCP server is not found, the error message now lists all configured servers, helping you identify typos or misconfigurations.</p>
+<div class="blabel">Evidence</div>
+<p>Improved error message (search for <code>". Configured servers:"</code>)</p>
+    </article>
+    <article class="card" id="improved-untrusted-device-error-messages">
+      <div class="card-top">
+        <h3>Improved Untrusted Device Error Messages <a class="anchor" href="#improved-untrusted-device-error-messages">#</a></h3>
+      </div>
+      <p>Authentication errors now distinguish between two device-trust failure scenarios:</p>
+<ul><li><code>untrusted_device</code>: "run /login to enroll this device"</li><li><code>session_stale_relogin</code>: "session expired for trusted-device check — run /login to re-authenticate"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Trust error messaging (search for <code>"session expired for trusted-device check"</code>)</p>
+    </article>
+    <article class="card" id="cloud-workspace-environment-detection">
+      <div class="card-top">
+        <h3>Cloud Workspace Environment Detection <a class="anchor" href="#cloud-workspace-environment-detection">#</a></h3>
+      </div>
+      <p>Claude Code now detects additional cloud development environments: Coder, DevPod, and Daytona workspaces, alongside existing cloud detection.</p>
+<div class="blabel">Evidence</div>
+<p>Workspace detection (search for <code>"CODER"</code> and <code>"DevPod"</code> and <code>"Daytona"</code>)</p>
+    </article>
+    <article class="card" id="expanded-terminal-emulator-support">
+      <div class="card-top">
+        <h3>Expanded Terminal Emulator Support <a class="anchor" href="#expanded-terminal-emulator-support">#</a></h3>
+      </div>
+      <p>The terminal detection system now recognizes Tabby alongside the previously supported set. The ARM64 architecture detection has also been improved for Linux platform identification.</p>
+<div class="blabel">Evidence</div>
+<p>Terminal emulator detection (search for <code>"Tabby"</code>)</p>
+    </article>
+    <article class="card" id="edit-tool-backward-compatibility">
+      <div class="card-top">
+        <h3>Edit Tool Backward Compatibility <a class="anchor" href="#edit-tool-backward-compatibility">#</a></h3>
+      </div>
+      <p>The Edit tool now accepts the older <code>old_str</code>/<code>new_str</code> parameter names, automatically migrating them to <code>old_string</code>/<code>new_string</code>. This improves compatibility with older model outputs or cached tool schemas.</p>
+<div class="blabel">Evidence</div>
+<p>Parameter migration (search for <code>"old_str"</code>)</p>
+    </article>
+    <article class="card" id="plugin-dependency-auto-installation">
+      <div class="card-top">
+        <h3>Plugin Dependency Auto-Installation <a class="anchor" href="#plugin-dependency-auto-installation">#</a></h3>
+      </div>
+      <p>MCP plugins that declare dependencies in <code>plugin.json</code> are now automatically installed if they're from a compatible marketplace. Cross-marketplace dependencies are validated and blocked with an informative message.</p>
+<div class="blabel">Details</div>
+<ul><li>Validates marketplace compatibility before auto-installing</li><li>Shows truncated dependency lists: "dep1, dep2, dep3, dep4, dep5 (+ N dependencies)"</li><li>Plugins from different marketplaces show: "not auto-installing — install it manually"</li><li>Plugins not found in any marketplace are flagged: "not auto-installing"</li><li>Deprecation notes (<code>depNote</code>) are now surfaced in plugin installation feedback</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin dependency system (search for <code>"plugin.json declares dependency"</code>)</p>
+    </article>
+    <article class="card" id="remote-session-environment-change">
+      <div class="card-top">
+        <h3>Remote Session Environment Change <a class="anchor" href="#remote-session-environment-change">#</a></h3>
+      </div>
+      <p>Remote sessions now use Bun's <code>--smol</code> option for reduced memory usage instead of the previous <code>ulimit -Sd</code> memory limit approach. This is more appropriate for the Bun runtime and avoids shell-level resource limits.</p>
+<div class="blabel">Evidence</div>
+<p>Remote environment setup (search for <code>"BUN_OPTIONS"</code> and the removal of <code>"ulimit -Sd"</code>)</p>
+    </article>
+    <article class="card" id="hook-security-enhancement">
+      <div class="card-top">
+        <h3>Hook Security Enhancement <a class="anchor" href="#hook-security-enhancement">#</a></h3>
+      </div>
+      <p>When a hook rewrites the user's input, permissions are now re-validated against the modified input. This prevents hooks from bypassing permission checks by rewriting a denied command into something different.</p>
+<div class="blabel">Evidence</div>
+<p>Permission re-validation (search for <code>"ask rule on hook-rewritten input"</code>)</p>
+    </article>
+    <article class="card" id="worktree-lock-on-creation">
+      <div class="card-top">
+        <h3>Worktree Lock on Creation <a class="anchor" href="#worktree-lock-on-creation">#</a></h3>
+      </div>
+      <p>Git worktrees created by Claude Code agents are now locked with <code>git worktree lock --reason</code> to prevent accidental pruning by other Git operations.</p>
+<div class="blabel">Evidence</div>
+<p>Worktree locking (search for <code>"worktree"</code> and <code>"lock"</code> and <code>"--reason"</code>)</p>
+    </article>
+    <article class="card" id="settings-panel-expansion">
+      <div class="card-top">
+        <h3>Settings Panel Expansion <a class="anchor" href="#settings-panel-expansion">#</a></h3>
+      </div>
+      <p>The settings panel now includes four configurable options:</p>
+<ol><li>Auto-scroll (fullscreen mode)</li><li>Show last response in external editor</li><li>Show turn duration</li><li>Notification preferences</li></ol>
+<div class="blabel">Evidence</div>
+<p>Settings panel items (search for <code>"autoScrollEnabled"</code> and <code>"externalEditorContext"</code>)</p>
+    </article>
+    <article class="card" id="improved-error-diagnostics">
+      <div class="card-top">
+        <h3>Improved Error Diagnostics <a class="anchor" href="#improved-error-diagnostics">#</a></h3>
+      </div>
+      <p>Error messages from <code>/doctor</code> and plugin validation have been upgraded from simple counts to detailed per-error diagnostics, showing file, path, message, and suggestion for each issue.</p>
+<div class="blabel">Evidence</div>
+<p>Diagnostic improvements (search for <code>"Suggestion:"</code>)</p>
+    </article>
+    <article class="card" id="vim-mode-multi-character-command-support">
+      <div class="card-top">
+        <h3>Vim Mode Multi-Character Command Support <a class="anchor" href="#vim-mode-multi-character-command-support">#</a></h3>
+      </div>
+      <p>Vim mode's text-change handling has been refactored to support multi-character commands and improved state passing between operations.</p>
+<div class="blabel">Evidence</div>
+<p>Vim mode refactor (search for the modified <code>D55</code> in the diff annotations)</p>
+    </article>
+    <article class="card" id="bypasspermissions-mode-scoping">
+      <div class="card-top">
+        <h3>bypassPermissions Mode Scoping <a class="anchor" href="#bypasspermissions-mode-scoping">#</a></h3>
+      </div>
+      <p>The <code>bypassPermissions</code> mode is now explicitly session-scoped and will not be persisted as the default mode: "setMode:'bypassPermissions' is session-scoped; not persisting as defaultMode."</p>
+<div class="blabel">Evidence</div>
+<p>Session scoping guard (search for <code>"setMode:'bypassPermissions' is session-scoped"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed keybinding code parsing to use the <code>code</code> property from the source event instead of the derived string, improving reliability for key detection (search for <code>"q.code &amp;&amp; q.code[0]"</code>)</li></ul>
+<ul><li>Fixed tmux integration by passing the current working directory (<code>cwd</code>) to tmux subprocess calls, resolving issues when the tmux binary isn't on the default path (search for <code>"cwd: R8()"</code> near <code>"tmux"</code>)</li></ul>
+<ul><li>Fixed subprocess spawn calls across the codebase to consistently pass <code>cwd: R8()</code>, preventing commands from running in wrong directories</li></ul>
+<ul><li>Fixed sleep command regex to accept trailing decimal points without fractional digits (e.g., <code>sleep 1.</code> now works), matching both Unix <code>sleep</code> and Windows <code>Start-Sleep</code> commands (search for <code>"\\d+(?:\\.\\d*)?"</code>)</li></ul>
+<ul><li>Added exponential growth protection to version range combining, preventing Cartesian product explosion in constraint resolution: "intersectConstraints: Cartesian product exceeded" (search for <code>"intersectConstraints"</code>)</li></ul>
+<ul><li>Fixed image rendering to show images even when they have been token-compressed, removing the overly restrictive <code>tokenCompressed</code> check</li></ul>
+<ul><li>Fixed terminal raw mode handling with reference counting to prevent mode conflicts between components</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
+    </article>
+    <article class="card" id="pushnotification-tool-in-development">
+      <div class="card-top">
+        <h3>PushNotification Tool [In Development] <a class="anchor" href="#pushnotification-tool-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A tool that allows Claude to send notifications to the user's terminal and, when Remote Control is connected, push to their mobile device. Claude decides when to notify based on whether the user appears to be away and whether the event is actionable.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_kairos_push_notifications</code> (default: <code>false</code>) and <code>tengu_kairos_input_needed_push</code> (default: <code>false</code>)</p>
+<div class="blabel">Details</div>
+<ul><li>Full implementation including tool definition, status rendering, mobile push via Remote Control API, and notification preference sync to <code>/api/claude_code/notification/preferences</code></li><li>The tool includes sophisticated logic: it only sends when the user appears away, considers terminal focus state, and respects user configuration</li><li>User-facing status messages like "Terminal notification sent. Mobile push requested." and "Not sent because you're active in this terminal."</li><li>Configuration options: "Push when Claude decides" and "Push when actions required" appear in <code>/config</code></li><li>Links to <code>https://claude.com/download#mobile</code> for mobile app setup</li><li>The tool prompt coaches the model: "err toward NOT sending. Not every event is worth a push; the ones that change what they'd do next are."</li></ul>
+<div class="blabel">Evidence</div>
+<p>PushNotification tool (gated by <code>tengu_kairos_push_notifications</code>, search for <code>"PushNotification"</code> and <code>"Send a notification to the user via their terminal"</code>)</p>
+    </article>
+    <article class="card" id="context-hint-time-based-microcompact-in-development">
+      <div class="card-top">
+        <h3>Context Hint / Time-Based Microcompact [In Development] <a class="anchor" href="#context-hint-time-based-microcompact-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>An intelligent context window management system that automatically removes older tool results to stay within context limits, triggered by server-side hints.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_hazel_osprey</code> (default: <code>false</code>), with beta header <code>context-hint-2026-04-09</code></p>
+<div class="blabel">Details</div>
+<ul><li>When the context window approaches limits, old tool result content is replaced with <code>"[Old tool result content cleared]"</code></li><li>Handles HTTP 422/424 status codes as context-hint rejection signals</li><li>Tracks telemetry for <code>tengu_time_based_microcompact</code> with token savings metrics</li><li>Clears cached thinking tokens on context-hint triggers</li></ul>
+<div class="blabel">Evidence</div>
+<p>Microcompact system (gated by <code>tengu_hazel_osprey</code>, search for <code>"[Old tool result content cleared]"</code> and <code>"tengu_time_based_microcompact"</code>)</p>
+    </article>
+    <article class="card" id="slate-ribbon-in-development">
+      <div class="card-top">
+        <h3>Slate Ribbon [In Development] <a class="anchor" href="#slate-ribbon-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A UI ribbon component controlled by a new feature flag.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_slate_ribbon</code> (default: <code>false</code>)</p>
+<div class="blabel">Details</div>
+<ul><li>Infrastructure for a new UI element has been added but is not yet enabled</li><li>Exact functionality unclear from code analysis</li></ul>
+<div class="blabel">Evidence</div>
+<p>Flag definition (search for <code>"tengu_slate_ribbon"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The Insights HTML report generator (2200+ lines of HTML/CSS/JS) has been refactored — it was removed and re-added in the same version, suggesting a significant rewrite of the report generation system</li><li>The Yoga layout engine wrapper class and related constants have been removed, replaced by a more direct layout approach. This is an internal rendering change with no user-facing impact</li><li>The update/relaunch mechanism (<code>FdY</code>) that displayed "Switching from X.X.X to latest…" has been removed, suggesting version transitions are now handled by the new daemon system</li><li>The kill ring (Emacs-style clipboard) implementation has been refactored from a factory function to a dispatch-based approach, maintaining the same yank/kill functionality</li><li>The <code>CLAUDE_CODE_ENABLE_BACKGROUND_PLUGIN_REFRESH</code> environment variable enables background refreshing of MCP plugin state — set it to opt in to async plugin reloading</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

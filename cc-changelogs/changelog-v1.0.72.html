@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.72 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.72."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.72</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.72</span></h1>
+<p class="sub">Claude Code 1.0.72 introduces a new <code>/statusline</code> command for customizing your terminal status line, enhances security with improved path validation, and provides clearer visual indicators for different operational modes.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.71 → v1.0.72</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="status-line-configuration-command">
+      <div class="card-top">
+        <h3>Status Line Configuration Command <a class="anchor" href="#status-line-configuration-command">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New <code>/statusline</code> command for customizing Claude Code's status line UI <strong>Why:</strong> Allows users to personalize their terminal experience and display custom information in the status line <strong>How to use:</strong></p>
+<pre><code># Configure status line from your shell PS1
+/statusline
+
+# Configure with custom command
+/statusline &quot;Configure my custom status display&quot;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Creates a specialized "statusline-setup" agent to handle configuration</li><li>Can read and convert existing shell PS1 configurations</li><li>Saves custom scripts to <code>~/.claude/statusline-command.sh</code> if needed</li><li>Updates settings in <code>~/.claude/settings.json</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-mode-display-system">
+      <div class="card-top">
+        <h3>Enhanced Mode Display System <a class="anchor" href="#enhanced-mode-display-system">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved visual indicators for different Claude Code operational modes <strong>Why:</strong> Makes it clearer which mode Claude Code is operating in, improving user awareness and control <strong>How to use:</strong> The mode display is automatic and shows in the interface with distinct icons and colors:</p>
+<ul><li><strong>Default mode</strong>: "Default" - standard operation</li><li><strong>Plan mode</strong>: "Plan" with ⏸ icon - planning before execution</li><li><strong>Accept Edits mode</strong>: "Accept" with ⏵⏵ icon - auto-accepting file edits</li><li><strong>Bypass Permissions mode</strong>: "Bypass" with warning styling - security restrictions bypassed</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Color-coded indicators (text, planMode, autoAccept, error)</li><li>Clear visual distinction between modes</li><li>Better integration with status line</li></ul>
+    </article>
+    <article class="card" id="improved-path-security-validation">
+      <div class="card-top">
+        <h3>Improved Path Security Validation <a class="anchor" href="#improved-path-security-validation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced validation for file system commands with clearer security messages <strong>Why:</strong> Provides better security boundaries and more helpful error messages when paths are restricted <strong>How to use:</strong> Path validation is automatic for commands like <code>cd</code>, <code>ls</code>, and <code>find</code>. When blocked, you'll see specific messages like:</p>
+<pre><code>cd in &#x27;/restricted/path&#x27; was blocked. For security, Claude Code may only 
+change directories to the allowed working directories for this session: [list]</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Better handling of glob patterns (<code>*</code>, <code>?</code>, <code>[</code>, <code>]</code>, <code>{</code>, <code>}</code>)</li><li>Proper tilde expansion (<code>~</code> and <code>~/</code> paths)</li><li>Improved handling of relative paths with <code>..</code></li><li>More specific error messages for each command type</li></ul>
+    </article>
+    <article class="card" id="agent-file-validation">
+      <div class="card-top">
+        <h3>Agent File Validation <a class="anchor" href="#agent-file-validation">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Better error reporting for invalid agent configuration files <strong>Impact:</strong> Clearer error messages when agent files are missing required fields or have invalid configurations, making it easier to debug custom agents</p>
+    </article>
+    <article class="card" id="token-usage-tracking">
+      <div class="card-top">
+        <h3>Token Usage Tracking <a class="anchor" href="#token-usage-tracking">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> More accurate calculation of token usage including cache tokens <strong>Impact:</strong> Better cost tracking with separate accounting for cached vs uncached tokens, providing more accurate usage reports</p>
+    </article>
+    <article class="card" id="background-shell-display">
+      <div class="card-top">
+        <h3>Background Shell Display <a class="anchor" href="#background-shell-display">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> New component for displaying running background shells in the UI <strong>Impact:</strong> Better visibility of background processes with indicators showing shell count and status</p>
+    </article>
+    <article class="card" id="fixed-path-validation-edge-cases">
+      <div class="card-top">
+        <h3>Fixed: Path validation edge cases <a class="anchor" href="#fixed-path-validation-edge-cases">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Certain path patterns with glob characters or parent directory references were not properly validated</li><li><strong>Resolution:</strong> Improved regex patterns and path resolution logic to handle all edge cases correctly</li></ul>
+    </article>
+    <article class="card" id="fixed-module-import-cleanup">
+      <div class="card-top">
+        <h3>Fixed: Module import cleanup <a class="anchor" href="#fixed-module-import-cleanup">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Unused imports from crypto and stream modules were left in the codebase</li><li><strong>Resolution:</strong> Removed unused imports and reorganized module dependencies for cleaner code</li></ul>
+    </article>
+    <article class="card" id="fixed-agent-frontmatter-parsing">
+      <div class="card-top">
+        <h3>Fixed: Agent frontmatter parsing <a class="anchor" href="#fixed-agent-frontmatter-parsing">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Missing or invalid frontmatter fields in agent files produced unclear error messages</li><li><strong>Resolution:</strong> Added specific validation and error reporting for required fields (name, description, model)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

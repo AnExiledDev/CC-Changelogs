@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.42 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.42."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.42</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.42</span></h1>
+<p class="sub">This release introduces the <code>/desktop</code> command to transfer sessions to Claude Desktop, adds an effort level selection callout for Opus 4.6 users, and includes significantly rewritten auto memory instructions. The release also improves error handling for image processing and marketplace caching, and adds support for date change notifications during long-running sessions.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.41 → v2.1.42</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">18</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">14 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="desktop-command">
+      <div class="card-top">
+        <h3><code>/desktop</code> Command <a class="anchor" href="#desktop-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Transfer your current Claude Code session to Claude Desktop for a seamless cross-platform workflow.</p>
+<div class="blabel">Usage</div>
+<pre><code># In Claude Code interactive mode
+/desktop</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Checks if Claude Desktop is installed and up-to-date (requires v1.1.2396+)</li><li>Saves the current session before transfer</li><li>Opens Claude Desktop and continues the conversation there</li><li>Alias: <code>/app</code></li><li>Supported on macOS and Windows only</li><li>If Claude Desktop is not installed, offers to download it</li></ul>
+<div class="blabel">Evidence</div>
+<p>Session transfer system (search for <code>"Session transferred to Claude Desktop"</code>)</p>
+    </article>
+    <article class="card" id="effort-level-callout-for-opus-4-6">
+      <div class="card-top">
+        <h3>Effort Level Callout for Opus 4.6 <a class="anchor" href="#effort-level-callout-for-opus-4-6">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new callout prompts users to choose their preferred thinking intensity when first using Opus 4.6.</p>
+<div class="blabel">Details</div>
+<ul><li>Appears when using Opus 4.6 for the first time</li><li>Offers "medium" (balances efficiency and intelligence) or "high" (best for hardest tasks) options</li><li>Pro plan users default to medium effort; others default to high</li><li>The callout can be dismissed and won't reappear</li><li>Effort can always be changed later via <code>/model</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Effort callout modal (search for <code>"Effort in Opus 4.6"</code>)</p>
+    </article>
+    <article class="card" id="date-change-notifications">
+      <div class="card-top">
+        <h3>Date Change Notifications <a class="anchor" href="#date-change-notifications">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Long-running sessions now receive automatic notifications when the date changes at midnight.</p>
+<div class="blabel">Details</div>
+<ul><li>Claude is informed of the new date without user intervention</li><li>Helps maintain accurate context for date-sensitive operations</li><li>The message instructs Claude not to mention the date change explicitly to users</li></ul>
+<div class="blabel">Evidence</div>
+<p>Date change handler (search for <code>"The date has changed. Today's date is now"</code>)</p>
+    </article>
+    <article class="card" id="interrupted-turn-auto-resume">
+      <div class="card-top">
+        <h3>Interrupted Turn Auto-Resume <a class="anchor" href="#interrupted-turn-auto-resume">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When a session is resumed after an interruption, Claude now receives a clear instruction to continue from where it left off.</p>
+<div class="blabel">Details</div>
+<ul><li>Improves session continuity after interruptions</li><li>Part of the <code>print.ts</code> auto-resume system</li></ul>
+<div class="blabel">Evidence</div>
+<p>Interrupted turn handling (search for <code>"Continue from where you left off."</code>)</p>
+    </article>
+    <article class="card" id="rewritten-auto-memory-instructions">
+      <div class="card-top">
+        <h3>Rewritten Auto Memory Instructions <a class="anchor" href="#rewritten-auto-memory-instructions">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The auto memory system prompt has been completely rewritten with clearer, more actionable guidance.</p>
+<p>Changes:</p>
+<ul><li>Simplified structure with clear "What to save" and "What NOT to save" sections</li><li>More specific guidelines about when to consult memory files</li><li>Explicit section for handling user requests to remember or forget things</li><li>Cleaner formatting with focused bullet points</li></ul>
+<div class="blabel">Evidence</div>
+<p>Auto memory prompt (search for <code>"# auto memory"</code>)</p>
+    </article>
+    <article class="card" id="aws-auth-timeout-feedback">
+      <div class="card-top">
+        <h3>AWS Auth Timeout Feedback <a class="anchor" href="#aws-auth-timeout-feedback">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added a 3-minute timeout with actionable feedback for AWS authentication refresh.</p>
+<div class="blabel">Details</div>
+<ul><li>If AWS auth refresh takes longer than 3 minutes, users receive clear guidance</li><li>Message suggests running the auth command manually in a separate terminal</li></ul>
+<div class="blabel">Evidence</div>
+<p>AWS auth timeout (search for <code>"AWS auth refresh timed out after 3 minutes"</code>)</p>
+    </article>
+    <article class="card" id="improved-marketplace-cache-recovery">
+      <div class="card-top">
+        <h3>Improved Marketplace Cache Recovery <a class="anchor" href="#improved-marketplace-cache-recovery">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Marketplace caching now handles stale directories more gracefully.</p>
+<p>Changes:</p>
+<ul><li>Renamed "Updating existing marketplace cache…" to "Refreshing marketplace cache…"</li><li>Added detection for stale directories with automatic cleanup and re-clone</li><li>Better error messages when git pull fails</li><li>Clearer status messages during cache operations</li></ul>
+<div class="blabel">Evidence</div>
+<p>Marketplace refresh (search for <code>"Refreshing marketplace cache…"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-image-error-detection">
+      <div class="card-top">
+        <h3>Enhanced Image Error Detection <a class="anchor" href="#enhanced-image-error-detection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Expanded detection of image processing errors for better error handling.</p>
+<p>New error patterns detected:</p>
+<ul><li><code>corrupt image</code>, <code>premature end</code>, <code>zlib: data error</code></li><li><code>zero width</code>, <code>zero height</code></li><li><code>pixel limit</code>, <code>too many pixels</code>, <code>exceeds pixel</code>, <code>image dimensions</code></li><li><code>out of memory</code>, <code>Cannot allocate</code>, <code>memory allocation</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Image error classification (search for <code>"too many pixels"</code>)</p>
+    </article>
+    <article class="card" id="network-egress-blocking">
+      <div class="card-top">
+        <h3>Network Egress Blocking <a class="anchor" href="#network-egress-blocking">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added a new error type for network egress proxy blocks in managed environments.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>EgressBlockedError</code> with clear messaging</li><li>Message: "Access to {domain} is blocked by the network egress proxy"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Egress blocking (search for <code>"EgressBlockedError"</code>)</p>
+    </article>
+    <article class="card" id="better-model-selection-ui-text">
+      <div class="card-top">
+        <h3>Better Model Selection UI Text <a class="anchor" href="#better-model-selection-ui-text">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Clearer wording for model inheritance in model selection.</p>
+<p>Change: "Inherit (default)" → "Inherit from parent (default)"</p>
+<div class="blabel">Evidence</div>
+<p>Model picker (search for <code>"Inherit from parent (default)"</code>)</p>
+    </article>
+    <article class="card" id="session-conflict-resolution">
+      <div class="card-top">
+        <h3>Session Conflict Resolution <a class="anchor" href="#session-conflict-resolution">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Better handling of session 409 conflicts with server-side sync.</p>
+<div class="blabel">Details</div>
+<ul><li>Adopts server's <code>lastUuid</code> from headers when conflicts occur</li><li>Re-fetches entries to ensure consistency</li><li>Logs detailed sync information for debugging</li></ul>
+<div class="blabel">Evidence</div>
+<p>Session 409 handler (search for <code>"Session 409: adopting server lastUuid"</code>)</p>
+    </article>
+    <article class="card" id="windows-shell-syntax-guidance">
+      <div class="card-top">
+        <h3>Windows Shell Syntax Guidance <a class="anchor" href="#windows-shell-syntax-guidance">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added explicit guidance for Windows users about shell syntax.</p>
+<div class="blabel">Details</div>
+<ul><li>Reminder to use Unix shell syntax (not Windows syntax) for bash commands</li><li>Examples: <code>/dev/null</code> not <code>NUL</code>, forward slashes in paths</li></ul>
+<div class="blabel">Evidence</div>
+<p>Shell syntax hint (search for <code>"use Unix shell syntax, not Windows"</code>)</p>
+    </article>
+    <article class="card" id="agent-frontmatter-validation">
+      <div class="card-top">
+        <h3>Agent Frontmatter Validation <a class="anchor" href="#agent-frontmatter-validation">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Improved error message for agent files missing required frontmatter.</p>
+<p>Change: Now specifically mentions <code>'description'</code> in the error message rather than generic field name.</p>
+<div class="blabel">Evidence</div>
+<p>Agent validation (search for <code>"is missing required 'description' in frontmatter"</code>)</p>
+    </article>
+    <article class="card" id="cache-editing-for-microcompact">
+      <div class="card-top">
+        <h3>Cache Editing for Microcompact <a class="anchor" href="#cache-editing-for-microcompact">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Cache editing beta header is now enabled for cached microcompact operations.</p>
+<div class="blabel">Details</div>
+<ul><li>Only applies to first-party API users in the main REPL thread</li><li>Improves performance when working with compacted conversations</li></ul>
+<div class="blabel">Evidence</div>
+<p>Cache editing (search for <code>"Cache editing beta header enabled for cached microcompact"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Removed Bun-specific WebSocket ping logging that was causing noise (search for <code>"WebSocketTransport: Sent ping"</code>)</li><li>Fixed model parsing for abbreviated model names like <code>3-5-sonnet</code> and <code>3-7-sonnet</code> to correctly detect context limits</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Removed verbose prompt cache break logging (<code>[PROMPT CACHE BREAK]</code> messages)</li><li>Removed detailed cache break reason strings (model changed, tools changed, system prompt changed)</li><li>Simplified Opus plan restriction messaging</li><li>Removed <code>fs</code> from the documented example list in hook globals (still accessible via <code>require()</code>)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

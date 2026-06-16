@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.85 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.85."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.85</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.85</span></h1>
+<p class="sub">Version 1.0.85 introduces comprehensive rate limit messaging with clear feedback about usage limits and spending caps, automatic session memory that maintains persistent notes about your work, and improved environment variable validation with helpful warnings when values are misconfigured.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.84 → v1.0.85</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="rate-limit-status-messaging">
+      <div class="card-top">
+        <h3>Rate Limit Status Messaging <a class="anchor" href="#rate-limit-status-messaging">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Complete system for communicating rate limits, usage limits, and spending caps with clear, actionable messages <strong>How to use:</strong></p>
+<pre><code># You&#x27;ll automatically see messages when approaching or hitting limits:
+# &quot;Approaching spending cap&quot;
+# &quot;5-hour limit reached • resets in 2h 15m&quot;
+# &quot;Weekly limit reached • resets Monday 9am&quot;
+# &quot;Opus weekly limit reached • resets in 3 days&quot;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Different messages for 5-hour, weekly, and Opus-specific limits</li><li>Human-readable reset times showing when limits clear</li><li>Warnings when approaching limits before hitting them</li><li>Special handling for team/enterprise accounts with admin contact guidance</li><li>Spending cap and overage status tracking</li></ul>
+    </article>
+    <article class="card" id="session-memory-automatic-notes">
+      <div class="card-top">
+        <h3>Session Memory (Automatic Notes) <a class="anchor" href="#session-memory-automatic-notes">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatic background system that maintains structured notes about your ongoing development work <strong>How to use:</strong></p>
+<pre><code># Automatically activates after 5 messages in a session
+# Notes are saved to ~/.claude/session-memory/[session-id].md
+# Customize with your own templates:
+mkdir -p ~/.claude/session-memory
+echo &quot;Your template&quot; &gt; ~/.claude/session-memory/template.md
+echo &quot;Your prompt&quot; &gt; ~/.claude/session-memory/prompt.md</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Captures task specifications, worklog, code documentation, and learnings</li><li>Updates transparently in the background without interrupting your work</li><li>Persists context across conversations for better continuity</li><li>Customizable template and update prompts for project-specific needs</li></ul>
+    </article>
+    <article class="card" id="environment-variable-validation-framework">
+      <div class="card-top">
+        <h3>Environment Variable Validation Framework <a class="anchor" href="#environment-variable-validation-framework">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Structured validation system for environment variables with detailed feedback <strong>How to use:</strong></p>
+<pre><code># Set environment variables with automatic validation:
+export BASH_MAX_OUTPUT_LENGTH=40000  # Validates and caps if needed
+export CLAUDE_CODE_MAX_OUTPUT_TOKENS=16000  # Validates with warnings
+
+# Invalid values show warnings but don&#x27;t crash:
+export BASH_MAX_OUTPUT_LENGTH=invalid  # Warning: Invalid value &quot;invalid&quot; (using default: 30000)
+export BASH_MAX_OUTPUT_LENGTH=100000   # Warning: Capped from 100000 to 50000</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>BASH_MAX_OUTPUT_LENGTH: Default 30000, max 50000 characters</li><li>CLAUDE_CODE_MAX_OUTPUT_TOKENS: Default 32000, max 32000 tokens</li><li>Non-fatal warnings for invalid or capped values</li><li>Clear feedback about what values are actually being used</li></ul>
+    </article>
+    <article class="card" id="sessionend-hook-event">
+      <div class="card-top">
+        <h3>SessionEnd Hook Event <a class="anchor" href="#sessionend-hook-event">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New hook event that fires when Claude Code shuts down, enabling cleanup actions <strong>How to use:</strong></p>
+<pre><code># Configure in your hooks file to run cleanup on exit:
+# Hook will receive: {hook_event_name: &quot;SessionEnd&quot;, reason: &quot;logout&quot; | &quot;other&quot;}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Triggers before Claude Code exits</li><li>Provides shutdown reason (logout vs other termination)</li><li>Allows external programs to perform cleanup</li><li>2-second timeout ensures quick shutdown</li></ul>
+    </article>
+    <article class="card" id="enhanced-heredoc-security-validation">
+      <div class="card-top">
+        <h3>Enhanced Heredoc Security Validation <a class="anchor" href="#enhanced-heredoc-security-validation">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> More robust validation for heredoc patterns in bash command substitutions <strong>Previous behavior:</strong> Simple pattern matching could miss complex quoting scenarios <strong>New behavior:</strong> Multi-step validation ensures each heredoc is properly paired and safe <strong>Impact:</strong> Fewer false positives when using valid heredoc constructs with complex quoting patterns like <code>cat &lt;&lt;'EOF'</code> or <code>cat &lt;&lt;\EOF</code></p>
+    </article>
+    <article class="card" id="better-process-cleanup">
+      <div class="card-top">
+        <h3>Better Process Cleanup <a class="anchor" href="#better-process-cleanup">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Improved handling of child processes during shutdown <strong>Previous behavior:</strong> Some child processes could linger after Claude Code exits <strong>New behavior:</strong> More thorough cleanup ensures all spawned processes terminate properly <strong>Impact:</strong> Cleaner system state after using Claude Code, no orphaned processes</p>
+    </article>
+    <article class="card" id="fixed-heredoc-delimiter-validation">
+      <div class="card-top">
+        <h3>Fixed: Heredoc Delimiter Validation <a class="anchor" href="#fixed-heredoc-delimiter-validation">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Valid heredoc patterns with multiple quotes were incorrectly rejected</li><li><strong>Cause:</strong> Regex pattern didn't account for all valid quoting variations</li><li><strong>Resolution:</strong> New validation logic handles complex delimiter patterns correctly</li><li><strong>Affected versions:</strong> v1.0.78 through v1.0.84</li></ul>
+    </article>
+    <article class="card" id="fixed-environment-variable-error-handling">
+      <div class="card-top">
+        <h3>Fixed: Environment Variable Error Handling <a class="anchor" href="#fixed-environment-variable-error-handling">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Invalid CLAUDE_CODE_MAX_OUTPUT_TOKENS values could crash the application</li><li><strong>Cause:</strong> Direct error throwing without graceful fallback</li><li><strong>Resolution:</strong> Invalid values now trigger warnings and use defaults</li><li><strong>Affected versions:</strong> v1.0.80 through v1.0.84</li></ul>
+    </article>
+    <article class="card" id="fixed-missing-cleanup-on-graceful-shutdown">
+      <div class="card-top">
+        <h3>Fixed: Missing Cleanup on Graceful Shutdown <a class="anchor" href="#fixed-missing-cleanup-on-graceful-shutdown">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Some cleanup handlers weren't executing during normal shutdown</li><li><strong>Cause:</strong> Shutdown sequence didn't properly await all cleanup operations</li><li><strong>Resolution:</strong> Improved shutdown flow ensures all handlers run within timeout</li><li><strong>Affected versions:</strong> v1.0.82 through v1.0.84</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

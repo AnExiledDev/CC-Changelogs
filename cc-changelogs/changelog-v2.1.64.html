@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.64 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.64."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.64</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.64</span></h1>
+<p class="sub">This is a substantial release that introduces Remote Control server mode for multi-session management from claude.ai/code, an "ultraplan" mode for more thorough planning, scheduled skills, a <code>/reload-plugins</code> command for hot-reloading plugins without restart, and mouse-based text selection in the terminal. It also adds Claude Code Desktop integration, a new <code>InstructionsLoaded</code> hook event, built-in plugins, new bash security checks against command obfuscation, and updates the default model to Opus 4.6.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.63 → v2.1.64</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">28</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">28 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="remote-control-server-mode">
+      <div class="card-top">
+        <h3>Remote Control Server Mode <a class="anchor" href="#remote-control-server-mode">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>claude remote-control</code> command gains a <code>server</code> subcommand that runs as a persistent server accepting multiple concurrent sessions, with isolation and session management options.</p>
+<div class="blabel">Usage</div>
+<pre><code># Each session gets its own git worktree (up to N concurrent)
+claude remote-control server --spawn-worktree-sessions [&lt;N&gt;]
+
+# All sessions share the current directory (up to N concurrent)
+claude remote-control server --spawn-same-dir-sessions [&lt;N&gt;]</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>--idle-timeout &lt;ms&gt;</code> controls how long detached sessions remain alive (0 = never)</li><li><code>--max-sessions &lt;n&gt;</code> caps concurrent sessions (0 = unlimited)</li><li><code>--auth-token &lt;token&gt;</code> adds bearer token authentication; auto-generates tokens with <code>sk-ant-cc-</code> prefix if omitted</li><li><code>--workspace &lt;dir&gt;</code> sets the default working directory for sessions</li><li><code>--host &lt;string&gt;</code> and <code>--port &lt;number&gt;</code> control bind address</li><li>Sessions can connect via unix domain sockets using the <code>cc+unix://</code> protocol</li><li>Session lifecycle is tracked in <code>server-sessions.json</code></li><li>The previous <code>claude remote-control</code> (without <code>server</code>) for single-session use still works</li></ul>
+<div class="blabel">Evidence</div>
+<p>Server session manager (search for <code>"--spawn-worktree-sessions"</code>, <code>"server-sessions.json"</code>, <code>"sk-ant-cc-"</code>)</p>
+    </article>
+    <article class="card" id="ultraplan-mode">
+      <div class="card-top">
+        <h3>Ultraplan Mode <a class="anchor" href="#ultraplan-mode">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new planning mode that delegates plan creation to a remote session for more thorough, multi-step planning before implementation begins.</p>
+<div class="blabel">Details</div>
+<ul><li>When triggered, Claude enters "ultraplan" mode and generates a comprehensive plan via a dedicated remote session</li><li>The completed plan is written to the plan file and presented to the user for approval</li><li>Users then review the ultraplan and Claude responds with a summary before proceeding</li><li>Gated as a <code>prePlanMode</code> option alongside the existing plan mode</li></ul>
+<div class="blabel">Evidence</div>
+<p>Ultraplan orchestration (search for <code>"ultraplan"</code>, <code>"Ultraplanning…"</code>, <code>"Ultraplan complete"</code>)</p>
+    </article>
+    <article class="card" id="scheduled-skills">
+      <div class="card-top">
+        <h3>Scheduled Skills <a class="anchor" href="#scheduled-skills">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Skills can now be scheduled to run on a cron-like schedule, executing automatically at specified intervals or times.</p>
+<div class="blabel">Details</div>
+<ul><li>Supports cron expression syntax with human-readable formatting (e.g., "Every hour", "Every day at 3:00 PM EST", "Weekdays at 9:00 AM EST")</li><li>Schedule types include <code>load</code> (on startup), <code>every</code> (interval-based), and cron expressions</li><li>The UI displays "1 scheduled skill" / "N scheduled skills" in the status area</li><li>Users can view scheduled skill details and dismiss the notification</li></ul>
+<div class="blabel">Evidence</div>
+<p>Scheduling engine (search for <code>"scheduled skill"</code>, <code>"Every hour"</code>, <code>"Weekdays at"</code>)</p>
+    </article>
+    <article class="card" id="reload-plugins-command">
+      <div class="card-top">
+        <h3><code>/reload-plugins</code> Command <a class="anchor" href="#reload-plugins-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new slash command that hot-reloads plugin changes in the current session without requiring a restart.</p>
+<div class="blabel">Usage</div>
+<pre><code>/reload-plugins</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Activates pending plugin installations, configuration changes, and enable/disable toggling</li><li>Throughout the plugin system, messages now say "Run /reload-plugins to activate" instead of the previous "Restart Claude Code to apply changes"</li><li>Clears all plugin caches and reloads hooks, MCP servers, skills, commands, and agents</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin hot-reload (search for <code>"/reload-plugins"</code>, <code>"Activate pending plugin changes"</code>)</p>
+    </article>
+    <article class="card" id="mouse-text-selection-and-copy">
+      <div class="card-top">
+        <h3>Mouse Text Selection and Copy <a class="anchor" href="#mouse-text-selection-and-copy">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Terminal UI now supports mouse-based text selection with click-and-drag, and copying selected text to the clipboard.</p>
+<div class="blabel">Details</div>
+<ul><li>Click and drag to select text regions in the terminal output</li><li>Selection is rendered with inverse colors to highlight the selected area</li><li>Provides <code>copySelection()</code>, <code>clearSelection()</code>, and <code>hasSelection()</code> APIs</li><li>Uses OSC 52 escape sequences to copy to the system clipboard</li></ul>
+<div class="blabel">Evidence</div>
+<p>Selection engine (search for <code>"copySelection"</code>, <code>"clearTextSelection"</code>, <code>"hasTextSelection"</code>)</p>
+    </article>
+    <article class="card" id="instructionsloaded-hook-event">
+      <div class="card-top">
+        <h3><code>InstructionsLoaded</code> Hook Event <a class="anchor" href="#instructionsloaded-hook-event">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new hook event type that fires whenever an instruction file (CLAUDE.md or a rule file) is loaded during a session.</p>
+<div class="blabel">Details</div>
+<ul><li>Hook receives context about which instruction file was loaded</li><li>Can be used for auditing, logging, or dynamically responding to instruction changes</li><li>Follows the same async/sync hook response patterns as other hook events</li></ul>
+<div class="blabel">Evidence</div>
+<p>Hook registration (search for <code>"InstructionsLoaded"</code>, <code>"When an instruction file (CLAUDE.md or rule) is loaded"</code>)</p>
+    </article>
+    <article class="card" id="built-in-plugins">
+      <div class="card-top">
+        <h3>Built-in Plugins <a class="anchor" href="#built-in-plugins">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Introduces the concept of built-in plugins that ship with Claude Code and cannot be uninstalled or updated by users.</p>
+<div class="blabel">Details</div>
+<ul><li>Built-in plugins are identified by the <code>@builtin</code> source suffix</li><li>They can be enabled or disabled via user settings but not removed</li><li>Attempting to update or uninstall shows: "Built-in plugins cannot be updated or uninstalled."</li><li>Built-in plugins can provide skills, hooks, and MCP servers just like regular plugins</li></ul>
+<div class="blabel">Evidence</div>
+<p>Built-in plugin system (search for <code>"Built-in plugin"</code>, <code>"@builtin"</code>, <code>"Built-in plugins cannot be updated or uninstalled"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-desktop-integration">
+      <div class="card-top">
+        <h3>Claude Code Desktop Integration <a class="anchor" href="#claude-code-desktop-integration">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New UI elements promote and integrate with Claude Code Desktop, a companion application with visual diffs, live app preview, and parallel sessions.</p>
+<div class="blabel">Details</div>
+<ul><li>"Try Claude Code Desktop" dialog appears as a suggestion</li><li>"Open in Claude Code Desktop" option available in menus</li><li>"Continue your session in Claude Code Desktop" enables session handoff</li><li>Described as: "Same Claude Code with visual diffs, live app preview, parallel sessions, and more."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Desktop integration (search for <code>"Claude Code Desktop"</code>, <code>"Open in Claude Code Desktop"</code>)</p>
+    </article>
+    <article class="card" id="git-subdirectory-plugin-source">
+      <div class="card-top">
+        <h3>Git Subdirectory Plugin Source <a class="anchor" href="#git-subdirectory-plugin-source">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new <code>git-subdir</code> plugin source type that allows installing plugins from a subdirectory within a larger git repository (monorepo).</p>
+<div class="blabel">Details</div>
+<ul><li>Uses git sparse-checkout with <code>--filter=tree:0</code> to minimize bandwidth</li><li>Requires git version 2.25 or later for cone mode support</li><li>Supports pinning to a specific branch or SHA</li><li>Falls back to unshallow fetch if shallow SHA fetch fails</li><li>Accepts GitHub <code>owner/repo</code> shorthand, HTTPS, or SSH URLs</li></ul>
+<div class="blabel">Evidence</div>
+<p>Monorepo plugin source (search for <code>"git-subdir"</code>, <code>"sparse-checkout"</code>, <code>"--filter=tree:0"</code>)</p>
+    </article>
+    <article class="card" id="asyncrewake-hook-option">
+      <div class="card-top">
+        <h3><code>asyncRewake</code> Hook Option <a class="anchor" href="#asyncrewake-hook-option">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new hook configuration option that allows hooks to run in the background and wake the model when they encounter a blocking error (exit code 2).</p>
+<div class="blabel">Details</div>
+<ul><li>When <code>asyncRewake: true</code>, the hook runs asynchronously like <code>async: true</code></li><li>If the hook exits with code 2, it signals a blocking error that wakes the model</li><li>The blocking error message from the hook command is surfaced to the user</li><li>New <code>"Stop hook blocking error"</code> notification type when this occurs</li></ul>
+<div class="blabel">Evidence</div>
+<p>Async rewake hooks (search for <code>"asyncRewake"</code>, <code>"If true, hook runs in background and wakes the model on exit code 2"</code>)</p>
+    </article>
+    <article class="card" id="commitworkflowinstructions-setting">
+      <div class="card-top">
+        <h3><code>commitWorkflowInstructions</code> Setting <a class="anchor" href="#commitworkflowinstructions-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new boolean setting that controls whether Claude's system prompt includes built-in commit and PR workflow instructions.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;commitWorkflowInstructions&quot;: false
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Default: <code>true</code> (instructions are included)</li><li>When disabled, Claude will not receive the built-in guidance for git commit messages and PR creation</li><li>Useful for teams that have their own commit/PR conventions via CLAUDE.md</li></ul>
+<div class="blabel">Evidence</div>
+<p>Setting definition (search for <code>"Include built-in commit and PR workflow instructions"</code>)</p>
+    </article>
+    <article class="card" id="showthinkingsummaries-setting">
+      <div class="card-top">
+        <h3><code>showThinkingSummaries</code> Setting <a class="anchor" href="#showthinkingsummaries-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new boolean setting that controls whether thinking summaries are displayed in the transcript view.</p>
+<div class="blabel">Details</div>
+<ul><li>Default: <code>false</code></li><li>When enabled, thinking process summaries appear in the transcript view (ctrl+o)</li><li>Also gated behind the <code>tengu_quiet_hollow</code> feature flag</li></ul>
+<div class="blabel">Evidence</div>
+<p>Setting definition (search for <code>"Show thinking summaries in the transcript view"</code>)</p>
+    </article>
+    <article class="card" id="bash-command-security-checks">
+      <div class="card-top">
+        <h3>Bash Command Security Checks <a class="anchor" href="#bash-command-security-checks">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New security checks detect and flag potentially obfuscated bash commands that could bypass permission checks.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects commands containing quoted newlines followed by <code>#</code>-prefixed lines, which can hide arguments from line-based permission scanning</li><li>Detects consecutive quote characters at word start (potential obfuscation)</li><li>Detects empty quote pairs adjacent to quoted dashes (flag obfuscation)</li><li>Sanitizes redirects to Windows <code>NUL</code> device by replacing with <code>/dev/null</code></li><li>Flagged commands trigger an "ask" behavior requiring explicit user approval</li></ul>
+<div class="blabel">Evidence</div>
+<p>Security checks (search for <code>"potential obfuscation"</code>, <code>"quoted newline"</code>, <code>"$1/dev/null"</code>)</p>
+    </article>
+    <article class="card" id="default-model-updated-to-opus-4-6">
+      <div class="card-top">
+        <h3>Default Model Updated to Opus 4.6 <a class="anchor" href="#default-model-updated-to-opus-4-6">#</a></h3>
+      </div>
+      <p>The model promotion banner now reads "Model updated to Opus 4.6" (previously "Opus 4.5"), reflecting the new default model.</p>
+<div class="blabel">Evidence</div>
+<p>Model banner (search for <code>"Opus 4.6"</code>)</p>
+    </article>
+    <article class="card" id="simplified-output-brevity-system">
+      <div class="card-top">
+        <h3>Simplified Output Brevity System <a class="anchor" href="#simplified-output-brevity-system">#</a></h3>
+      </div>
+      <p>The previous three-tier brevity system (<code>tengu_swann_brevity</code> with <code>strict</code>/<code>focused</code>/<code>polished</code> levels) has been replaced by a single <code>tengu_sotto_voce</code> feature flag that, when enabled, injects a streamlined output efficiency instruction. This simplifies server-side control of model verbosity.</p>
+<div class="blabel">Evidence</div>
+<p>Brevity flag (search for <code>"tengu_sotto_voce"</code>)</p>
+    </article>
+    <article class="card" id="parallel-plugin-loading">
+      <div class="card-top">
+        <h3>Parallel Plugin Loading <a class="anchor" href="#parallel-plugin-loading">#</a></h3>
+      </div>
+      <p>Plugin commands, skills, and agents are now loaded using <code>Promise.all</code> for concurrent processing, improving startup time when multiple plugins are installed. Previously, plugins were loaded sequentially in <code>for</code> loops.</p>
+<div class="blabel">Evidence</div>
+<p>Parallel loading (search for <code>"Promise.all"</code> in the plugin loading functions)</p>
+    </article>
+    <article class="card" id="parallel-async-hook-processing">
+      <div class="card-top">
+        <h3>Parallel Async Hook Processing <a class="anchor" href="#parallel-async-hook-processing">#</a></h3>
+      </div>
+      <p>The hook response system now uses <code>Promise.allSettled</code> to check all pending async hooks concurrently rather than sequentially. Failed hook callbacks are caught and logged individually without blocking other hooks.</p>
+<div class="blabel">Evidence</div>
+<p>Hook processing (search for <code>"checkForAsyncHookResponses callback rejected"</code>)</p>
+    </article>
+    <article class="card" id="improved-parallel-tool-call-error-handling">
+      <div class="card-top">
+        <h3>Improved Parallel Tool Call Error Handling <a class="anchor" href="#improved-parallel-tool-call-error-handling">#</a></h3>
+      </div>
+      <p>When a parallel tool call fails, sibling tool calls now receive a clearer cancellation message: "Cancelled: parallel tool call \&lt;name\&gt; errored" — replacing the previous generic "Sibling tool call errored" message. This helps identify which specific tool caused the failure.</p>
+<div class="blabel">Evidence</div>
+<p>Error message (search for <code>"Cancelled: parallel tool call"</code>)</p>
+    </article>
+    <article class="card" id="hook-context-fields-for-subagents">
+      <div class="card-top">
+        <h3>Hook Context Fields for Subagents <a class="anchor" href="#hook-context-fields-for-subagents">#</a></h3>
+      </div>
+      <p>Hook event payloads now include <code>agent_type</code> and <code>agent_id</code> fields, providing context about whether the hook fired from a subagent and which agent type triggered it. This allows hook scripts to behave differently based on agent context.</p>
+<div class="blabel">Evidence</div>
+<p>Hook schema (search for <code>"Agent type name"</code>, <code>"Subagent identifier"</code>)</p>
+    </article>
+    <article class="card" id="taskcompleted-and-teammateidle-hooks-can-block-continuation">
+      <div class="card-top">
+        <h3>TaskCompleted and TeammateIdle Hooks Can Block Continuation <a class="anchor" href="#taskcompleted-and-teammateidle-hooks-can-block-continuation">#</a></h3>
+      </div>
+      <p>The <code>TaskCompleted</code> and <code>TeammateIdle</code> hook events can now prevent the session from continuing when they return a blocking response, surfacing messages like "TaskCompleted hook prevented continuation".</p>
+<div class="blabel">Evidence</div>
+<p>Hook blocking (search for <code>"TaskCompleted hook prevented continuation"</code>, <code>"TeammateIdle hook prevented continuation"</code>)</p>
+    </article>
+    <article class="card" id="toolsearch-multi-select">
+      <div class="card-top">
+        <h3>ToolSearch Multi-Select <a class="anchor" href="#toolsearch-multi-select">#</a></h3>
+      </div>
+      <p>The ToolSearch tool now supports comma-separated tool names for loading multiple tools in a single call (e.g., <code>select:Read,Edit,Grep</code>), reducing the number of round-trips needed to load tools.</p>
+<div class="blabel">Evidence</div>
+<p>ToolSearch docs (search for <code>"select:Read,Edit,Grep"</code>)</p>
+    </article>
+    <article class="card" id="binary-content-handling-for-mcp">
+      <div class="card-top">
+        <h3>Binary Content Handling for MCP <a class="anchor" href="#binary-content-handling-for-mcp">#</a></h3>
+      </div>
+      <p>Binary content from MCP tool results is now saved to disk with proper MIME type detection and file extension mapping, rather than being displayed inline. Supports a comprehensive set of MIME types including Office documents, audio, video, and archives.</p>
+<div class="blabel">Evidence</div>
+<p>Binary content handling (search for <code>"Binary content ("</code>, <code>"application/vnd.openxmlformats"</code>)</p>
+    </article>
+    <article class="card" id="plugin-trust-message-policy-setting">
+      <div class="card-top">
+        <h3>Plugin Trust Message Policy Setting <a class="anchor" href="#plugin-trust-message-policy-setting">#</a></h3>
+      </div>
+      <p>Enterprise administrators can now configure a custom <code>pluginTrustMessage</code> in policy settings (managed-settings.json / MDM) that is appended to the plugin trust warning shown before installation.</p>
+<div class="blabel">Evidence</div>
+<p>Trust message (search for <code>"pluginTrustMessage"</code>, <code>"Custom message to append to the plugin trust warning"</code>)</p>
+    </article>
+    <article class="card" id="plugin-error-ui-redesigned">
+      <div class="card-top">
+        <h3>Plugin Error UI Redesigned <a class="anchor" href="#plugin-error-ui-redesigned">#</a></h3>
+      </div>
+      <p>The plugin error view has been completely rewritten with actionable guidance for each error type. Errors now show the source scope (user/project/local/managed), provide specific remediation actions (navigate to settings, remove marketplace, contact admin), and allow direct resolution from the error list.</p>
+<div class="blabel">Evidence</div>
+<p>Error UI (search for <code>"Managed by your organization — contact your admin"</code>, <code>"Restart to retry loading plugins"</code>)</p>
+    </article>
+    <article class="card" id="pathpattern-for-marketplace-source-matching">
+      <div class="card-top">
+        <h3><code>pathPattern</code> for Marketplace Source Matching <a class="anchor" href="#pathpattern-for-marketplace-source-matching">#</a></h3>
+      </div>
+      <p>A new <code>pathPattern</code> field in <code>strictKnownMarketplaces</code> settings allows regex-based matching against file and directory plugin sources, complementing the existing <code>hostPattern</code> for network sources.</p>
+<div class="blabel">Evidence</div>
+<p>Path matching (search for <code>"pathPattern"</code>, <code>"Regex pattern matched against the .path field"</code>)</p>
+    </article>
+    <article class="card" id="voice-mode-notification-banner">
+      <div class="card-top">
+        <h3>Voice Mode Notification Banner <a class="anchor" href="#voice-mode-notification-banner">#</a></h3>
+      </div>
+      <p>A new notification banner "Voice mode is now available · /voice to enable" appears when voice mode is detected as available, improving discoverability of the feature.</p>
+<div class="blabel">Evidence</div>
+<p>Voice notification (search for <code>"Voice mode is now available"</code>)</p>
+    </article>
+    <article class="card" id="improved-worktree-file-copying">
+      <div class="card-top">
+        <h3>Improved Worktree File Copying <a class="anchor" href="#improved-worktree-file-copying">#</a></h3>
+      </div>
+      <p>The <code>.worktreeinclude</code> file processing for worktree sessions now uses <code>ignore</code> pattern matching (similar to <code>.gitignore</code>) instead of simple file list comparison, supporting glob patterns and directory matching for more flexible file copying into worktrees.</p>
+<div class="blabel">Evidence</div>
+<p>Worktree include (search for <code>".worktreeinclude"</code>)</p>
+    </article>
+    <article class="card" id="fast-mode-network-error-handling">
+      <div class="card-top">
+        <h3>Fast Mode Network Error Handling <a class="anchor" href="#fast-mode-network-error-handling">#</a></h3>
+      </div>
+      <p>When fast mode status cannot be determined due to network connectivity issues, it now defaults to <code>disabled (network_error)</code> with the message "Fast mode unavailable due to network connectivity issues" instead of silently failing.</p>
+<div class="blabel">Evidence</div>
+<p>Fast mode fallback (search for <code>"Fast mode unavailable due to network connectivity issues"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed stale lock file handling: lock files can now be force-removed when they become stale, with logging of the cleanup (search for <code>"Force-removed lock file at"</code>)</li><li>LSP diagnostics state is now properly reset when clearing state, preventing stale diagnostic data from persisting (search for <code>"LSP Diagnostics: Resetting all state"</code>)</li><li>MCP config validation now produces clearer error messages: <code>"--mcp-config validation failed"</code> and <code>"MCP config is not valid JSON"</code> replace generic parse errors (search for <code>"--mcp-config validation failed"</code>)</li><li>Symlink-aware path resolution added for filesystem operations, properly following symlinks through intermediate path components (search for <code>"isSymbolicLink"</code> in function <code>Oiq</code>)</li></ul>
+    </article>
+    <article class="card" id="search-hints-in-tool-list-gradual-rollout">
+      <div class="card-top">
+        <h3>Search Hints in Tool List [Gradual Rollout] <a class="anchor" href="#search-hints-in-tool-list-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Tool names in the deferred tool list can display alongside a short description hint (e.g., "Read — read files, images, PDFs, notebooks"), making it easier to identify the right tool.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged behind <code>tengu_tst_hint_m7r</code> and overridable via <code>CLAUDE_CODE_SEARCH_HINTS_IN_LIST</code> env var.</p>
+<div class="blabel">Details</div>
+<ul><li>Every built-in tool now has a <code>searchHint</code> property with a short plain-English description</li><li>When enabled, the tool list displays <code>"ToolName — description"</code> format</li><li>Hints include descriptions like "execute shell commands", "search file contents with regex (ripgrep)", "delegate work to a subagent"</li><li>Environment variable takes precedence over feature flag (set to <code>1</code> to enable, <code>0</code> to disable)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Search hints (gated by <code>tengu_tst_hint_m7r</code>, search for <code>"searchHint"</code>, <code>"CLAUDE_CODE_SEARCH_HINTS_IN_LIST"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

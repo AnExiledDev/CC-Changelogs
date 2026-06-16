@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.105 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.105."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.105</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.105</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.104 → v0.2.105</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">14 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.105 Changelog</p>
+    </article>
+    <article class="card" id="enhanced-model-selection">
+      <div class="card-top">
+        <h3>Enhanced Model Selection <a class="anchor" href="#enhanced-model-selection">#</a></h3>
+      </div>
+      <ul><li><strong>Simplified model selection UI</strong>: The model selector now presents "Sonnet (recommended)" as the default option with clearer pricing information ($3/$15 per Mtok)</li><li><strong>New model display format</strong>: Model names now show both the user-friendly name and the actual model ID (e.g., "sonnet (claude-3-7-sonnet)")</li></ul>
+    </article>
+    <article class="card" id="file-path-handling-improvements">
+      <div class="card-top">
+        <h3>File Path Handling Improvements <a class="anchor" href="#file-path-handling-improvements">#</a></h3>
+      </div>
+      <ul><li><strong>New path display functions</strong>: Added <code>x21()</code> for converting absolute paths to relative or home-relative paths (~/...) for cleaner display</li><li><strong>Enhanced path resolution</strong>: New <code>xO0()</code> function properly resolves relative paths (./), home paths (~/), and absolute paths</li></ul>
+    </article>
+    <article class="card" id="mention-file-references">
+      <div class="card-top">
+        <h3>@-mention File References <a class="anchor" href="#mention-file-references">#</a></h3>
+      </div>
+      <ul><li><strong>Markdown @-mention parsing</strong>: The CLI now detects and resolves file paths mentioned with @ syntax in markdown content</li><li><strong>Line number support</strong>: File references can include line numbers using GitHub-style syntax: <code>@filename.js#L10-20</code></li><li><strong>Smart path detection</strong>: Automatically identifies valid file paths in @-mentions while filtering out email addresses and other non-path content</li></ul>
+<div class="blabel">Example usage</div>
+<pre><code># In your message to Claude:
+&quot;Please review the code @./src/main.js#L45-60 and compare it with @~/projects/other/utils.js&quot;</code></pre>
+    </article>
+    <article class="card" id="ide-integration-enhancements">
+      <div class="card-top">
+        <h3>IDE Integration Enhancements <a class="anchor" href="#ide-integration-enhancements">#</a></h3>
+      </div>
+      <ul><li><strong>Installation status tracking</strong>: The CLI now properly tracks and displays IDE extension installation status with detailed error messages</li><li><strong>Visual installation feedback</strong>: Shows success/error states for IDE extension installation attempts</li><li><strong>Persistent error display</strong>: Installation errors remain visible for 5 seconds with helpful troubleshooting advice</li></ul>
+    </article>
+    <article class="card" id="mcp-server-notification-support">
+      <div class="card-top">
+        <h3>MCP Server Notification Support <a class="anchor" href="#mcp-server-notification-support">#</a></h3>
+      </div>
+      <ul><li><strong>New <code>at_mentioned</code> notification handler</strong>: IDE extensions can now notify Claude when files are mentioned, with automatic line number conversion</li><li><strong>Real-time file selection</strong>: IDE can push file references directly to Claude's context</li></ul>
+    </article>
+    <article class="card" id="memory-management-visualization">
+      <div class="card-top">
+        <h3>Memory Management Visualization <a class="anchor" href="#memory-management-visualization">#</a></h3>
+      </div>
+      <ul><li><strong>Hierarchical memory display</strong>: Memory panel now shows file relationships with indentation for better understanding of included files</li><li><strong>Parent-child file relationships</strong>: Visual tree structure showing which files reference other files</li></ul>
+    </article>
+    <article class="card" id="cost-tracking-enhancements">
+      <div class="card-top">
+        <h3>Cost Tracking Enhancements <a class="anchor" href="#cost-tracking-enhancements">#</a></h3>
+      </div>
+      <ul><li><strong>Dual cost calculation</strong>: Now tracks both "sticker price" and "final price" (with discounts applied)</li><li><strong>More accurate token pricing</strong>: Refactored cost calculation to use a unified <code>SB6()</code> function with usage object</li></ul>
+    </article>
+    <article class="card" id="ui-ux-improvements">
+      <div class="card-top">
+        <h3>UI/UX Improvements <a class="anchor" href="#ui-ux-improvements">#</a></h3>
+      </div>
+      <ul><li><strong>Theme reactivity</strong>: New <code>C$6()</code> hook ensures UI components update immediately when theme changes</li><li><strong>Better error messaging</strong>: IDE extension errors now provide specific troubleshooting steps</li><li><strong>Status panel enhancements</strong>: The <code>/status</code> command now includes IDE installation information</li></ul>
+    </article>
+    <article class="card" id="api-enhancements">
+      <div class="card-top">
+        <h3>API Enhancements <a class="anchor" href="#api-enhancements">#</a></h3>
+      </div>
+      <ul><li><strong>Beta parameter support</strong>: All API classes (Models, Completions) now properly handle <code>betas</code> parameter for accessing beta features</li><li><strong>Improved parameter handling</strong>: Cleaner separation of beta headers from request body parameters</li></ul>
+    </article>
+    <article class="card" id="github-action-template">
+      <div class="card-top">
+        <h3>GitHub Action Template <a class="anchor" href="#github-action-template">#</a></h3>
+      </div>
+      <ul><li><strong>Expanded event triggers</strong>: GitHub action now responds to <code>edited</code> events on comments and reviews, not just <code>created</code> events</li><li><strong>Pull request review support</strong>: Added support for triggering on pull request review submissions</li><li><strong>Updated action version</strong>: Changed from <code>anthropics/claude-action@v1</code> to <code>anthropics/claude-action@beta</code></li></ul>
+    </article>
+    <article class="card" id="error-handling">
+      <div class="card-top">
+        <h3>Error Handling <a class="anchor" href="#error-handling">#</a></h3>
+      </div>
+      <ul><li><strong>Better installation error recovery</strong>: IDE extension installation errors are now caught and displayed gracefully</li><li><strong>Improved notification error handling</strong>: @-mention notifications include try-catch error handling</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li><strong>New imports</strong>: Added modular imports for <code>cwd</code>, <code>EOL</code>, <code>platform</code>, and <code>homedir</code> from Node.js</li><li><strong>Stream handling</strong>: Switched from direct <code>Stream</code> import to <code>PassThrough</code> for better stream manipulation</li><li><strong>React hooks</strong>: Added proper React imports for new UI components</li></ul>
+    </article>
+    <article class="card" id="performance">
+      <div class="card-top">
+        <h3>Performance <a class="anchor" href="#performance">#</a></h3>
+      </div>
+      <ul><li><strong>Lazy initialization</strong>: IDE installation check now uses lazy loading pattern</li><li><strong>Reduced unnecessary checks</strong>: IDE status only updates when actually changed</li></ul>
+    </article>
+    <article class="card" id="internal-updates">
+      <div class="card-top">
+        <h3>Internal Updates <a class="anchor" href="#internal-updates">#</a></h3>
+      </div>
+      <ul><li><strong>Version bump</strong>: Updated from 0.40.1 to 0.41.0</li><li><strong>Renamed internal functions</strong>: Various function renames for better code organization</li><li><strong>New configuration constant</strong>: Added <code>Y98 = 5</code> for configuration purposes</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

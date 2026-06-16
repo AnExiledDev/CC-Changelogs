@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.126 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.126."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.126</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.126</span></h1>
+<p class="sub">This is a small release that removes the model-specific malware-analysis system reminder previously injected into file reads, persists <code>/effort</code> selections to user settings so the choice survives across sessions, and extracts the streaming idle-timeout calculation into a small helper. Most of the diff is version-string churn (2.1.124 → 2.1.126); the user-visible changes are limited to those three areas.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.124 → v2.1.126</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="effort-selections-are-now-persisted-to-user-settings">
+      <div class="card-top">
+        <h3><code>/effort</code> selections are now persisted to user settings <a class="anchor" href="#effort-selections-are-now-persisted-to-user-settings">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Choosing an effort level with the <code>/effort</code> slash command now writes the value to your user settings file, so it persists across sessions and across Claude Code restarts. Previously, an <code>/effort</code> change only mutated in-memory session state — when you started a fresh session the selection reverted.</p>
+<div class="blabel">Usage</div>
+<pre><code>/effort high     # persisted to userSettings.effortLevel = &quot;high&quot;
+/effort medium   # persisted
+/effort auto     # clears the persisted effortLevel (writes undefined)</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The command now invokes the settings writer (<code>I6("userSettings", { effortLevel: $ })</code>) in addition to the existing in-session update.</li><li>If the write fails (read-only filesystem, permissions, etc.), the command returns a new error message: <code>Failed to set effort level: &lt;reason&gt;</code>.</li><li>The session-scoped guard for non-allowed values is unchanged: only <code>low</code>, <code>medium</code>, <code>high</code>, and <code>xhigh</code> propagate to remote sessions; other values still produce the existing "session-scoped and won't reach the remote process" warning.</li><li><code>/effort auto</code> likewise clears the persisted <code>effortLevel</code> (writes <code>undefined</code>), so resetting works symmetrically.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>/effort</code> command handler now persists to settings (search for the new error string <code>"Failed to set effort level: "</code> and the call <code>I6("userSettings", { effortLevel"</code>). The prior version's handler had no <code>I6("userSettings", ...)</code> call at all.</p>
+    </article>
+    <article class="card" id="read-tool-no-longer-injects-a-model-specific-malware-analysi">
+      <div class="card-top">
+        <h3>Read-tool no longer injects a model-specific malware-analysis system reminder <a class="anchor" href="#read-tool-no-longer-injects-a-model-specific-malware-analysi">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When the Read tool returned the contents of a file, prior versions appended a <code>&lt;system-reminder&gt;</code> instructing the assistant to treat any file content as potentially malware and to refuse to "improve or augment" the code while still allowing analysis. That reminder has been removed entirely, along with the per-file model tracking that decided when to inject it.</p>
+<p>User impact:</p>
+<ul><li>File reads now produce cleaner output without an extra trailing system reminder block.</li><li>Models that previously received the reminder (Claude 3 Opus/Sonnet/Haiku, 3.5 Sonnet/Haiku, 3.7 Sonnet, Sonnet 4.0/4.5, Opus 4.0/4.1/4.5, Haiku 4.5) will no longer be auto-instructed to refuse to "improve or augment" code in the file. In practice this means Claude Code can edit code in files it has read without that hardcoded refusal cue in its context.</li><li>The model-tracking <code>WeakMap</code> that recorded which model read which file (<code>qB7</code>) is gone, as is the hardcoded model allowlist (<code>oB_</code>) used to gate the reminder.</li></ul>
+<p>For users who relied on Claude pushing back on suspicious-looking code in read files, you may notice it doing so less aggressively; behavior now derives only from the model's own training and your project instructions, not from a hardcoded reminder.</p>
+<div class="evidence-label">Evidence</div>
+<ul><li>The system-reminder string <code>"Whenever you read a file, you should consider whether it would be considered malware..."</code> was removed (search for it in v2.1.124 — present; v2.1.126 — absent).</li><li>The model allowlist <code>Set(["claude-3-opus", "claude-3-sonnet", ..., "claude-haiku-4-5"])</code> was removed.</li><li>File-read formatter simplified from <code>q = sB_(H) + iB_(H.file) + (aB_(K) ? rB_ : "")</code> (with conditional reminder) to <code>q = rB_(H) + iB_(H.file)</code> (no reminder).</li><li>The line <code>qB7.set(Z, M.options.mainLoopModel)</code> that recorded the reading model per text block was removed.</li></ul>
+    </article>
+    <article class="card" id="streaming-idle-timeout-calculation-extracted-into-a-helper">
+      <div class="card-top">
+        <h3>Streaming idle-timeout calculation extracted into a helper <a class="anchor" href="#streaming-idle-timeout-calculation-extracted-into-a-helper">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The logic that decides how long the SSE/streaming HTTP layer waits before declaring an idle stream dead has been pulled into its own function. Behavior is effectively unchanged — both before and after, the timeout is the maximum of the user's <code>CLAUDE_STREAM_IDLE_TIMEOUT_MS</code> env var and a 300000 ms (5 minute) floor.</p>
+<div class="blabel">Details</div>
+<ul><li>Previous inline expression: <code>Math.max(parseInt(process.env.CLAUDE_STREAM_IDLE_TIMEOUT_MS || "", 10) || 90000, 300000)</code>.</li><li>New helper: <code>Math.max(Number(process.env.CLAUDE_STREAM_IDLE_TIMEOUT_MS) || 0, 300000)</code>.</li><li>The 90000 fallback in the old version was always dominated by the 300000 floor, so the 5-minute minimum is preserved.</li><li>The env var continues to behave the same: setting <code>CLAUDE_STREAM_IDLE_TIMEOUT_MS</code> above 300000 raises the timeout; values at or below 300000 are clamped to the 5-minute floor.</li></ul>
+<p>This is mostly an internal cleanup, but documented here because <code>CLAUDE_STREAM_IDLE_TIMEOUT_MS</code> is a user-configurable env var — its semantics are unchanged in this release.</p>
+<div class="blabel">Evidence</div>
+<p>New function returning the timeout (search for <code>"CLAUDE_STREAM_IDLE_TIMEOUT_MS"</code>); call site previously had the inline <code>Math.max(...)</code> expression and now invokes the helper.</p>
+    </article>
+    <article class="card" id="re-running-an-initialization-step-on-a-code-path">
+      <div class="card-top">
+        <h3>Re-running an initialization step on a code path <a class="anchor" href="#re-running-an-initialization-step-on-a-code-path">#</a></h3>
+      </div>
+      <p>A second invocation of an internal initialization function was added to a top-level setup block (effectively <code>OF(); OF();</code> instead of a single call). This pattern usually indicates a "the second call ensures X is reset/applied after some intervening side effect" fix. There is no user-facing string change associated with it, but it is included here for completeness because it is one of only a handful of non-version-bump structural diffs in this release.</p>
+<div class="blabel">Evidence</div>
+<p>structural diff in the <code>Wh6</code> initializer adds a duplicate <code>OF()</code> call after the existing <code>OF()</code> call.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The release notes / onboarding-version comparators were rewritten as new functions (<code>OK5</code>, <code>N55</code>, <code>MI5</code>) replacing the old (<code>wK5</code>, <code>h55</code>, <code>jI5</code>). This is a pure version-string churn artifact: each function compares the user's last-seen version to the constant <code>2.1.126</code> instead of <code>2.1.124</code>. No behavior change.</li><li>This release does <strong>not</strong> bump any models, change any commands or flags, add any settings, or alter permission rules. If you only care about user-facing surface area, the two notable changes are persistent <code>/effort</code> and the removal of the Read-tool malware reminder.</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

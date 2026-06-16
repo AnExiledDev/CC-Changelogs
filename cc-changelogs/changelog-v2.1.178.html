@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.178 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.178."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.178</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.178</span></h1>
+<p class="sub">This release replaces the explicit TeamCreate/TeamDelete tools with a simpler named-agent model, introduces a standalone <code>/design-login</code> command for design-system access independent of the main session token, and adds <code>isolation: "remote"</code> support to the Agent tool for cloud-hosted subagents. Fable 5 usage credits receive a significant UX overhaul, and the code-review skill gains a new CLAUDE.md conventions angle.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.177 → v2.1.178</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">18</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">5</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="design-login-standalone-design-system-authorization">
+      <div class="card-top">
+        <h3>/design-login — Standalone Design-System Authorization <a class="anchor" href="#design-login-standalone-design-system-authorization">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new slash command that authorizes design-system (claude.ai/design) access independently of the main session login. This is especially useful when Claude Code authenticates via an API key or provider token rather than a claude.ai subscription.</p>
+<div class="blabel">Usage</div>
+<pre><code>/design-login</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Opens a browser OAuth consent page specific to design-system scopes (<code>user:design:read</code>, <code>user:design:write</code>)</li><li>On SSH or remote sessions (where a browser can't reach the local listener), the flow falls back to a manual code-paste method</li><li>The credential is stored as a separate <code>designOauth</code> entry in settings, entirely separate from the main session token — signing out of claude.ai does not invalidate the design credential</li><li>The credential auto-refreshes; if a refresh fails the command re-prompts</li><li>Requires <code>CLAUDE_CODE_DESIGN_OAUTH_CLIENT_ID</code> to be set (or a build that includes the registered client id)</li><li>A 5-minute browser-authorization timeout applies; after that, the manual <code>/design-login</code> flow is suggested</li></ul>
+<div class="blabel">Evidence</div>
+<p>Design OAuth lock and flow (search for <code>"Design login"</code>, <code>".design_oauth_refresh.lock"</code>, <code>"design login — approving opens a browser OAuth consent"</code>)</p>
+    </article>
+    <article class="card" id="agent-tool-isolation-remote-cloud-hosted-subagents">
+      <div class="card-top">
+        <h3>Agent Tool: <code>isolation: "remote"</code> — Cloud-Hosted Subagents <a class="anchor" href="#agent-tool-isolation-remote-cloud-hosted-subagents">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The Agent tool's <code>isolation</code> parameter now accepts <code>"remote"</code> in addition to <code>"worktree"</code>. This launches the agent in a remote cloud (CCR) environment, always as a background task.</p>
+<div class="blabel">Usage</div>
+<pre><code>// In a skill or agent prompt instructing Agent tool use:
+isolation: &quot;remote&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Always runs in the background; you are notified when it completes</li><li>Remote agents run against the repository's default branch if the current local branch is not pushed to origin</li><li>Not available in all contexts: if CCR is unavailable, the tool reports <code>[remote agent] isolation:'remote' is unavailable</code></li><li>A local agent context or no git root causes automatic fallback to other isolation modes</li></ul>
+<div class="blabel">Evidence</div>
+<p>Remote agent branch check (search for <code>"[remote agent] local branch '"</code>, <code>"isolation:'remote' is unavailable"</code>, <code>"CLAUDE_CODE_REMOTE_SESSION_ID"</code>)</p>
+    </article>
+    <article class="card" id="thinking-command-thinking-display-parameter">
+      <div class="card-top">
+        <h3><code>/thinking</code> Command: <code>thinking_display</code> Parameter <a class="anchor" href="#thinking-command-thinking-display-parameter">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>/thinking</code> command (which sets maximum thinking tokens) now accepts an optional <code>thinking_display</code> argument to set the thinking display mode for the rest of the session.</p>
+<div class="blabel">Usage</div>
+<pre><code>/thinking 10000 summarized
+/thinking 10000 omitted
+/thinking 10000          (keeps the session-start --thinking-display value)
+/thinking 0              (disables extended thinking)</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>summarized</code> — shows collapsed thinking summaries</li><li><code>omitted</code> — hides thinking blocks entirely</li><li>Passing <code>null</code> clears back to the API default</li><li>When omitted the display mode from session start (<code>--thinking-display</code>) is preserved</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema update for <code>set_max_thinking_tokens</code> (search for <code>"thinking_display optionally sets the thinking display mode"</code>, <code>"thinking_display"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">15 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="named-teammate-agent-swarms-teamcreate-teamdelete-removed">
+      <div class="card-top">
+        <h3>Named-Teammate Agent Swarms (TeamCreate/TeamDelete Removed) <a class="anchor" href="#named-teammate-agent-swarms-teamcreate-teamdelete-removed">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The explicit <code>TeamCreate</code> and <code>TeamDelete</code> tools have been removed. Multi-agent coordination is now done entirely through the <code>Agent</code> tool's <code>name</code> parameter — no separate team-creation step is needed.</p>
+<p>Before (v2.1.177):</p>
+<pre><code>// 1. Call TeamCreate to set up the team
+// 2. Call Agent with team_name + name to spawn a teammate
+// 3. Call TeamDelete when done</code></pre>
+<p>After (v2.1.178):</p>
+<pre><code>// Just call Agent with a name parameter
+Agent({ name: &quot;researcher&quot;, prompt: &quot;...&quot; })</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Agent swarms remain gated by the same feature flag as before</li><li>The <code>team_name</code> field in <code>TeammateIdle</code> hook events is now deprecated (marked <code>@deprecated</code>) — sessions have a single implicit team; the field will be removed in a future release</li><li>System prompt guidance now reads: "If this plan can be broken down into multiple independent tasks, consider spawning named teammates with the Agent tool (pass a <code>name</code>) to parallelize the work."</li><li>"main" is now a reserved recipient name for SendMessage — it routes a message directly to the main conversation</li></ul>
+<div class="blabel">Evidence</div>
+<p>Removal of TeamCreate/TeamDelete tools (search for <code>"TeamCreate"</code> absent from new file; guidance string search for <code>"spawning named teammates with the"</code>; reserved name message search for <code>"SendMessage routes it to the main conversation"</code>)</p>
+    </article>
+    <article class="card" id="code-review-claude-md-conventions-angle-added">
+      <div class="card-top">
+        <h3>Code Review: CLAUDE.md Conventions Angle Added <a class="anchor" href="#code-review-claude-md-conventions-angle-added">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The code review skill (<code>/code-review</code>) now runs a dedicated "conventions" finder angle that checks changed code against the CLAUDE.md files governing those files.</p>
+<div class="blabel">Details</div>
+<ul><li>Looks at user-level <code>~/.claude/CLAUDE.md</code>, repo-root <code>CLAUDE.md</code>, and any ancestor-directory <code>CLAUDE.md</code> or <code>CLAUDE.local.md</code> relevant to changed files</li><li>Only flags a violation when the exact rule can be quoted and the exact violating line identified — no vague style inferences</li><li>Total finder angles increase: high effort goes from 7 to 8 independent angles; max effort goes from 9 to 10</li><li>Cleanup/altitude/conventions candidates share the same finding shape; correctness bugs always rank higher when output cap forces a cut</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated phase header strings (search for <code>"3 correctness angles + 3 cleanup angles + 1 altitude angle + 1 conventions angle"</code>, <code>"Pin the diff command, changed files, applicable CLAUDE.md files, and conventions"</code>)</p>
+    </article>
+    <article class="card" id="fable-5-usage-credits-ux-overhaul">
+      <div class="card-top">
+        <h3>Fable 5 Usage Credits UX Overhaul <a class="anchor" href="#fable-5-usage-credits-ux-overhaul">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The model selector and status messages around Fable 5's usage credits are significantly improved with clearer state communication.</p>
+<div class="blabel">Details</div>
+<ul><li>The model entry now dynamically shows either "Draws from usage credits" or "Included with your plan until [date]" depending on account state</li><li>New <code>fableOverageConsent</code> consent flow: users are asked to explicitly enable usage credits before Fable 5 draws from them</li><li>Consent is stored per organization UUID or account UUID in local settings</li><li>Improved error messages distinguish between: credits not yet enabled, monthly limit reached (admin-adjustable vs. self-adjustable), credits unavailable for the account, and organization policy disabling credits</li><li>A configurable bridge dialog timeout: <code>CLAUDE_CODE_FABLE_BRIDGE_DIALOG_TIMEOUT_MS</code> (default 60,000 ms)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Fable model description function (search for <code>"Draws from usage credits"</code>, <code>"Included with your plan until"</code>, <code>"fableOverageConsent"</code>, <code>"CLAUDE_CODE_FABLE_BRIDGE_DIALOG_TIMEOUT_MS"</code>)</p>
+    </article>
+    <article class="card" id="designsync-works-without-a-claude-ai-session-login">
+      <div class="card-top">
+        <h3>DesignSync: Works Without a claude.ai Session Login <a class="anchor" href="#designsync-works-without-a-claude-ai-session-login">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>DesignSync (and the DesignSync tool) now works even when the session authenticates with an API key or provider token, as long as a design credential has been stored via <code>/design-login</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously, design access required expanding the main OAuth token with design scopes — impossible with API keys</li><li>Now there is a separate credential slot (<code>designOauth</code>) checked independently of the main session token</li><li>Error messages are updated to reflect this: the new message for needing authorization is "Run /design-login to authorize it with your claude.ai account — this works even when this session authenticates with an API key or a provider token."</li><li>The DesignSync tool description is updated to note the <code>(or, for sessions without one, a dedicated design authorization from /design-login)</code> path</li></ul>
+<div class="blabel">Evidence</div>
+<p>DesignSync error message (search for <code>"DesignSync needs design-system authorization. Run /design-login"</code>, <code>"designOauth"</code>)</p>
+    </article>
+    <article class="card" id="foundry-deployment-capability-detection">
+      <div class="card-top">
+        <h3>Foundry Deployment Capability Detection <a class="anchor" href="#foundry-deployment-capability-detection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When running against an Azure AI Foundry deployment, Claude Code now detects unsupported capabilities at runtime and degrades gracefully instead of failing.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects when Foundry returns a 400 error indicating features are unavailable (tool search, structured outputs, web search)</li><li>Capabilities detected from Foundry error messages: <code>tool_search_server</code>, <code>tool_search</code>, <code>structured_outputs</code>, <code>web_search</code></li><li>On subsequent requests, the unsupported capabilities are stripped from the request (e.g. <code>defer_loading</code> and <code>strict</code> fields removed from tool definitions)</li><li>Web search unavailability is reported as: "Web search is not available on this Foundry deployment."</li><li>Tool search unavailability shows: "Tool search disabled: Foundry deployment for '…'"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Foundry capability detection (search for <code>"[foundry-capabilities] deployment"</code>, <code>"retry:foundry-capability-strip:"</code>, <code>"fail:foundry-purpose-request"</code>, <code>"not supported in your workspace"</code>)</p>
+    </article>
+    <article class="card" id="artifact-tool-html-skeleton-wrapping-at-publish-time">
+      <div class="card-top">
+        <h3>Artifact Tool: HTML Skeleton Wrapping at Publish Time <a class="anchor" href="#artifact-tool-html-skeleton-wrapping-at-publish-time">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The Artifact tool now wraps content in a <code>&lt;!doctype html&gt;…&lt;head&gt;…&lt;/head&gt;&lt;body&gt;</code> skeleton automatically at publish time, so content files should be written without those outer tags.</p>
+<div class="blabel">Details</div>
+<ul><li>Write the page content directly (body content, CSS, scripts) — no <code>&lt;!DOCTYPE&gt;</code>, <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, or <code>&lt;body&gt;</code> tags of your own</li><li>Unless the user specifies a location, the recommended place for artifact files is the scratchpad directory listed in the system prompt</li><li>All other existing rules (self-contained, no external resources, responsive, favicon) are unchanged</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated Artifact tool description (search for <code>"wrapped in a"</code>, <code>"&lt;!doctype html&gt;"</code>, <code>"write the page content directly"</code>)</p>
+    </article>
+    <article class="card" id="skill-directory-scoping">
+      <div class="card-top">
+        <h3>Skill Directory Scoping <a class="anchor" href="#skill-directory-scoping">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Skills can now be scoped to a specific directory subtree. When a scoped and unscoped variant of the same skill exist, the Skill tool picks the most-specific matching directory.</p>
+<div class="blabel">Details</div>
+<ul><li>Skill names with a directory scope appear as <code>apps/web:deploy</code> (directory prefix + colon + skill name)</li><li>The Skill tool prompt now instructs the model: "When a skill name has both a scoped and an unscoped variant, pick by the files you are working on: if the files are under a variant's directory, invoke that variant (most specific directory wins)"</li><li>Marketplace plugin entries can declare specific skill subdirectory paths relative to the plugin root</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill tool prompt update (search for <code>"Some skills are scoped to a directory"</code>, <code>"most specific directory wins"</code>); plugin schema (search for <code>"Path to a skill directory, relative to the plugin root"</code>)</p>
+    </article>
+    <article class="card" id="scratchpad-directory-always-enabled">
+      <div class="card-top">
+        <h3>Scratchpad Directory Always Enabled <a class="anchor" href="#scratchpad-directory-always-enabled">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The Scratchpad Directory section is now always included in the system prompt when a scratchpad is available. It was previously gated by the <code>tengu_scratch</code> feature flag.</p>
+<div class="blabel">Details</div>
+<ul><li>Workers can read and write to the scratchpad without permission prompts</li><li>The section is only added when a scratchpad directory is actually configured and not already present in the system prompt</li><li>The <code># Scratchpad Directory</code> marker is used to detect duplicate inclusion</li></ul>
+<div class="blabel">Evidence</div>
+<p>Removal of <code>tengu_scratch</code> flag check (search for <code>"# Scratchpad Directory"</code>, <code>"Twf"</code>); old code checked <code>pz5()</code> which called <code>Y$("tengu_scratch", !1)</code>)</p>
+    </article>
+    <article class="card" id="remote-control-diagnostics-improvements">
+      <div class="card-top">
+        <h3>Remote Control Diagnostics Improvements <a class="anchor" href="#remote-control-diagnostics-improvements">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The Remote Control eligibility check (shown in <code>claude doctor</code> and related diagnostics) now shows more granular, correctly-labeled status for each check.</p>
+<div class="blabel">Details</div>
+<ul><li>Each check now shows a positive or negative label depending on its state, e.g. "Connected to the Anthropic API (api.anthropic.com)" vs. "Not connected to the Anthropic API (api.anthropic.com)"</li><li>A new explicit org policy check: "Org policy allows Remote Control (allow_remote_control)" / "Org policy does not allow Remote Control" / "Org policy could not be verified"</li><li>The rollout gate check now distinguishes between "rollout not enabled for this account" and "could not be verified for this account" (no server response)</li><li>Remote Control is now blocked with a clearer message when the organization's compliance policy disallows it</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated diagnostics function (search for <code>"Connected to the Anthropic API (api.anthropic.com)"</code>, <code>"Org policy allows Remote Control (allow_remote_control)"</code>, <code>"Remote Control rollout enabled for this account"</code>)</p>
+    </article>
+    <article class="card" id="agent-proxy-replaces-egress-gateway">
+      <div class="card-top">
+        <h3>agent-proxy Replaces egress-gateway <a class="anchor" href="#agent-proxy-replaces-egress-gateway">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Internal proxy component renamed from "egress-gateway" to "agent-proxy". All log messages now use the <code>[agent-proxy]</code> prefix.</p>
+<div class="blabel">Details</div>
+<ul><li>All <code>[egress-gateway]</code> log strings are replaced with <code>[agent-proxy]</code></li><li>No behavior change; this is a rename that aligns with the component's role in agent communication</li></ul>
+<div class="blabel">Evidence</div>
+<p>Log string comparison (search for <code>"[agent-proxy] enabled on 127.0.0.1:"</code>, <code>"[agent-proxy] tunnel protocol v2 negotiated"</code>)</p>
+    </article>
+    <article class="card" id="tool-call-empty-input-repair">
+      <div class="card-top">
+        <h3>Tool Call Empty-Input Repair <a class="anchor" href="#tool-call-empty-input-repair">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a tool is called with an empty input object <code>{}</code> but the tool has required parameters, a helpful error message is now generated that shows the minimal valid call shape.</p>
+<div class="blabel">Details</div>
+<ul><li>Controlled by the <code>teasel_cove</code> field in the <code>juniper_shoal</code> server config (feature flag)</li><li>The error message format: "The [tool] tool was called with an empty input object ({}), but it has required parameters: <code>param1</code>, <code>param2</code>. Minimal valid call shape: {…}. Re-issue the call with real values for each required parameter."</li><li>Works for Zod-validated tool schemas (ZodObject inputs)</li></ul>
+<div class="blabel">Evidence</div>
+<p>New function generating the repair message (search for <code>"tool was called with an empty input object ({})"</code>; <code>"teasel_cove"</code> in juniper_shoal config)</p>
+    </article>
+    <article class="card" id="hyperlink-scheme-allowlist">
+      <div class="card-top">
+        <h3>Hyperlink Scheme Allowlist <a class="anchor" href="#hyperlink-scheme-allowlist">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Clickable hyperlinks in the UI are now filtered through a scheme allowlist. Links with non-allowlisted schemes are silently rejected rather than dispatched.</p>
+<div class="blabel">Details</div>
+<ul><li>Allowed schemes: <code>https:</code>, <code>http:</code>, <code>vscode:</code>, <code>vscode-insiders:</code>, <code>cursor:</code>, <code>windsurf:</code>, <code>zed:</code>, <code>jetbrains:</code>, <code>idea:</code>, <code>slack:</code>, <code>linear:</code>, <code>notion:</code>, <code>figma:</code></li><li>Non-allowlisted schemes produce a warning log: "[hyperlink] refusing to dispatch clicked link with non-allowlisted scheme"</li><li><code>file:</code> URLs are allowed but resolve to local filesystem paths only</li></ul>
+<div class="blabel">Evidence</div>
+<p>Allowlist constant (search for <code>"[hyperlink] refusing to dispatch clicked link with non-allowlisted scheme"</code>, <code>"windsurf:"</code>, <code>"figma:"</code>)</p>
+    </article>
+    <article class="card" id="notebookedit-permission-rules-now-filter-by-path">
+      <div class="card-top">
+        <h3>NotebookEdit Permission Rules Now Filter by Path <a class="anchor" href="#notebookedit-permission-rules-now-filter-by-path">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>NotebookEdit</code> tool now supports <code>ruleContentField: "notebook_path"</code>, meaning permission rules can match against the notebook path specifically.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously, permission rules for <code>NotebookEdit</code> did not have a path-based content field</li><li>Now, rules like <code>NotebookEdit(path/to/notebook.ipynb)</code> will correctly match the notebook path</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema change for NotebookEdit tool definition (search for <code>"notebook_path"</code> in context of <code>ruleContentField</code>)</p>
+    </article>
+    <article class="card" id="periodic-memory-store-resync">
+      <div class="card-top">
+        <h3>Periodic Memory Store Resync <a class="anchor" href="#periodic-memory-store-resync">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Memory stores are now periodically resynced in the background instead of relying solely on event-driven pushes.</p>
+<div class="blabel">Details</div>
+<ul><li>Controlled by the <code>tengu_memory_store_resync_interval_minutes</code> feature flag (minimum interval enforced)</li><li>Can be disabled entirely with <code>CLAUDE_CODE_DISABLE_MEMORY_PERIODIC_RESYNC=true</code></li><li>A timer re-arms after each sync to schedule the next one; the mechanism uses <code>unref()</code> so it doesn't block process exit</li></ul>
+<div class="blabel">Evidence</div>
+<p>New periodic resync logic (search for <code>"memory-watcher: stale-store check failed:"</code>, <code>"CLAUDE_CODE_DISABLE_MEMORY_PERIODIC_RESYNC"</code>, <code>"tengu_memory_store_resync_interval_minutes"</code>)</p>
+    </article>
+    <article class="card" id="todo-reminder-mode-control">
+      <div class="card-top">
+        <h3>TODO Reminder Mode Control <a class="anchor" href="#todo-reminder-mode-control">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The TODO reminder behavior can now be controlled via a new environment variable or feature flag.</p>
+<div class="blabel">Usage</div>
+<pre><code>CLAUDE_CODE_TODO_REMINDER_MODE=off claude     # disable TODO reminders
+CLAUDE_CODE_TODO_REMINDER_MODE=baseline claude # default behavior</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Env var takes precedence over the <code>tengu_soft_slate_nudge</code> feature flag</li><li>Feature flag values: <code>"baseline"</code> (default) or <code>"off"</code></li><li>When set to <code>"off"</code>, TODO nudges are suppressed</li></ul>
+<div class="blabel">Evidence</div>
+<p>New function reading the mode (search for <code>"CLAUDE_CODE_TODO_REMINDER_MODE"</code>, <code>"tengu_soft_slate_nudge"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Bash prompt rule denials are now classified as <code>safetyCheck</code> type (rather than <code>other</code>) with <code>classifierApprovable: false</code>, ensuring auto-mode cannot override safety denials. (search for <code>"Denied by Bash prompt rule"</code>)</li></ul>
+<ul><li>Precomputed compact is now correctly gated: it can activate for non-user-query sources that have a precomputed swap available, fixing cases where compaction would not trigger when it should. (search for <code>"precomputed compact: arm gated"</code>)</li></ul>
+<ul><li>WIF (Workload Identity Federation) token refresh now checks sibling-process-rotated tokens before performing a new refresh grant, avoiding redundant token rotations in multi-process scenarios. (search for <code>"wif: adopting sibling-rotated access token from credentials file"</code>)</li></ul>
+<ul><li>Agent list attachment is no longer gated by <code>tengu_agent_list_attach</code> — the check that previously required the feature flag is removed, making agent context more consistently available. (search for <code>"tengu_agent_list_attach"</code> absent from new code)</li></ul>
+<ul><li>Design OAuth credential error messages are improved: the <code>expand_failed</code> case now includes guidance to run <code>/design-login</code> as an alternative, rather than only suggesting <code>/login</code>. (search for <code>"Could not add design scopes to the token"</code>, <code>"or run /design-login to authorize design access separately"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>New Environment Variables</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="new-environment-variables">
+      <p>| Variable | Purpose | |---|---| | <code>CLAUDE_CODE_SESSION_ID</code> | Identifies the current session (must start with <code>cse_</code> or <code>session_</code>) | | <code>CLAUDE_CODE_TODO_REMINDER_MODE</code> | Set to <code>off</code> or <code>baseline</code> to control TODO nudges | | <code>CLAUDE_CODE_FABLE_BRIDGE_DIALOG_TIMEOUT_MS</code> | Timeout for the Fable usage-credits consent dialog (default 60000 ms) | | <code>CLAUDE_CODE_DIAGNOSTICS_FILE</code> | Path for writing diagnostics output | | <code>CLAUDE_CODE_REPO_CHECKOUTS</code> | Controls repository checkout behavior for remote agents | | <code>CLAUDE_SESSION_INGRESS_TOKEN_FILE</code> | Path to a session ingress token file | | <code>CLAUDE_CODE_DESIGN_OAUTH_CLIENT_ID</code> | Override the registered Design OAuth client ID | | <code>CLAUDE_CODE_DISABLE_MEMORY_PERIODIC_RESYNC</code> | Set to disable periodic memory store resyncs |</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The removal of <code>TeamCreate</code> and <code>TeamDelete</code> is a breaking change for any workflow that explicitly called those tools. Update to use the <code>Agent</code> tool's <code>name</code> parameter directly. The <code>team_name</code> field in <code>TeammateIdle</code> hook event payloads is deprecated and will be removed in a future release.</p>
+<p>The Artifact tool's content model changed: files should no longer include <code>&lt;!DOCTYPE html&gt;</code>, <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, or <code>&lt;body&gt;</code> tags — the tool wraps the content in a skeleton automatically. Existing artifact files that include these tags may render with duplicate structure.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.178.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.178.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

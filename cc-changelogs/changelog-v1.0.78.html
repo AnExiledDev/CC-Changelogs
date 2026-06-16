@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.78 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.78."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.78</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.78</span></h1>
+<p class="sub">Claude Code 1.0.78 introduces enhanced security for authentication tokens, a completely refactored permission system with three-tier control, and renames "output modes" to "output styles" for clarity. The update also adds support for a new Sonnet model with 1M context and implements infrastructure for A/B testing and dynamic configuration.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.77 → v1.0.78</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">11 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="file-descriptor-authentication-for-enhanced-security">
+      <div class="card-top">
+        <h3>File Descriptor Authentication for Enhanced Security <a class="anchor" href="#file-descriptor-authentication-for-enhanced-security">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Authentication tokens can now be passed via file descriptors instead of environment variables <strong>How to use:</strong></p>
+<pre><code># Pass token through file descriptor (more secure)
+export CLAUDE_CODE_WEBSOCKET_AUTH_FILE_DESCRIPTOR=3
+exec 3&lt; &lt;(echo &quot;your-token-here&quot;)
+claude
+
+# Traditional method still supported
+export CLAUDE_CODE_SESSION_ACCESS_TOKEN=&quot;your-token-here&quot;
+claude</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Prevents tokens from appearing in process listings or environment dumps</li><li>Reads token from <code>/proc/self/fd/&lt;number&gt;</code> on Linux systems</li><li>Falls back to environment variable for backward compatibility</li><li>Provides clear error messages for invalid file descriptors</li></ul>
+    </article>
+    <article class="card" id="three-tier-permission-system">
+      <div class="card-top">
+        <h3>Three-Tier Permission System <a class="anchor" href="#three-tier-permission-system">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New granular permission options for file operations <strong>How to use:</strong> When Claude requests file permissions, you now have three options:</p>
+<ul><li><strong>Accept once</strong> - Permission for this operation only</li><li><strong>Accept for session</strong> (Shift+S) - Permission for all operations this session</li><li><strong>Accept for project</strong> (Shift+A) - Persistent permission for this project</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Different options appear based on whether files are inside or outside your project</li><li>Project-level permissions are saved to your local settings</li><li>Read operations don't offer project-level write permissions</li><li>Clearer distinction between temporary and persistent permissions</li></ul>
+    </article>
+    <article class="card" id="sonnet-model-with-1m-context">
+      <div class="card-top">
+        <h3>Sonnet Model with 1M Context <a class="anchor" href="#sonnet-model-with-1m-context">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New high-context variant of Claude 3.5 Sonnet with 1 million token context window <strong>Details:</strong></p>
+<ul><li>Available as "Sonnet (1M context)" option</li><li>Uses rate limits faster than standard models</li><li>Access may be gated based on account type or feature flags</li><li>Provides extended context for working with very large codebases</li></ul>
+    </article>
+    <article class="card" id="simplified-onboarding-experience">
+      <div class="card-top">
+        <h3>Simplified Onboarding Experience <a class="anchor" href="#simplified-onboarding-experience">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New streamlined onboarding for first-time users <strong>Details:</strong></p>
+<ul><li>Shows "new-user-warmup" flow for users with fewer than 10 app startups</li><li>Controlled via <code>cc_simple_onboarding</code> experiment flag</li><li>More focused introduction compared to standard onboarding</li><li>Automatically selected based on usage patterns</li></ul>
+    </article>
+    <article class="card" id="output-modes-renamed-to-output-styles">
+      <div class="card-top">
+        <h3>Output Modes Renamed to Output Styles <a class="anchor" href="#output-modes-renamed-to-output-styles">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> The entire "output modes" feature is now called "output styles" <strong>Impact:</strong></p>
+<ul><li>Directory structure changed from <code>~/.claude/output-modes/</code> to <code>~/.claude/output-styles/</code></li><li>Built-in options renamed: "Insights" → "Explanatory", "Learn By Doing" → "Learning"</li><li>Clearer terminology that better reflects the feature's purpose</li><li>Agent type renamed from <code>output-mode-setup</code> to <code>output-style-setup</code></li></ul>
+    </article>
+    <article class="card" id="dynamic-model-configuration">
+      <div class="card-top">
+        <h3>Dynamic Model Configuration <a class="anchor" href="#dynamic-model-configuration">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Models can now be configured remotely via Statsig <strong>Impact:</strong></p>
+<ul><li>Claude Code can receive model updates without requiring new releases</li><li>Supports time-based feature gating for gradual rollouts</li><li>Enables A/B testing of different model configurations</li><li>External overrides respect user's first usage date to prevent unexpected changes</li></ul>
+    </article>
+    <article class="card" id="enhanced-agent-configuration">
+      <div class="card-top">
+        <h3>Enhanced Agent Configuration <a class="anchor" href="#enhanced-agent-configuration">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Agent definitions now include source tracking <strong>Impact:</strong></p>
+<ul><li>Agents now specify their source: <code>built-in</code>, <code>localSettings</code>, or <code>projectSettings</code></li><li>Better management and display of agent origins</li><li>Statusline setup agent now recommends skipping optional git locks for better performance</li></ul>
+    </article>
+    <article class="card" id="improved-permission-storage">
+      <div class="card-top">
+        <h3>Improved Permission Storage <a class="anchor" href="#improved-permission-storage">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Simplified and more reliable permission persistence <strong>Impact:</strong></p>
+<ul><li>Clear tracking of permission sources (session vs persistent)</li><li>New helper functions for managing directory permissions</li><li>Automatic addition of allowed directories to settings</li><li>Better handling of permissions for files outside project directory</li></ul>
+    </article>
+    <article class="card" id="fixed-stdin-terminal-mode-cleanup">
+      <div class="card-top">
+        <h3>Fixed: Stdin Terminal Mode Cleanup <a class="anchor" href="#fixed-stdin-terminal-mode-cleanup">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Terminal raw mode wasn't properly cleaned up on exit</li><li><strong>Resolution:</strong> Added <code>Ao4()</code> function to properly reset stdin terminal mode and unref the stream</li></ul>
+    </article>
+    <article class="card" id="fixed-enterprise-account-detection">
+      <div class="card-top">
+        <h3>Fixed: Enterprise Account Detection <a class="anchor" href="#fixed-enterprise-account-detection">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Enterprise and team accounts weren't properly detected for feature gating</li><li><strong>Cause:</strong> Missing logic to check account type in conjunction with environment flags</li><li><strong>Resolution:</strong> New <code>BL6()</code> function correctly identifies enterprise/team accounts</li></ul>
+    </article>
+    <article class="card" id="fixed-model-selection-logic">
+      <div class="card-top">
+        <h3>Fixed: Model Selection Logic <a class="anchor" href="#fixed-model-selection-logic">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Model selection didn't properly handle all user access scenarios</li><li><strong>Cause:</strong> Complex conditional logic without proper fallback chain</li><li><strong>Resolution:</strong> Refactored into cleaner function chain with proper override points</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

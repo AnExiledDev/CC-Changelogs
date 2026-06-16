@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.36 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.36."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.36</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.36</span></h1>
+<p class="sub">Version 2.0.36 introduces session-scoped hooks for temporary automation, adds telemetry infrastructure for monitoring, and improves plugin reliability with duplicate hook detection. Pro and Max users gain quick access to usage settings via a new command.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.35 → v2.0.36</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">11 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="extra-usage-command">
+      <div class="card-top">
+        <h3>Extra Usage Command <a class="anchor" href="#extra-usage-command">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New command for Pro and Max subscribers to quickly access Claude AI usage settings <strong>How to use:</strong></p>
+<pre><code>claude extra-usage</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Opens https://claude.ai/settings/usage in your browser</li><li>Only available for "pro" or "max" subscription tiers</li><li>Can be disabled by setting <code>DISABLE_EXTRA_USAGE_COMMAND</code> environment variable</li><li><strong>Evidence</strong>: <code>RAI command definition at line 467420</code> in new function, <code>ha2 = RAI at line 467528</code></li></ul>
+    </article>
+    <article class="card" id="session-hooks-infrastructure">
+      <div class="card-top">
+        <h3>Session Hooks Infrastructure <a class="anchor" href="#session-hooks-infrastructure">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New architecture for temporary, session-scoped hooks that automatically clean up when sessions end <strong>How it works:</strong></p>
+<ul><li>Session hooks are stored separately from user settings (<code>sessionHooks</code> field in app state at line 141240)</li><li>Automatically cleared on session end to prevent accumulation</li><li>Support callback functions (<code>onMatch</code>) for programmatic responses</li><li>Cannot be removed through settings UI (protected at diff lines 2057-2059)</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Three new management functions:</li><li><code>wB1() at line 457341</code> - Retrieves session hooks for a specific session</li><li><code>ll2() at line 457356</code> - Finds and returns matching hook callbacks</li><li><code>il2() at line 457367</code> - Clears all hooks for a session</li><li>Session hooks are merged with permanent hooks at execution time (merge logic in <code>nl2() at line 457391</code>)</li><li>Hooks are marked with <code>source: "sessionHook"</code> to distinguish from settings-based hooks</li><li>Designed for plugins, agents, and temporary automation without polluting user settings</li><li><strong>Evidence</strong>: State initialization at <code>line 141240</code>, management functions at <code>lines 457341-457367</code>, integration in <code>nl2() at lines 457391-457413</code></li></ul>
+    </article>
+    <article class="card" id="datadog-telemetry-integration">
+      <div class="card-top">
+        <h3>Datadog Telemetry Integration <a class="anchor" href="#datadog-telemetry-integration">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New telemetry backend for event logging and monitoring <strong>Details:</strong></p>
+<ul><li>Sends logs to Datadog HTTP intake endpoint: <code>https://http-intake.logs.datadoghq.com/api/v2/logs</code></li><li>Controlled by feature gate <code>tengu_log_datadog_events</code> (gate name at line 477899)</li><li>Batches events for efficiency (batch size threshold <code>KBI</code>, flush interval <code>VBI = 15000ms</code> at line 477634)</li><li>Includes context tags: user type, version, model, session ID, platform details</li><li>Automatic flush on process exit</li><li><strong>Evidence</strong>: <code>FBI constant at line 477632</code>, gate check <code>er2 at line 477899</code>, batching logic in <code>QB0() at line 477567</code> and <code>BB0() at line 477543</code></li></ul>
+    </article>
+    <article class="card" id="opentelemetry-1p-events">
+      <div class="card-top">
+        <h3>OpenTelemetry 1P Events <a class="anchor" href="#opentelemetry-1p-events">#</a></h3>
+      </div>
+      <p><strong>What:</strong> First-party event logging using OpenTelemetry protocol <strong>Details:</strong></p>
+<ul><li>Exports events to Anthropic's event logging endpoint: <code>{ANTHROPIC_BASE_URL}/api/event_logging/batch</code></li><li>New exporter class <code>IB0 at line 477676</code> handles batching and export</li><li>Transforms logs into ClaudeCodeInternalEvent format with environment context</li><li>Logger initialization in <code>or2() at line 477773</code> with automatic shutdown handling</li><li>Controlled by feature gate <code>tengu_log_1p_events</code> (gate check in <code>rr2() at line 477755</code>)</li><li>Events include session context, environment details, and custom metadata</li><li><strong>Evidence</strong>: <code>IB0 class at lines 477676-477751</code>, initialization <code>or2() at line 477773</code>, event emission <code>ZB0() at line 477761</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-plugin-hook-loading">
+      <div class="card-top">
+        <h3>Enhanced Plugin Hook Loading <a class="anchor" href="#enhanced-plugin-hook-loading">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Plugin loading now detects and prevents duplicate hook file loading <strong>How it works:</strong></p>
+<ul><li>Uses <code>realpathSync()</code> to resolve canonical file paths (at line 275643 in <code>BwQ()</code>)</li><li>Tracks loaded hook files in a Set to detect duplicates</li><li>In strict mode (default), duplicate hooks trigger errors with helpful messages</li><li>Automatically loads <code>hooks/hooks.json</code> if it exists, so manifest shouldn't reference it</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>New 5th parameter added to plugin loading function <code>BwQ(A, B, Q, I, G = !0)</code> where <code>G</code> controls strict mode (function signature at line 275505)</li><li>Strict mode enabled by default but can be disabled via marketplace entry's <code>strict: false</code> property (call site at line 275831)</li><li>Enhanced logging: "Loaded hooks from standard location for plugin..." (at line 275647)</li><li>Error message explains the issue: "The standard hooks/hooks.json is loaded automatically, so manifest.hooks should only reference additional hook files" (at lines 275696-275697)</li><li>Prevents common plugin authoring mistakes and duplicate hook registrations</li><li><strong>Evidence</strong>: Function <code>BwQ() at line 275505</code>, duplicate detection at <code>lines 275689-275707</code>, Set tracking at <code>line 275637</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-session-end-handling">
+      <div class="card-top">
+        <h3>Enhanced Session End Handling <a class="anchor" href="#enhanced-session-end-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Session end processing now includes session hook cleanup and accepts additional configuration <strong>Details:</strong></p>
+<ul><li>Function renamed from <code>Hf1()</code> to <code>Tf1()</code> with enhanced parameters (signature at line 483476)</li><li>Now accepts options object with <code>getAppState</code>, <code>setAppState</code>, <code>signal</code>, <code>timeoutMs</code></li><li>Automatically clears session hooks after executing SessionEnd hooks (cleanup call <code>il2(I, J)</code> at line 483506)</li><li>Prevents session hook accumulation across multiple sessions</li><li><strong>Evidence</strong>: Old function <code>Hf1 at line 482867</code> (removed), new function <code>Tf1 at line 483476</code> (added), session hook clearing at <code>line 483506</code></li></ul>
+    </article>
+    <article class="card" id="improved-continue-command-detection">
+      <div class="card-top">
+        <h3>Improved Continue Command Detection <a class="anchor" href="#improved-continue-command-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> More robust detection of user "continue" commands <strong>Details:</strong></p>
+<ul><li>Updated pattern matching in <code>prQ() at line 347927</code></li><li>Now trims input and checks for exact "continue" match: <code>if (B === "continue") return !0;</code></li><li>Also matches phrase patterns "keep going" and "go on"</li><li><strong>Evidence</strong>: Function <code>prQ() at line 347927</code>, exact match check at line 347929</li></ul>
+    </article>
+    <article class="card" id="enhanced-github-actions-workflow-template">
+      <div class="card-top">
+        <h3>Enhanced GitHub Actions Workflow Template <a class="anchor" href="#enhanced-github-actions-workflow-template">#</a></h3>
+      </div>
+      <p><strong>What:</strong> PR review workflow now triggers on more PR events <strong>Details:</strong></p>
+<ul><li>Previous triggers: <code>[opened, synchronize]</code></li><li>New triggers: <code>[opened, synchronize, ready_for_review, reopened]</code></li><li>Ensures reviews run when draft PRs become ready for review and when closed PRs reopen</li><li><strong>Evidence</strong>: Workflow template <code>yp2 at line 452368</code>, trigger definition at line 452314</li></ul>
+    </article>
+    <article class="card" id="query-handler-refactoring">
+      <div class="card-top">
+        <h3>Query Handler Refactoring <a class="anchor" href="#query-handler-refactoring">#</a></h3>
+      </div>
+      <ul><li>Function identifier <code>iS2</code> repurposed: old agent definitions renderer moved to <code>Fy2() at line 437284</code></li><li>New <code>iS2() at line 436183</code> is async query handler managing user input processing, checkpointing, message preparation, and queue processing</li><li>Not user-facing but improves code organization</li></ul>
+    </article>
+    <article class="card" id="hook-retrieval-function-update">
+      <div class="card-top">
+        <h3>Hook Retrieval Function Update <a class="anchor" href="#hook-retrieval-function-update">#</a></h3>
+      </div>
+      <ul><li>Function renamed from <code>sl2()</code> to <code>Hi2()</code> with additional state parameter</li><li>Now merges session hooks with settings-based hooks</li><li>Updated to call <code>nl2(A)</code> which includes session hook integration</li><li><strong>Evidence</strong>: Old function signature <code>sl2(A)</code> at diff line 1940, new signature <code>Hi2(A, B)</code> at diff line 1984</li></ul>
+    </article>
+    <article class="card" id="process-metrics-helper">
+      <div class="card-top">
+        <h3>Process Metrics Helper <a class="anchor" href="#process-metrics-helper">#</a></h3>
+      </div>
+      <ul><li>New helper function <code>Hp2() at line 451872</code> formats telemetry metadata</li><li>Structures environment context, process metrics, and core session data</li><li>Used by telemetry exporters for consistent event formatting</li><li><strong>Evidence</strong>: Function <code>Hp2(A, B = {})</code> at line 451872</li></ul>
+<p><em>This changelog reflects changes from v2.0.35 to v2.0.36 based on structural diff analysis and source code verification.</em></p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

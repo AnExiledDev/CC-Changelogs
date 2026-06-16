@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.79 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.79."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.79</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.79</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.78 → v0.2.79</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>🆕 Local File Context Command</h4>
+<ul><li>Added a new <code>files</code> command that lists all files currently in context</li><li>Usage: Simply type <code>files</code> to see which files Claude is currently aware of</li><li>Useful for keeping track of what files you're working with in longer sessions</li></ul>
+<h4>Enhanced Directory Support for @-mentions</h4>
+<ul><li>You can now @-mention directories in addition to files</li><li>When you @-mention a directory path, Claude will include the directory's contents in context</li><li>Example: <code>@src/components</code> will include information about all files in that directory</li></ul>
+<h4>Improved Large File Handling</h4>
+<ul><li>Large files that exceed size limits are now partially loaded instead of being completely skipped</li><li>When a file is too large, the first 100 lines are loaded with a truncation indicator</li><li>This ensures you can still reference and work with large files, even if only partially</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Performance &amp; Stability</h4>
+<ul><li>Added proper timeout handling for bash commands</li><li>Default timeout: 2 minutes (120 seconds)</li><li>Maximum configurable timeout: 10 minutes (600 seconds)</li><li>Fixed Windows path handling for escaped characters</li><li>Improved telemetry for metrics collection</li></ul>
+<h4>Environment Configuration</h4>
+<ul><li>Environment variables from configuration are now loaded earlier in the startup process</li><li>This ensures custom environment settings are available throughout the entire session</li></ul>
+<h4>Better User Onboarding</h4>
+<ul><li>New users (fewer than 10 startups) now receive targeted tips:</li><li>"Start with small features or bug fixes, tell Claude to propose a plan, and verify its suggested edits"</li><li>Replaced advanced git worktree tips with more beginner-friendly guidance</li></ul>
+<h4>️ Safety Improvements</h4>
+<ul><li>Added supervisor interrupt handling with clear messaging</li><li>New interrupt message: "Interaction interrupted by the safety supervisor."</li><li>Better separation of different interruption scenarios (user interrupts vs safety interrupts)</li></ul>
+    </article>
+    <article class="card" id="internal-changes">
+      <div class="card-top">
+        <h3>Internal Changes <a class="anchor" href="#internal-changes">#</a></h3>
+      </div>
+      <ul><li>Removed unused stream import</li><li>Consolidated process imports</li><li>Added project onboarding tracking counter</li><li>Improved code organization and error handling</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed issue where environment variables weren't being applied early enough</li><li>Improved error handling for directory and file access</li><li>Better validation for file paths and permissions</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

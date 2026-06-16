@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.0 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.0."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.0</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.0</span></h1>
+<p class="sub">Version 2.0.0 introduces Claude Sonnet 4.5 as the new default model, completely redesigns the welcome screen with a new "Clawd" mascot and adaptive layout system, and adds a <code>/usage</code> command for subscription plan usage tracking. The thinking feature has been streamlined to use a simple "ultrathink" trigger, and the MultiEdit tool has been removed in favor of the existing Edit tool.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.128 → v2.0.0</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">31</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">31 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="claude-sonnet-4-5-model">
+      <div class="card-top">
+        <h3>Claude Sonnet 4.5 Model <a class="anchor" href="#claude-sonnet-4-5-model">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New default model <code>claude-sonnet-4-5-20250929</code> with improved performance for daily coding tasks</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Sonnet 4.5 is now the default - no changes needed
+claude
+
+# Or explicitly specify it
+claude --model sonnet45</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Available across all platforms (first-party API, Bedrock, Vertex AI)</li><li>Automatic migration from previous default models</li><li>Described as "Smartest model for daily use"</li><li>Supports 1M token context window variant: <code>claude-sonnet-4-5[1m]</code></li><li><strong>Evidence</strong>: <code>U10</code> at line 367516, <code>GM1()</code> at line 368315, model detection logic at line 340617 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="usage-command">
+      <div class="card-top">
+        <h3>/usage Command <a class="anchor" href="#usage-command">#</a></h3>
+      </div>
+      <p><strong>What:</strong> View your subscription plan usage limits and current consumption</p>
+<p><strong>How to use:</strong></p>
+<pre><code>/usage</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Shows current 5-hour session usage</li><li>Displays 7-day usage across all models</li><li>Shows 7-day Opus-specific usage</li><li>Visual progress bars with percentage indicators</li><li>Reset time countdown</li><li>Only available for subscription plans (API key users see informational message)</li><li><strong>Evidence</strong>: <code>OXB</code> command definition at line 416198, usage API endpoint at line 402408, UI components <code>E3B()</code> and <code>WS6()</code> at lines 402479-402532 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="redesigned-welcome-screen">
+      <div class="card-top">
+        <h3>Redesigned Welcome Screen <a class="anchor" href="#redesigned-welcome-screen">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Complete overhaul with adaptive layout, branded "Clawd" mascot, and dynamic content feeds</p>
+<p><strong>Features:</strong></p>
+<ul><li><strong>Clawd mascot</strong>: Custom ASCII art character with theme-aware rendering</li><li><strong>Three responsive layouts</strong>: Adapts to terminal width (compact/horizontal/vertical)</li><li><strong>Dynamic feeds</strong>: Recent activity with timestamps, release notes, getting started tips</li><li><strong>Personalized greeting</strong>: Shows user's display name when available</li><li><strong>Model &amp; billing info</strong>: Quick view of current settings</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Automatically adjusts to terminal size and capabilities</li><li>Special rendering optimizations for Apple Terminal</li><li>Supports both light and dark themes</li><li>Shows recent conversation history</li><li>Displays latest changelog entries</li><li>Contextual tips based on project state</li><li><strong>Evidence</strong>: Main welcome screen <code>iOB()</code> at line 429317, Clawd mascot <code>PK5()</code> at line 429231, feed system <code>gOB()</code> at line 429168, splash screen <code>Pc1()</code> at line 441300 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="extended-thinking-improvements">
+      <div class="card-top">
+        <h3>Extended Thinking Improvements <a class="anchor" href="#extended-thinking-improvements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Simplified thinking trigger system with new programmatic control</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Use &quot;ultrathink&quot; anywhere in your prompt for maximum thinking
+claude
+&gt; Please ultrathink about this architectural design
+
+# Toggle thinking with tab key during interactive sessions
+# Or use /t command</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Streamlined from multilingual pattern matching to single "ultrathink" keyword</li><li>Binary mode: ULTRATHINK (31,999 tokens) or NONE</li><li>New <code>thinkingMetadata</code> API for programmatic control without text triggers</li><li>Removed complex multi-level system (HIGHEST/MIDDLE/BASIC) in favor of simpler on/off</li><li>Thinking state notifications show "Thinking on/off (tab to toggle)"</li><li><strong>Evidence</strong>: Pattern at line 363628, functions <code>Y61()</code> at line 363667, <code>Y09()</code> at line 363644, <code>le1()</code> at line 363671, metadata handling at line 363649 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="enhanced-settings-dialog">
+      <div class="card-top">
+        <h3>Enhanced Settings Dialog <a class="anchor" href="#enhanced-settings-dialog">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Tabbed interface combining status, configuration, and usage in one place</p>
+<p><strong>How to use:</strong></p>
+<pre><code>/status  # Opens with Status tab
+/config  # Opens with Config tab  
+/usage   # Opens with Usage tab</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Tab navigation to cycle between Status/Config/Usage panels</li><li>Status tab shows system diagnostics, IDE connection, MCP servers, memory usage</li><li>Config tab provides interactive settings management</li><li>Usage tab displays subscription limits (new in 2.0.0)</li><li>Unified interface reduces command clutter</li><li><strong>Evidence</strong>: Tabbed component <code>L01()</code> at line 394930, status dialog <code>h01()</code> at line 402533 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="session-persistence-improvements">
+      <div class="card-top">
+        <h3>Session Persistence Improvements <a class="anchor" href="#session-persistence-improvements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced session history deduplication and conflict detection</p>
+<p><strong>Details:</strong></p>
+<ul><li>Prevents duplicate entries when fetching session history</li><li>Tracks already-fetched UUIDs per session to avoid redundant storage</li><li>Improved conflict resolution with UUID mismatch detection</li><li>Better error messages for concurrent modification scenarios</li><li><strong>Evidence</strong>: Deduplication logic in <code>F8B()</code> at line 397200, UUID tracking with <code>Cv1</code> map in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="ide-selection-indicator">
+      <div class="card-top">
+        <h3>IDE Selection Indicator <a class="anchor" href="#ide-selection-indicator">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Shows currently active file or selected text from connected IDE</p>
+<p><strong>Display:</strong></p>
+<ul><li>"⧉ In filename.ts" when a file is active</li><li>"⧉ 15 lines selected" when text is selected</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Only appears when IDE is connected and has an active context</li><li>Helps confirm Claude knows which file you're working in</li><li>Updates automatically as you switch files</li><li><strong>Evidence</strong>: <code>aLB()</code> function at line 423498 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="notification-system-enhancements">
+      <div class="card-top">
+        <h3>Notification System Enhancements <a class="anchor" href="#notification-system-enhancements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved notification queue management with invalidation support</p>
+<p><strong>Details:</strong></p>
+<ul><li>Notifications can now invalidate previous notifications by key</li><li>Better handling of immediate-priority notifications</li><li>Prevents notification spam by filtering duplicates</li><li>Queue management ensures only relevant notifications are shown</li><li><strong>Evidence</strong>: Enhanced <code>xG()</code> notification hook at line 363012 with <code>invalidates</code> support at lines 363225-363244 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="auto-compact-token-budget-display">
+      <div class="card-top">
+        <h3>Auto-compact Token Budget Display <a class="anchor" href="#auto-compact-token-budget-display">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Context window display now shows reserved space for auto-compact and output tokens</p>
+<p><strong>Details:</strong></p>
+<ul><li>New "Reserved (autocompact + output tokens)" category in /context display</li><li>Shows available tokens after accounting for auto-compact threshold</li><li>Helps users understand actual usable context space</li><li>More accurate free space calculations for subscription plans</li><li><strong>Evidence</strong>: <code>L3B</code> and <code>CS6</code> variables at lines 402598 and 403199, calculation logic in <code>y3B()</code> at line 403320 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="thinking-time-display">
+      <div class="card-top">
+        <h3>Thinking Time Display <a class="anchor" href="#thinking-time-display">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Visual feedback when Claude uses extended thinking</p>
+<p><strong>Display:</strong></p>
+<pre><code>∴ Thinking…  (while active)
+∴ Thought for 12s (ctrl+o to show thinking)  (after completion)</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Real-time indicator during thinking phase</li><li>Shows total thinking duration after completion</li><li>Reminds users how to view thinking content</li><li>Only appears when thinking is actually used</li><li><strong>Evidence</strong>: <code>m3B()</code> function at line 404483 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="path-truncation-algorithm">
+      <div class="card-top">
+        <h3>Path Truncation Algorithm <a class="anchor" href="#path-truncation-algorithm">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved file path display in narrow terminals</p>
+<p><strong>Details:</strong></p>
+<ul><li>Smart truncation preserves first and last path components</li><li>Uses middle ellipsis (…) to show structure</li><li>Handles root paths and edge cases gracefully</li><li>Example: <code>/very/long/path/to/file.ts</code> → <code>/very/…/to/file.ts</code></li><li><strong>Evidence</strong>: <code>MI1()</code> function at line 405562 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="model-display-names">
+      <div class="card-top">
+        <h3>Model Display Names <a class="anchor" href="#model-display-names">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Clearer model naming in UI</p>
+<p><strong>Changes:</strong></p>
+<ul><li>"Sonnet 4.5" for the new default model</li><li>"Sonnet 4.5 (with 1M token context)" for extended context variant</li><li>Consistent capitalization and formatting</li><li><strong>Evidence</strong>: <code>UeA()</code> function at line 368322, <code>JM()</code> at line 368327, <code>lJA()</code> at line 367531 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="restore-dialog-file-display">
+      <div class="card-top">
+        <h3>Restore Dialog File Display <a class="anchor" href="#restore-dialog-file-display">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Better file information when restoring changes</p>
+<p><strong>Details:</strong></p>
+<ul><li>Shows specific filenames instead of generic "files changed"</li><li>Lists up to 2 files by name, then "and N other files"</li><li>More informative change summaries</li><li><strong>Evidence</strong>: <code>uf6()</code> function at line 414892 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="recent-activity-feed">
+      <div class="card-top">
+        <h3>Recent Activity Feed <a class="anchor" href="#recent-activity-feed">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Welcome screen shows recent conversations with timestamps</p>
+<p><strong>Details:</strong></p>
+<ul><li>Displays last 3 non-sidechain conversations</li><li>Filters out apology-heavy sessions</li><li>Shows conversation summary or first prompt</li><li>Relative timestamps (e.g., "2h ago", "yesterday")</li><li>Quick context for resuming work</li><li><strong>Evidence</strong>: <code>_GB()</code> function at line 405621, <code>iR0()</code> at line 429186 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="sonnet-4-5-migration">
+      <div class="card-top">
+        <h3>Sonnet 4.5 Migration <a class="anchor" href="#sonnet-4-5-migration">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatic model upgrade for existing users</p>
+<p><strong>Details:</strong></p>
+<ul><li>Users with explicit model settings are migrated to Sonnet 4.5</li><li>Migration timestamp tracked to show "Model updated to Sonnet 4.5" notification</li><li>One-time migration prevents repeated notifications</li><li>Graceful handling of users who prefer other models</li><li><strong>Evidence</strong>: <code>v4Q()</code> migration function at line 443290, notification in <code>NRB()</code> at line 430680 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="subscription-plan-notifications">
+      <div class="card-top">
+        <h3>Subscription Plan Notifications <a class="anchor" href="#subscription-plan-notifications">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Prompts to activate Claude subscription if available</p>
+<p><strong>Details:</strong></p>
+<ul><li>Shows up to 3 times for eligible users</li><li>"Use your existing Claude [plan] with Claude Code · /login to activate"</li><li>Tracks notification count to avoid annoyance</li><li>Only shown to users with available subscriptions</li><li><strong>Evidence</strong>: <code>MRB()</code> notification at line 430699, subscription check <code>sK5()</code> referenced in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="extended-thinking-simplification">
+      <div class="card-top">
+        <h3>Extended Thinking Simplification <a class="anchor" href="#extended-thinking-simplification">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Streamlined from multilingual multi-level system to single trigger</p>
+<p><strong>Previous (v1.0.128):</strong></p>
+<ul><li>8 languages supported (English, Japanese, Chinese, Spanish, French, German, Korean, Italian)</li><li>4 thinking levels: HIGHEST (31,999 tokens), MIDDLE (10,000), BASIC (4,000), NONE (0)</li><li>Dozens of trigger phrases per language</li><li>Complex pattern matching with negation filtering</li></ul>
+<p><strong>Now (v2.0.0):</strong></p>
+<ul><li>English-only "ultrathink" trigger</li><li>2 levels: ULTRATHINK (31,999 tokens) or NONE (0)</li><li>Simple case-insensitive regex matching</li><li>New <code>thinkingMetadata</code> API for programmatic control</li></ul>
+<p><strong>Implications:</strong></p>
+<ul><li>More predictable behavior</li><li>Easier to remember single trigger word</li><li>Programmatic control via metadata for advanced use cases</li><li><strong>Evidence</strong>: Removed <code>v19</code> patterns at line 363665 in v1.0.128, new simplified system with <code>NU1</code> at line 363628 and functions at lines 363644-363671 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="tool-list-updates">
+      <div class="card-top">
+        <h3>Tool List Updates <a class="anchor" href="#tool-list-updates">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed MultiEdit from available tools array</p>
+<p><strong>Details:</strong></p>
+<ul><li>MultiEdit tool completely removed from codebase</li><li>Tool arrays updated from <code>["Edit", "MultiEdit", "Write", "NotebookEdit"]</code> to <code>["Edit", "Write", "NotebookEdit"]</code></li><li>Edit tool handles all file editing use cases</li><li>Reduces complexity and potential confusion between Edit and MultiEdit</li><li><strong>Evidence</strong>: Tool array <code>HK5</code> at line 428943 in v1.0.128 vs <code>IK5</code> at line 428118 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="state-management-improvements">
+      <div class="card-top">
+        <h3>State Management Improvements <a class="anchor" href="#state-management-improvements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Simplified state update logic removes redundant null checks</p>
+<p><strong>Details:</strong></p>
+<ul><li>Model selection updates no longer check if <code>oldState</code> is null before comparison</li><li>Assumes initial state is always available</li><li>Cleaner conditional logic</li><li>Added thinking state persistence to user settings</li><li><strong>Evidence</strong>: Function <code>Bp()</code> at line 443042 in v1.0.128 vs <code>df()</code> at line 443128 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="notification-color-scheme">
+      <div class="card-top">
+        <h3>Notification Color Scheme <a class="anchor" href="#notification-color-scheme">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Reduced thinking notification color levels</p>
+<p><strong>Details:</strong></p>
+<ul><li>Removed medium and low thinking level colors</li><li>Now only "none" (text) and "high" (claude) colors</li><li>Matches simplified binary thinking system</li><li><strong>Evidence</strong>: Variables <code>cT</code> and <code>aa</code> at lines 363617-363618 in v1.0.128 vs <code>LU1</code> and <code>$WA</code> at lines 363586-363587 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="multiedit-tool">
+      <div class="card-top">
+        <h3>MultiEdit Tool <a class="anchor" href="#multiedit-tool">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The MultiEdit tool has been removed entirely</p>
+<p><strong>Reason:</strong> The Edit tool provides all necessary file editing capabilities, and having both tools caused confusion.</p>
+<p><strong>Migration:</strong> Use the Edit tool for all file modifications. For multiple edits to the same file, Claude will use Edit multiple times as needed.</p>
+<p><strong>Evidence:</strong> Variable <code>sH = "MultiEdit"</code> at line 365916, tool registration in arrays at line 428943, prompts mentioning MultiEdit at lines 440925-440941 in v1.0.128 - all removed in v2.0.0</p>
+    </article>
+    <article class="card" id="multilingual-extended-thinking-triggers">
+      <div class="card-top">
+        <h3>Multilingual Extended Thinking Triggers <a class="anchor" href="#multilingual-extended-thinking-triggers">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Support for non-English thinking trigger phrases removed</p>
+<p><strong>Affected Languages:</strong></p>
+<ul><li>Japanese (熟考, 深思, etc.)</li><li>Chinese (深思, 仔细思考, etc.)</li><li>Spanish (piensa más, etc.)</li><li>French (réfléchis, etc.)</li><li>German (denk nach, etc.)</li><li>Korean (심사숙고, 깊이 생각, etc.)</li><li>Italian (pensa profondamente, etc.)</li></ul>
+<p><strong>Replacement:</strong> Use "ultrathink" in English for maximum thinking tokens</p>
+<p><strong>Evidence:</strong> Variable <code>v19</code> with multilingual patterns at line 363665 in v1.0.128 - removed in v2.0.0, replaced with single English pattern <code>G09</code> at line 363628</p>
+    </article>
+    <article class="card" id="legacy-welcome-screen-components">
+      <div class="card-top">
+        <h3>Legacy Welcome Screen Components <a class="anchor" href="#legacy-welcome-screen-components">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Old ASCII banner and static welcome screen removed</p>
+<p><strong>Removed Components:</strong></p>
+<ul><li>Large ASCII art "CLAUDE CODE" logo (<code>lGB()</code> at line 406445)</li><li>Simple header with star icon (<code>DN0()</code> at line 406867)</li><li>Static environment overrides display (<code>_A1()</code> at line 407407)</li></ul>
+<p><strong>Replacement:</strong> New adaptive welcome screen with Clawd mascot and dynamic feeds</p>
+<p><strong>Evidence:</strong> Functions <code>lGB()</code>, <code>DN0()</code>, <code>_A1()</code> in v1.0.128 completely replaced by new system in v2.0.0</p>
+    </article>
+    <article class="card" id="opusplan-fallback-mode">
+      <div class="card-top">
+        <h3>Opusplan Fallback Mode <a class="anchor" href="#opusplan-fallback-mode">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed "Opus Plan Mode" model fallback strategy</p>
+<p><strong>Details:</strong></p>
+<ul><li>Previously: "Use Opus 4.1 in plan mode, Sonnet 4 otherwise"</li><li>This specific fallback configuration is no longer available</li><li>Standard model selection and rate limit fallback still work</li><li><strong>Evidence</strong>: Variable <code>D31</code> at line 368627, function <code>U31()</code> at line 368577 in v1.0.128 - removed in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="config-command-array-functions">
+      <div class="card-top">
+        <h3>Config Command Array Functions <a class="anchor" href="#config-command-array-functions">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed several project-level config management functions</p>
+<p><strong>Removed:</strong></p>
+<ul><li><code>Ym1()</code> - Add items to array config (line 439101)</li><li><code>YPB()</code> - Remove items from array config (line 439140)</li><li><code>VPB()</code> - Set config value (line 439430)</li><li><code>KPB()</code> - Delete config key (line 439488)</li><li><code>FPB()</code> - Get config value (line 439413)</li><li><code>zPB()</code> - List config (line 439507)</li></ul>
+<p><strong>Reason:</strong> Config management migrated to settings.json system</p>
+<p><strong>Migration:</strong> Use <code>.claude/settings.json</code> for project configuration instead of CLI commands</p>
+<p><strong>Evidence:</strong> Functions at lines 439101-439507 in v1.0.128 marked as removed in diff</p>
+    </article>
+    <article class="card" id="post-tool-hook-feedback-messages">
+      <div class="card-top">
+        <h3>Post-Tool Hook Feedback Messages <a class="anchor" href="#post-tool-hook-feedback-messages">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed dedicated function for creating post-tool feedback system messages</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>kv1(A, B)</code> removed - created system messages for tool hook feedback</li><li>Feedback mechanism still exists but implementation changed</li><li><strong>Evidence</strong>: Function <code>kv1()</code> at line 397255 in v1.0.128 vs different implementation in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="session-persistence-deduplication">
+      <div class="card-top">
+        <h3>Session Persistence Deduplication <a class="anchor" href="#session-persistence-deduplication">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Fixed duplicate session log entries when fetching history</p>
+<p><strong>Issue:</strong> When resuming sessions, the same entries could be persisted multiple times</p>
+<p><strong>Fix:</strong> Added UUID tracking per session to skip already-fetched entries</p>
+<p><strong>Impact:</strong> Cleaner session history, reduced storage overhead, faster session loading</p>
+<p><strong>Evidence:</strong> New deduplication check at start of <code>F8B()</code> function at line 397200 in v2.0.0</p>
+    </article>
+    <article class="card" id="terminal-width-calculation">
+      <div class="card-top">
+        <h3>Terminal Width Calculation <a class="anchor" href="#terminal-width-calculation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved responsive layout calculations for welcome screen</p>
+<p><strong>Details:</strong></p>
+<ul><li>Better handling of very narrow terminals (&lt; 70 columns)</li><li>Fixed edge cases in path truncation</li><li>More accurate column calculations for multi-panel layouts</li><li><strong>Evidence</strong>: Layout functions <code>SGB()</code> at line 405537, <code>yGB()</code> at line 405541 in v2.0.0</li></ul>
+    </article>
+    <article class="card" id="breaking-changes">
+      <div class="card-top">
+        <h3>Breaking Changes <a class="anchor" href="#breaking-changes">#</a></h3>
+      </div>
+      <ol><li><strong>MultiEdit tool removed</strong> - Extensions or scripts using MultiEdit must switch to Edit tool</li><li><strong>Non-English thinking triggers removed</strong> - Only "ultrathink" works now</li><li><strong>Project config CLI commands removed</strong> - Use settings.json instead</li><li><strong>Opusplan mode removed</strong> - Adjust model selection strategy if using this</li></ol>
+    </article>
+    <article class="card" id="migration-guide">
+      <div class="card-top">
+        <h3>Migration Guide <a class="anchor" href="#migration-guide">#</a></h3>
+      </div>
+      <ul><li><strong>MultiEdit → Edit</strong>: Simply use Edit tool; Claude will apply multiple edits as needed</li><li><strong>Multilingual thinking → ultrathink</strong>: Replace language-specific triggers with "ultrathink"</li><li><strong>Config commands → settings.json</strong>: Move <code>allowedTools</code>, <code>ignorePatterns</code> to <code>.claude/settings.json</code> permissions object</li><li><strong>Model selection</strong>: Sonnet 4.5 is now default; explicit model selections are preserved</li></ul>
+    </article>
+    <article class="card" id="version-information">
+      <div class="card-top">
+        <h3>Version Information <a class="anchor" href="#version-information">#</a></h3>
+      </div>
+      <ul><li><strong>Version:</strong> 2.0.0</li><li><strong>Previous Version:</strong> 1.0.128</li><li><strong>Release Date:</strong> 2025 (based on model identifiers)</li><li><strong>Major Version Bump Reason:</strong> Breaking changes (removed tools, removed CLI commands, simplified thinking system)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.4 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.4."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.4</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.4</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.3 → v1.0.4</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">4</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.4 Changelog</p>
+    </article>
+    <article class="card" id="enhanced-model-support">
+      <div class="card-top">
+        <h3>Enhanced Model Support <a class="anchor" href="#enhanced-model-support">#</a></h3>
+      </div>
+      <ul><li><strong>New Model Recognition</strong>: Added support for recognizing additional Claude models including:</li><li>Claude Sonnet 4</li><li>Claude Opus 4</li><li>Claude 3.7 Sonnet</li><li>Claude 3.5 Sonnet</li><li>Claude 3.5 Haiku</li></ul>
+    </article>
+    <article class="card" id="improved-working-directory-management">
+      <div class="card-top">
+        <h3>Improved Working Directory Management <a class="anchor" href="#improved-working-directory-management">#</a></h3>
+      </div>
+      <ul><li><strong>PWD Environment Support</strong>: The CLI now recognizes the <code>PWD</code> environment variable as an additional working directory, expanding file operation permissions beyond just the current working directory</li><li><strong>Multiple Working Directories</strong>: Files can now be accessed from both the current working directory and the PWD location</li></ul>
+    </article>
+    <article class="card" id="sandbox-mode-for-bash-commands">
+      <div class="card-top">
+        <h3>Sandbox Mode for Bash Commands <a class="anchor" href="#sandbox-mode-for-bash-commands">#</a></h3>
+      </div>
+      <ul><li><strong>New <code>sandbox</code> parameter</strong>: Execute bash commands in a restricted environment without requiring user approval</li><li>When <code>sandbox=true</code>: Commands run immediately without approval dialogs but with restricted filesystem write and network access</li><li>Automatically retries with <code>sandbox=false</code> if permission or network errors occur</li><li>Optimized for read-only operations like <code>ls</code>, <code>cat</code>, <code>git status</code>, <code>pwd</code>, etc.</li></ul>
+<p>Example usage scenarios:</p>
+<pre><code># These commands can run with sandbox=true (no approval needed)
+ls -la
+git status
+cat file.txt
+pwd
+echo $HOME
+
+# These require sandbox=false (user approval required)
+npm install
+git commit
+touch newfile.txt
+curl https://api.example.com</code></pre>
+    </article>
+    <article class="card" id="streaming-tool-use-display">
+      <div class="card-top">
+        <h3>Streaming Tool Use Display <a class="anchor" href="#streaming-tool-use-display">#</a></h3>
+      </div>
+      <ul><li><strong>Enhanced streaming feedback</strong>: When Claude is preparing to use a tool, the interface now shows animated status messages that cycle through states like "Streaming input", "Still streaming input", "Megastreaming", etc.</li><li><strong>Improved tool preview</strong>: Shows the tool name and partial parameters while the tool use is being streamed</li></ul>
+    </article>
+    <article class="card" id="telemetry-and-metrics-system">
+      <div class="card-top">
+        <h3>Telemetry and Metrics System <a class="anchor" href="#telemetry-and-metrics-system">#</a></h3>
+      </div>
+      <ul><li><strong>Centralized metrics</strong>: New unified system for tracking CLI usage metrics including:</li><li>Session counts</li><li>Lines of code modified (additions/removals)</li><li>Pull requests created</li><li>Git commits created</li><li>Cost tracking</li><li>Token usage</li><li>Code editing tool decisions (accept/reject)</li></ul>
+    </article>
+    <article class="card" id="custom-command-title-detection">
+      <div class="card-top">
+        <h3>Custom Command Title Detection <a class="anchor" href="#custom-command-title-detection">#</a></h3>
+      </div>
+      <ul><li><strong>Smart command titles</strong>: Custom slash commands now extract titles from markdown headers in the command content, limiting to 100 characters for better display</li></ul>
+    </article>
+    <article class="card" id="file-operations">
+      <div class="card-top">
+        <h3>File Operations <a class="anchor" href="#file-operations">#</a></h3>
+      </div>
+      <ul><li><strong>Symlink resolution</strong>: The <code>cd</code> command now resolves symlinks using <code>realpath</code>, ensuring you navigate to the actual directory location</li><li><strong>Enhanced WSL support</strong>: Improved detection of Windows Subsystem for Linux (WSL) environments with better path handling for <code>.claude/ide</code> directories</li><li><strong>Notebook cell handling</strong>: Better support for reading and editing individual cells in Jupyter notebooks</li></ul>
+    </article>
+    <article class="card" id="configuration-and-environment">
+      <div class="card-top">
+        <h3>Configuration and Environment <a class="anchor" href="#configuration-and-environment">#</a></h3>
+      </div>
+      <ul><li><strong>API Provider display</strong>: New configuration info panel showing:</li><li>Current API provider (AWS Bedrock, Google Vertex AI)</li><li>Custom base URLs if configured</li><li>AWS/GCP regions</li><li>Proxy settings</li><li>Authentication status</li></ul>
+    </article>
+    <article class="card" id="tool-validation">
+      <div class="card-top">
+        <h3>Tool Validation <a class="anchor" href="#tool-validation">#</a></h3>
+      </div>
+      <ul><li><strong>Stricter input parsing</strong>: Tool inputs now use proper schema validation with partial parsing support for streaming scenarios</li><li><strong>Better error handling</strong>: Improved error messages when tool rendering fails during streaming</li></ul>
+    </article>
+    <article class="card" id="version-management">
+      <div class="card-top">
+        <h3>Version Management <a class="anchor" href="#version-management">#</a></h3>
+      </div>
+      <ul><li><strong>Concurrent version cleanup</strong>: Old CLI versions are now cleaned up more efficiently with proper locking</li><li><strong>Protected versions</strong>: The system protects currently running versions and symbolic links (latest, known-good) from deletion</li><li><strong>Configurable retention</strong>: Keeps only the 2 most recent versions by default</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Improvements</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-improvements">
+      <ul><li><strong>Modular telemetry</strong>: Metrics system is now initialized separately and can be disabled</li><li><strong>Better proxy support</strong>: Consolidated proxy configuration using <code>HTTPS_PROXY</code> or <code>HTTP_PROXY</code> environment variables</li><li><strong>Enhanced MCP approval</strong>: Improved migration of MCP (Model Context Protocol) server approval settings</li><li><strong>React context for feature flags</strong>: New context system for managing feature availability</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed issues with file permission checks in additional working directories</li><li>Improved handling of malformed tool inputs during streaming</li><li>Better error recovery during version installation and cleanup</li><li>Fixed duplicate imports and unused variables</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Breaking Changes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="breaking-changes">
+      <p>None - This release maintains backward compatibility with existing workflows and configurations.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.58 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.58."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.58</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.58</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.57 → v1.0.58</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Agent Color Coding</h4>
+<ul><li>Agents now have color-coded identification in the interface</li><li>New color palette: <code>claude</code>, <code>success</code>, <code>bashBorder</code>, <code>planMode</code>, <code>autoAccept</code>, <code>warning</code>, <code>permission</code>, <code>error</code></li><li>Color assignments persist per agent type for consistency</li><li>The <code>general-purpose</code> agent remains uncolored</li></ul>
+<h4>PDF File Support</h4>
+<ul><li>Added native PDF reading capability to the Read tool</li><li>PDF files up to 32MB can now be processed directly</li><li>PDF content is displayed visually as Claude Code is multimodal</li></ul>
+<h4>Enhanced Permission Messages</h4>
+<ul><li>New <code>DETAILED_PERMISSION_MESSAGES</code> environment variable</li><li>When enabled, provides more context about which specific commands are pre-approved</li><li>Permission prompts now show reminders of allowed commands for each tool type</li></ul>
+<h4>OAuth 2.0 Client Authentication</h4>
+<ul><li>Added comprehensive OAuth 2.0 client authentication support</li><li>Supports multiple authentication methods:</li><li><code>client_secret_basic</code> (HTTP Basic Auth)</li><li><code>client_secret_post</code> (form-encoded)</li><li><code>none</code> (public clients)</li><li>New error handling for OAuth flows with specific error types</li></ul>
+<h4>Bash Command Prefix Support</h4>
+<ul><li>New <code>CLAUDE_CODE_BASH_PREFIX</code> environment variable</li><li>Allows prefixing all bash commands with custom wrapper scripts</li><li>Useful for sandboxing or monitoring command execution</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Performance</h4>
+<ul><li>Added LRU cache support with configurable size limits</li><li>New telemetry for tracking attachment computation duration</li><li>Improved abort signal handling with configurable timeouts (default 50ms)</li></ul>
+<h4>MCP Server Integration</h4>
+<ul><li>Better connection status reporting for MCP servers</li><li>New <code>JyB</code> function provides clear connection status messages:</li><li>"✓ Connected"</li><li>"⚠ Needs authentication"</li><li>"✗ Failed to connect"</li><li>"✗ Connection error"</li></ul>
+<h4>Telemetry Enhancements</h4>
+<ul><li>Added tracking for non-interactive sessions</li><li>New <code>print</code> mode detection in API success metrics</li><li>TTY detection for better usage analytics</li></ul>
+    </article>
+    <article class="card" id="api-changes">
+      <div class="card-top">
+        <h3>API Changes <a class="anchor" href="#api-changes">#</a></h3>
+      </div>
+      <h4>Tool Permission Context</h4>
+<ul><li>New <code>I1Q</code> function to get tool-specific permission rules</li><li>Enhanced <code>G1Q</code> function for generating contextual permission messages</li><li>Permission rules now support content-specific messaging</li></ul>
+<h4>Agent Management</h4>
+<ul><li>Agent color preferences stored in new <code>agentColorMap</code></li><li>Color index rotation for automatic assignment</li><li><code>uz0</code> function for getting agent colors</li><li><code>e31</code> function for setting custom agent colors</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed duplicate code comments in some scenarios</li><li>Improved error handling for OAuth token refresh flows</li><li>Better cleanup of temporary shell execution files</li></ul>
+    </article>
+    <article class="card" id="removed-features">
+      <div class="card-top">
+        <h3>Removed Features <a class="anchor" href="#removed-features">#</a></h3>
+      </div>
+      <ul><li>Removed several unused internal functions and variables</li><li>Cleaned up deprecated OAuth implementation code</li><li>Removed redundant file reading state management</li></ul>
+    </article>
+    <article class="card" id="developer-notes">
+      <div class="card-top">
+        <h3>Developer Notes <a class="anchor" href="#developer-notes">#</a></h3>
+      </div>
+      <ul><li>Version updated from 1.0.57 to 1.0.58</li><li>Structural similarity remains high at 99.0%</li><li>76 additions, 19 deletions, 11 modifications across the codebase</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.118 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.118."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.118</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.118</span></h1>
+<p class="sub">This release introduces the <code>/autofix-pr</code> command for automated PR monitoring and fixing, adds the <code>/plugin tag</code> command for plugin release management, replaces the standalone Config tool with integrated settings UI, and brings significant infrastructure improvements including a new <code>PostToolBatch</code> hook event, WSL managed settings inheritance, custom theme creation, MCP tool hooks, and a new SSE-based sessions transport (<code>SessionsV2Client</code>). The <code>/cost</code> and <code>/stats</code> commands are now aliases for an expanded <code>/usage</code> command.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.117 → v2.1.118</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">34</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">30 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="autofix-pr-command">
+      <div class="card-top">
+        <h3>/autofix-pr Command <a class="anchor" href="#autofix-pr-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new slash command that monitors a PR for CI failures and review comments, then automatically investigates and pushes fixes.</p>
+<div class="blabel">Usage</div>
+<pre><code>/autofix-pr
+/autofix-pr stop</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Can spawn either a background in-process agent or a remote autofix session (CCR)</li><li>Monitors the current PR continuously for CI failures or review comments</li><li>Automatically investigates issues and pushes fixes to the PR branch</li><li>Tracks monitoring state, preventing duplicate monitors with "Already monitoring" detection</li><li>Use <code>/autofix-pr stop</code> to stop monitoring</li><li>The remote variant shows <code>"Spawning remote autofix session…"</code> instead of the previous generic <code>"Spawning remote Claude Code session…"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Slash command definition (search for <code>"autofix-pr"</code>) with description <code>"Monitor and autofix any issues with the current PR"</code>. Background agent spawned via <code>lG1</code> at line ~473108.</p>
+    </article>
+    <article class="card" id="plugin-tag-command">
+      <div class="card-top">
+        <h3>/plugin tag Command <a class="anchor" href="#plugin-tag-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new slash command and CLI subcommand to create versioned git tags for plugin releases, with validation against plugin.json and marketplace entries.</p>
+<div class="blabel">Usage</div>
+<pre><code>/plugin tag [path] [--push] [--dry-run] [-f|--force]
+claude plugin tag [path] [--push] [--dry-run] [-f|--force] [-m &lt;msg&gt;] [--remote &lt;name&gt;]</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Validates plugin.json and any enclosing marketplace manifest agree on name and version</li><li>Checks for uncommitted changes, existing tags, valid semver, and valid git ref names</li><li>Creates annotated git tags in the format <code>{name}--v{version}</code></li><li><code>--push</code> pushes the tag to the remote after creation</li><li><code>--dry-run</code> previews what would be tagged without creating it</li><li><code>--force</code> skips dirty-working-tree and tag-already-exists checks</li><li>CLI variant adds <code>--message &lt;msg&gt;</code> for custom tag annotation and <code>--remote &lt;name&gt;</code> for push target</li><li>Detailed error messages for version mismatches, missing manifests, and invalid configs</li></ul>
+<div class="blabel">Evidence</div>
+<p>Slash command help text (search for <code>"Create a {name}--v{version} git tag"</code>) and CLI subcommand <code>.command("tag [path]")</code> at line ~652882.</p>
+    </article>
+    <article class="card" id="posttoolbatch-hook-event">
+      <div class="card-top">
+        <h3>PostToolBatch Hook Event <a class="anchor" href="#posttoolbatch-hook-event">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new hook event type that fires once after every tool call in a batch has resolved, before the next model request.</p>
+<div class="blabel">Details</div>
+<ul><li>Unlike <code>PostToolUse</code> which fires per-tool and may run concurrently for parallel tool calls, <code>PostToolBatch</code> fires exactly once with the full batch</li><li>Hook input includes <code>tool_calls</code> array with <code>{tool_name, tool_input, tool_use_id, tool_response}</code> for each call</li><li>Supports <code>additionalContext</code> return to inject content into the next model request</li><li>Can return <code>"stopAgent": true</code> to halt execution, showing <code>"Execution stopped by PostToolBatch hook"</code></li><li>Available in hooks configuration under the event name <code>"PostToolBatch"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema definition (search for <code>"PostToolBatch"</code>) at line ~263664. Hook input schema describes <code>"Fired once after every tool call in a batch has resolved, before the next model request"</code>.</p>
+    </article>
+    <article class="card" id="mcp-tool-hooks-mcp-tool">
+      <div class="card-top">
+        <h3>MCP Tool Hooks (mcp_tool) <a class="anchor" href="#mcp-tool-hooks-mcp-tool">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new hook type that invokes an MCP server tool as the hook action, as an alternative to bash/command hooks.</p>
+<div class="blabel">Details</div>
+<ul><li>Configure with <code>type: "mcp_tool"</code> in hook definitions</li><li>Specify <code>server</code> (name of an already-configured MCP server) and <code>tool</code> (tool name on that server)</li><li>Supports <code>arguments</code> object with <code>${path}</code> interpolation from hook input JSON</li><li>Optional <code>timeout</code> field for per-call timeout in seconds</li><li>Reads <code>X-Mcp-Error-Code</code> header from 401 responses for better error diagnostics</li><li>Not available for all hook events — logs <code>"mcp_tool hooks are not available for the '&lt;event&gt;' hook event"</code> when unsupported</li></ul>
+<div class="blabel">Evidence</div>
+<p>Hook type definition (search for <code>"mcp_tool"</code>) and MCP tool schema fields (search for <code>"Name of an already-configured MCP server to invoke"</code>).</p>
+    </article>
+    <article class="card" id="wsl-managed-settings-inheritance">
+      <div class="card-top">
+        <h3>WSL Managed Settings Inheritance <a class="anchor" href="#wsl-managed-settings-inheritance">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>WSL (Windows Subsystem for Linux) instances can now inherit managed settings from the Windows host's policy chain.</p>
+<div class="blabel">Details</div>
+<ul><li>A new <code>wslInheritsWindowsSettings</code> boolean setting controls this behavior</li><li>When set to <code>true</code> in a Windows admin-only source (HKLM registry or <code>C:/Program Files/ClaudeCode/managed-settings.json</code>), WSL reads managed settings from the full Windows policy chain</li><li>Windows sources take priority over Linux-native <code>/etc/claude-code</code> settings</li><li>Double opt-in required: admin enables the chain via HKLM/HKCU, user confirms via their own HKCU entry</li><li>Uses <code>reg.exe</code> queries via <code>/mnt/c/Windows/System32/reg.exe</code> for cross-environment access</li><li>Drop-in settings from <code>C:/Program Files/ClaudeCode/managed-settings.d/</code> are also supported</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema description (search for <code>"wslInheritsWindowsSettings"</code>) and WSL detection function <code>pnH()</code> at line ~50906.</p>
+    </article>
+    <article class="card" id="custom-theme-creation-and-management">
+      <div class="card-top">
+        <h3>Custom Theme Creation and Management <a class="anchor" href="#custom-theme-creation-and-management">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Users can now create, edit, and manage custom color themes with fine-grained color token overrides.</p>
+<div class="blabel">Details</div>
+<ul><li>Custom themes are stored as JSON files in the user's themes directory (<code>~/.claude/themes/</code>)</li><li>Each theme specifies a <code>name</code>, <code>base</code> theme (<code>dark</code> or <code>light</code>), and color <code>overrides</code></li><li>Color overrides accept <code>rgb(r,g,b)</code>, <code>#rrggbb</code>, <code>ansi256(n)</code>, or <code>ansi:name</code> formats</li><li>Custom themes appear in the <code>/theme</code> picker with a <code>(custom)</code> label</li><li>A <code>"New custom theme…"</code> option is available in the theme selector to create themes interactively</li><li>File watcher auto-reloads themes when JSON files are added, changed, or removed</li><li>Themes from plugins are also supported via a <code>themes</code> field in plugin.json or a <code>themes/</code> directory</li><li>Plugin settings schema adds <code>themesDirectories</code> for specifying additional theme paths</li></ul>
+<div class="blabel">Evidence</div>
+<p>Theme creation flow (search for <code>"__new_custom_theme__"</code>) and color validation (search for <code>"Accepts rgb(r,g,b)"</code> and <code>"rgb(r,g,b) · #rrggbb · ansi:red"</code>).</p>
+    </article>
+    <article class="card" id="managed-settings-cli-flag">
+      <div class="card-top">
+        <h3>--managed-settings CLI Flag <a class="anchor" href="#managed-settings-cli-flag">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new CLI flag that accepts a JSON object of policy-tier settings from a spawning parent process (SDK use only).</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --managed-settings &#x27;{&quot;key&quot;: &quot;value&quot;}&#x27;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Only honored when spawned by an SDK parent process</li><li>Ignored with a warning when passed outside SDK context: <code>"--managed-settings ignored: only honored when spawned by an SDK parent"</code></li><li>Invalid JSON produces: <code>"--managed-settings ignored: invalid JSON object"</code></li><li>Parsed settings are applied as <code>"Enterprise managed settings (parent process)"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>CLI flag definition (search for <code>"--managed-settings"</code>) and validation messages (search for <code>"--managed-settings ignored"</code>).</p>
+    </article>
+    <article class="card" id="plan-mode-instructions-cli-flag">
+      <div class="card-top">
+        <h3>--plan-mode-instructions CLI Flag <a class="anchor" href="#plan-mode-instructions-cli-flag">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new CLI flag that lets users customize the plan-mode workflow instructions.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --print --plan-mode-instructions &quot;Custom workflow instructions here&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Replaces the default code-implementation phases in the plan-mode system reminder</li><li>The read-only enforcement preamble and ExitPlanMode protocol footer are always kept</li><li>Can only be used with <code>--print</code> mode; using it otherwise produces: <code>"Error: --plan-mode-instructions can only be used with --print mode."</code></li><li>Also exposed as an agent frontmatter field <code>planModeInstructions</code> for programmatic configuration</li></ul>
+<div class="blabel">Evidence</div>
+<p>CLI option definition (search for <code>"--plan-mode-instructions"</code>) and enforcement (search for <code>"can only be used with --print mode"</code>).</p>
+    </article>
+    <article class="card" id="auto-mode-classifier-defaults-inheritance">
+      <div class="card-top">
+        <h3>Auto Mode Classifier $defaults Inheritance <a class="anchor" href="#auto-mode-classifier-defaults-inheritance">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Agent definitions can now use the literal string <code>"$defaults"</code> in auto mode classifier sections to inherit built-in rules at a specific position.</p>
+<div class="blabel">Details</div>
+<ul><li>Works in <code>allow</code>, <code>deny</code> (soft_deny), and <code>environment</code> sections of the auto mode classifier</li><li>When <code>$defaults</code> is present, the built-in rules are inserted at that position in the list</li><li>Custom rules can appear before or after <code>$defaults</code>, enabling augmentation rather than replacement</li><li>The UI now distinguishes between modes: <code>"Defaults also in effect:"</code> (custom rules added alongside) vs <code>"Defaults being replaced:"</code> (custom rules replacing defaults)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Variable definition <code>do$ = "$defaults"</code> and schema descriptions (search for <code>"Include the literal string \"$defaults\" to inherit the built-in rules at that position"</code>).</p>
+    </article>
+    <article class="card" id="session-color-tags-on-bridge-sessions">
+      <div class="card-top">
+        <h3>Session Color Tags on Bridge Sessions <a class="anchor" href="#session-color-tags-on-bridge-sessions">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>/color</code> command now syncs color choices to the bridge session via API tags, enabling consistent color display across clients.</p>
+<div class="blabel">Details</div>
+<ul><li>When a bridge session ID is available, <code>/color</code> calls <code>updateBridgeSessionColorTag</code> to set a <code>color:</code> tag on the server-side session</li><li>Resetting to default removes all color tags</li><li>Uses the new <code>QD6</code> function to manage <code>color:</code> prefixed tags via the sessions API</li></ul>
+<div class="blabel">Evidence</div>
+<p>Color tag update function <code>QZ1</code> at line ~476042 (search for <code>"color:"</code>) and tag prefix constant <code>UD6 = "color:"</code>.</p>
+    </article>
+    <article class="card" id="unified-usage-command-replaces-cost">
+      <div class="card-top">
+        <h3>Unified /usage Command (replaces /cost) <a class="anchor" href="#unified-usage-command-replaces-cost">#</a></h3>
+      </div>
+      <p>The standalone <code>/cost</code> command has been removed and consolidated into <code>/usage</code>. The <code>/usage</code> command now has <code>"cost"</code> and <code>"stats"</code> as aliases, so typing <code>/cost</code> or <code>/stats</code> still works. The description changed from <code>"Show plan usage limits"</code> to <code>"Show session cost, plan usage, and activity stats"</code>. For thin-client (remote) sessions, <code>/usage</code> now fetches the remote container's cost via a <code>get_session_cost</code> control request instead of displaying <code>$0.00</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Command definition with aliases (search for <code>"Show session cost, plan usage, and activity stats"</code>) and remote cost fetching (search for <code>"Loading remote cost"</code>).</p>
+    </article>
+    <article class="card" id="config-tool-removed-in-favor-of-settings-ui">
+      <div class="card-top">
+        <h3>Config Tool Removed in Favor of Settings UI <a class="anchor" href="#config-tool-removed-in-favor-of-settings-ui">#</a></h3>
+      </div>
+      <p>The standalone <code>Config</code> tool (which allowed the model to get/set settings via tool use) has been completely removed. All its functionality — theme, model, permissions, voice, memory, and other settings — is now managed through the <code>/config</code> slash command and settings UI. This simplifies the tool surface and prevents the model from changing settings without explicit user intent.</p>
+<div class="blabel">Evidence</div>
+<p>Removal of <code>var Fw7 = "Config"</code> tool definition and all associated functions (<code>sw7</code>, <code>tw7</code>, <code>ms$</code>, <code>ew7</code>, <code>$j7</code>, <code>Kj7</code>, <code>_j7</code>, <code>Aj7</code>, <code>Wj7</code>, <code>Gj7</code>, <code>Zj7</code>) from v2.1.117.</p>
+    </article>
+    <article class="card" id="broadcast-messaging-deprecated">
+      <div class="card-top">
+        <h3>Broadcast Messaging Deprecated <a class="anchor" href="#broadcast-messaging-deprecated">#</a></h3>
+      </div>
+      <p>The <code>to: "<em>"</code> broadcast mode for <code>SendMessage</code> in agent teams has been deprecated. The new behavior produces: <code>"broadcast (to: \"</em>\") is no longer supported — send a message per recipient"</code>. The team system prompt no longer mentions broadcast capability, directing agents to send individual messages instead.</p>
+<div class="blabel">Evidence</div>
+<p>Deprecation message (search for <code>"broadcast (to: \"*\") is no longer supported"</code>).</p>
+    </article>
+    <article class="card" id="improved-recap-messages">
+      <div class="card-top">
+        <h3>Improved Recap Messages <a class="anchor" href="#improved-recap-messages">#</a></h3>
+      </div>
+      <p>The recap command now provides more specific error messages based on the failure reason:</p>
+<ul><li>No turns yet: <code>"Nothing to recap yet — send a message first."</code> (previously: generic "No recap available")</li><li>Generation failed: <code>"Couldn't generate a recap. Run with --debug for details."</code></li><li>Cancelled: <code>"Recap cancelled."</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>New recap messages (search for <code>"Nothing to recap yet"</code> and <code>"Couldn't generate a recap"</code>).</p>
+    </article>
+    <article class="card" id="mcp-server-authentication-improvements">
+      <div class="card-top">
+        <h3>MCP Server Authentication Improvements <a class="anchor" href="#mcp-server-authentication-improvements">#</a></h3>
+      </div>
+      <p>When an MCP server returns 401, the error message now offers an <code>"Authenticate"</code> option for OAuth-capable servers: <code>"requires authentication. Use 'Authenticate' if the upstream server uses OAuth, or check the headersHelper script and use 'Reconnect'."</code> The previous version only suggested checking the headersHelper script.</p>
+<div class="blabel">Evidence</div>
+<p>Updated authentication message (search for <code>"Use 'Authenticate' if the upstream server uses OAuth"</code>).</p>
+    </article>
+    <article class="card" id="speculation-generalized-from-bash-to-shell">
+      <div class="card-top">
+        <h3>Speculation Generalized from Bash to Shell <a class="anchor" href="#speculation-generalized-from-bash-to-shell">#</a></h3>
+      </div>
+      <p>The speculative execution boundary detection has been generalized from <code>"Speculation paused: bash boundary"</code> to <code>"Speculation paused: shell boundary"</code>, reflecting broader shell support including PowerShell.</p>
+<div class="blabel">Evidence</div>
+<p>New string <code>"Speculation paused: shell boundary"</code> replaces <code>"Speculation paused: bash boundary"</code>.</p>
+    </article>
+    <article class="card" id="powershell-remove-item-support-in-memory-mode">
+      <div class="card-top">
+        <h3>PowerShell Remove-Item Support in Memory Mode <a class="anchor" href="#powershell-remove-item-support-in-memory-mode">#</a></h3>
+      </div>
+      <p>The memory agent's restricted shell commands now understand PowerShell <code>Remove-Item</code> (and aliases <code>ri</code>, <code>del</code>, <code>erase</code>, <code>rd</code>, <code>rm</code>, <code>rmdir</code>) for <code>.md</code> file deletion, not just Unix <code>rm</code>. This aligns with the cross-platform shell support.</p>
+<div class="blabel">Evidence</div>
+<p>PowerShell command parser <code>Z31</code> at line ~433184 (search for <code>"Remove-Item"</code> / <code>"PowerShell Remove-Item"</code>).</p>
+    </article>
+    <article class="card" id="admin-controlled-update-blocking">
+      <div class="card-top">
+        <h3>Admin-Controlled Update Blocking <a class="anchor" href="#admin-controlled-update-blocking">#</a></h3>
+      </div>
+      <p>Administrators can now disable auto-updates via managed settings. When disabled, users see: <code>"Updates are disabled by your administrator. Contact your IT team to get the latest version."</code> This supports enterprise environments with controlled rollout.</p>
+<div class="blabel">Evidence</div>
+<p>Admin update blocking message (search for <code>"Updates are disabled by your administrator"</code>).</p>
+    </article>
+    <article class="card" id="plugin-autoupdate-blocked-by-pinner-notifications">
+      <div class="card-top">
+        <h3>Plugin Autoupdate "Blocked by Pinner" Notifications <a class="anchor" href="#plugin-autoupdate-blocked-by-pinner-notifications">#</a></h3>
+      </div>
+      <p>When a plugin can't auto-update because another plugin pins it to a specific version, users now receive a clear notification explaining the hold: <code>"Autoupdate held"</code>. The notification identifies which plugin is blocking the update and whether those pinning plugins are disabled.</p>
+<div class="blabel">Evidence</div>
+<p>Autoupdate blocked notification type (search for <code>"autoupdate-blocked-by-pinner"</code> and <code>"Autoupdate held"</code>).</p>
+    </article>
+    <article class="card" id="push-notification-tips">
+      <div class="card-top">
+        <h3>Push Notification Tips <a class="anchor" href="#push-notification-tips">#</a></h3>
+      </div>
+      <p>New tips encourage users to enable push notifications:</p>
+<ul><li><code>"Get pinged on your phone when long tasks finish · enable push notifications in /config"</code></li><li>After session completion: <code>"get pinged when Claude finishes · enable push notifications in"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Tip definition (search for <code>"push-notif"</code> or <code>"Get pinged on your phone"</code>).</p>
+    </article>
+    <article class="card" id="frontmatter-schema-validation-telemetry">
+      <div class="card-top">
+        <h3>Frontmatter Schema Validation Telemetry <a class="anchor" href="#frontmatter-schema-validation-telemetry">#</a></h3>
+      </div>
+      <p>New telemetry tracks when plugin/skill frontmatter contains unknown keys or type mismatches against the expected schema. This helps identify misconfigured plugins without breaking them.</p>
+<div class="blabel">Evidence</div>
+<p>Validation function <code>pwH</code> at line ~205424 (search for <code>"tengu_frontmatter_shadow_unknown_key"</code>).</p>
+    </article>
+    <article class="card" id="anthropic-client-platform-header">
+      <div class="card-top">
+        <h3>Anthropic Client Platform Header <a class="anchor" href="#anthropic-client-platform-header">#</a></h3>
+      </div>
+      <p>API requests now include an <code>anthropic-client-platform</code> header that identifies the entrypoint context (VSCode, remote, SDK, MCP, GitHub Action, local agent, Slack, or CLI). This enables better server-side analytics.</p>
+<div class="blabel">Evidence</div>
+<p>Header function <code>YDH()</code> at line ~147245 (search for <code>"anthropic-client-platform"</code>).</p>
+    </article>
+    <article class="card" id="fork-context-reference-tracking">
+      <div class="card-top">
+        <h3>Fork Context Reference Tracking <a class="anchor" href="#fork-context-reference-tracking">#</a></h3>
+      </div>
+      <p>When forking sessions, the system now tracks a <code>fork-context-ref</code> linking the child to the parent context. This improves session lineage tracking for forked conversations.</p>
+<div class="blabel">Evidence</div>
+<p>Fork context reference (search for <code>"fork-context-ref"</code> and <code>"Failed to record fork-context-ref"</code>).</p>
+    </article>
+    <article class="card" id="stall-detection-and-diagnostics">
+      <div class="card-top">
+        <h3>Stall Detection and Diagnostics <a class="anchor" href="#stall-detection-and-diagnostics">#</a></h3>
+      </div>
+      <p>A comprehensive stall detection system has been added that logs timing information for:</p>
+<ul><li>Stream idle partials: <code>[Stall] stream_idle_partial lastChunkAgeMs=...</code></li><li>Classifier requests: start, progress, and finish with timing and outcome</li><li>Tool dispatch: start, end, and post-error with tool name and permission decision timing</li><li>Agent completion events</li></ul>
+<p>This helps diagnose performance bottlenecks and stuck sessions.</p>
+<div class="blabel">Evidence</div>
+<p>Stall detection logs (search for <code>"[Stall]"</code>), with fields like <code>promptTokensEst=</code> and <code>permissionDecisionMs=</code>.</p>
+    </article>
+    <article class="card" id="improved-edit-tool-unicode-handling">
+      <div class="card-top">
+        <h3>Improved Edit Tool Unicode Handling <a class="anchor" href="#improved-edit-tool-unicode-handling">#</a></h3>
+      </div>
+      <p>The Edit tool now attempts to match <code>\uXXXX</code> escape sequences and their literal Unicode character equivalents. If neither form matches, it provides a more helpful error message: <code>"Edit also tried swapping \uXXXX escapes and their characters; neither form matched, so the mismatch is likely elsewhere in old_string."</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Unicode swap functions <code>$e8</code> and <code>qe8</code> at line ~260927, and error hint (search for <code>"swapping \\uXXXX escapes"</code>).</p>
+    </article>
+    <article class="card" id="fullscreen-renderer-memory-optimization">
+      <div class="card-top">
+        <h3>Fullscreen Renderer Memory Optimization <a class="anchor" href="#fullscreen-renderer-memory-optimization">#</a></h3>
+      </div>
+      <p>The fullscreen renderer's pool reset logic has been optimized. Instead of resetting all pools every 5 minutes unconditionally, it now only resets the hyperlink pool when its size exceeds a threshold. The character pool is no longer reset, reducing memory churn.</p>
+<div class="blabel">Evidence</div>
+<p>Structural change in class <code>VH$</code> — conditional <code>this.hyperlinkPool.size &gt; i4K</code> check before pool reset.</p>
+    </article>
+    <article class="card" id="byte-watchdog-with-stall-detection-tiers">
+      <div class="card-top">
+        <h3>Byte Watchdog with Stall Detection Tiers <a class="anchor" href="#byte-watchdog-with-stall-detection-tiers">#</a></h3>
+      </div>
+      <p>The streaming byte watchdog now includes tiered stall detection with escalating timeouts (15s, 30s, 60s, 120s) before the final hard watchdog fires. Each tier logs <code>[Stall] stream_idle_partial</code> with byte count and timing, providing earlier visibility into stalled streams.</p>
+<div class="blabel">Evidence</div>
+<p>Stall tier array <code>f = [15000, 30000, 60000, 120000]</code> in function <code>Md_</code> at line ~145358.</p>
+    </article>
+    <article class="card" id="user-oauth-and-ant-auth-profile-support">
+      <div class="card-top">
+        <h3>User OAuth and Ant Auth Profile Support <a class="anchor" href="#user-oauth-and-ant-auth-profile-support">#</a></h3>
+      </div>
+      <p>The credentials system now recognizes <code>user_oauth</code> authentication type alongside <code>oidc_federation</code>, enabling new identity provider flows. The status display distinguishes between profile types (explicit vs. implicit) and shows the authentication type. A new logout hint tells users: <code>"Run \</code>ant auth logout\<code>, or remove the active profile under ~/.config/anthropic/configs/."</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Authentication type detection in <code>$y8</code> at line ~101631 (search for <code>"user_oauth"</code>) and logout hint (search for <code>"ant auth logout"</code>).</p>
+    </article>
+    <article class="card" id="cache-diagnosis-beta-header-handling">
+      <div class="card-top">
+        <h3>Cache Diagnosis Beta Header Handling <a class="anchor" href="#cache-diagnosis-beta-header-handling">#</a></h3>
+      </div>
+      <p>Improved handling of the cache diagnosis beta feature. If the server rejects the beta header, it's now detected and dropped gracefully: <code>"[cache-diagnosis] server rejected beta — dropping header latch"</code>. A retry mechanism (<code>"retry:cache-diagnosis-beta"</code>) handles transient failures.</p>
+<div class="blabel">Evidence</div>
+<p>Cache diagnosis handling (search for <code>"cache-diagnosis"</code> and <code>"retry:cache-diagnosis-beta"</code>).</p>
+    </article>
+    <article class="card" id="atomic-file-writes">
+      <div class="card-top">
+        <h3>Atomic File Writes <a class="anchor" href="#atomic-file-writes">#</a></h3>
+      </div>
+      <p>A new <code>rcq</code> function implements atomic file writes using temp-file-then-rename, with fallback to copy+unlink for cross-device scenarios (<code>EXDEV</code>, <code>EPERM</code>, <code>EEXIST</code>). This prevents data corruption from interrupted writes.</p>
+<div class="blabel">Evidence</div>
+<p>Atomic write function at line ~145955 (search for <code>".tmp."</code> in the write context).</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential data loss when writing files across filesystem boundaries — atomic writes now handle <code>EXDEV</code> and <code>EPERM</code> errors gracefully (search for <code>"EXDEV"</code>)</li><li>Fixed session reattachment cleanup — <code>CLAUDE_BRIDGE_REATTACH_SESSION</code> and <code>CLAUDE_BRIDGE_REATTACH_SEQ</code> environment variables are now properly cleared on TUI restart to prevent stale reattachment (search for <code>"CLAUDE_BRIDGE_REATTACH_SESSION"</code>)</li><li>Improved credentials lock handling with proper retry logic and error reporting: <code>"Could not acquire credentials lock at ... after N retries"</code> (search for <code>"credentials lock"</code>)</li><li>Fixed potential memory leak in fullscreen renderer where character pools were unnecessarily reset every 5 minutes</li></ul>
+    </article>
+    <article class="card" id="pro-trial-expired-options-in-development">
+      <div class="card-top">
+        <h3>Pro Trial Expired Options [In Development] <a class="anchor" href="#pro-trial-expired-options-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new slash command <code>pro-trial-expired</code> for handling expired Pro plan Claude Code trials.</p>
+<div class="blabel">Status</div>
+<p>Stubbed — <code>isEnabled</code> returns <code>!1</code> (false) and <code>isHidden</code> is <code>!0</code> (true).</p>
+<div class="blabel">Details</div>
+<ul><li>Described as <code>"Options shown when the Pro plan Claude Code trial has ended"</code></li><li>Includes a user-facing message <code>"Your Claude Code trial has ended."</code> and <code>"Upgrade to Max"</code> option</li><li>The <code>"No, don't ask again"</code> dismiss option with value <code>"decline-dont-ask"</code> is also wired up</li><li>Infrastructure is complete but the command is hidden and disabled</li></ul>
+<div class="blabel">Evidence</div>
+<p>Command definition (search for <code>"pro-trial-expired"</code>) with <code>isEnabled: () =&gt; { return !1; }</code> and <code>isHidden: !0</code>.</p>
+    </article>
+    <article class="card" id="sessions-v2-client-sse-transport-in-development">
+      <div class="card-top">
+        <h3>Sessions V2 Client (SSE Transport) [In Development] <a class="anchor" href="#sessions-v2-client-sse-transport-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A complete replacement for the WebSocket-based <code>SessionsWebSocket</code> client, using Server-Sent Events (SSE) over HTTP.</p>
+<div class="blabel">Status</div>
+<p>Infrastructure added. The new <code>SessionsV2Client</code> coexists with the old WebSocket client.</p>
+<div class="blabel">Details</div>
+<ul><li>Uses <code>/events/stream</code> SSE endpoint for receiving events (replacing WebSocket)</li><li>Uses <code>POST /events</code> for sending events (replacing WebSocket send)</li><li>Includes reconnection budget tracking with backoff</li><li>Supports <code>from_sequence_num</code> for event replay on reconnect</li><li>Liveness timeout detection with automatic reconnection</li><li>Force reconnect capability</li><li>Full control request/response protocol over HTTP</li></ul>
+<div class="blabel">Evidence</div>
+<p>New client class (search for <code>"SessionsV2Client"</code>) with log prefixes like <code>"[SessionsV2Client] Connecting to"</code>, <code>"[SessionsV2Client] Connected"</code>, etc.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The <code>/cost</code> command still works — it is now an alias for <code>/usage</code>, which provides expanded session cost, plan usage, and activity stats</li><li>The Config tool removal means the model can no longer change settings autonomously; all settings changes now go through the interactive <code>/config</code> UI</li><li>WSL managed settings inheritance requires explicit opt-in from both the Windows admin (via HKLM or Program Files config) and the user (via HKCU) — it is not enabled by default</li><li>Custom themes require the user themes directory (<code>~/.claude/themes/</code>); themes are auto-detected and hot-reloaded on file changes</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

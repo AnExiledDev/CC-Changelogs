@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.50 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.50."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.50</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.50</span></h1>
+<p class="sub">This release introduces cross-project conversation resume, a new MCP CLI endpoint for external tool integration, mandatory source citations for web search results, and human-friendly session naming using memorable word combinations like "fluffy-bouncing-bunny".</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.49 → v2.0.50</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="cross-project-conversation-resume">
+      <div class="card-top">
+        <h3>Cross-Project Conversation Resume <a class="anchor" href="#cross-project-conversation-resume">#</a></h3>
+      </div>
+      <p><strong>What:</strong> View and resume conversations from any project directory, not just the current one. <strong>How to use:</strong></p>
+<pre><code># Use /resume command and toggle &quot;Show all projects&quot; 
+claude
+&gt; /resume
+# Press the toggle key to switch between current project and all projects</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>When enabled, scans <code>~/.claude/projects/</code> for all project directories</li><li>Shows project path in conversation list for cross-project items</li><li>For conversations from different directories, copies the resume command to clipboard</li><li>Provides clear instructions: <code>cd /path/to/project &amp;&amp; claude --resume &lt;session-id&gt;</code></li><li><strong>Evidence</strong>: <code>FZ1()</code> at line 487757, <code>VZ1()</code> at line 504532 in v2.0.50</li></ul>
+    </article>
+    <article class="card" id="mcp-cli-endpoint">
+      <div class="card-top">
+        <h3>MCP CLI Endpoint <a class="anchor" href="#mcp-cli-endpoint">#</a></h3>
+      </div>
+      <p><strong>What:</strong> HTTP REST API server for external tools to interact with Claude Code's MCP servers programmatically. <strong>How to use:</strong></p>
+<pre><code># Enable the endpoint (enabled by default when Claude Code is running)
+# External tools can make requests to localhost with bearer token auth
+
+# Example: List available MCP servers
+curl -X POST http://127.0.0.1:&lt;port&gt;/mcp \
+  -H &quot;Authorization: Bearer &lt;secret&gt;&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;command&quot;: &quot;servers&quot;}&#x27;
+
+# Example: Call an MCP tool
+curl -X POST http://127.0.0.1:&lt;port&gt;/mcp \
+  -H &quot;Authorization: Bearer &lt;secret&gt;&quot; \
+  -d &#x27;{&quot;command&quot;: &quot;call&quot;, &quot;params&quot;: {&quot;server&quot;: &quot;myserver&quot;, &quot;tool&quot;: &quot;mytool&quot;, &quot;args&quot;: {}}}&#x27;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Supports commands: <code>servers</code>, <code>tools</code>, <code>info</code>, <code>call</code>, <code>grep</code>, <code>resources</code>, <code>read</code></li><li>Bearer token authentication with 32-byte random secret</li><li>Localhost-only binding for security</li><li>Endpoint info stored in <code>~/.claude/&lt;workspace&gt;.endpoint</code></li><li>Can be disabled via <code>ENABLE_MCP_CLI_ENDPOINT=false</code> environment variable</li><li><strong>Evidence</strong>: <code>class hX0</code> at line 515880 in v2.0.50</li></ul>
+    </article>
+    <article class="card" id="friendly-session-slug-names">
+      <div class="card-top">
+        <h3>Friendly Session Slug Names <a class="anchor" href="#friendly-session-slug-names">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Plan files now use memorable, human-readable names instead of UUIDs. <strong>How to use:</strong></p>
+<pre><code># Session plans are now named with friendly slugs like:
+# ~/.claude/plans/fluffy-bouncing-bunny.md
+# ~/.claude/plans/golden-dancing-butterfly.md</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>146 adjectives × 112 verbs × 300 nouns = 4.9 million unique combinations</li><li>Word categories include nature terms, animals, and whimsical objects</li><li>Names like "sparkly-juggling-penguin" or "cozy-dreaming-unicorn"</li><li><strong>Evidence</strong>: <code>$A2()</code> at line 300930, word arrays at lines 300938-301497 in v2.0.50</li></ul>
+    </article>
+    <article class="card" id="code-change-indicator">
+      <div class="card-top">
+        <h3>Code Change Indicator <a class="anchor" href="#code-change-indicator">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Real-time display of file modifications during a conversation showing files changed and lines added/removed. <strong>Details:</strong></p>
+<ul><li>Shows: <code>2 files +15 -8</code> format with color-coded counts</li><li>Green for additions, red for deletions</li><li>Tracks changes from tool use results</li><li>Updates as files are modified during the session</li><li><strong>Evidence</strong>: <code>Fo2()</code> component at line 451329 in v2.0.50</li></ul>
+    </article>
+    <article class="card" id="json-schema-support-in-sdk-initialization">
+      <div class="card-top">
+        <h3>JSON Schema Support in SDK Initialization <a class="anchor" href="#json-schema-support-in-sdk-initialization">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Pass JSON schemas at SDK initialization time for automatic structured output validation. <strong>How to use:</strong></p>
+<pre><code># Python SDK example
+from claude_code import ClaudeCode
+
+client = ClaudeCode()
+response = client.run(
+    prompt=&quot;Generate user data&quot;,
+    json_schema={
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+            &quot;name&quot;: {&quot;type&quot;: &quot;string&quot;},
+            &quot;age&quot;: {&quot;type&quot;: &quot;integer&quot;}
+        },
+        &quot;required&quot;: [&quot;name&quot;, &quot;age&quot;]
+    }
+)</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Schema is validated using Ajv validator</li><li>Automatically creates a StructuredOutput validation tool</li><li>Validates all outputs against the schema throughout the session</li><li>Works via both SDK initialization and CLI <code>--json-schema</code> flag</li><li><strong>Evidence</strong>: <code>$D0()</code> at line 2327, <code>$G1()</code> at line 470974 in v2.0.50</li></ul>
+    </article>
+    <article class="card" id="websearch-tool-now-requires-source-citations">
+      <div class="card-top">
+        <h3>WebSearch Tool Now Requires Source Citations <a class="anchor" href="#websearch-tool-now-requires-source-citations">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude must now include a "Sources:" section with hyperlinked references when using web search. <strong>Details:</strong></p>
+<ul><li>Mandatory "Sources:" section at end of responses using web search</li><li>Links formatted as markdown hyperlinks: <code>[Title](URL)</code></li><li>Returns now include "links as markdown hyperlinks" in results</li><li><strong>Evidence</strong>: <code>k9B</code> variable at line 187201 in v2.0.50, adds "CRITICAL REQUIREMENT" section</li></ul>
+    </article>
+    <article class="card" id="enhanced-lsp-client-robustness">
+      <div class="card-top">
+        <h3>Enhanced LSP Client Robustness <a class="anchor" href="#enhanced-lsp-client-robustness">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Significant improvements to Language Server Protocol client reliability and error handling. <strong>Details:</strong></p>
+<ul><li>New spawn event handling ensures process fully started before using stdio</li><li>Added stdin error handler for write failures</li><li>Added connection-level error and close handlers</li><li>New cleanup flag prevents spurious errors during intentional shutdown</li><li>Enhanced listener cleanup removes stdin/stderr handlers on stop</li><li>Trace setup now has error handling</li><li><strong>Evidence</strong>: <code>w02()</code> function at line 304885 in v2.0.50</li></ul>
+    </article>
+    <article class="card" id="session-memory-template-enhancement">
+      <div class="card-top">
+        <h3>Session Memory Template Enhancement <a class="anchor" href="#session-memory-template-enhancement">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added "Key results" section to session memory template for capturing concrete outputs. <strong>Details:</strong></p>
+<ul><li>New section between "Learnings" and "Worklog"</li><li>Purpose: Store specific answers, tables, or documents user requested</li><li>Template prompt: "_If the user asked a specific output such as an answer to a question, a table, or other document, repeat the exact result here_"</li><li><strong>Evidence</strong>: <code>hP3</code> template at line 508626 in v2.0.50</li></ul>
+    </article>
+    <article class="card" id="remote-session-persistence-retry-logic">
+      <div class="card-top">
+        <h3>Remote Session Persistence Retry Logic <a class="anchor" href="#remote-session-persistence-retry-logic">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added retry mechanism for remote session log persistence. <strong>Details:</strong></p>
+<ul><li>Retries failed persistence attempts with exponential backoff</li><li>Base delay of 1 second, max 8 seconds between attempts</li><li>Better error messages including entry UUID in conflict errors</li><li><strong>Evidence</strong>: <code>JS5()</code> function at line 393547 in v2.0.50</li></ul>
+    </article>
+    <article class="card" id="ide-name-resolution-enhancement">
+      <div class="card-top">
+        <h3>IDE Name Resolution Enhancement <a class="anchor" href="#ide-name-resolution-enhancement">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved detection and display of IDE names from various formats. <strong>Details:</strong></p>
+<ul><li>Better handling of lowercase and trimmed IDE identifiers</li><li>Fallback lookup for IDE display names</li><li>Handles space-separated IDE names (uses first word)</li><li><strong>Evidence</strong>: <code>CE()</code> function at line 318709 in v2.0.50</li></ul>
+    </article>
+    <article class="card" id="large-mcp-tool-result-handling">
+      <div class="card-top">
+        <h3>Large MCP Tool Result Handling <a class="anchor" href="#large-mcp-tool-result-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved handling of oversized MCP tool results with structured output support. <strong>Details:</strong></p>
+<ul><li>Detects when results exceed maximum token limits</li><li>Saves large outputs to temporary files</li><li>Reports output format (plain text, JSON, JSON array with schema)</li><li>Provides clear instructions for reading chunked content</li><li><strong>Evidence</strong>: <code>HZ5()</code> function at line 333257 in v2.0.50</li></ul>
+    </article>
+    <article class="card" id="startup-performance-telemetry">
+      <div class="card-top">
+        <h3>Startup Performance Telemetry <a class="anchor" href="#startup-performance-telemetry">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added detailed startup performance tracking for diagnostics. <strong>Details:</strong></p>
+<ul><li>Tracks import time, init time, settings load time, and total startup time</li><li>Reports checkpoint counts and timing intervals</li><li>Sampled at 0.1% of sessions for telemetry</li><li><strong>Evidence</strong>: <code>wT3()</code> function at line 506078, <code>UT3</code> timings at line 506093 in v2.0.50</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

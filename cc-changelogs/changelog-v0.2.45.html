@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.45 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.45."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.45</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.45</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.44 → v0.2.45</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">2</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.45 Changelog</p>
+    </article>
+    <article class="card" id="environment-variable-support-for-api-customization">
+      <div class="card-top">
+        <h3>Environment Variable Support for API Customization <a class="anchor" href="#environment-variable-support-for-api-customization">#</a></h3>
+      </div>
+      <p>Claude Code now supports a new environment variable <code>CLAUDE_CODE_EXTRA_BODY</code> that allows users to inject additional parameters into API requests.</p>
+<p><strong>Usage:</strong></p>
+<pre><code># Set custom API parameters as a JSON object
+export CLAUDE_CODE_EXTRA_BODY=&#x27;{&quot;temperature&quot;: 0.8, &quot;max_tokens&quot;: 4000}&#x27;
+claude &quot;Your prompt here&quot;</code></pre>
+<p>This feature enables:</p>
+<ul><li>Customization of API request parameters without modifying code</li><li>Fine-tuning of Claude's response behavior (temperature, max tokens, etc.)</li><li>Advanced users to experiment with API options</li></ul>
+<p><strong>Error Handling:</strong></p>
+<ul><li>The value must be a valid JSON object (not an array or primitive)</li><li>Invalid JSON will be logged to stderr and ignored</li><li>Parsing errors are gracefully handled with descriptive error messages</li></ul>
+    </article>
+    <article class="card" id="import-optimizations">
+      <div class="card-top">
+        <h3>Import Optimizations <a class="anchor" href="#import-optimizations">#</a></h3>
+      </div>
+      <ul><li>Switched from default imports to named imports for better tree-shaking:</li><li><code>stream</code> module now uses <code>import { Readable as o$4 }</code></li><li><code>node:process</code> module now uses <code>import { cwd as zw0 }</code></li><li>These changes may result in slightly smaller bundle sizes and improved load times</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Details</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-details">
+      <p>The new <code>O41()</code> function handles the environment variable parsing:</p>
+<pre><code>function O41() {
+  let I = process.env.CLAUDE_CODE_EXTRA_BODY;
+  if (!I) return {};
+  try {
+    let G = wO(I); // JSON parse wrapper
+    if (G &amp;&amp; typeof G === &quot;object&quot; &amp;&amp; !Array.isArray(G)) return G;
+    return (console.error(&quot;CLAUDE_CODE_EXTRA_BODY must be a JSON object&quot;), {});
+  } catch (G) {
+    return (
+      console.error(
+        `Error parsing CLAUDE_CODE_EXTRA_BODY: ${G instanceof Error ? G.message : String(G)}`,
+      ),
+      {}
+    );
+  }
+}</code></pre>
+<p>This function is likely called during API request construction to merge custom parameters with default request bodies.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

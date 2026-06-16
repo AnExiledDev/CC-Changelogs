@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.101 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.101."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.101</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.101</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.100 → v0.2.101</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Model Selection and Configuration</h4>
+<ul><li><strong>Added model selection support</strong>: Users can now choose between different Claude models or use the default</li><li>Claude 3.7 Sonnet (Fast and balanced · $3/$15 per Mtok)</li><li>Claude 3.5 Sonnet (Previous generation · $3/$15 per Mtok)</li><li>Claude 3.5 Haiku (Quick responses · $0.80/$4 per Mtok)</li><li>Custom model configurations</li><li><strong>Environment variable support</strong>: Set your preferred model using <code>ANTHROPIC_MODEL</code> environment variable</li><li><strong>Platform-specific model routing</strong>: Automatic detection and routing for Bedrock (<code>CLAUDE_CODE_USE_BEDROCK</code>) and Vertex (<code>CLAUDE_CODE_USE_VERTEX</code>) platforms</li></ul>
+<h4>Migration System</h4>
+<ul><li><strong>New migration framework</strong>: Automated migration system for handling configuration and data migrations between versions</li><li><strong>Bundled migration support</strong>: Special handling for Bun runtime with embedded migration files</li><li><strong>Version tracking</strong>: Migration files are now included with version metadata (v0.2.101)</li></ul>
+<h4>IDE Integration Improvements</h4>
+<ul><li><strong>IDE lock file management</strong>: New functions for managing IDE integration lock files in <code>~/.claude/ide/</code></li><li><strong>Connection handling</strong>: Enhanced TCP connection support for IDE integrations using Node.js <code>net</code> module</li></ul>
+<h4>User Interface Enhancements</h4>
+<ul><li><strong>Relative time formatting</strong>: New utility for displaying human-readable relative timestamps (e.g., "2 hours ago", "in 3 days")</li><li><strong>Enhanced permission context</strong>: Improved tool permission handling system</li></ul>
+    </article>
+    <article class="card" id="technical-improvements">
+      <div class="card-top">
+        <h3>Technical Improvements <a class="anchor" href="#technical-improvements">#</a></h3>
+      </div>
+      <h4>Performance and Stability</h4>
+<ul><li><strong>React 18+ compatibility</strong>: Removed legacy React components and updated to modern React 18+ APIs</li><li><strong>Reduced bundle size</strong>: Removed approximately 496 deprecated functions while adding only 119 new ones</li><li><strong>Memory optimization</strong>: Cleaned up unused signal handling and event management code</li></ul>
+<h4>Code Quality</h4>
+<ul><li><strong>Structural similarity</strong>: Maintained 92.7% structural similarity with previous version for stability</li><li><strong>Modernized codebase</strong>: Removed legacy polyfills and outdated compatibility layers</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed potential issues with Fast Refresh module reloading</li><li>Improved cache invalidation for selectors returning inconsistent values</li><li>Enhanced error handling for migration processes</li></ul>
+    </article>
+    <article class="card" id="developer-experience">
+      <div class="card-top">
+        <h3>Developer Experience <a class="anchor" href="#developer-experience">#</a></h3>
+      </div>
+      <ul><li><strong>Better error messages</strong>: More descriptive error messages for migration failures</li><li><strong>Issue reporting</strong>: Direct links to GitHub issues (<code>https://github.com/anthropics/claude-code/issues</code>)</li><li><strong>Documentation</strong>: Updated references to documentation at <code>https://docs.anthropic.com/s/claude-code</code></li></ul>
+    </article>
+    <article class="card" id="breaking-changes">
+      <div class="card-top">
+        <h3>Breaking Changes <a class="anchor" href="#breaking-changes">#</a></h3>
+      </div>
+      <ul><li>Removed legacy signal handling utilities (<code>$i0</code>, <code>Ui0</code>)</li><li>Removed deprecated React lifecycle methods and compatibility layers</li><li>Some internal APIs have been restructured (maintaining 92.7% compatibility)</li></ul>
+    </article>
+    <article class="card" id="usage-examples">
+      <div class="card-top">
+        <h3>Usage Examples <a class="anchor" href="#usage-examples">#</a></h3>
+      </div>
+      <h4>Setting a preferred model:</h4>
+<pre><code># Via environment variable
+export ANTHROPIC_MODEL=&quot;claude-3-7-sonnet&quot;
+claude &quot;Help me write a Python script&quot;
+
+# The CLI will use Claude 3.7 Sonnet for this request</code></pre>
+<h4>Using platform-specific routing:</h4>
+<pre><code># For AWS Bedrock
+export CLAUDE_CODE_USE_BEDROCK=true
+claude &quot;Analyze this codebase&quot;
+
+# For Google Cloud Vertex
+export CLAUDE_CODE_USE_VERTEX=true
+claude &quot;Review this pull request&quot;</code></pre>
+<p>The model selection interface provides clear pricing information and performance characteristics to help users choose the most appropriate model for their needs.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

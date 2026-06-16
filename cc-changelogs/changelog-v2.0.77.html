@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.77 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.77."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.77</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.77</span></h1>
+<p class="sub">This release focuses on internal performance improvements with new slow operation detection and diagnostics, enhanced OAuth authentication recovery, better enterprise MCP policy enforcement, and updated max token handling for Claude Sonnet 4 with the 1M context beta. Several large dependency libraries (AJV JSON Schema validator, terminal setup helpers) were removed and replaced with more efficient alternatives.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.76 → v2.0.77</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="epipe-error-handling-for-piped-output">
+      <div class="card-top">
+        <h3>EPIPE Error Handling for Piped Output <a class="anchor" href="#epipe-error-handling-for-piped-output">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now gracefully handles broken pipe (EPIPE) errors when output is piped to another process that closes early.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude -p &quot;list files&quot; | head -1  # No longer crashes if head closes early</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Prevents crashes when Claude Code's output is piped to a process that terminates before reading all output</li><li>Automatically destroys stdout/stderr streams on EPIPE instead of throwing an uncaught error</li><li>Improves CLI scripting reliability</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>HS0()</code> at line 519 (EPIPE handler, contains <code>"EPIPE"</code>)</p>
+    </article>
+    <article class="card" id="enterprise-mcp-exclusive-mode">
+      <div class="card-top">
+        <h3>Enterprise MCP Exclusive Mode <a class="anchor" href="#enterprise-mcp-exclusive-mode">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Enterprises can now configure MCP servers in exclusive mode, preventing users from adding custom MCP servers.</p>
+<p>Usage: Configured via enterprise policy. When active, users see:</p>
+<pre><code>Cannot add MCP server: enterprise MCP configuration is active and has exclusive control over MCP servers</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Allows enterprises to lock down MCP server configuration</li><li>Users cannot add MCP servers via <code>/mcp</code> command or config files when active</li><li>Provides clear error messaging about why server addition is blocked</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>jd()</code> at line 398745 (MCP server add function, contains <code>"enterprise MCP configuration is active and has exclusive control over MCP servers"</code>)</p>
+    </article>
+    <article class="card" id="custom-betas-validation-for-api-users">
+      <div class="card-top">
+        <h3>Custom Betas Validation for API Users <a class="anchor" href="#custom-betas-validation-for-api-users">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>API key users can now specify custom beta headers, with validation against an allowlist.</p>
+<div class="blabel">Details</div>
+<ul><li>Only the <code>context-1m-2025-08-07</code> beta is currently allowed</li><li>Warnings are shown for disallowed beta headers</li><li>OAuth users cannot use custom betas (server-controlled)</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>JrQ()</code> at line 140738 (beta validation, contains <code>"Custom betas are only available for API key users"</code>)</p>
+    </article>
+    <article class="card" id="slow-operation-detection-and-diagnostics">
+      <div class="card-top">
+        <h3>Slow Operation Detection and Diagnostics <a class="anchor" href="#slow-operation-detection-and-diagnostics">#</a></h3>
+      </div>
+      <p>Performance monitoring has been added for operations that may cause UI lag or delays:</p>
+<ul><li><code>JSON.stringify</code>, <code>JSON.parse</code>, and <code>structuredClone</code> operations now log warnings when they take &gt;200ms</li><li><code>fs.writeFileSync</code> operations include size information in slow operation warnings</li><li><code>execSync</code> shell commands are monitored for slow execution</li><li>All slow operations are reported via telemetry for aggregate analysis</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>duA()</code> at line 3224 (slow operation wrapper, contains <code>"[SLOW OPERATION DETECTED]"</code>)</p>
+    </article>
+    <article class="card" id="oauth-401-error-recovery">
+      <div class="card-top">
+        <h3>OAuth 401 Error Recovery <a class="anchor" href="#oauth-401-error-recovery">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>OAuth authentication now attempts to recover from 401 errors by re-reading credentials from the system keychain.</p>
+<div class="blabel">Details</div>
+<ul><li>When a 401 error occurs, Claude Code checks if the keychain has newer credentials</li><li>If different credentials are found, they're used without requiring re-authentication</li><li>Reduces unnecessary login prompts when tokens are refreshed externally</li><li>Telemetry event: <code>tengu_oauth_401_recovered_from_keychain</code></li></ul>
+<div class="blabel">Evidence</div>
+<p><code>C1B()</code> at line 146443 (OAuth recovery, contains <code>"tengu_oauth_401_recovered_from_keychain"</code>)</p>
+    </article>
+    <article class="card" id="claude-sonnet-4-with-1m-context-beta-support">
+      <div class="card-top">
+        <h3>Claude Sonnet 4 with 1M Context Beta Support <a class="anchor" href="#claude-sonnet-4-with-1m-context-beta-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The max tokens calculation now correctly handles Claude Sonnet 4 models using the 1M context beta.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously only models with <code>[1m]</code> in the name got 1M max tokens</li><li>Now also applies when <code>context-1m-2025-08-07</code> beta header is used with claude-sonnet-4 models</li><li>Enables proper token limits for Sonnet 4 + 1M context combinations</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>R$()</code> at line 1818 (max tokens calculation, contains <code>"claude-sonnet-4"</code> and <code>T8A</code>)</p>
+    </article>
+    <article class="card" id="filesystem-operations-logging-improvements">
+      <div class="card-top">
+        <h3>Filesystem Operations Logging Improvements <a class="anchor" href="#filesystem-operations-logging-improvements">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>All filesystem operations now include descriptive context in debug logs.</p>
+<div class="blabel">Details</div>
+<ul><li>Operations like <code>readFileSync</code>, <code>writeFileSync</code>, <code>symlinkSync</code> now log with path information</li><li>Improved format: <code>readFileSync(/path/to/file)</code> instead of just <code>readFileSync</code></li><li>Helps diagnose file-related issues in debug mode</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>CQ</code> variable at line 2388 (filesystem wrapper, contains descriptive operation strings)</p>
+    </article>
+    <article class="card" id="plugin-hooks-cleanup">
+      <div class="card-top">
+        <h3>Plugin Hooks Cleanup <a class="anchor" href="#plugin-hooks-cleanup">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added function to cleanly remove plugin-sourced hooks while preserving non-plugin hooks.</p>
+<div class="blabel">Details</div>
+<ul><li><code>sy0()</code> function filters out hooks that have a <code>pluginRoot</code> property</li><li>Enables proper plugin unloading without affecting built-in hooks</li><li>Improves plugin lifecycle management</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>sy0()</code> at line 2270 (plugin hooks cleanup, filters by <code>"pluginRoot"</code>)</p>
+    </article>
+    <article class="card" id="configurable-timeout-validator">
+      <div class="card-top">
+        <h3>Configurable Timeout Validator <a class="anchor" href="#configurable-timeout-validator">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New timeout configuration validator with sensible defaults and caps.</p>
+<div class="blabel">Details</div>
+<ul><li>Default: 30000ms (30 seconds)</li><li>Maximum: 150000ms (2.5 minutes)</li><li>Invalid values fall back to default with a warning</li><li>Values exceeding maximum are capped with a notice</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>sx0()</code> at line 1741 (timeout validator, contains <code>"Invalid value"</code>, <code>"Capped from"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential crash when OAuth tokens expire and keychain has updated credentials (<code>C1B()</code> at line 146443)</li><li>Improved handling of model region prefixes (us, eu, apac, global) for Bedrock deployments (<code>Ad1()</code> at line 139167, <code>MoQ()</code> at line 139171)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <p>The following changes are internal and don't affect user-facing functionality:</p>
+    </article>
+    <article class="card" id="removed-libraries-code">
+      <div class="card-top">
+        <h3>Removed Libraries/Code <a class="anchor" href="#removed-libraries-code">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li><strong>AJV JSON Schema Validator</strong>: The large AJV library (~5000+ lines) has been removed. Schema validation now uses a different approach (likely Zod which was already present)</li><li><strong>Terminal Setup Helpers</strong>: Functions for configuring iTerm2, WezTerm, Ghostty, and Kitty Shift+Enter bindings have been removed from the diff (the <code>/terminal-setup</code> command still exists but implementation may have changed)</li><li><strong>Keychain Delete Sync</strong>: The synchronous <code>UsQ()</code> keychain delete function was replaced with an async version <code>J1B()</code></li></ul>
+    </article>
+    <article class="card" id="added-libraries">
+      <div class="card-top">
+        <h3>Added Libraries <a class="anchor" href="#added-libraries">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li><strong>YAML Parser</strong>: A full YAML parsing library has been bundled (likely for reading <code>.yml</code>/<code>.yaml</code> config files)</li></ul>
+    </article>
+    <article class="card" id="refactoring">
+      <div class="card-top">
+        <h3>Refactoring <a class="anchor" href="#refactoring">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <ul><li>Zod schema validation error messages now use <code>.issues</code> instead of <code>.errors</code> property</li><li>Cache invalidation function <code>fl()</code> added for OAuth credential cache</li><li>Various dependency updates (google-auth-library version string changes)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

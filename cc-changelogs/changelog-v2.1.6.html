@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.6 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.6."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.6</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.6</span></h1>
+<p class="sub">This release introduces git token injection for private repository cloning, a new <code>/keybindings</code> command for keyboard shortcut customization, enhanced <code>/stats</code> with date range filtering, and improved "add directory to workspace" with tab completion. The internal command explanation system has been refactored to use tool-based structured output, and the cache warming feature has been removed.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.5 → v2.1.6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">11 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="git-token-injection-for-private-repository-cloning">
+      <div class="card-top">
+        <h3>Git Token Injection for Private Repository Cloning <a class="anchor" href="#git-token-injection-for-private-repository-cloning">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now automatically injects authentication tokens when cloning HTTPS repositories, supporting GitHub, GitLab, and Bitbucket.</p>
+<p>Usage: Set the appropriate environment variable and clone private repositories seamlessly:</p>
+<pre><code>export GITHUB_TOKEN=your_token
+# Or: GH_TOKEN, GITLAB_TOKEN, GL_TOKEN, BITBUCKET_TOKEN</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Automatically detects authentication failures and retries with token injection</li><li>Supports <code>GITHUB_TOKEN</code>/<code>GH_TOKEN</code> for github.com</li><li>Supports <code>GITLAB_TOKEN</code>/<code>GL_TOKEN</code> for gitlab.com and GitLab self-hosted instances</li><li>Supports <code>BITBUCKET_TOKEN</code> for bitbucket.org</li><li>Tokens in error messages are automatically redacted for security</li><li>Preserves <code>SSH_AUTH_SOCK</code> for SSH key agent forwarding</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>K55()</code> at line 299739 (token injection logic, contains <code>"Injecting GitHub token into clone URL"</code>)</p>
+    </article>
+    <article class="card" id="keybindings-command">
+      <div class="card-top">
+        <h3>Keybindings Command <a class="anchor" href="#keybindings-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>/keybindings</code> command to open or create a keybindings configuration file for customizing keyboard shortcuts.</p>
+<div class="blabel">Usage</div>
+<pre><code>/keybindings</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Opens or creates <code>~/.config/claude-code/keybindings.json</code></li><li>Template includes syntax documentation for modifiers (ctrl, alt, shift, meta)</li><li>Supports chord shortcuts like <code>"ctrl+k ctrl+s"</code></li><li>File is automatically reloaded when saved</li><li>Documents reserved keys (ctrl+c, ctrl+d) and terminal conflicts (ctrl+b, ctrl+a, ctrl+z)</li><li>Feature is currently in preview and may need to be enabled</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>iD7()</code> at line 497353 (command implementation, contains <code>"keybindings"</code>)</p>
+    </article>
+    <article class="card" id="stats-date-range-filtering">
+      <div class="card-top">
+        <h3>Stats Date Range Filtering <a class="anchor" href="#stats-date-range-filtering">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>/stats</code> command now supports filtering by date range with a keyboard shortcut to cycle through options.</p>
+<p>Usage: Press <code>r</code> while viewing stats to cycle through:</p>
+<ul><li>All time (default)</li><li>Last 7 days</li><li>Last 30 days</li></ul>
+<div class="blabel">Details</div>
+<ul><li>Displays loading indicator when fetching filtered stats</li><li>Shows "r to cycle dates" in the help text</li><li>Caches fetched date ranges for faster switching</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>MC7()</code> at line 521418 (stats dialog, contains <code>"r to cycle dates"</code>)</p>
+    </article>
+    <article class="card" id="numpad-key-support">
+      <div class="card-top">
+        <h3>Numpad Key Support <a class="anchor" href="#numpad-key-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added support for numeric keypad keys in the input handling system.</p>
+<div class="blabel">Details</div>
+<ul><li>Supports numpad digits 0-9 (codes 57399-57408)</li><li>Supports numpad operators: <code>.</code> <code>/</code> <code>*</code> <code>-</code> <code>+</code> <code>=</code></li><li>Supports numpad Enter key</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>KW8()</code> at line 212920 (key code handler, contains cases 57399-57415)</p>
+    </article>
+    <article class="card" id="add-directory-dialog-with-tab-completion">
+      <div class="card-top">
+        <h3>Add Directory Dialog with Tab Completion <a class="anchor" href="#add-directory-dialog-with-tab-completion">#</a></h3>
+      </div>
+      <p>The "add directory to workspace" dialog now includes path autocomplete functionality with tab completion.</p>
+<div class="blabel">Details</div>
+<ul><li>Press Tab to autocomplete the current directory suggestion</li><li>Shows directory suggestions as you type</li><li>Navigate suggestions with up/down arrows or ctrl+p/ctrl+n</li><li>Help text updated to: "Tab to complete · Enter to add · Esc to cancel"</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>mz1()</code> at line 489858 (add directory component, contains <code>"Tab to complete"</code>)</p>
+    </article>
+    <article class="card" id="version-information-display">
+      <div class="card-top">
+        <h3>Version Information Display <a class="anchor" href="#version-information-display">#</a></h3>
+      </div>
+      <p>The <code>/version</code> command now shows both stable and latest versions from npm dist-tags and GCS.</p>
+<div class="blabel">Details</div>
+<ul><li>Fetches version info from npm with <code>--prefer-online</code> flag</li><li>Falls back to GCS storage for version information</li><li>Displays "Stable version" and "Latest version" separately</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>zD7()</code> at line 495798 (version display, contains <code>"Stable version"</code>, <code>"Latest version"</code>)</p>
+    </article>
+    <article class="card" id="mcp-logging-infrastructure">
+      <div class="card-top">
+        <h3>MCP Logging Infrastructure <a class="anchor" href="#mcp-logging-infrastructure">#</a></h3>
+      </div>
+      <p>Added structured logging for MCP (Model Context Protocol) server errors and debug messages.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>logMCPError()</code> and <code>logMCPDebug()</code> functions for server-specific logging</li><li>MCP logs stored separately per server in <code>mcp-logs-{serverName}</code> directories</li><li>Error log sink initialization with buffering for early errors before sink is ready</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Lq9()</code> at line 536969 (error log sink initialization, contains <code>logMCPError</code>, <code>logMCPDebug</code>)</p>
+    </article>
+    <article class="card" id="command-explanation-tool-refactoring">
+      <div class="card-top">
+        <h3>Command Explanation Tool Refactoring <a class="anchor" href="#command-explanation-tool-refactoring">#</a></h3>
+      </div>
+      <p>The shell command explanation system has been refactored from structured outputs to a tool-based approach.</p>
+<div class="blabel">Details</div>
+<ul><li>Now uses <code>explain_command</code> tool with explicit JSON schema</li><li>Cleaner separation between explanation, reasoning, and risk assessment</li><li>Simplified system prompt: "Analyze shell commands and explain what they do, why you're running them, and potential risks."</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>zE5</code> at line 2256 (tool definition, contains <code>"explain_command"</code>)</p>
+    </article>
+    <article class="card" id="exitplanmode-permission-requests">
+      <div class="card-top">
+        <h3>ExitPlanMode Permission Requests <a class="anchor" href="#exitplanmode-permission-requests">#</a></h3>
+      </div>
+      <p>When exiting plan mode, Claude can now request prompt-based bash permissions that will be pre-approved for the session.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>allowedPrompts</code> parameter accepts semantic descriptions of actions</li><li>Example: <code>{"tool": "Bash", "prompt": "run tests"}</code> matches npm test, pytest, etc.</li><li>Permissions are session-scoped and cleared when the session ends</li><li>Guidelines encourage narrow, security-conscious permission scoping</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>jE2</code> at line 2362 (ExitPlanMode description, contains <code>"allowedPrompts"</code>)</p>
+    </article>
+    <article class="card" id="extended-book-comparison-list-for-stats">
+      <div class="card-top">
+        <h3>Extended Book Comparison List for Stats <a class="anchor" href="#extended-book-comparison-list-for-stats">#</a></h3>
+      </div>
+      <p>The <code>/stats</code> comparison feature now includes more books for token usage comparison.</p>
+<p>Details: Added 10 new books including "The Little Prince", "A Christmas Carol", "Fahrenheit 451", "Slaughterhouse-Five", "The Catcher in the Rye", "Dune", "Moby-Dick", "Crime and Punishment", "A Game of Thrones", "The Count of Monte Cristo", and "Les Misérables".</p>
+<div class="blabel">Evidence</div>
+<p><code>_C7</code> at line 4141 (book list array)</p>
+    </article>
+    <article class="card" id="extended-time-comparison-list-for-stats">
+      <div class="card-top">
+        <h3>Extended Time Comparison List for Stats <a class="anchor" href="#extended-time-comparison-list-for-stats">#</a></h3>
+      </div>
+      <p>Added more time-based comparisons for session duration statistics.</p>
+<p>Details: Added comparisons including "listening to Abbey Road", "a yoga class", "a World Cup soccer match", "watching Titanic", and "a full night of sleep".</p>
+<div class="blabel">Evidence</div>
+<p><code>jC7</code> at line 4167 (time comparison array)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed path truncation for long file paths in autocomplete suggestions with smart ellipsis placement (<code>ItQ()</code> at line 139331, preserves filename visibility)</li></ul>
+    </article>
+    <article class="card" id="cache-warming">
+      <div class="card-top">
+        <h3>Cache Warming <a class="anchor" href="#cache-warming">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The cache warming feature has been completely removed.</p>
+<div class="blabel">Details</div>
+<ul><li>Removed <code>Dr5()</code> cache warming configuration function</li><li>Removed <code>In2()</code> cache warming hook</li><li>Removed <code>tengu_cache_warming_request</code> telemetry</li><li>Removed agent warmup functionality (<code>iU9</code>, <code>yS0</code> functions)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Removal of functions at lines 437535-437845 in v2.1.5</p>
+    </article>
+    <article class="card" id="terminal-progress-bar">
+      <div class="card-top">
+        <h3>Terminal Progress Bar <a class="anchor" href="#terminal-progress-bar">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The terminal progress bar component has been removed from the UI.</p>
+<div class="blabel">Details</div>
+<ul><li>Removed <code>kbA()</code> progress bar rendering function</li><li>Removed <code>G21()</code> ink-progress component</li><li>Removed progress state tracking (<code>rUB</code>, <code>Z00</code>, <code>$K8</code> functions)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Removal of <code>ink-progress</code> element handling</p>
+    </article>
+    <article class="card" id="btw-side-questions-in-development">
+      <div class="card-top">
+        <h3>BTW Side Questions [In Development] <a class="anchor" href="#btw-side-questions-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A quick side question feature allowing users to ask tangential questions without interrupting the main conversation flow.</p>
+<div class="blabel">Status</div>
+<p>Stubbed - command infrastructure exists but <code>isEnabled</code> returns <code>false</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Registered as <code>/btw</code> command</li><li>Description: "Ask a quick side question without interrupting the main conversation"</li><li>Side question infrastructure (API calls, response handling) already exists from previous versions</li><li>Parser function returns <code>{ isBtw: !1 }</code> (always false)</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>bW7</code> at line 3694 (btw command definition, <code>isEnabled: () =&gt; !1</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

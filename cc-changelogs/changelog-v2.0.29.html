@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.29 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.29."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.29</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.29</span></h1>
+<p class="sub">Version 2.0.29 optimizes the trust validation system to respect the global bypass permissions setting, reducing unnecessary directory traversal when users have already accepted bypass permissions mode.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.28 → v2.0.29</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">2</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enhanced-trust-validation-logic">
+      <div class="card-top">
+        <h3>Enhanced Trust Validation Logic <a class="anchor" href="#enhanced-trust-validation-logic">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The workspace trust check now respects the global bypass permissions setting more efficiently. When users have accepted bypass permissions mode (via <code>--dangerously-skip-permissions</code> or <code>--allow-dangerously-skip-permissions</code> flags), the trust validation immediately returns true without checking individual directory trust settings.</p>
+<p><strong>How it works:</strong></p>
+<pre><code># Enable bypass permissions mode (shows one-time warning dialog)
+claude --dangerously-skip-permissions
+
+# Or make it available as an option
+claude --allow-dangerously-skip-permissions</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Previously, bypass permissions mode existed but trust checks were independent operations</li><li>Now, accepting bypass permissions mode acts as a global trust override for all workspace trust dialogs</li><li>Eliminates redundant directory traversal when bypass mode is already active</li><li>The bypass permissions feature requires explicit user consent via an interactive warning dialog</li><li>Designed for sandboxed/containerized environments with restricted internet access</li><li><strong>Evidence</strong>: Enhanced check in <code>rJ()</code> at line 468251 in v2.0.29</li></ul>
+<p><strong>Technical changes:</strong></p>
+<ul><li>Added early-return check for <code>bypassPermissionsModeAccepted</code> flag before performing directory-specific trust validation</li><li>Reduces unnecessary computation when global bypass is enabled</li><li>No change to the security model—only optimization of the existing trust system</li></ul>
+    </article>
+    <article class="card" id="import-statement-refactoring">
+      <div class="card-top">
+        <h3>Import Statement Refactoring <a class="anchor" href="#import-statement-refactoring">#</a></h3>
+      </div>
+      <p>Modernized Node.js module imports to use more specific named imports instead of default imports, improving code clarity and enabling better tree-shaking:</p>
+<ul><li><code>stream</code> module: Changed to named import of <code>PassThrough</code></li><li><code>node:child_process</code>: Changed to named imports of <code>execSync</code> and <code>spawn</code></li><li><code>node:os</code>: Changed to named import of <code>homedir</code></li><li><code>node:process</code>: Changed to named import of <code>cwd</code></li></ul>
+<p>These changes have no user-visible impact but improve code maintainability and bundle optimization.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

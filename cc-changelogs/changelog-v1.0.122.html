@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.122 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.122."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.122</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.122</span></h1>
+<p class="sub">Version 1.0.122 significantly enhances security and configurability with hardened macOS sandbox policies based on Chrome's security model, a new <code>--setting-sources</code> flag for controlling which configuration files are loaded, and improved slash command management to optimize context window usage.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.120 → v1.0.122</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">18</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">18 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="setting-sources-control">
+      <div class="card-top">
+        <h3>Setting Sources Control <a class="anchor" href="#setting-sources-control">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Control which configuration sources Claude Code loads via a new <code>--setting-sources</code> command-line flag</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Only load user settings (ignore project/local configs)
+claude --setting-sources=user
+
+# Load user and project settings (ignore local)
+claude --setting-sources=user,project
+
+# Managed environment mode (only enterprise policies and CLI flags)
+claude --setting-sources=</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Valid source values: <code>user</code>, <code>project</code>, <code>local</code> (comma-separated)</li><li>Policy settings and CLI flags are always loaded (cannot be disabled)</li><li>Enables controlled environments where project settings should be ignored</li><li>Affects CLAUDE.md loading, MCP server configuration, and agent definitions</li><li><strong>Evidence</strong>: <code>St5() at line 447294</code>, <code>N4A() at line 348834</code>, <code>pn0() at line 340374</code>, <code>Rg() at line 348856</code></li></ul>
+    </article>
+    <article class="card" id="sandbox-violation-filtering">
+      <div class="card-top">
+        <h3>Sandbox Violation Filtering <a class="anchor" href="#sandbox-violation-filtering">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Configure which sandbox violations to ignore for specific commands or globally</p>
+<p><strong>How to use:</strong></p>
+<pre><code>// In settings file
+{
+  &quot;sandbox&quot;: {
+    &quot;ignoreViolations&quot;: {
+      &quot;*&quot;: [&quot;/tmp&quot;, &quot;/dev/null&quot;],           // Ignore these paths for all commands
+      &quot;npm install&quot;: [&quot;/private/var/folders&quot;], // Ignore for specific command
+      &quot;python&quot;: [&quot;/Library/Python&quot;]
+    }
+  }
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Reduces noise from expected/harmless sandbox violations</li><li>Violations are now correlated with the specific command that triggered them</li><li>Commands are base64-encoded in sandbox logs for precise tracking</li><li>Each violation now includes the command, not just the filesystem path</li><li><strong>Evidence</strong>: <code>Ec4 schema at line 370115</code>, <code>eR2() at line 370611</code>, <code>jc4() at line 370372</code></li></ul>
+    </article>
+    <article class="card" id="websocket-transport-for-mcp-servers">
+      <div class="card-top">
+        <h3>WebSocket Transport for MCP Servers <a class="anchor" href="#websocket-transport-for-mcp-servers">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Configure MCP servers to use WebSocket connections directly</p>
+<p><strong>How to use:</strong></p>
+<pre><code>{
+  &quot;mcpServers&quot;: {
+    &quot;my-server&quot;: {
+      &quot;type&quot;: &quot;ws&quot;,
+      &quot;url&quot;: &quot;ws://localhost:8080&quot;,
+      &quot;headers&quot;: {
+        &quot;Authorization&quot;: &quot;Bearer token123&quot;
+      }
+    }
+  }
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Previously WebSocket was only available for internal IDE communication</li><li>Now supports custom headers and authentication</li><li>Complements existing stdio, SSE, and HTTP transports</li><li><strong>Evidence</strong>: <code>F56 schema at line 388759</code>, transport enum updated at line 388727</li></ul>
+    </article>
+    <article class="card" id="json-agent-definitions">
+      <div class="card-top">
+        <h3>JSON Agent Definitions <a class="anchor" href="#json-agent-definitions">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Define custom agents using JSON format in addition to Markdown files</p>
+<p><strong>How to use:</strong></p>
+<pre><code>{
+  &quot;agents&quot;: {
+    &quot;my-agent&quot;: {
+      &quot;description&quot;: &quot;Handles custom tasks&quot;,
+      &quot;prompt&quot;: &quot;You are a specialized agent for...&quot;,
+      &quot;tools&quot;: [&quot;Read&quot;, &quot;Write&quot;, &quot;Bash&quot;],
+      &quot;model&quot;: &quot;claude-3-5-sonnet-20241022&quot;
+    }
+  }
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Enables programmatic agent configuration without creating .md files</li><li>Supports runtime agent configuration via settings files</li><li>Agents can now come from "flagSettings" source (CLI configuration)</li><li>Includes validation with clear error messages for invalid definitions</li><li><strong>Evidence</strong>: <code>QRB schema at line 434547</code>, <code>GRB() at line 434642</code>, <code>$K5() at line 434622</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-sandbox-security-macos">
+      <div class="card-top">
+        <h3>Enhanced Sandbox Security (macOS) <a class="anchor" href="#enhanced-sandbox-security-macos">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> macOS sandbox policies rewritten based on Chrome's security model, replacing broad wildcards with explicit whitelists</p>
+<p><strong>How it works now:</strong></p>
+<ul><li><strong>Process permissions:</strong> Only allows <code>process-exec</code>, <code>process-fork</code>, and same-sandbox operations (previously allowed all process operations)</li><li><strong>Mach IPC:</strong> Restricts to 9 specific Apple system services instead of allowing all Mach operations</li><li><strong>IOKit access:</strong> Limited to specific device classes (IOSurfaceRootUserClient, RootDomainUserClient) instead of all IOKit operations</li><li><strong>Sysctls:</strong> Whitelists ~45 specific hardware/kernel information sysctls instead of allowing all reads</li><li><strong>File I/O:</strong> Specific device files only (/dev/null, /dev/random, etc.)</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Follows principle of least privilege</li><li>Based on Chromium's battle-tested sandbox implementation</li><li>Breaking change: Commands relying on unrestricted system access may fail</li><li>Unix socket configuration changed: <code>allowUnixSockets</code> now only accepts array of paths (boolean values removed)</li><li><strong>Evidence</strong>: <code>kc4() at line 370411</code> (new profile generator replacing <code>eb6() at line 374940</code> in v1.0.120)</li></ul>
+    </article>
+    <article class="card" id="dynamic-auto-protection-for-claude-directories">
+      <div class="card-top">
+        <h3>Dynamic Auto-Protection for Claude Directories <a class="anchor" href="#dynamic-auto-protection-for-claude-directories">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Protected directories are now discovered dynamically instead of using a static list</p>
+<p><strong>How it works now:</strong></p>
+<ul><li>Automatically finds and protects all <code>.claude/commands</code> and <code>.claude/agents</code> directories in your project</li><li>Uses ripgrep to locate Claude-specific directories at runtime</li><li>Prevents accidental deletion or modification of Claude configuration</li><li>Also protects user config files: <code>.gitconfig</code>, <code>.bashrc</code>, <code>.zshrc</code>, <code>.profile</code>, <code>.ripgreprc</code>, <code>.mcp.json</code></li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Adapts to your project structure automatically</li><li>No manual configuration needed</li><li>More reliable protection across different project layouts</li><li><strong>Evidence</strong>: <code>iR2() at line 370172</code> (replaces static <code>ZQB() at line 374759</code> in v1.0.120)</li></ul>
+    </article>
+    <article class="card" id="slash-command-budget-management">
+      <div class="card-top">
+        <h3>Slash Command Budget Management <a class="anchor" href="#slash-command-budget-management">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Slash command descriptions are now limited to prevent excessive context window usage</p>
+<p><strong>How it works now:</strong></p>
+<ul><li>Default character budget: 15,000 characters</li><li>Configurable via <code>SLASH_COMMAND_TOOL_CHAR_BUDGET</code> environment variable</li><li>Shows notification when commands are truncated: "(Showing 25 of 50 commands due to token limits)"</li><li>Only includes commands with user-specified descriptions (excludes built-in commands without descriptions)</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Prevents unlimited context consumption with many custom commands</li><li>Prioritizes commands by order (shows first N that fit in budget)</li><li>Separate token tracking for slash command overhead</li><li><strong>Evidence</strong>: <code>GM6() at line 402246</code>, <code>G4B() at line 402255</code>, <code>Y4B() at line 402266</code></li></ul>
+    </article>
+    <article class="card" id="expanded-ultrathink-triggers">
+      <div class="card-top">
+        <h3>Expanded Ultrathink Triggers <a class="anchor" href="#expanded-ultrathink-triggers">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Ultrathink mode now recognizes natural language variations</p>
+<p><strong>Trigger phrases:</strong></p>
+<ul><li><code>"ultrathink"</code> (original)</li><li><code>"think ultra hard"</code> (new)</li><li><code>"think ultrahard"</code> (new)</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>More discoverable and intuitive for users</li><li>Backward compatible with original trigger</li><li><strong>Evidence</strong>: <code>DU1() at line 361856</code> (replaces <code>dw1() at line 366346</code> in v1.0.120)</li></ul>
+    </article>
+    <article class="card" id="account-display-names">
+      <div class="card-top">
+        <h3>Account Display Names <a class="anchor" href="#account-display-names">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> OAuth account display names are now captured and synchronized</p>
+<p><strong>How it works now:</strong></p>
+<ul><li>Display names are fetched from <code>/api/oauth/profile</code> endpoint</li><li>Stored alongside email, organization, and UUID</li><li>Automatically updated during token refresh</li><li>Available for showing richer user identification</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Improves user identification beyond email addresses</li><li>Kept in sync with server changes</li><li><strong>Evidence</strong>: <code>Dq0() at line 405124</code> returns <code>{ subscriptionType, displayName }</code> (previously <code>JB0() at line 371316</code> returned only subscription string)</li></ul>
+    </article>
+    <article class="card" id="improved-git-ignore-for-checkpoints">
+      <div class="card-top">
+        <h3>Improved Git Ignore for Checkpoints <a class="anchor" href="#improved-git-ignore-for-checkpoints">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Checkpoint gitignore now prevents duplicate entries and has better error logging</p>
+<p><strong>How it works now:</strong></p>
+<ul><li>Reads existing <code>.gitignore</code> before appending to avoid duplicates</li><li>Uses structured error logging with explicit error levels</li><li>Better path handling with trailing slashes</li><li>Creates parent directories if needed</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>More robust against repeated invocations</li><li>Cleaner <code>.gitignore</code> files</li><li>Better error reporting and telemetry</li><li><strong>Evidence</strong>: <code>yy6() at line 412545</code>, <code>aY1() at line 404121</code> (enhanced from <code>u35()</code> and <code>Z61()</code> in v1.0.120)</li></ul>
+    </article>
+    <article class="card" id="status-line-reorganization">
+      <div class="card-top">
+        <h3>Status Line Reorganization <a class="anchor" href="#status-line-reorganization">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> <code>/status</code> command output reordered and enhanced</p>
+<p><strong>New section order:</strong></p>
+<ol><li>Working directory (moved to top)</li><li><strong>Setting sources</strong> (new section showing which configs are active)</li><li>Installation status</li><li>System diagnostics</li><li>MCP servers</li><li>Account information</li><li>API provider</li><li>Memory usage</li></ol>
+<p><strong>Details:</strong></p>
+<ul><li>Most frequently needed information appears first</li><li>New "Setting Sources" section shows enabled config sources</li><li>Account information extraction refactored for reusability</li><li><strong>Evidence</strong>: <code>Ey6() at line 411883</code> (new section), <code>My6() at line 411961</code> (refactored account display)</li></ul>
+    </article>
+    <article class="card" id="session-quality-classification">
+      <div class="card-top">
+        <h3>Session Quality Classification <a class="anchor" href="#session-quality-classification">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Internal analytics to detect user frustration and PR creation requests</p>
+<p><strong>Details:</strong></p>
+<ul><li>Analyzes conversation patterns to identify frustrated users</li><li>Detects explicit pull request creation requests</li><li>Sends telemetry event <code>tengu_session_quality_classification</code> for matching sessions</li><li>Uses a lightweight model to analyze user message patterns</li><li>No user-visible changes</li><li><strong>Evidence</strong>: <code>jr5() at line 442431</code>, <code>Pr5() at line 442426</code></li></ul>
+    </article>
+    <article class="card" id="oauth-environment-mode-removed">
+      <div class="card-top">
+        <h3>OAuth Environment Mode Removed <a class="anchor" href="#oauth-environment-mode-removed">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed <code>USE_LOCAL_OAUTH</code> environment variable support</p>
+<p><strong>Details:</strong></p>
+<ul><li>Previously allowed switching between "local" and "prod" OAuth modes</li><li>Now hardcoded to "prod" mode only</li><li>Simplifies OAuth configuration</li><li><strong>Evidence</strong>: <code>M9A() at line 346962</code> always returns "prod" (replaced <code>ao1() at line 339979</code> in v1.0.120)</li></ul>
+    </article>
+    <article class="card" id="agent-system-refactoring">
+      <div class="card-top">
+        <h3>Agent System Refactoring <a class="anchor" href="#agent-system-refactoring">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Agent loading architecture improved for better maintainability</p>
+<p><strong>Details:</strong></p>
+<ul><li>Extracted deduplication logic into reusable <code>YR() at line 434554</code></li><li>Task tool description generation moved to <code>PXB() at line 419667</code> (same output as before)</li><li>Support for "flagSettings" agent source added</li><li>More modular code structure</li><li>No user-visible behavioral changes</li></ul>
+    </article>
+    <article class="card" id="thinking-only-response-detection">
+      <div class="card-top">
+        <h3>Thinking-Only Response Detection <a class="anchor" href="#thinking-only-response-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New helper to detect assistant responses containing only thinking blocks</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>xQB() at line 396683</code> checks if response is all <code>&lt;thinking&gt;</code> content</li><li>Enables better handling of extended thinking responses</li><li>Internal optimization, no user-facing changes</li></ul>
+    </article>
+    <article class="card" id="breaking-changes">
+      <div class="card-top">
+        <h3>Breaking Changes <a class="anchor" href="#breaking-changes">#</a></h3>
+      </div>
+      <ol><li><strong>Sandbox <code>allowUnixSockets</code> configuration:</strong></li></ol>
+<ul><li>v1.0.120: Accepted <code>true</code>, <code>false</code>, or array of paths</li><li>v1.0.122: Only accepts array of specific paths</li><li>Migration: Change <code>allowUnixSockets: true</code> to <code>allowUnixSockets: ["/path/to/socket"]</code></li></ul>
+<ol><li><strong>Stricter macOS sandbox policies:</strong></li></ol>
+<ul><li>Commands requiring unrestricted Mach IPC, IOKit, or sysctl access may fail</li><li>Review sandbox violations and add to <code>ignoreViolations</code> if needed</li></ul>
+    </article>
+    <article class="card" id="new-configuration-options">
+      <div class="card-top">
+        <h3>New Configuration Options <a class="anchor" href="#new-configuration-options">#</a></h3>
+      </div>
+      <pre><code>{
+  &quot;sandbox&quot;: {
+    &quot;ignoreViolations&quot;: {
+      &quot;*&quot;: [&quot;path1&quot;, &quot;path2&quot;],  // Global ignore patterns
+      &quot;command-pattern&quot;: [&quot;path3&quot;]  // Command-specific ignore patterns
+    }
+  }
+}</code></pre>
+    </article>
+    <article class="card" id="duplicate-gitignore-entries">
+      <div class="card-top">
+        <h3>Duplicate <code>.gitignore</code> Entries <a class="anchor" href="#duplicate-gitignore-entries">#</a></h3>
+      </div>
+      <p>Fixed checkpoint gitignore logic to check for existing patterns before appending, preventing duplicate <code>**/.claude/checkpoints</code> entries in <code>.gitignore</code> files.</p>
+<ul><li><strong>Evidence</strong>: <code>aY1() at line 404121</code> now reads file content before appending</li></ul>
+<p><strong>Note:</strong> All line numbers reference <code>/home/shcv/projects/claude-investigations/archive/pretty/pretty-v1.0.122.js</code> unless otherwise specified.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

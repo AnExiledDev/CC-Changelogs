@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.31 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.31."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.31</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.31</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.30 → v1.0.31</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p>Based on my analysis of the diff for Claude Code version 1.0.31, here's the detailed changelog:</p>
+<p># Claude Code v1.0.31 Changelog</p>
+    </article>
+    <article class="card" id="native-installation-command">
+      <div class="card-top">
+        <h3>Native Installation Command <a class="anchor" href="#native-installation-command">#</a></h3>
+      </div>
+      <ul><li><strong>New <code>claude install</code> command</strong>: Install Claude Code's native build directly from the CLI</li><li>Usage: <code>claude install [options]</code></li><li>Supports <code>--force</code> flag to override installation checks</li><li>Automatically cleans up old npm installations before installing the native build</li><li>Provides visual feedback during installation process with status updates</li><li>Shows shell integration setup notes after successful installation</li></ul>
+    </article>
+    <article class="card" id="enhanced-conversation-analytics">
+      <div class="card-top">
+        <h3>Enhanced Conversation Analytics <a class="anchor" href="#enhanced-conversation-analytics">#</a></h3>
+      </div>
+      <ul><li>Added token usage tracking for conversations with detailed breakdowns:</li><li>Human vs assistant message tokens</li><li>Tool request and response tokens by tool type</li><li>Duplicate file read detection and optimization metrics</li><li>Attachment token counts by type</li><li>Local command output token tracking</li><li>Percentage breakdowns for all token categories</li></ul>
+    </article>
+    <article class="card" id="security-enhancements">
+      <div class="card-top">
+        <h3>Security Enhancements <a class="anchor" href="#security-enhancements">#</a></h3>
+      </div>
+      <ul><li>New security-focused system prompt that emphasizes defensive security practices</li><li>Enhanced malicious code detection in file reading operations</li><li>Updated security instructions to refuse creating, modifying, or improving potentially malicious code</li></ul>
+    </article>
+    <article class="card" id="shell-integration">
+      <div class="card-top">
+        <h3>️ Shell Integration <a class="anchor" href="#shell-integration">#</a></h3>
+      </div>
+      <ul><li>Improved shell alias management with better conflict resolution</li><li>Enhanced detection and cleanup of existing claude aliases</li><li>Support for ZDOTDIR environment variable for zsh configurations</li><li>Automatic removal of old/conflicting claude aliases during setup</li></ul>
+    </article>
+    <article class="card" id="documentation-updates">
+      <div class="card-top">
+        <h3>Documentation Updates <a class="anchor" href="#documentation-updates">#</a></h3>
+      </div>
+      <ul><li>Updated documentation URL structure with new sub-pages:</li><li><code>quickstart</code>, <code>common-workflows</code>, <code>ide-integrations</code></li><li><code>mcp</code>, <code>github-actions</code>, <code>sdk</code>, <code>third-party-integrations</code></li><li><code>amazon-bedrock</code>, <code>google-vertex-ai</code>, <code>corporate-proxy</code></li><li><code>llm-gateway</code>, <code>devcontainer</code>, <code>iam</code>, <code>monitoring-usage</code></li><li>Expanded coverage for Extended thinking, image pasting, and <code>--resume</code> flag</li></ul>
+    </article>
+    <article class="card" id="session-management">
+      <div class="card-top">
+        <h3>️ Session Management <a class="anchor" href="#session-management">#</a></h3>
+      </div>
+      <ul><li>Improved transcript loading with better summary handling</li><li>Enhanced session file organization by working directory</li><li>More efficient duplicate message detection</li><li>Better handling of sidechain conversations</li></ul>
+    </article>
+    <article class="card" id="auto-updater-improvements">
+      <div class="card-top">
+        <h3>Auto-updater Improvements <a class="anchor" href="#auto-updater-improvements">#</a></h3>
+      </div>
+      <ul><li>Native installer now sets <code>autoUpdaterStatus</code> to "installed" after successful installation</li><li>Better error handling and retry logic for version locks</li><li>Enhanced cleanup of stale npm installations and symlinks</li><li>More robust directory creation for lock files</li></ul>
+    </article>
+    <article class="card" id="stop-signal-support">
+      <div class="card-top">
+        <h3>Stop Signal Support <a class="anchor" href="#stop-signal-support">#</a></h3>
+      </div>
+      <ul><li>Added "Stop" to the list of supported signal types for MCP (Message Control Protocol)</li><li>Enables better control flow for long-running operations</li></ul>
+    </article>
+    <article class="card" id="theme-support">
+      <div class="card-top">
+        <h3>Theme Support <a class="anchor" href="#theme-support">#</a></h3>
+      </div>
+      <ul><li>Added dark theme configuration option for error dialogs</li><li>Better visual consistency across the application</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed issues with transcript summary generation for conversations without summaries</li><li>Improved error handling in configuration file parsing with proper async/await flow</li><li>Fixed race conditions in session file writes</li><li>Better handling of missing or corrupt session files</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Refactored main entry point to use proper async initialization</li><li>Improved process cleanup with dedicated launcher symlink removal</li><li>Enhanced token counting algorithms for more accurate usage metrics</li><li>Better separation of concerns for installation and setup logic</li></ul>
+    </article>
+    <article class="card" id="installing-claude-code">
+      <div class="card-top">
+        <h3>Installing Claude Code <a class="anchor" href="#installing-claude-code">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <pre><code># Install the latest native build
+claude install
+
+# Force reinstall even if already installed
+claude install --force</code></pre>
+    </article>
+    <article class="card" id="shell-integration">
+      <div class="card-top">
+        <h3>Shell Integration <a class="anchor" href="#shell-integration">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>After installation, the tool will automatically:</p>
+<ol><li>Clean up any old npm global installations</li><li>Remove conflicting aliases from shell config files</li><li>Add the new <code>claude</code> alias pointing to <code>~/.claude/bin/claude</code></li><li>Provide instructions for sourcing your shell config</li></ol>
+<p>The installation process provides clear visual feedback:</p>
+<pre><code>✓ Claude Code successfully installed!
+Version: 1.0.31
+Location: ~/.claude/bin/claude
+Next: Run claude --help to get started</code></pre>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

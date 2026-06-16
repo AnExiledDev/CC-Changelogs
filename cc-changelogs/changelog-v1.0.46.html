@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.46 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.46."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.46</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.46</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.45 → v1.0.46</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Environment Variable Expansion in MCP Server Configuration</h4>
+<ul><li>Added support for environment variable expansion in MCP server configurations using <code>${VAR}</code> syntax</li><li>Supports default values with <code>${VAR:-default}</code> notation</li><li>Validates that all required environment variables are set before starting servers</li><li>Example usage in MCP config:</li></ul>
+<pre><code>  {
+    &quot;mcpServers&quot;: {
+      &quot;myServer&quot;: {
+        &quot;command&quot;: &quot;${HOME}/bin/server&quot;,
+        &quot;args&quot;: [&quot;--port&quot;, &quot;${PORT:-8080}&quot;],
+        &quot;env&quot;: {
+          &quot;API_KEY&quot;: &quot;${MY_API_KEY}&quot;
+        }
+      }
+    }
+  }</code></pre>
+<h4>Background Command Execution Shortcut</h4>
+<ul><li>Added keyboard shortcut <code>Ctrl+B</code> to run long-running commands in the background</li><li>Displays helpful hint "Ctrl+B to run in background" when commands are executing</li><li>Allows users to quickly background tasks without waiting for the command selection dialog</li></ul>
+<h4>Enhanced Long-Running Command Display</h4>
+<ul><li>Improved the display of long-running commands to show the last 2 lines of output</li><li>Shows line count indicator (e.g., "+15 more lines") for truncated output</li><li>More compact and informative display during command execution</li></ul>
+<h4>WSL Path Translation Support</h4>
+<ul><li>Added automatic path translation between Windows and WSL environments</li><li>New <code>ie</code> class handles bidirectional path conversion:</li><li><code>toLocalPath()</code>: Converts Windows paths to WSL paths</li><li><code>toIDEPath()</code>: Converts WSL paths to Windows paths</li><li>Automatically detects and handles WSL distribution names in paths</li></ul>
+    </article>
+    <article class="card" id="performance-improvements">
+      <div class="card-top">
+        <h3>Performance Improvements <a class="anchor" href="#performance-improvements">#</a></h3>
+      </div>
+      <h4>Circular Buffer for Command Output</h4>
+<ul><li>Implemented <code>qu1</code> circular buffer class for efficient handling of streaming command output</li><li>Maintains only the most recent output lines in memory</li><li>Reduces memory usage for long-running commands with extensive output</li></ul>
+<h4>Tool Result Compaction</h4>
+<ul><li>Added intelligent compaction for frequently-used tool outputs to reduce token usage</li><li>Compacts results for: Read, Edit, MultiEdit, Write, Bash, Grep, Glob, LS, WebSearch, WebFetch</li><li>Preserves essential information while reducing verbosity</li><li>Example: <code>[Read /path/to/file.js, details compacted]</code> instead of full file contents</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <h4>Installation Health Check Improvements</h4>
+<ul><li>Fixed auto-update detection for global npm installations</li><li>Removed check for global installations being unable to auto-update (no longer applicable)</li><li>Improved permission checking for update capabilities</li></ul>
+<h4>Shell Execution Error Handling</h4>
+<ul><li>Added try-catch block around shell command spawning to handle execution failures gracefully</li><li>Returns proper error response with exit code 126 when shell command fails to start</li><li>Provides clear error messages in stderr when execution fails</li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <h4>Updated Dependencies</h4>
+<ul><li>Removed redundant stream imports (<code>stream</code> and <code>node:stream</code>)</li><li>Added new imports for child process operations from specific modules</li><li>Updated to use <code>PassThrough</code> from <code>node:stream</code> consistently</li></ul>
+<h4>Code Organization</h4>
+<ul><li>Removed 39 unused functions and variables, including:</li><li>String trimming utilities (<code>um2</code>, <code>dm2</code>)</li><li>Number parsing functions (<code>am2</code>, <code>sm2</code>, <code>om2</code>)</li><li>Array shuffling functions (<code>na2</code>, <code>aa2</code>, <code>ra2</code>)</li><li>Unused configuration functions</li><li>Added 30 new functions focused on MCP support and improved command handling</li></ul>
+<h4>Configuration Constants</h4>
+<ul><li>Added <code>lw6 = 2000</code> for command output line limits</li><li>Added <code>WS6 = 2000</code> for WebSearch result limits</li><li>Added <code>F$6 = 80000</code> for maximum tool output size</li><li>Added <code>zQA = 3</code> for retry attempts</li></ul>
+    </article>
+    <article class="card" id="developer-notes">
+      <div class="card-top">
+        <h3>Developer Notes <a class="anchor" href="#developer-notes">#</a></h3>
+      </div>
+      <ul><li>The codebase now includes better support for development environments with proper <code>__dirname</code> handling</li><li>Git status information is now truncated at 40,000 characters to prevent overwhelming the context</li><li>Improved modularity with separate concerns for path translation, environment expansion, and output buffering</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

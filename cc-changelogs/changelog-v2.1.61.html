@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.61 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.61."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.61</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.61</span></h1>
+<p class="sub">This is a minor release that disables usage-based tool deferral for built-in tools by default, ensuring all built-in tools are always immediately available without needing to be discovered via ToolSearch first. It also includes an internal optimization to client data caching.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.59 → v2.1.61</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">2</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="built-in-tools-no-longer-deferred-by-default">
+      <div class="card-top">
+        <h3>Built-in tools no longer deferred by default <a class="anchor" href="#built-in-tools-no-longer-deferred-by-default">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Built-in tools marked as deferrable (e.g., Bash, Read, WebFetch, Task tools, etc.) are no longer automatically deferred based on usage frequency. Previously, if you hadn't used a tool recently (usage score below a threshold), it could be hidden and require discovery through the ToolSearch tool before use. Now all built-in tools are loaded and available immediately.</p>
+<div class="blabel">Details</div>
+<ul><li>The <code>tengu_coral_whistle</code> feature flag default was changed from enabled (<code>!0</code>) to disabled (<code>!1</code>) in the tool deferral check</li><li>MCP (Model Context Protocol) tools remain always deferred — they still require ToolSearch to discover and load</li><li>Tool usage tracking remains active (the usage recording path is unchanged), suggesting data is still being collected for future improvements</li><li>The server can still enable usage-based deferral via the feature flag if needed</li></ul>
+<div class="blabel">Evidence</div>
+<p>Tool deferral gate function <code>WG()</code> (search for <code>"tengu_coral_whistle"</code>) — default changed from <code>!0</code> to <code>!1</code> at line ~246691</p>
+    </article>
+    <article class="card" id="smarter-client-data-cache-updates">
+      <div class="card-top">
+        <h3>Smarter client data cache updates <a class="anchor" href="#smarter-client-data-cache-updates">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The client data cache (used for fetching configuration from the API) now performs a deep equality check before updating state, avoiding unnecessary state propagation when the fetched data hasn't changed.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously, every fetch from the OAuth client data endpoint would overwrite the cache with a new object, even if the data was identical</li><li>Now uses <code>isDeepStrictEqual</code> to compare fresh data against cached data and only triggers a state update when something actually changed</li><li>This reduces unnecessary re-renders and state propagation in the UI</li></ul>
+<div class="blabel">Evidence</div>
+<p>Client data fetch function <code>sQK()</code> (search for <code>"clientDataCache"</code>) — added deep equality check via <code>$Q()</code> before cache write at line ~69394</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.53 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.53."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.53</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.53</span></h1>
+<p class="sub">This is a maintenance release with internal code improvements. The primary user-facing change is improved handling of OAuth token expiration when fetching API usage data, which prevents unnecessary errors during token refresh periods.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.52 → v2.0.53</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="oauth-token-expiration-handling-for-usage-data">
+      <div class="card-top">
+        <h3>OAuth Token Expiration Handling for Usage Data <a class="anchor" href="#oauth-token-expiration-handling-for-usage-data">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The API usage data fetcher now checks if the OAuth token is expiring before making API calls, gracefully falling back to cached data instead of throwing errors.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Previously, the usage data fetch (<code>VPA()</code> at line 471623) would attempt API calls even with expiring tokens, potentially causing "Failed to load usage data" errors</li><li>Now checks if token expires within 5 minutes and returns <code>null</code> immediately if so</li><li>Falls back to cached usage data rather than displaying errors during token refresh windows</li><li><strong>Evidence</strong>: <code>VPA()</code> at line 471623-471636 in v2.0.53, new check using <code>W6()</code> (OAuth token getter at line 163812) and <code>Ym()</code> (expiration checker at line 67497)</li></ul>
+<p><strong>User impact:</strong> Fewer transient error messages when viewing API usage near token expiration times.</p>
+    </article>
+    <article class="card" id="import-statement-reorganization">
+      <div class="card-top">
+        <h3>Import Statement Reorganization <a class="anchor" href="#import-statement-reorganization">#</a></h3>
+      </div>
+      <p>The codebase underwent significant refactoring of import statements, moving from default imports to named imports for better tree-shaking and code organization. This affects ~16 import statements but has no user-facing impact.</p>
+<p>Examples of changes:</p>
+<ul><li><code>import from "stream"</code> → <code>import { PassThrough } from "stream"</code> (line 514212)</li><li><code>import from "crypto"</code> → <code>import { createHash, randomBytes } from "crypto"</code> (line 323718)</li><li><code>import from "node:fs"</code> → <code>import { readFileSync, existsSync, mkdirSync, readdirSync } from "node:fs"</code> (line 232383)</li></ul>
+    </article>
+    <article class="card" id="variable-renaming">
+      <div class="card-top">
+        <h3>Variable Renaming <a class="anchor" href="#variable-renaming">#</a></h3>
+      </div>
+      <p>817 internal variable and function names were renamed as part of minification/obfuscation changes. No functional impact.</p>
+<p><strong>Version Statistics:</strong></p>
+<ul><li>Structural similarity to v2.0.52: 99.8%</li><li>Matched declarations: 10273/10290</li><li>Changes: 17 additions, 17 deletions, 1 modification, 817 renames</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

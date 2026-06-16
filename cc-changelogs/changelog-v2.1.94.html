@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.94 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.94."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.94</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.94</span></h1>
+<p class="sub">This release adds Amazon Bedrock (Mantle) as a new backend provider, introduces the <code>--thinking-display</code> CLI flag for controlling how thinking content appears, and substantially enhances the autofix-pr feature with full PR monitoring UI. Memory system improvements include a new "Dream" mode for background memory pruning/consolidation, tiny memory mode, and LLM-based memory synthesis. A new <code>/team-onboarding</code> command (feature-flagged) generates team ramp-up guides, and several quality-of-life improvements land around tmux/screen terminal detection, macOS Keychain diagnostics, and settings validation error reporting.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.92 → v2.1.94</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">26</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">5</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">2</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="thinking-display-cli-flag">
+      <div class="card-top">
+        <h3>--thinking-display CLI Flag <a class="anchor" href="#thinking-display-cli-flag">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>New CLI option to control how model thinking content is rendered in output.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --thinking-display summarized
+claude --thinking-display omitted</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Choices: <code>summarized</code> or <code>omitted</code></li><li>Complements the existing <code>--thinking</code> flag (which controls <code>enabled</code>, <code>adaptive</code>, <code>disabled</code>)</li><li>Allows users to get thinking benefits without verbose output</li></ul>
+<div class="blabel">Evidence</div>
+<p>CLI option definition (search for <code>"--thinking-display"</code>)</p>
+    </article>
+    <article class="card" id="amazon-bedrock-mantle-provider">
+      <div class="card-top">
+        <h3>Amazon Bedrock (Mantle) Provider <a class="anchor" href="#amazon-bedrock-mantle-provider">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>New backend provider option enabling Claude Code to connect through Amazon Bedrock's managed Mantle service.</p>
+<div class="blabel">Usage</div>
+<pre><code>export CLAUDE_CODE_USE_MANTLE=1
+claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Set <code>CLAUDE_CODE_USE_MANTLE</code> to enable the Mantle provider</li><li>Additional env vars: <code>ANTHROPIC_BEDROCK_MANTLE_BASE_URL</code>, <code>ANTHROPIC_BEDROCK_MANTLE_API_KEY</code>, <code>CLAUDE_CODE_SKIP_MANTLE_AUTH</code></li><li>Uses <code>bedrock-mantle</code> as the service name with SigV4 authentication</li><li>Supports explicit AWS credentials or the standard AWS credential provider chain</li><li>Base URL pattern: <code>https://bedrock-mantle.{region}.api.aws/anthropic</code></li><li>Mantle endpoints added to all model deployment configurations</li><li>Provider detection centralised into a single function that handles Mantle alongside existing providers (Bedrock, Vertex, Foundry)</li><li>The <code>ANTHROPIC_BEDROCK_MANTLE_API_KEY</code> is treated as sensitive and masked in logs</li></ul>
+<div class="blabel">Evidence</div>
+<p>Provider configuration (search for <code>"Amazon Bedrock (Mantle)"</code>, <code>"CLAUDE_CODE_USE_MANTLE"</code>, <code>"bedrock-mantle"</code>)</p>
+    </article>
+    <article class="card" id="autofix-pr-full-implementation">
+      <div class="card-top">
+        <h3>Autofix PR — Full Implementation <a class="anchor" href="#autofix-pr-full-implementation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>autofix-pr</code> command has been upgraded from a registered task name to a fully implemented feature with a React-based UI, PR validation, and remote session management.</p>
+<div class="blabel">Usage</div>
+<pre><code>/autofix-pr</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Spawns a remote Claude Code session that monitors the current PR for CI failures and review comments, then pushes fixes directly</li><li>Validates PR eligibility: checks the current branch is not the default branch, verifies a remote is set, and detects an open PR via <code>gh pr view</code></li><li>Warns if there are unpushed local commits: "WARNING: You have unpushed local commits, run git push so the remote session sees them"</li><li>Communicates with the bridge API at <code>/v1/code/github/subscribe-pr</code> and <code>/v1/code/github/unsubscribe-pr</code></li><li>Tracks telemetry events: <code>tengu_autofix_pr_started</code>, <code>tengu_autofix_pr_result</code> (success/failed/cancelled)</li><li>Requires <code>allow_remote_sessions</code> policy to be enabled</li><li>Shows progress UI: "Detecting open PR for current branch…", "Spawning remote Claude Code session…", "Spawned remote autofix PR session on {host} (PR #{number})"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Autofix PR component (search for <code>"Autofix PR"</code>, <code>"Detecting open PR for current branch"</code>, <code>"subscribe-pr"</code>)</p>
+    </article>
+    <article class="card" id="memory-dream-mode-background-pruning-consolidation">
+      <div class="card-top">
+        <h3>Memory Dream Mode (Background Pruning &amp; Consolidation) <a class="anchor" href="#memory-dream-mode-background-pruning-consolidation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>New "Dream" system that automatically prunes and consolidates memory files in the background between sessions.</p>
+<div class="blabel">Details</div>
+<ul><li>Two dream modes:</li><li>Pruning: "delete stale or invalidated memories, and collapse duplicates"</li><li>Consolidation: "synthesize what you've learned recently into durable, well-organized memories"</li><li>User setting: <code>autoDreamEnabled</code> (boolean) — "Enable background memory consolidation (auto-dream). When set, overrides the server-side default."</li><li>Default thresholds: minimum 24 hours and 5 sessions between dreams (configurable via server flag)</li><li>Memory files are treated as immutable — combining means deleting old files and writing fresh single-fact replacements</li><li>Tool constraints during dream: Bash restricted to read-only commands plus <code>rm</code> for <code>.md</code> files inside the memory directory</li><li>Existing <code>autoDreamEnabled</code> setting existed in v2.1.92 but the Dream prompts and pruning/consolidation logic are new</li></ul>
+<div class="blabel">Evidence</div>
+<p>Dream instructions (search for <code>"Dream: Memory Pruning"</code>, <code>"autoDreamEnabled"</code>, <code>"tengu_onyx_plover"</code>)</p>
+    </article>
+    <article class="card" id="llm-based-memory-synthesis">
+      <div class="card-top">
+        <h3>LLM-Based Memory Synthesis <a class="anchor" href="#llm-based-memory-synthesis">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>New memory retrieval path that uses an LLM to synthesize relevant memories into a single paragraph, replacing the previous raw-file retrieval approach.</p>
+<div class="blabel">Details</div>
+<ul><li>When tiny memory mode (<code>tengu_billiard_aviary</code>) is active, uses LLM synthesis to produce contextually relevant memory summaries</li><li>System prompt instructs: "synthesize information directly relevant to" the current query</li><li>Output formatted as JSON with a one-paragraph synthesis</li><li>Recalled memories shown to users with: "Recalled from your persistent memory system:"</li><li>Synthesis memories are excluded from the standard memory context to avoid duplication</li></ul>
+<div class="blabel">Evidence</div>
+<p>Memory synthesis (search for <code>"Synthesize memory information relevant to"</code>, <code>"synthesizeRelevantMemories"</code>)</p>
+    </article>
+    <article class="card" id="agentic-search-session-id-extraction">
+      <div class="card-top">
+        <h3>Agentic Search — Session ID Extraction <a class="anchor" href="#agentic-search-session-id-extraction">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Refactored agentic search now returns structured <code>session_ids</code> arrays instead of prose-based responses, making session search results more reliable.</p>
+<div class="blabel">Details</div>
+<ul><li>Search agent returns JSON: <code>{"session_ids": ["&lt;uuid&gt;", ...]}</code></li><li>Response parsed via regex: <code>/"session_ids"\s<em>:\s</em>(\[[^\]]*\])/g</code></li><li>Logs "Agentic search: no session_ids array in final response" when extraction fails</li><li>Session metadata display now includes tag, git branch, and project path (formatted via new <code>uCY</code> helper)</li><li>Search prompt refactored with separate system prompt constant for better maintainability</li></ul>
+<div class="blabel">Evidence</div>
+<p>Session ID extraction (search for <code>"session_ids"</code>, <code>"Agentic search: no session_ids array"</code>)</p>
+    </article>
+    <article class="card" id="chat-clearinput-keybinding">
+      <div class="card-top">
+        <h3>chat:clearInput Keybinding <a class="anchor" href="#chat-clearinput-keybinding">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>New keyboard shortcut to clear the current chat input field.</p>
+<p>Usage: <code>Ctrl+L</code> (or <code>Cmd+L</code> on macOS)</p>
+<div class="blabel">Details</div>
+<ul><li>Event name: <code>chat:clearInput</code></li><li>Joins existing chat keybindings: <code>Escape</code> (cancel), <code>Ctrl+X Ctrl+K</code> (kill agents), <code>Meta+P</code> (model picker), <code>Meta+O</code> (fast mode), <code>Meta+T</code> (thinking toggle), <code>Enter</code> (submit)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Keybinding definition (search for <code>"chat:clearInput"</code>)</p>
+    </article>
+    <article class="card" id="macos-keychain-diagnostics">
+      <div class="card-top">
+        <h3>macOS Keychain Diagnostics <a class="anchor" href="#macos-keychain-diagnostics">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>New keychain probe during <code>claude doctor</code> that tests whether the macOS Keychain is writable and provides actionable fix suggestions.</p>
+<div class="blabel">Details</div>
+<ul><li>Probes keychain write access during initialisation when <code>probeKeychain: true</code> is passed</li><li>New error messages:</li><li>"macOS Keychain is not writable"</li><li>"Failed to save API key to macOS Keychain"</li><li>Fix suggestion: "Run: security unlock-keychain ~/Library/Keychains/login.keychain-db"</li><li>Keychain operations now have explicit 5-second timeout and stderr-based error detection</li><li>Probe service name: <code>"Claude Code-doctor-probe"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Keychain probe (search for <code>"macOS Keychain is not writable"</code>, <code>"Claude Code-doctor-probe"</code>, <code>"probeKeychain"</code>)</p>
+    </article>
+    <article class="card" id="settings-parse-and-validation-error-reporting">
+      <div class="card-top">
+        <h3>Settings Parse and Validation Error Reporting <a class="anchor" href="#settings-parse-and-validation-error-reporting">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Settings files that fail to parse or validate are now reported with structured error information instead of being silently skipped.</p>
+<div class="blabel">Details</div>
+<ul><li>New structured error fields: <code>path</code> (dot-notation to field), <code>message</code> (human-readable), <code>severity</code> (set to <code>"warning"</code>)</li><li>Settings errors section: "Settings parse and validation errors. When non-empty, the listed files were skipped during the merge above — their settings are not reflected in <code>effective</code> or <code>sources</code>."</li><li>Error types include invalid JSON, JSON comments, and schema mismatches</li><li>File path of the failing settings file is included in error output</li></ul>
+<div class="blabel">Evidence</div>
+<p>Settings validation (search for <code>"Settings parse and validation errors"</code>, <code>"severity"</code>)</p>
+    </article>
+    <article class="card" id="session-title-hook">
+      <div class="card-top">
+        <h3>Session Title Hook <a class="anchor" href="#session-title-hook">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Hooks can now set the session title programmatically, enabling automated title assignment based on conversation content.</p>
+<div class="blabel">Details</div>
+<ul><li>New hook handler applies session title updates with sanitization</li><li>Titles sanitized: control characters removed, limited to 200 characters</li><li>Emits event after title update so UI stays in sync</li><li>Log message: "Hook sessionTitle applied"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Session title hook (search for <code>"Hook sessionTitle applied"</code>, <code>"type\":\"custom-title\""</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">16 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enhanced-tmux-terminal-detection">
+      <div class="card-top">
+        <h3>Enhanced tmux Terminal Detection <a class="anchor" href="#enhanced-tmux-terminal-detection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Terminal detection in tmux sessions now queries the actual terminal type via <code>#{client_termtype}</code> instead of relying solely on the <code>TERM</code> environment variable. This enables better color support and escape sequence handling when running inside tmux.</p>
+<div class="blabel">Evidence</div>
+<p>tmux display-message query (search for <code>"#{client_termtype}"</code>)</p>
+    </article>
+    <article class="card" id="screen-sty-escape-sequence-fix">
+      <div class="card-top">
+        <h3>Screen (STY) Escape Sequence Fix <a class="anchor" href="#screen-sty-escape-sequence-fix">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Escape sequences for the GNU Screen terminal multiplexer now correctly wrap content using DCS passthrough (<code>\x1BP...\x1B\\</code>) with proper double-escaping of embedded escape characters. Previously this wrapping could produce malformed sequences.</p>
+<div class="blabel">Evidence</div>
+<p>STY escape handler (search for <code>process.env.STY</code>)</p>
+    </article>
+    <article class="card" id="improved-api-error-classification">
+      <div class="card-top">
+        <h3>Improved API Error Classification <a class="anchor" href="#improved-api-error-classification">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>HTTP error codes are now mapped to user-friendly status messages in the retry UI:</p>
+<ul><li>429 → "Rate limited"</li><li>529 → "API overloaded" (new)</li><li>401/403 → "Authentication error"</li></ul>
+<p>The retry display shows the error reason, retry countdown timer, and attempt number in a structured warning frame.</p>
+<div class="blabel">Evidence</div>
+<p>Error mapping function (search for <code>"API overloaded"</code>, <code>"Rate limited"</code>)</p>
+    </article>
+    <article class="card" id="feedback-command-authentication-check">
+      <div class="card-top">
+        <h3>/feedback Command Authentication Check <a class="anchor" href="#feedback-command-authentication-check">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>/feedback</code> command now checks for valid Anthropic credentials before attempting to submit. If no OAuth token or API key is found, it returns: "/feedback requires Anthropic credentials (OAuth or API key)."</p>
+<div class="blabel">Evidence</div>
+<p>Feedback auth check (search for <code>"/feedback requires"</code>)</p>
+    </article>
+    <article class="card" id="team-memory-sync-forbidden-error-handling">
+      <div class="card-top">
+        <h3>Team Memory Sync — Forbidden Error Handling <a class="anchor" href="#team-memory-sync-forbidden-error-handling">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Team memory sync now explicitly detects HTTP 403 responses and returns "Forbidden by server policy" with <code>skipRetry: true</code> and <code>errorType: "forbidden"</code>, preventing futile retry loops when server policy blocks access.</p>
+<div class="blabel">Evidence</div>
+<p>Forbidden handling (search for <code>"Forbidden by server policy"</code>)</p>
+    </article>
+    <article class="card" id="feedback-payload-size-validation">
+      <div class="card-top">
+        <h3>Feedback Payload Size Validation <a class="anchor" href="#feedback-payload-size-validation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Feedback submissions now validate payload size before sending (8 MB limit). If the payload exceeds the limit or the server returns 413, the error is surfaced as <code>payloadTooLarge</code> rather than a generic failure.</p>
+<div class="blabel">Evidence</div>
+<p>Payload validation (search for <code>"payloadTooLarge"</code>)</p>
+    </article>
+    <article class="card" id="websocket-decompression-bomb-protection">
+      <div class="card-top">
+        <h3>WebSocket Decompression Bomb Protection <a class="anchor" href="#websocket-decompression-bomb-protection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>WebSocket message handling now tracks cumulative decompressed size and enforces a <code>maxDecompressedMessageSize</code> limit (default 4 MB). Messages exceeding this limit are rejected with <code>"Max decompressed message size exceeded"</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Decompression protection (search for <code>"maxDecompressedMessageSize"</code>)</p>
+    </article>
+    <article class="card" id="utf-8-encoding-for-stream-json-input">
+      <div class="card-top">
+        <h3>UTF-8 Encoding for stream-json Input <a class="anchor" href="#utf-8-encoding-for-stream-json-input">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>stream-json</code> input mode now explicitly sets UTF-8 encoding on <code>process.stdin</code>, preventing encoding issues that could corrupt multi-byte characters.</p>
+<div class="blabel">Evidence</div>
+<p>Encoding fix (search for <code>"stream-json"</code> near <code>"utf-8"</code>)</p>
+    </article>
+    <article class="card" id="terminal-hyperlink-detection-enhancement">
+      <div class="card-top">
+        <h3>Terminal Hyperlink Detection Enhancement <a class="anchor" href="#terminal-hyperlink-detection-enhancement">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Hyperlink support detection now uses the <code>supports-hyperlinks</code> library with <code>FORCE_HYPERLINK</code> environment variable support, replacing the previous raw stdout capability check.</p>
+<div class="blabel">Evidence</div>
+<p>Hyperlink detection (search for <code>"supportsHyperlink"</code>, <code>"FORCE_HYPERLINK"</code>)</p>
+    </article>
+    <article class="card" id="plugin-bin-path-security">
+      <div class="card-top">
+        <h3>Plugin Bin Path Security <a class="anchor" href="#plugin-bin-path-security">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Plugin bin directories are now validated against shell metacharacters before being added to PATH. Paths containing dangerous characters are dropped with a warning: "Dropping plugin bin path with shell metacharacters."</p>
+<div class="blabel">Evidence</div>
+<p>Bin path security (search for <code>"Dropping plugin bin path with shell metacharacters"</code>)</p>
+    </article>
+    <article class="card" id="memory-system-immutability-enforcement">
+      <div class="card-top">
+        <h3>Memory System — Immutability Enforcement <a class="anchor" href="#memory-system-immutability-enforcement">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Memory files are now explicitly treated as immutable across the system. Edit and Write tools are blocked for memory paths with the message: "is not permitted — memories are immutable, so delete-and-recreate replaces in-place edits." In tiny memory mode, the restriction is phrased as: "is not permitted in tiny memory mode — memories are immutable, so delete via Bash rm and rewrite."</p>
+<div class="blabel">Evidence</div>
+<p>Memory immutability enforcement (search for <code>"memories are immutable"</code>)</p>
+    </article>
+    <article class="card" id="improved-memory-save-instructions">
+      <div class="card-top">
+        <h3>Improved Memory Save Instructions <a class="anchor" href="#improved-memory-save-instructions">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Memory save guidance has been significantly expanded with:</p>
+<ul><li>Each memory file should contain one paragraph about a single fact</li><li>Frontmatter format with type, scope, and created date</li><li>Instructions to check for duplicates before writing</li><li>Separate scope guidance for private vs team memories</li><li>Delete-and-recreate workflow instead of in-place edits</li></ul>
+<div class="blabel">Evidence</div>
+<p>Memory documentation (search for <code>"Each memory file should contain one paragraph"</code>)</p>
+    </article>
+    <article class="card" id="model-restart-notification">
+      <div class="card-top">
+        <h3>Model Restart Notification <a class="anchor" href="#model-restart-notification">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When changing models, Claude Code now shows "Restarting Claude Code to apply the new model…" and automatically relaunches, rather than requiring a manual restart.</p>
+<div class="blabel">Evidence</div>
+<p>Restart message (search for <code>"Restarting Claude Code to apply the new model"</code>)</p>
+    </article>
+    <article class="card" id="hook-validation-environment-variable-checks">
+      <div class="card-top">
+        <h3>Hook Validation — Environment Variable Checks <a class="anchor" href="#hook-validation-environment-variable-checks">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Hook commands now validate that environment variable references (<code>${...}</code>) match the correct variables available for that hook type. Invalid references produce warnings during validation.</p>
+<div class="blabel">Evidence</div>
+<p>Hook env var validation (search for <code>"Hook command references ${"</code>)</p>
+    </article>
+    <article class="card" id="skill-name-sanitization">
+      <div class="card-top">
+        <h3>Skill Name Sanitization <a class="anchor" href="#skill-name-sanitization">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Skill names from plugins are now sanitized by removing invalid characters and replacing them with hyphens (<code>[^a-zA-Z0-9_-]</code> → <code>-</code>), preventing registration failures from names with special characters.</p>
+<div class="blabel">Evidence</div>
+<p>Skill name sanitization (search for <code>"[^a-zA-Z0-9_-]"</code>)</p>
+    </article>
+    <article class="card" id="updated-task-agent-tool-documentation">
+      <div class="card-top">
+        <h3>Updated Task/Agent Tool Documentation <a class="anchor" href="#updated-task-agent-tool-documentation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The Task tool's system prompt has been condensed and reorganised. The "When NOT to use" section is now streamlined, examples are updated, and the <code>isolation: "worktree"</code> option and agent resumption via <code>to</code> field are better documented.</p>
+<div class="blabel">Evidence</div>
+<p>Task tool help (search for <code>"Launch a new agent to handle complex, multi-step tasks"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed UTF-8 encoding for <code>stream-json</code> input mode to prevent multi-byte character corruption (search for <code>"stream-json"</code> near <code>"utf-8"</code>)</li><li>Fixed escape sequence handling in GNU Screen (STY) terminal multiplexer — properly wraps DCS passthrough sequences with double-escaped embedded escapes (search for <code>process.env.STY</code> in <code>tD</code> function)</li><li>Fixed PATH extraction on Windows to use shell-aware subprocess for correct environment resolution (search for <code>h1Y</code>)</li><li>Added defensive guard in team memory watcher to check identifier existence before processing, preventing potential crashes (search for <code>"team-memory-watcher: suppressing retry"</code>)</li><li>Session title updates now emit events to keep the UI synchronized (search for <code>"rA7.emit()"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
+    </article>
+    <article class="card" id="team-onboarding-command-gradual-rollout">
+      <div class="card-top">
+        <h3>/team-onboarding Command [Gradual Rollout] <a class="anchor" href="#team-onboarding-command-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Generates team onboarding guides by analysing your Claude Code usage patterns across sessions, then produces a shareable guide for teammates.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_flint_harbor</code> (default: false). Can also be enabled with <code>CLAUDE_CODE_TEAM_ONBOARDING=1</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Scans session transcripts for usage metrics: slash commands, MCP servers, project patterns</li><li>Generates markdown onboarding guide with team-specific recommendations</li><li>Uses allowed tools: <code>Edit(ONBOARDING.md)</code> and <code>Bash(ls:*)</code></li><li>Shows progress: "scanning usage data"</li><li>Discovery variant controlled by <code>tengu_cedar_inlet</code> flag</li><li>Custom prompt/template configurable via <code>tengu_flint_harbor_prompt</code></li><li>Onboarding banner visible to users: "On a team? Ask a teammate to run /team-onboarding and share the guide."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Command definition (search for <code>"team-onboarding"</code>, <code>"tengu_flint_harbor"</code>)</p>
+    </article>
+    <article class="card" id="tiny-memory-mode-gradual-rollout">
+      <div class="card-top">
+        <h3>Tiny Memory Mode [Gradual Rollout] <a class="anchor" href="#tiny-memory-mode-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Alternative memory storage mode that uses a separate <code>tiny_memory</code> directory with reduced footprint and LLM-based synthesis for retrieval.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_billiard_aviary</code> (default: false).</p>
+<div class="blabel">Details</div>
+<ul><li>When enabled, memory directory switches from <code>memory</code> to <code>tiny_memory</code></li><li>Memory files get YAML frontmatter timestamps (<code>created:</code>, <code>last_read:</code>)</li><li>Read-only shell commands and <code>rm</code> for <code>.md</code> files only are permitted during memory operations</li><li>Memory retrieval uses LLM synthesis instead of raw file contents</li><li>Team memory paths are excluded from tiny memory mode</li><li>Timestamp stamping: <code>tinyMemoryStamps</code> tracks file modification</li></ul>
+<div class="blabel">Evidence</div>
+<p>Feature flag and directory selection (search for <code>"tengu_billiard_aviary"</code>, <code>"tiny_memory"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The XML/DOM parsing library has been replaced. The previous <code>xmldom</code>-based parser (with error messages like "end tag name: X is not complete", "unclosed xml attribute", etc.) has been swapped for a new implementation with W3C-compliant DOM exceptions (DOMException types like <code>HierarchyRequestError</code>, <code>InvalidCharacterError</code>, <code>NamespaceError</code>, etc.) and stricter validation. This is an internal change but may surface different error messages if XML parsing is used by MCP servers or plugins.</p>
+<p>Several Smithy/AWS SDK utility modules (<code>FetchHttpHandler</code>, <code>buildQueryString</code>, <code>escapeUri</code>, <code>fromBase64</code>, <code>toBase64</code>, etc.) have been removed as standalone CommonJS modules and replaced by native implementations, reducing bundle size.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

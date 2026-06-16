@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.7 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.7."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.7</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.7</span></h1>
+<p class="sub">This release introduces significant speculation execution infrastructure for predictive tool running, adds a new <code>/color</code> command for session-customizable prompt bar colors, implements Opus 4.5 migration handling for Pro users, and improves compaction reliability with streaming retry logic. Enhanced telemetry and crash handling have also been added.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.6 → v2.1.7</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">13</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="color-command">
+      <div class="card-top">
+        <h3><code>/color</code> Command <a class="anchor" href="#color-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Set a custom color for the prompt bar during your current session.</p>
+<div class="blabel">Usage</div>
+<pre><code>/color cyan</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Available colors are configurable per session</li><li>Color is persisted in the session file and can be used to visually distinguish multiple concurrent Claude Code sessions</li><li>Sets the <code>standaloneAgentContext.color</code> property</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>VQ9</code> at line 466161 (color command handler, contains <code>"Set the prompt bar color for this session"</code>)</p>
+    </article>
+    <article class="card" id="speculative-execution-infrastructure">
+      <div class="card-top">
+        <h3>Speculative Execution Infrastructure <a class="anchor" href="#speculative-execution-infrastructure">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code can now speculatively execute tool calls while waiting for user input, using isolated git clones to avoid affecting your working directory.</p>
+<div class="blabel">Details</div>
+<ul><li>Creates temporary <code>speculation-clones/speculation-{id}</code> directories for isolated execution</li><li>Uses <code>git clone --shared --no-checkout</code> for fast, lightweight cloning</li><li>Tracks time saved and tools executed via <code>tengu_speculation</code> telemetry</li><li>Changes from accepted speculations are copied back to the main worktree</li><li>Read operations outside git root are allowed; writes outside git root are blocked</li><li>Speculation aborts cleanly on user input or errors</li><li>Displays time saved indicator (e.g., <code>▶▶ 5s</code>) when speculation completes</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>g19()</code> at line 460815 (speculation entry point, contains <code>"speculation-clones"</code>)</p>
+    </article>
+    <article class="card" id="opus-4-5-pro-migration-notification">
+      <div class="card-top">
+        <h3>Opus 4.5 Pro Migration Notification <a class="anchor" href="#opus-4-5-pro-migration-notification">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Pro users who hadn't set a model preference are automatically migrated to Opus 4.5, with a notification displayed.</p>
+<div class="blabel">Details</div>
+<ul><li>Only triggers for first-party auth users</li><li>Shows "Model updated to Opus 4.5" notification on next session start</li><li>Migration only occurs once, tracked via <code>opusProMigrationComplete</code> state</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>ww9()</code> at line 539875 (migration logic), <code>Xq9()</code> at line 533528 (notification display, contains <code>"Model updated to Opus 4.5"</code>)</p>
+    </article>
+    <article class="card" id="chrome-browser-skill">
+      <div class="card-top">
+        <h3>Chrome Browser Skill <a class="anchor" href="#chrome-browser-skill">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added a new <code>claude-in-chrome</code> skill that enables browser automation tools via the Skill tool.</p>
+<div class="blabel">Details</div>
+<ul><li>Provides comprehensive guidance for browser automation including GIF recording, console log debugging, and dialog handling</li><li>Controlled by <code>tengu_chrome_auto_enable</code> feature flag</li><li>Must invoke skill before using <code>mcp__claude-in-chrome__*</code> tools</li><li>Includes instructions for tab context management and session startup</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>TI9()</code> at line 516042 (skill registration, contains <code>"claude-in-chrome"</code>)</p>
+    </article>
+    <article class="card" id="compaction-streaming-retry">
+      <div class="card-top">
+        <h3>Compaction Streaming Retry <a class="anchor" href="#compaction-streaming-retry">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Compaction now includes retry logic when streaming responses fail.</p>
+<div class="blabel">Details</div>
+<ul><li>Controlled by <code>tengu_compact_streaming_retry</code> feature flag</li><li>Retries up to 3 times with exponential backoff</li><li>Improved error message: "Compaction interrupted · This may be due to network issues — please try again."</li><li>Logs retry attempts and final failure for diagnostics</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>H97()</code> at line 449946 (compaction handler, contains <code>"tengu_compact_streaming_retry"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-crash-and-signal-telemetry">
+      <div class="card-top">
+        <h3>Enhanced Crash and Signal Telemetry <a class="anchor" href="#enhanced-crash-and-signal-telemetry">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Better crash and shutdown diagnostics through telemetry.</p>
+<div class="blabel">Details</div>
+<ul><li>Now logs <code>shutdown_signal</code> events for SIGINT/SIGTERM</li><li>Captures <code>uncaught_exception</code> with error name and truncated message</li><li>Captures <code>unhandled_rejection</code> for promise rejections</li><li>All error messages are truncated to 2000 characters</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>yJ</code> at line 317867 (signal handlers, contains <code>"shutdown_signal"</code>, <code>"uncaught_exception"</code>)</p>
+    </article>
+    <article class="card" id="keybindings-file-format-update">
+      <div class="card-top">
+        <h3>Keybindings File Format Update <a class="anchor" href="#keybindings-file-format-update">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Keybindings configuration now includes JSON schema and documentation references.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>$schema</code> field pointing to <code>https://code.claude.com/docs/schemas/keybindings.json</code></li><li>New <code>$docs</code> field linking to <code>https://code.claude.com/docs/s/claude-code-keybindings</code></li><li>Reserved (non-rebindable) keys are now filtered from generated config</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>R29()</code> at line 473546 (keybindings generator, contains <code>"$schema"</code>)</p>
+    </article>
+    <article class="card" id="dynamic-tool-loading-diagnostics">
+      <div class="card-top">
+        <h3>Dynamic Tool Loading Diagnostics <a class="anchor" href="#dynamic-tool-loading-diagnostics">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Logs discovered tools found in message history when resuming sessions.</p>
+<div class="blabel">Details</div>
+<ul><li>Scans tool_result blocks in user messages for tool names</li><li>Logs count of discovered tools for debugging dynamic tool loading behavior</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>_Z0()</code> at line 279909 (tool discovery, contains <code>"Dynamic tool loading"</code>)</p>
+    </article>
+    <article class="card" id="plugin-forced-output-style">
+      <div class="card-top">
+        <h3>Plugin Forced Output Style <a class="anchor" href="#plugin-forced-output-style">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Plugins can now force a specific output style for the session.</p>
+<div class="blabel">Details</div>
+<ul><li>Plugins can set <code>forceForPlugin: true</code> on their output style</li><li>If multiple plugins force styles, a warning is logged and the first is used</li><li>Takes precedence over user-configured output style</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>sY9()</code> at line 508208 (output style selection, contains <code>"forceForPlugin"</code>)</p>
+    </article>
+    <article class="card" id="orphaned-thinking-block-filtering">
+      <div class="card-top">
+        <h3>Orphaned Thinking Block Filtering <a class="anchor" href="#orphaned-thinking-block-filtering">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Filters out orphaned assistant thinking blocks that don't have associated content.</p>
+<div class="blabel">Details</div>
+<ul><li>Removes assistant messages that contain only thinking/redacted_thinking blocks</li><li>Logs filtered messages via <code>tengu_filtered_orphaned_thinking_message</code> telemetry</li><li>Prevents display issues from incomplete responses</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Su2()</code> at line 510058 (filtering logic, contains <code>"tengu_filtered_orphaned_thinking"</code>)</p>
+    </article>
+    <article class="card" id="prefetch-system-context-optimization">
+      <div class="card-top">
+        <h3>Prefetch System Context Optimization <a class="anchor" href="#prefetch-system-context-optimization">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>System context is now prefetched more intelligently based on trust status.</p>
+<div class="blabel">Details</div>
+<ul><li>In non-interactive sessions, prefetch runs immediately</li><li>In interactive sessions, only prefetches if trust has been established</li><li>Logs prefetch status via <code>prefetch_system_context_*</code> telemetry events</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>tR7()</code> at line 543352 (prefetch logic, contains <code>"prefetch_system_context"</code>)</p>
+    </article>
+    <article class="card" id="git-conflict-detection-for-snapshots">
+      <div class="card-top">
+        <h3>Git Conflict Detection for Snapshots <a class="anchor" href="#git-conflict-detection-for-snapshots">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Worktree snapshotting now detects in-progress git operations and provides clearer errors.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects cherry-pick, rebase, merge, revert, am, and bisect operations</li><li>Throws descriptive error: "Cannot snapshot worktree: in-progress {operation} operation detected"</li><li>Also detects uninitialized repositories and prompts for initial commit</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>a77()</code> at line 458650 (conflict detection, contains <code>"cherry-picking"</code>, <code>"rebasing"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-symlink-resolution">
+      <div class="card-top">
+        <h3>Enhanced Symlink Resolution <a class="anchor" href="#enhanced-symlink-resolution">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>File path resolution now follows symlink chains more thoroughly.</p>
+<div class="blabel">Details</div>
+<ul><li>Follows up to 40 levels of symlinks (protection against infinite loops)</li><li>Skips special file types (FIFO, socket, character/block devices)</li><li>Returns all paths in the symlink chain for better tracking</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>pAA()</code> at line 2374 (symlink resolution, contains <code>"isSymbolicLink"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed <code>"File has been unexpectedly modified"</code> error message to be more actionable (<code>ZRA</code> at line 170468)</li><li>Improved request size error messaging for non-interactive mode (<code>hs8()</code> at line 278885, contains <code>"Request too large"</code>)</li></ul>
+    </article>
+    <article class="card" id="enhanced-telemetry-beta">
+      <div class="card-top">
+        <h3>Enhanced Telemetry Beta <a class="anchor" href="#enhanced-telemetry-beta">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">Status</div>
+<p>Feature-flagged</p>
+<div class="blabel">What</div>
+<p>Optional enhanced telemetry collection for debugging and analytics.</p>
+<div class="blabel">Details</div>
+<ul><li>Controlled by <code>CLAUDE_CODE_ENHANCED_TELEMETRY_BETA</code> or <code>ENABLE_ENHANCED_TELEMETRY_BETA</code> env var</li><li>Also gated by <code>enhanced_telemetry_beta</code> feature flag (defaults to false)</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>uI0</code> at line 303463 (feature definition, contains <code>"enhanced_telemetry_beta"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

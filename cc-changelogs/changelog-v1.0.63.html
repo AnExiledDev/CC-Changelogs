@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.63 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.63."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.63</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.63</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.62 → v1.0.63</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">15</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">15 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.63 Changelog</p>
+    </article>
+    <article class="card" id="output-mode-selection">
+      <div class="card-top">
+        <h3>Output Mode Selection <a class="anchor" href="#output-mode-selection">#</a></h3>
+      </div>
+      <p>A new output mode system has been introduced that changes how Claude Code communicates with users. Users can now choose between different interaction styles:</p>
+<ul><li><strong>Default Mode</strong>: Concise, direct responses focused on completing tasks efficiently. Best for straightforward coding help.</li><li><strong>Insights Mode</strong>: Provides educational insights along the way to help understand implementation choices and codebase patterns.</li><li><strong>Learn by Doing Mode</strong>: Collaborative mode where users are asked to contribute small, strategic pieces of code for hands-on learning.</li></ul>
+<p>To change the output mode, users can access the new mode selection interface which allows saving preferences either globally or per-project.</p>
+    </article>
+    <article class="card" id="enhanced-debug-output">
+      <div class="card-top">
+        <h3>Enhanced Debug Output <a class="anchor" href="#enhanced-debug-output">#</a></h3>
+      </div>
+      <p>New debug flag <code>--debug-to-stderr</code> has been added. When enabled, debug output will be written to stderr instead of stdout, allowing better separation of debug information from regular output.</p>
+<pre><code>claude --debug-to-stderr [command]</code></pre>
+    </article>
+    <article class="card" id="workspace-restoration-in-message-selector">
+      <div class="card-top">
+        <h3>Workspace Restoration in Message Selector <a class="anchor" href="#workspace-restoration-in-message-selector">#</a></h3>
+      </div>
+      <p>The message selector (jump to previous message feature) now includes an option to restore the workspace state associated with a previous message when checkpointing is enabled. This allows users to not only jump to a previous conversation point but also restore the file system state from that moment.</p>
+<p>When selecting a previous message, users will see indicators showing whether workspace restoration is available for that checkpoint. Messages without restorable workspace states are marked with <code>[ ✗ Restore Workspace ]</code>.</p>
+    </article>
+    <article class="card" id="mcp-server-status-indicators">
+      <div class="card-top">
+        <h3>MCP Server Status Indicators <a class="anchor" href="#mcp-server-status-indicators">#</a></h3>
+      </div>
+      <p>New visual indicators for MCP (Model Context Protocol) server status have been added. The interface now shows:</p>
+<ul><li>Failed MCP servers with error indicators</li><li>MCP servers that need authentication with warning indicators</li><li>Helpful hint to use <code>/mcp</code> command for more information</li></ul>
+<p>These indicators automatically disappear after 5 seconds to avoid cluttering the interface.</p>
+    </article>
+    <article class="card" id="better-error-handling-in-print-mode">
+      <div class="card-top">
+        <h3>Better Error Handling in Print Mode <a class="anchor" href="#better-error-handling-in-print-mode">#</a></h3>
+      </div>
+      <p>The <code>--print</code> mode now has improved error handling and exit codes. The exit code properly reflects whether an error occurred during execution, making it more reliable for scripting and automation.</p>
+    </article>
+    <article class="card" id="enhanced-command-response-handling">
+      <div class="card-top">
+        <h3>Enhanced Command Response Handling <a class="anchor" href="#enhanced-command-response-handling">#</a></h3>
+      </div>
+      <p>Local commands now include checkpoint information in their responses, ensuring that the conversation state is properly tracked even when using local slash commands.</p>
+    </article>
+    <article class="card" id="cleaner-message-filtering">
+      <div class="card-top">
+        <h3>Cleaner Message Filtering <a class="anchor" href="#cleaner-message-filtering">#</a></h3>
+      </div>
+      <p>The message selector now has improved filtering logic to exclude command output messages (stdout/stderr from local commands and bash commands) from the selectable message list, providing a cleaner interface for jumping between actual user messages.</p>
+    </article>
+    <article class="card" id="removed-duplicate-imports">
+      <div class="card-top">
+        <h3>Removed Duplicate Imports <a class="anchor" href="#removed-duplicate-imports">#</a></h3>
+      </div>
+      <p>Fixed issues with duplicate stream imports that were causing potential conflicts.</p>
+    </article>
+    <article class="card" id="fixed-parallelization-configuration">
+      <div class="card-top">
+        <h3>Fixed Parallelization Configuration <a class="anchor" href="#fixed-parallelization-configuration">#</a></h3>
+      </div>
+      <p>Removed the <code>parallelTasksCount</code> configuration option which was causing issues with task execution.</p>
+    </article>
+    <article class="card" id="ide-auto-connection-improvements">
+      <div class="card-top">
+        <h3>IDE Auto-connection Improvements <a class="anchor" href="#ide-auto-connection-improvements">#</a></h3>
+      </div>
+      <p>Enhanced the IDE auto-connection logic to better handle WebSocket and Server-Sent Events connections, with improved authentication token handling and Windows compatibility detection.</p>
+    </article>
+    <article class="card" id="stream-processing-updates">
+      <div class="card-top">
+        <h3>Stream Processing Updates <a class="anchor" href="#stream-processing-updates">#</a></h3>
+      </div>
+      <ul><li>Replaced direct stream imports with more specific imports from <code>node:stream</code></li><li>Added <code>PassThrough</code> stream handling for better data flow control</li></ul>
+    </article>
+    <article class="card" id="debugging-infrastructure">
+      <div class="card-top">
+        <h3>Debugging Infrastructure <a class="anchor" href="#debugging-infrastructure">#</a></h3>
+      </div>
+      <ul><li>Added lazy evaluation for debug flags using memoization</li><li>Introduced <code>qo0</code> function for writing debug output to stderr in chunks</li></ul>
+    </article>
+    <article class="card" id="message-processing">
+      <div class="card-top">
+        <h3>Message Processing <a class="anchor" href="#message-processing">#</a></h3>
+      </div>
+      <ul><li>New <code>w$B</code> function for extracting control sequences from user messages</li><li>Added <code>B68</code> function for handling output mode metadata</li><li>Implemented <code>$Z1</code> for finding checkpoint IDs in message sequences</li></ul>
+    </article>
+    <article class="card" id="control-response-handling">
+      <div class="card-top">
+        <h3>Control Response Handling <a class="anchor" href="#control-response-handling">#</a></h3>
+      </div>
+      <p>New <code>tH8</code> function handles initialization requests with improved error handling and command discovery for external integrations.</p>
+    </article>
+    <article class="card" id="checkpoint-management">
+      <div class="card-top">
+        <h3>Checkpoint Management <a class="anchor" href="#checkpoint-management">#</a></h3>
+      </div>
+      <ul><li><code>Wx1</code>: Retrieves checkpoint attachments for a conversation</li><li><code>$Z1</code>: Finds checkpoint IDs associated with messages</li></ul>
+<p>These changes improve the overall stability and user experience of Claude Code, with particular focus on making the tool more educational and collaborative through the new output modes, while also enhancing the debugging and state management capabilities.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

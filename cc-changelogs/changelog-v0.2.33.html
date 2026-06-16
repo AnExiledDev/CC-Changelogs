@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.33 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.33."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.33</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.33</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.32 → v0.2.33</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Improved <code>/compact</code> Command</h4>
+<ul><li><strong>Enhanced message preservation</strong>: The <code>/compact</code> command now intelligently preserves recent messages while summarizing older conversation history</li><li><strong>Better handling of tool use</strong>: Fixed issues where tool use messages could become "dangling" during compaction</li><li><strong>Configurable preservation</strong>: The command now preserves the last 10 messages by default (<code>fS2 = 10</code>) while summarizing older content</li><li><strong>Improved telemetry</strong>: Added tracking for compacted vs preserved message counts</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <h4>Error Reporting Improvements</h4>
+<ul><li><strong>Enhanced error details</strong>: Bug reports now include structured error information in JSON format</li><li><strong>Stack trace collection</strong>: Added error stack trace collection to help diagnose issues more effectively</li><li><strong>Better error context</strong>: Bug reports now include complete error objects with stack traces</li></ul>
+    </article>
+    <article class="card" id="removed-features">
+      <div class="card-top">
+        <h3>Removed Features <a class="anchor" href="#removed-features">#</a></h3>
+      </div>
+      <h4>Removed A/B Testing UI</h4>
+<p>The following experimental features have been removed:</p>
+<ul><li>Binary feedback comparison UI (<code>prefer-left</code>, <code>prefer-right</code> options)</li><li>Side-by-side message comparison interface</li><li>A/B testing telemetry functions (<code>JE2</code>, <code>zE2</code>)</li><li>Visual comparison components (<code>wf1</code>, <code>IQ9</code>, <code>zm2</code>, <code>gm2</code>)</li></ul>
+<h4>Removed Internal Components</h4>
+<ul><li>Removed <code>BatchTool</code> variable</li><li>Removed <code>onboarding</code> command (was ANT-ONLY and disabled)</li><li>Removed various stream imports that were unused</li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <h4>DOM Implementation Additions</h4>
+<ul><li>Added extensive DOM API implementations including:</li><li>Event system (<code>Event</code>, <code>UIEvent</code>, <code>MouseEvent</code>, <code>CustomEvent</code>)</li><li>Node iteration (<code>NodeIterator</code>)</li><li>URL handling utilities</li><li>CSS style manipulation</li><li>Complete HTML element implementations</li><li>SVG element support</li><li>Document type handling</li></ul>
+<h4>Code Organization</h4>
+<ul><li>Significant refactoring of internal modules</li><li>Better separation of DOM-related functionality</li><li>Improved module structure with clearer boundaries</li></ul>
+    </article>
+    <article class="card" id="performance-improvements">
+      <div class="card-top">
+        <h3>Performance Improvements <a class="anchor" href="#performance-improvements">#</a></h3>
+      </div>
+      <ul><li>Optimized message compaction to avoid unnecessary processing</li><li>Better memory management during conversation compaction</li><li>More efficient handling of large conversation histories</li></ul>
+    </article>
+    <article class="card" id="user-experience-improvements">
+      <div class="card-top">
+        <h3>User Experience Improvements <a class="anchor" href="#user-experience-improvements">#</a></h3>
+      </div>
+      <ul><li>Cleaner conversation management with improved <code>/compact</code> functionality</li><li>More reliable preservation of recent context when compacting conversations</li><li>Better error messages and feedback during operations</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

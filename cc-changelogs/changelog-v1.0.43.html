@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.43 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.43."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.43</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.43</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.42 → v1.0.43</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.43 Changelog</p>
+    </article>
+    <article class="card" id="new-theme-preview-feature">
+      <div class="card-top">
+        <h3>New Theme Preview Feature <a class="anchor" href="#new-theme-preview-feature">#</a></h3>
+      </div>
+      <p>Version 1.0.43 introduces a major enhancement to the theme management system with the ability to preview themes before applying them permanently.</p>
+<h4>Key Changes:</h4>
+<p><strong>Enhanced Theme Context</strong></p>
+<ul><li>The theme context has been completely redesigned with a richer API</li><li>New context structure includes:</li></ul>
+<pre><code>  {
+    theme: null,           // Current saved theme
+    setTheme: (A) =&gt; A,    // Set and save theme
+    setPreviewTheme: (A) =&gt; A,  // Preview theme without saving
+    savePreview: () =&gt; {},      // Save the previewed theme
+    currentTheme: null,    // Active theme (preview or saved)
+  }</code></pre>
+<p><strong>New Theme Provider Component</strong></p>
+<ul><li>Added <code>jT1</code> component that provides theme state management</li><li>Tracks both saved themes and preview themes separately</li><li>Allows users to test themes before committing to them</li></ul>
+<p><strong>Updated Theme Hook</strong></p>
+<ul><li>The <code>hB</code> hook now returns <code>currentTheme</code> instead of just the saved theme</li><li>This means components will automatically use preview themes when active</li></ul>
+    </article>
+    <article class="card" id="user-facing-benefits">
+      <div class="card-top">
+        <h3>User-Facing Benefits: <a class="anchor" href="#user-facing-benefits">#</a></h3>
+      </div>
+      <ol><li><strong>Try Before You Apply</strong>: You can now preview how a theme looks before permanently switching to it</li><li><strong>Easy Rollback</strong>: If you don't like a preview theme, simply don't save it</li><li><strong>Seamless Testing</strong>: The UI updates immediately when previewing themes, giving instant feedback</li></ol>
+    </article>
+    <article class="card" id="usage-example">
+      <div class="card-top">
+        <h3>Usage Example: <a class="anchor" href="#usage-example">#</a></h3>
+      </div>
+      <p>When using Claude Code, you might interact with themes like this:</p>
+<ul><li>Preview a theme temporarily to see how it looks</li><li>If you like it, save the preview to make it permanent</li><li>If not, the preview is discarded and your original theme remains</li></ul>
+    </article>
+    <article class="card" id="stream-handling-updates">
+      <div class="card-top">
+        <h3>Stream Handling Updates <a class="anchor" href="#stream-handling-updates">#</a></h3>
+      </div>
+      <ul><li>Migrated from generic stream imports to more specific <code>PassThrough</code> imports</li><li>Added <code>PassThrough</code> imports from both <code>node:stream</code> and <code>stream</code> modules</li><li>This likely improves performance and reduces bundle size</li></ul>
+    </article>
+    <article class="card" id="process-module-import">
+      <div class="card-top">
+        <h3>Process Module Import <a class="anchor" href="#process-module-import">#</a></h3>
+      </div>
+      <ul><li>Added specific import for <code>cwd</code> (current working directory) from <code>node:process</code></li><li>Removed generic process import, using only what's needed</li></ul>
+<p>These changes represent a focus on improving the user experience around theme customization while also making technical optimizations to the codebase.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

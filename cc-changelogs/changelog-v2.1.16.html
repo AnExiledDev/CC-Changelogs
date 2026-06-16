@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.16 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.16."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.16</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.16</span></h1>
+<p class="sub">This is a landmark release introducing <strong>Agent Swarms</strong> (multi-agent coordination), including the TeammateTool for spawning and managing teams of AI agents, Task tools (TaskCreate, TaskGet, TaskUpdate, TaskList) for shared task management, and native iTerm2 split pane support for macOS users. The release also adds in-process teammate execution, dynamic team joining, and plan approval workflows.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.15 → v2.1.16</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">13</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">5</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="agent-swarms-multi-agent-coordination">
+      <div class="card-top">
+        <h3>Agent Swarms - Multi-Agent Coordination <a class="anchor" href="#agent-swarms-multi-agent-coordination">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Spawn and coordinate multiple AI agents working in parallel on a project. Teams have a 1:1 correspondence with task lists (Team = Project = TaskList).</p>
+<div class="blabel">Usage</div>
+<pre><code># Create a team
+claude
+&gt; Use TeammateTool with operation &quot;spawnTeam&quot; and team_name &quot;my-project&quot;
+
+# Spawn teammates via the Task tool with team_name and name parameters
+&gt; Use Task tool to spawn a teammate named &quot;researcher&quot; for team &quot;my-project&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Create teams with <code>spawnTeam</code> operation</li><li>Teams automatically create corresponding task list directories at <code>~/.claude/tasks/{team-name}/</code></li><li>Team configuration stored at <code>~/.claude/teams/{team-name}/config.json</code></li><li>Teammates can communicate via <code>write</code> (single recipient) or <code>broadcast</code> (all teammates)</li><li>Graceful shutdown workflow with <code>requestShutdown</code> → <code>approveShutdown</code>/<code>rejectShutdown</code></li><li>Plan approval workflow for teammates: <code>approvePlan</code>/<code>rejectPlan</code></li><li>Cleanup team resources when done with <code>cleanup</code> operation</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Ds7()</code> at line 417104 (TeammateTool prompt, contains <code>"# TeammateTool"</code>, <code>"spawnTeam"</code>, <code>"requestShutdown"</code>)</p>
+    </article>
+    <article class="card" id="dynamic-team-joining">
+      <div class="card-top">
+        <h3>Dynamic Team Joining <a class="anchor" href="#dynamic-team-joining">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Agents can discover and request to join existing teams, with leaders approving or rejecting requests.</p>
+<div class="blabel">Usage</div>
+<pre><code># Discover available teams
+&gt; Use TeammateTool with operation &quot;discoverTeams&quot;
+
+# Request to join a team
+&gt; Use TeammateTool with operation &quot;requestJoin&quot;, team_name &quot;my-project&quot;, proposed_name &quot;helper&quot;
+
+# Leader approves the request
+&gt; Use TeammateTool with operation &quot;approveJoin&quot;, target_agent_id &quot;helper&quot;, request_id &quot;join-123&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>discoverTeams</code> lists teams from <code>~/.claude/teams/</code> that you can join</li><li><code>requestJoin</code> sends a join request to the team leader</li><li>Leader receives <code>join_request</code> message and uses <code>approveJoin</code> or <code>rejectJoin</code></li><li>Configurable timeout for join requests (default 60 seconds)</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>rY2()</code> (requestJoin handler), <code>oY2()</code> (approveJoin handler), <code>aY2()</code> (rejectJoin handler) with operations <code>"requestJoin"</code>, <code>"approveJoin"</code>, <code>"rejectJoin"</code></p>
+    </article>
+    <article class="card" id="task-tools-for-shared-task-management">
+      <div class="card-top">
+        <h3>Task Tools for Shared Task Management <a class="anchor" href="#task-tools-for-shared-task-management">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New set of tools for creating and managing tasks that are shared across team members.</p>
+<div class="blabel">Usage</div>
+<pre><code># Create a task
+&gt; Use TaskCreate with subject &quot;Implement API endpoint&quot; and description &quot;Create the /users endpoint&quot;
+
+# List all tasks
+&gt; Use TaskList to see available tasks
+
+# Update task status or ownership
+&gt; Use TaskUpdate with id &quot;1&quot; and status &quot;in_progress&quot; and owner &quot;researcher&quot;
+
+# Get task details
+&gt; Use TaskGet with id &quot;1&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>TaskCreate</code>: Create new tasks with subject, description, and optional metadata</li><li><code>TaskGet</code>: Retrieve a task by ID</li><li><code>TaskUpdate</code>: Update task status, owner, description, or blocked_by relationships</li><li><code>TaskList</code>: List all tasks showing ID, status, owner, and subject</li><li>Tasks support dependency tracking with <code>blocks</code> and <code>blockedBy</code> fields</li><li>When a task is completed, blocked tasks become unblocked</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Or7</code> at line containing <code>"Create a new task in the task list"</code>, <code>Xr7</code> (TaskCreate prompt), <code>DD1</code> (TaskGet name), <code>Lr7</code> (TaskUpdate description)</p>
+    </article>
+    <article class="card" id="native-iterm2-split-pane-support-for-teammates">
+      <div class="card-top">
+        <h3>Native iTerm2 Split Pane Support for Teammates <a class="anchor" href="#native-iterm2-split-pane-support-for-teammates">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Teammates appear as split panes in iTerm2 on macOS, providing visual separation for each agent.</p>
+<div class="blabel">Usage</div>
+<pre><code># Setup is prompted automatically when spawning teammates in iTerm2
+# Requires it2 CLI tool installation via pip/pipx/uv
+pip install it2</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Automatic detection of iTerm2 environment</li><li>Guided setup flow to install <code>it2</code> CLI tool</li><li>Split panes created for each teammate with color-coded borders</li><li>Falls back to tmux if iTerm2 setup is not completed</li><li>Option to prefer tmux over iTerm2 with <code>--teammate-mode tmux</code></li></ul>
+<div class="blabel">Evidence</div>
+<p><code>ITermBackend</code> class with methods <code>createTeammatePaneInSwarmView</code>, <code>isAvailable</code>, contains <code>"[ITermBackend] Creating pane"</code>, <code>"iTerm2 Split Pane Setup"</code>, <code>"✓ iTerm2 split pane support is ready"</code></p>
+    </article>
+    <article class="card" id="in-process-teammate-execution">
+      <div class="card-top">
+        <h3>In-Process Teammate Execution <a class="anchor" href="#in-process-teammate-execution">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Spawn teammates within the same process instead of separate tmux panes, useful for non-interactive sessions.</p>
+<div class="blabel">Usage</div>
+<pre><code># Automatically used in non-interactive sessions
+# Can be explicitly requested with --teammate-mode in-process
+claude --teammate-mode in-process</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Teammates run as async tasks within the same process</li><li>Enabled by default in non-interactive sessions</li><li>Each teammate has its own abort controller for graceful shutdown</li><li>Supports all the same operations as pane-based teammates</li><li>Resource cleanup handled automatically</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>InProcessBackend</code> class at line 6920 with <code>type = "in-process"</code>, <code>"[InProcessBackend] spawn() called"</code>, <code>"[InProcessBackend] Started agent execution"</code></p>
+    </article>
+    <article class="card" id="mailbox-based-inter-agent-communication">
+      <div class="card-top">
+        <h3>Mailbox-Based Inter-Agent Communication <a class="anchor" href="#mailbox-based-inter-agent-communication">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Filesystem-based mailbox system for asynchronous communication between team members.</p>
+<div class="blabel">Details</div>
+<ul><li>Each agent has an inbox at <code>~/.claude/teams/{team-name}/inboxes/{agent-name}.json</code></li><li>Messages include timestamp, sender, and content</li><li>Automatic delivery of messages when agent turn ends</li><li>Queued messages for busy agents delivered after their turn completes</li><li>Supports permission requests/responses, shutdown requests, plan approvals</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>TeammateMailbox</code> functions <code>writeToMailbox</code>, <code>readMailbox</code>, <code>markMessagesAsRead</code> with logging <code>"[TeammateMailbox] Wrote message to"</code>, <code>"[TeammateMailbox] readMailbox"</code></p>
+    </article>
+    <article class="card" id="new-cli-flags-for-teammate-mode">
+      <div class="card-top">
+        <h3>New CLI Flags for Teammate Mode <a class="anchor" href="#new-cli-flags-for-teammate-mode">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New command-line flags for configuring teammate spawning behavior.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --teammate-mode tmux          # Force tmux backend
+claude --teammate-mode in-process    # Force in-process backend
+claude --teammate-mode auto          # Auto-select based on environment
+
+# Used internally when spawning teammates:
+claude --agent-id &lt;id&gt; --agent-name &lt;name&gt; --team-name &lt;name&gt;
+claude --agent-color &lt;color&gt;
+claude --plan-mode-required
+claude --parent-session-id &lt;id&gt;</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>--teammate-mode</code>: Choose how teammates are spawned (tmux, in-process, auto)</li><li><code>--agent-id</code>, <code>--agent-name</code>, <code>--team-name</code>: Identity flags for teammate sessions</li><li><code>--agent-color</code>: Assign a color for the teammate's UI</li><li><code>--plan-mode-required</code>: Require plan approval before implementation</li><li><code>--parent-session-id</code>: Link to parent session for analytics</li></ul>
+<div class="blabel">Evidence</div>
+<p>CLI flag construction at lines 5617-5622, 7145-7193 with flags <code>"--agent-id"</code>, <code>"--agent-name"</code>, <code>"--team-name"</code>, <code>"--agent-color"</code>, <code>"--plan-mode-required"</code></p>
+    </article>
+    <article class="card" id="git-worktree-support-for-teammates">
+      <div class="card-top">
+        <h3>Git Worktree Support for Teammates <a class="anchor" href="#git-worktree-support-for-teammates">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Each teammate can work in their own git worktree for isolated file modifications.</p>
+<div class="blabel">Details</div>
+<ul><li>Worktrees created automatically for teammates when needed</li><li>Cleaned up via <code>git worktree remove</code> or manual removal on cleanup</li><li>Supports parallel work on the same repository without conflicts</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>removeWorktree()</code> function with <code>git worktree remove --force</code>, <code>"[TeammateTool] Removed worktree via git"</code>, <code>worktreePath</code> field in teammate objects</p>
+    </article>
+    <article class="card" id="enhanced-backend-registry-for-pane-management">
+      <div class="card-top">
+        <h3>Enhanced Backend Registry for Pane Management <a class="anchor" href="#enhanced-backend-registry-for-pane-management">#</a></h3>
+      </div>
+      <p>The backend registry now intelligently selects the appropriate pane backend:</p>
+<ul><li>Detects iTerm2 and checks for it2 CLI availability</li><li>Prefers iTerm2 native split panes when available</li><li>Falls back to tmux with informative messaging</li><li>Supports user preference for tmux over iTerm2</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>[BackendRegistry] Selected: iterm2 (native iTerm2 with it2 CLI)</code>, <code>[BackendRegistry] Selected: tmux (fallback in iTerm2, it2 setup recommended)</code></p>
+    </article>
+    <article class="card" id="teammate-preview-ui">
+      <div class="card-top">
+        <h3>Teammate Preview UI <a class="anchor" href="#teammate-preview-ui">#</a></h3>
+      </div>
+      <p>New UI for viewing teammate status and activity:</p>
+<ul><li>Shows teammate name, status (running/idle/awaiting approval), and progress</li><li>Color-coded teammate indicators</li><li>Idle time tracking</li><li>Interactive controls: kill, shutdown, cycle mode, prune idle</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>hs7()</code> function (teammate preview component), <code>"shift+↑/↓ to select teammate"</code>, <code>"select · Enter view · k kill · s shutdown · p prune idle"</code></p>
+    </article>
+    <article class="card" id="slack-mcp-tool-recognition">
+      <div class="card-top">
+        <h3>Slack MCP Tool Recognition <a class="anchor" href="#slack-mcp-tool-recognition">#</a></h3>
+      </div>
+      <p>Added recognition for Slack MCP tools to enable better integration with authenticated Slack access.</p>
+<div class="blabel">Evidence</div>
+<p><code>"mcp__claude_ai_Slack__slack_send_message"</code>, <code>"mcp__claude_ai_Slack__slack_read_thread"</code>, <code>"mcp__slack__send_message"</code>, <code>"mcp__slack__read_thread"</code></p>
+    </article>
+    <article class="card" id="remote-ide-server-path-handling">
+      <div class="card-top">
+        <h3>Remote IDE Server Path Handling <a class="anchor" href="#remote-ide-server-path-handling">#</a></h3>
+      </div>
+      <p>Improved path handling for remote IDE server directories (.vscode-server, .cursor-server, .windsurf-server).</p>
+<div class="blabel">Evidence</div>
+<p>Path checking includes <code>".vscode-server"</code>, <code>".cursor-server"</code>, <code>".windsurf-server"</code> at line 1669-1674</p>
+    </article>
+    <article class="card" id="first-render-timing-logging">
+      <div class="card-top">
+        <h3>First Render Timing Logging <a class="anchor" href="#first-render-timing-logging">#</a></h3>
+      </div>
+      <p>Added startup performance logging to track first ink render time.</p>
+<div class="blabel">Evidence</div>
+<p><code>"[render] first ink render: ${Math.round(process.uptime() * 1000)}ms since process start"</code></p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential issues with teammate context initialization during session reconnection (<code>[Reconnection] Initialized agent context from session</code>)</li><li>Fixed message marking logic in mailbox system (<code>markMessagesAsRead</code>, <code>markMessageAsReadByIndex</code> with proper lock handling)</li><li>Fixed cleanup of in-process teammate tasks when aborted (<code>[TeammateTool] Aborted controller for in-process teammate</code>)</li><li>Fixed worktree removal when git command fails (falls back to manual rm)</li></ul>
+    </article>
+    <article class="card" id="perfetto-tracing-removed">
+      <div class="card-top">
+        <h3>Perfetto Tracing Removed <a class="anchor" href="#perfetto-tracing-removed">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The Perfetto performance tracing feature has been removed from this release.</p>
+<div class="blabel">Evidence</div>
+<p>Removed <code>PERFETTO_TRACING</code> flag check, removed trace writing functions <code>writePerfettoTrace</code>, <code>writePerfettoTraceSync</code>, removed all <code>[Perfetto]</code> logging statements</p>
+    </article>
+    <article class="card" id="hybridtransport-post-debugging-removed">
+      <div class="card-top">
+        <h3>HybridTransport POST Debugging Removed <a class="anchor" href="#hybridtransport-post-debugging-removed">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>Removed verbose HTTP POST debugging from the hybrid transport layer.</p>
+<div class="blabel">Evidence</div>
+<p>Removed <code>"HybridTransport: POST URL ="</code>, <code>"HybridTransport: POST success"</code>, <code>"HybridTransport: POST failed"</code> logging</p>
+    </article>
+    <article class="card" id="teammate-mode-requirements">
+      <div class="card-top">
+        <h3>Teammate Mode Requirements <a class="anchor" href="#teammate-mode-requirements">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <ul><li><strong>tmux mode</strong>: Requires tmux installed on your system. Start a tmux session before spawning teammates.</li><li><strong>iTerm2 mode</strong>: Requires macOS with iTerm2 and the it2 CLI tool installed.</li><li><strong>in-process mode</strong>: No external dependencies, but teammates run in the same process.</li></ul>
+    </article>
+    <article class="card" id="task-list-coordination">
+      <div class="card-top">
+        <h3>Task List Coordination <a class="anchor" href="#task-list-coordination">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>When working in teams:</p>
+<ol><li>Use <code>TaskList</code> periodically to find available work</li><li>Claim tasks by setting yourself as owner with <code>TaskUpdate</code></li><li>Mark tasks completed when done</li><li>Check <code>TaskList</code> again to find newly unblocked work</li></ol>
+    </article>
+    <article class="card" id="environment-variables-for-teammates">
+      <div class="card-top">
+        <h3>Environment Variables for Teammates <a class="anchor" href="#environment-variables-for-teammates">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>Spawned teammates have these environment variables:</p>
+<ul><li><code>CLAUDE_CODE_AGENT_ID</code>: Unique identifier for the agent</li><li><code>CLAUDE_CODE_AGENT_TYPE</code>: Role/type of the agent</li><li><code>CLAUDE_CODE_TEAM_NAME</code>: Name of the team</li><li><code>CLAUDE_CODE_PLAN_MODE_REQUIRED</code>: Whether plan approval is required</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

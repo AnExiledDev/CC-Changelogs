@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.38 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.38."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.38</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.38</span></h1>
+<p class="sub">This release introduces session effort levels (low/medium/high) for controlling Claude's response intensity, auto-memory as a research preview for persistent learning across sessions, and browser switching for multi-Chrome automation setups. The update also adds file snapshot persistence for plan recovery, conditional skills that activate based on file patterns, improved elicitation with natural language date/time parsing, and new security checks for command validation.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.37 → v2.1.38</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">19</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">5</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">15 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="effort-level-control">
+      <div class="card-top">
+        <h3>Effort Level Control <a class="anchor" href="#effort-level-control">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Control how much effort Claude puts into responses during a session.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --effort medium
+claude --effort high</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Valid levels: <code>low</code>, <code>medium</code>, <code>high</code></li><li>The <code>max</code> level exists but is restricted:</li><li>Not available in interactive mode</li><li>Not available for Claude.ai subscribers</li><li>Use <code>high</code> for complex analysis, <code>low</code> for quick tasks</li></ul>
+<div class="blabel">Evidence</div>
+<p>CLI flag definition (search for <code>"--effort &lt;level&gt;"</code>)</p>
+    </article>
+    <article class="card" id="auto-memory-research-preview">
+      <div class="card-top">
+        <h3>Auto-Memory (Research Preview) <a class="anchor" href="#auto-memory-research-preview">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude can now automatically learn and remember patterns across sessions, writing insights to a persistent memory directory.</p>
+<p><strong>Activation</strong>: Auto-memory has a three-layer activation cascade (checked in order):</p>
+<ol><li><strong>Environment variable</strong> (highest priority): <code>CLAUDE_CODE_DISABLE_AUTO_MEMORY=true</code> forces off, <code>=false</code> forces on</li><li><strong>User setting</strong>: <code>autoMemoryEnabled</code> in <code>~/.claude/settings.json</code> (per-project, overrides the feature flag)</li><li><strong>GrowthBook feature flag</strong> <code>tengu_oboe</code> (default fallback): server-side rollout control, defaults to <code>false</code></li></ol>
+<p>If the flag is off for your account and you haven't set the user setting, auto-memory is disabled by default. Remote sessions (<code>CLAUDE_CODE_REMOTE=true</code>) also disable it unless <code>CLAUDE_CODE_REMOTE_MEMORY_DIR</code> is set.</p>
+<p><strong>How to enable</strong>: The toggle is in the <code>/memory</code> panel (not <code>/settings</code>). Type <code>/memory</code> to see "Auto-memory (research preview): off" at the top, then confirm to toggle it on. This writes <code>autoMemoryEnabled: true</code> to settings, overriding the feature flag. After enabling, "Open auto-memory folder" and per-agent memory entries also appear in the <code>/memory</code> panel.</p>
+<p><strong>Note</strong>: The feature flag <code>tengu_oboe</code> existed in v2.1.37 but with no user-facing toggle — auto-memory was purely server-gated. v2.1.38 added the <code>autoMemoryEnabled</code> setting, the <code>/memory</code> panel toggle, and the bidirectional env var override, making it opt-in for everyone.</p>
+<div class="blabel">Details</div>
+<ul><li>Per-project setting: <code>autoMemoryEnabled</code> controls whether Claude reads/writes to auto-memory</li><li>Memory guidance updated from "write down key learnings as you complete tasks" to "save patterns worth preserving across sessions"</li><li>New guidelines for what to save:</li><li>Stable patterns and conventions confirmed across multiple interactions</li><li>User preferences for workflow, tools, and communication style</li><li>Key architectural decisions and important file paths</li><li>Solutions to recurring problems and debugging insights</li><li>What NOT to save:</li><li>Session-specific context (current task details, in-progress work)</li><li>Speculative conclusions from reading a single file</li><li>Information that duplicates CLAUDE.md instructions</li><li>Supports explicit user requests: "always use bun", "never auto-commit", or "forget X"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Activation logic (search for <code>tengu_oboe</code>), settings schema (search for <code>"Enable auto-memory for this project"</code>), <code>/memory</code> panel toggle (search for <code>"Auto-memory (research preview):"</code>)</p>
+    </article>
+    <article class="card" id="browser-switching-for-chrome-automation">
+      <div class="card-top">
+        <h3>Browser Switching for Chrome Automation <a class="anchor" href="#browser-switching-for-chrome-automation">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Switch between multiple Chrome browsers when using Claude's browser automation features.</p>
+<p>Usage: Invoke the <code>switch_browser</code> tool when you want to connect to a different Chrome instance.</p>
+<div class="blabel">Details</div>
+<ul><li>Broadcasts a connection request to all Chrome browsers with the Claude extension installed</li><li>User clicks 'Connect' in the desired browser to switch</li><li>Only available with bridge connections (shows error otherwise)</li><li>Useful for multi-browser development/testing workflows</li></ul>
+<div class="blabel">Evidence</div>
+<p>Tool definition (search for <code>"Switch which Chrome browser is used for browser automation"</code>)</p>
+    </article>
+    <article class="card" id="conditional-skills">
+      <div class="card-top">
+        <h3>Conditional Skills <a class="anchor" href="#conditional-skills">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Skills can now activate automatically when you work with files matching specific patterns.</p>
+<div class="blabel">Details</div>
+<ul><li>Skills are stored with file pattern matchers</li><li>When a matching file is touched, the skill activates automatically</li><li>Log message shows: <code>[skills] Activated conditional skill '&lt;name&gt;' (matched path: &lt;path&gt;)</code></li><li>Tracked via telemetry for optimization</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill activation system (search for <code>"Activated conditional skill"</code>)</p>
+    </article>
+    <article class="card" id="file-snapshot-persistence-for-plan-recovery">
+      <div class="card-top">
+        <h3>File Snapshot Persistence for Plan Recovery <a class="anchor" href="#file-snapshot-persistence-for-plan-recovery">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Plan mode now persists file snapshots to the conversation transcript, enabling recovery if files are deleted.</p>
+<div class="blabel">Details</div>
+<ul><li>File snapshots are stored as system messages with subtype <code>file_snapshot</code></li><li>Recovery sequence when resuming a conversation:</li></ul>
+<ol><li>Try to read plan file from disk</li><li>If missing, recover from file snapshot in message history</li><li>If no snapshot, attempt recovery from serialized plan content</li></ol>
+<ul><li>Log messages indicate recovery source: "Plan recovered from file snapshot"</li><li>Protects against accidental file deletion during long planning sessions</li></ul>
+<div class="blabel">Evidence</div>
+<p>Recovery system (search for <code>"Plan recovered from file snapshot"</code>)</p>
+    </article>
+    <article class="card" id="worktree-symlink-configuration">
+      <div class="card-top">
+        <h3>Worktree Symlink Configuration <a class="anchor" href="#worktree-symlink-configuration">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Configure directories to symlink when using git worktrees, preventing disk bloat from duplicated dependencies.</p>
+<p>Usage: Add to your settings:</p>
+<pre><code>{
+  &quot;worktree&quot;: {
+    &quot;symlinkDirectories&quot;: [&quot;node_modules&quot;, &quot;.cache&quot;, &quot;.bin&quot;]
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>No directories are symlinked by default — must be explicitly configured</li><li>Common candidates: <code>node_modules</code>, <code>.cache</code>, <code>.bin</code></li><li>Prevents duplicating large directories across worktrees</li><li>Part of the <code>--worktree</code> flag configuration</li></ul>
+<div class="blabel">Evidence</div>
+<p>Settings schema (search for <code>"Directories to symlink from main repository"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-elicitation-with-natural-language-date-time-parsing">
+      <div class="card-top">
+        <h3>Enhanced Elicitation with Natural Language Date/Time Parsing <a class="anchor" href="#enhanced-elicitation-with-natural-language-date-time-parsing">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>MCP elicitation now supports natural language date/time input with intelligent parsing.</p>
+<div class="blabel">Details</div>
+<ul><li>Accepts natural language: "tomorrow", "next Monday", "jan 1st 2025", "in 2 hours"</li><li>Converts to ISO 8601 format automatically</li><li>Prefers future dates over past dates when ambiguous</li><li>For dates without times, omits the time component</li><li>Supports multiple formats: <code>uri</code>, <code>email</code>, <code>date</code>, <code>date-time</code></li><li>Shows current context (date, time, timezone, day of week) to help parsing</li><li>Includes <code>minItems</code>/<code>maxItems</code> validation for selection elicitations</li><li>Gracefully handles invalid input with clear error messages</li></ul>
+<div class="blabel">Evidence</div>
+<p>Date parser prompt (search for <code>"You are a date/time parser"</code>)</p>
+    </article>
+    <article class="card" id="auto-compact-notification">
+      <div class="card-top">
+        <h3>Auto-Compact Notification <a class="anchor" href="#auto-compact-notification">#</a></h3>
+      </div>
+      <p>Claude now displays a helpful message when auto-compact is enabled: "Auto-compact is enabled. When the context window is nearly full, older messages will be automatically summarized so you can continue working seamlessly. There is no need to stop or rush — you have unlimited context through automatic compaction."</p>
+<div class="blabel">Evidence</div>
+<p>Notification message (search for <code>"Auto-compact is enabled"</code>)</p>
+    </article>
+    <article class="card" id="memory-search-improvements">
+      <div class="card-top">
+        <h3>Memory Search Improvements <a class="anchor" href="#memory-search-improvements">#</a></h3>
+      </div>
+      <p>Added structured guidance for searching past context:</p>
+<ol><li>Search topic files in memory directory first (fast)</li><li>Session transcript logs as last resort (large files, slow)</li></ol>
+<ul><li>New tip: "Use narrow search terms (error messages, file paths, function names) rather than broad keywords"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Memory search section (search for <code>"Searching past context"</code>)</p>
+    </article>
+    <article class="card" id="thinking-mode-deprecation-warning">
+      <div class="card-top">
+        <h3>Thinking Mode Deprecation Warning <a class="anchor" href="#thinking-mode-deprecation-warning">#</a></h3>
+      </div>
+      <p>When using <code>thinking.type=enabled</code>, Claude now warns that this is deprecated and recommends <code>thinking.type=adaptive</code> for better performance, with a link to documentation.</p>
+<div class="blabel">Evidence</div>
+<p>Deprecation warning (search for <code>"thinking.type=enabled' is deprecated"</code>)</p>
+    </article>
+    <article class="card" id="websocket-reconnection-improvements">
+      <div class="card-top">
+        <h3>WebSocket Reconnection Improvements <a class="anchor" href="#websocket-reconnection-improvements">#</a></h3>
+      </div>
+      <p>Changed reconnection handling from a fixed retry count to a time budget approach, providing more predictable behavior during network instability.</p>
+<div class="blabel">Evidence</div>
+<p>Transport logging (search for <code>"Reconnection time budget exhausted"</code>)</p>
+    </article>
+    <article class="card" id="output-format-deprecation">
+      <div class="card-top">
+        <h3>Output Format Deprecation <a class="anchor" href="#output-format-deprecation">#</a></h3>
+      </div>
+      <p>The <code>output_format</code> parameter is now deprecated in favor of <code>output_config.format</code>. Using both together produces a warning.</p>
+<div class="blabel">Evidence</div>
+<p>Deprecation check (search for <code>"output_format is deprecated"</code>)</p>
+    </article>
+    <article class="card" id="opus-4-6-extended-context-messaging">
+      <div class="card-top">
+        <h3>Opus 4.6 Extended Context Messaging <a class="anchor" href="#opus-4-6-extended-context-messaging">#</a></h3>
+      </div>
+      <p>Clear error message when trying to use Opus 4.6 with 1M extended context on unsupported plans, with link to documentation.</p>
+<div class="blabel">Evidence</div>
+<p>Error message (search for <code>"Opus 4.6 with extended context (1M) is not available"</code>)</p>
+    </article>
+    <article class="card" id="mcp-bash-tool-enhancement">
+      <div class="card-top">
+        <h3>MCP Bash Tool Enhancement <a class="anchor" href="#mcp-bash-tool-enhancement">#</a></h3>
+      </div>
+      <p>New <code>noOutputExpected</code> boolean field in command schemas indicates when a command is expected to produce no output on success, improving semantic interpretation of exit codes.</p>
+<div class="blabel">Evidence</div>
+<p>Schema definition (search for <code>"Whether the command is expected to produce no output"</code>)</p>
+    </article>
+    <article class="card" id="credential-refresh-improvements">
+      <div class="card-top">
+        <h3>Credential Refresh Improvements <a class="anchor" href="#credential-refresh-improvements">#</a></h3>
+      </div>
+      <p>Improved handling of token refresh failures with <code>invalid_grant</code> errors, including automatic credential invalidation and token clearing for smoother re-authentication.</p>
+<div class="blabel">Evidence</div>
+<p>Token handling (search for <code>"Token refresh failed with invalid_grant"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed handling of orphaned permissions when <code>updatedInput</code> is undefined, now falls back to original tool input (search for <code>"Orphaned permission for"</code>)</li><li>Added security check for commands containing single-quoted backslash patterns that could bypass security checks (search for <code>"single-quoted backslash pattern"</code>)</li><li>Improved sync agent error recovery with automatic retry mechanism (search for <code>"Sync agent recovering from error"</code>)</li><li>Fixed compaction error handling when response is not text as expected (search for <code>"Expected text response for compaction"</code>)</li><li>Added validation for elicitation responses with proper "This field is required" messaging</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal">
+      <ul><li>Updated Azure Identity SDK integration with additional credential types (AzurePipelinesCredential, VisualStudioCodeCredential, etc.)</li><li>Added bridge staging URL for development/testing environments</li><li>Improved Symbol.dispose/Symbol.asyncDispose handling for resource cleanup</li><li>Enhanced session title update logging with success/failure tracking</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

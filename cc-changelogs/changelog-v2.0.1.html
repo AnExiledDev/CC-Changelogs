@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.1 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.1."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.1</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.1</span></h1>
+<p class="sub">Version 2.0.1 focuses on platform compatibility improvements and welcome screen refinements. The key changes include proper handling of Bedrock/Vertex platform configurations during model migrations, enhanced Apple Terminal support with custom rendering, and streamlined onboarding that emphasizes keyboard shortcuts over changelog history.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.0 → v2.0.1</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="extended-thinking-detection-for-api-calls">
+      <div class="card-top">
+        <h3>Extended Thinking Detection for API Calls <a class="anchor" href="#extended-thinking-detection-for-api-calls">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added automatic detection of extended thinking content in conversation history to ensure accurate token counting and proper API parameter configuration.</p>
+<p><strong>How it works:</strong> When Claude Code needs to count tokens for API calls, it now scans through the message history to detect if any assistant responses contain thinking or redacted_thinking blocks. If detected, it automatically includes the appropriate thinking parameters in the API call.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Detects both <code>thinking</code> and <code>redacted_thinking</code> content types</li><li>Automatically adjusts token counting for conversations with extended thinking</li><li>Ensures API calls include proper thinking budget parameters (1024 tokens)</li><li>Improves accuracy when estimating costs for conversations using extended thinking</li><li><strong>Evidence</strong>: <code>uS2() at line 376194</code> (new detection function), enhanced <code>TZ1() at line 376212</code> and <code>dS2() at line 376234</code></li></ul>
+    </article>
+    <article class="card" id="apple-terminal-custom-welcome-banner">
+      <div class="card-top">
+        <h3>Apple Terminal Custom Welcome Banner <a class="anchor" href="#apple-terminal-custom-welcome-banner">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Apple Terminal users now see a specially designed welcome screen with optimized ASCII art rendering.</p>
+<p><strong>How it works:</strong> The CLI detects if you're running in Apple Terminal and displays a custom banner designed for that terminal's specific rendering characteristics.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Automatically detects Apple Terminal environment</li><li>Shows theme-appropriate ASCII art (different designs for light vs dark themes)</li><li>Uses simplified character graphics (▗, ▖) for better rendering compatibility</li><li>Early detection ensures custom banner appears before standard theme processing</li><li><strong>Evidence</strong>: <code>Pc1() at line 441323</code> checks <code>hA.terminal === "Apple_Terminal"</code>, custom banner rendered via <code>Ot5() at line 441581</code></li></ul>
+    </article>
+    <article class="card" id="streamlined-welcome-screen">
+      <div class="card-top">
+        <h3>Streamlined Welcome Screen <a class="anchor" href="#streamlined-welcome-screen">#</a></h3>
+      </div>
+      <p>The welcome screen now focuses on keyboard shortcuts rather than recent changelog entries. Instead of displaying the latest features from the changelog, new users immediately see the most important keyboard shortcuts for getting started.</p>
+<p><strong>What changed:</strong></p>
+<ul><li>Removed the "What's new" section that displayed recent changelog entries</li><li>Replaced with a "Shortcuts" section showing essential keybindings</li><li>Simplified onboarding experience focusing on practical usage</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>fGB() at line 405662</code> (v2.0.0) removed, replaced with <code>PGB() at line 405481</code> (v2.0.1)</p>
+    </article>
+    <article class="card" id="platform-aware-model-migration">
+      <div class="card-top">
+        <h3>Platform-Aware Model Migration <a class="anchor" href="#platform-aware-model-migration">#</a></h3>
+      </div>
+      <p>The Sonnet 4.5 model migration now intelligently skips execution for Bedrock and Vertex AI users, preserving their platform-specific model configurations.</p>
+<p><strong>What changed:</strong></p>
+<ul><li>Migration checks if you're using Bedrock (<code>CLAUDE_CODE_USE_BEDROCK</code>) or Vertex AI (<code>CLAUDE_CODE_USE_VERTEX</code>)</li><li>Third-party platform users skip the migration entirely, keeping their existing model settings</li><li>Only Anthropic API (firstParty) users have their model preferences reset</li></ul>
+<p><strong>Why it matters:</strong> Bedrock and Vertex have different model catalogs and naming conventions. This prevents the migration from breaking configurations on those platforms.</p>
+<div class="blabel">Evidence</div>
+<p><code>v4Q() at line 443591</code> with platform check via <code>k8() at line 351873</code></p>
+    </article>
+    <article class="card" id="visual-consistency-fix">
+      <div class="card-top">
+        <h3>Visual Consistency Fix <a class="anchor" href="#visual-consistency-fix">#</a></h3>
+      </div>
+      <p>Updated ASCII art rendering to use consistent color naming throughout the welcome screen.</p>
+<p><strong>What changed:</strong></p>
+<ul><li>Claude logo ASCII art changed from <code>"claude"</code> color to <code>"clawd_body"</code> color</li><li>Matches the color scheme introduced for the Clawd mascot in v2.0.0</li><li>No visual change (both colors use identical RGB values)</li><li>Improves code maintainability and semantic clarity</li></ul>
+<div class="blabel">Evidence</div>
+<p>Color changes in <code>Pc1() at lines 441437, 441462, 441474</code> and corresponding dark theme locations</p>
+    </article>
+    <article class="card" id="import-statement-cleanup">
+      <div class="card-top">
+        <h3>Import Statement Cleanup <a class="anchor" href="#import-statement-cleanup">#</a></h3>
+      </div>
+      <p>Removed unused import statements and reorganized dependencies for cleaner code organization:</p>
+<ul><li>Removed unused <code>stream</code> import (<code>import@338166</code>)</li><li>Removed unused <code>node:process</code> import (<code>import@442305</code>)</li><li>Added focused imports: <code>cwd</code> from <code>node:process</code> (<code>import@357264</code>) and <code>PassThrough</code> from <code>stream</code> (<code>import@443814</code>)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Diff lines 10-12, 73-75, 79-81, 408-410</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

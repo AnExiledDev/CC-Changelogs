@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.86 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.86."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.86</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.86</span></h1>
+<p class="sub">This release introduces trusted device enrollment for enhanced session security, a new file read caching optimization that avoids re-reading unchanged files, and a context window usage breakdown command. It also adds Slack channel autocomplete integration, expands git/PR operation tracking beyond just <code>git commit</code> and <code>gh pr create</code>, and includes new shell safety checks for zsh equals expansion and bash array subscript injection.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.85 → v2.1.86</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">20</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">5</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">17 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="trusted-device-enrollment">
+      <div class="card-top">
+        <h3>Trusted Device Enrollment <a class="anchor" href="#trusted-device-enrollment">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now automatically enrolls your device as a trusted device, sending a <code>X-Trusted-Device-Token</code> header with API requests for enhanced session security.</p>
+<div class="blabel">Details</div>
+<ul><li>Enrollment happens automatically in the background when you're logged in via OAuth</li><li>Device is registered with the display name <code>Claude Code on &lt;hostname&gt; · &lt;platform&gt;</code></li><li>The token is persisted locally and reused across sessions</li><li>You can override with the <code>CLAUDE_TRUSTED_DEVICE_TOKEN</code> environment variable</li><li>Enrollment can be skipped in essential-traffic mode</li></ul>
+<div class="blabel">Evidence</div>
+<p>Trusted device enrollment flow (search for <code>"[trusted-device] Enrolled device_id="</code>) — gated by <code>tengu_sessions_elevated_auth_enforcement</code> flag</p>
+<p><strong>[Gradual Rollout]</strong> — gated by the <code>tengu_sessions_elevated_auth_enforcement</code> feature flag.</p>
+    </article>
+    <article class="card" id="file-read-caching-unchanged-since-last-read">
+      <div class="card-top">
+        <h3>File Read Caching ("Unchanged since last read") <a class="anchor" href="#file-read-caching-unchanged-since-last-read">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When the Read tool is used on a file that hasn't changed since a previous read in the same conversation, Claude now returns a short notice instead of re-reading the entire file, saving context window space.</p>
+<div class="blabel">Details</div>
+<ul><li>Displays "Unchanged since last read" in the tool output</li><li>The full message tells Claude to refer to the earlier Read tool result instead of re-reading</li><li>Controlled by the <code>tengu_compact_line_prefix_killswitch</code> feature flag (enabled when killswitch is off)</li><li>Helps conserve context window tokens in long conversations with repeated file reads</li></ul>
+<div class="blabel">Evidence</div>
+<p>Read caching message (search for <code>"File unchanged since last read"</code>) — <code>kf1()</code> at line ~163425</p>
+    </article>
+    <article class="card" id="context-window-usage-breakdown">
+      <div class="card-top">
+        <h3>Context Window Usage Breakdown <a class="anchor" href="#context-window-usage-breakdown">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new command that provides a breakdown of your current context window usage by category (system prompt, tools, messages, etc.).</p>
+<div class="blabel">Details</div>
+<ul><li>Shows how your context budget is being consumed across different categories</li><li>Useful for understanding why you're running low on context or for optimizing long sessions</li></ul>
+<div class="blabel">Evidence</div>
+<p>Context window command (search for <code>"Breakdown of current context window usage by category"</code>)</p>
+    </article>
+    <article class="card" id="slack-channel-autocomplete">
+      <div class="card-top">
+        <h3>Slack Channel Autocomplete <a class="anchor" href="#slack-channel-autocomplete">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When a connected Slack MCP server is detected, Claude Code now offers channel autocomplete with <code>#channel-name</code> syntax.</p>
+<div class="blabel">Details</div>
+<ul><li>Automatically discovers connected Slack MCP servers</li><li>Searches for channels using the Slack MCP tool (supports public and private channels)</li><li>Parses channel names from MCP tool responses and provides autocomplete suggestions</li><li>Channel references use the <code>#channel-name</code> format in the input</li></ul>
+<div class="blabel">Evidence</div>
+<p>Slack channel integration (search for <code>"Failed to fetch Slack channels"</code>) — <code>AQK()</code> at line ~592144</p>
+    </article>
+    <article class="card" id="expanded-git-and-pr-operation-tracking">
+      <div class="card-top">
+        <h3>Expanded Git and PR Operation Tracking <a class="anchor" href="#expanded-git-and-pr-operation-tracking">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now tracks a broader set of git and GitHub PR operations, beyond just <code>git commit</code> and <code>gh pr create</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Newly tracked operations: <code>git push</code>, <code>gh pr edit</code>, <code>gh pr merge</code>, <code>gh pr comment</code>, <code>gh pr close</code>, <code>gh pr ready</code></li><li>Telemetry events emitted as <code>tengu_git_operation</code> with specific operation tags (e.g., <code>pr_edit</code>, <code>pr_merge</code>)</li><li>Enables better understanding of Claude's git workflow patterns</li></ul>
+<div class="blabel">Evidence</div>
+<p>Expanded PR regex list (search for <code>"pr_edit"</code>) — <code>in6</code> at line ~308673</p>
+    </article>
+    <article class="card" id="shell-safety-zsh-equals-expansion-and-bash-array-subscript-c">
+      <div class="card-top">
+        <h3>Shell Safety: Zsh Equals Expansion and Bash Array Subscript Checks <a class="anchor" href="#shell-safety-zsh-equals-expansion-and-bash-array-subscript-c">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New command safety checks that detect and flag potentially dangerous shell expansion patterns before execution.</p>
+<div class="blabel">Details</div>
+<ul><li><strong>Zsh equals expansion (<code>=cmd</code>)</strong>: Detects commands containing zsh <code>=cmd</code> syntax, which could unexpectedly expand to command paths</li><li><strong>Bash array subscript injection</strong>: Flags commands where <code>$(cmd)</code> appears inside <code>[[ ... ]]</code> array subscripts, which bash arithmetically evaluates — a known injection vector</li></ul>
+<div class="blabel">Evidence</div>
+<p>Shell safety checks (search for <code>"Zsh equals expansion (=cmd)"</code> and <code>"bash arithmetically evaluates"</code>)</p>
+    </article>
+    <article class="card" id="skill-anthropic-alwaysload-metadata">
+      <div class="card-top">
+        <h3>Skill <code>anthropic/alwaysLoad</code> Metadata <a class="anchor" href="#skill-anthropic-alwaysload-metadata">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Skills can now declare <code>anthropic/alwaysLoad</code> in their MCP metadata to be loaded automatically without requiring explicit invocation.</p>
+<div class="blabel">Details</div>
+<ul><li>Set via <code>_meta.["anthropic/alwaysLoad"]</code> on the skill server</li><li>When true, the skill is loaded into the conversation automatically</li><li>Useful for skills that provide always-relevant context or capabilities</li></ul>
+<div class="blabel">Evidence</div>
+<p>Always-load flag (search for <code>"anthropic/alwaysLoad"</code>)</p>
+    </article>
+    <article class="card" id="overage-credit-grant-and-extra-usage-display">
+      <div class="card-top">
+        <h3>Overage Credit Grant and Extra Usage Display <a class="anchor" href="#overage-credit-grant-and-extra-usage-display">#</a></h3>
+      </div>
+      <p>The extra usage billing display has been significantly enhanced with an overage credit grant system. Users may now see their available extra usage credit amount (e.g., "$5 in extra usage") along with the message "On us. Works on third-party apps · /extra-usage". The system fetches grant info from a new <code>/overage_credit_grant</code> API endpoint and caches it per-organization.</p>
+<div class="blabel">Evidence</div>
+<p>Overage credit display (search for <code>"On us. Works on third-party apps · /extra-usage"</code>) — <code>LE6()</code> at line ~424063</p>
+    </article>
+    <article class="card" id="ultrareview-billing-now-org-scoped">
+      <div class="card-top">
+        <h3>Ultrareview Billing Now Org-Scoped <a class="anchor" href="#ultrareview-billing-now-org-scoped">#</a></h3>
+      </div>
+      <p>The ultrareview billing prompt now says "Your free ultrareviews for this organization are used" instead of the previous user-scoped message. This aligns with organization-level billing. The ultrareview billing dialog also now supports abort signals and shows a "Launching…" state.</p>
+<div class="blabel">Evidence</div>
+<p>Org-scoped billing text (search for <code>"Your free ultrareviews for this organization are used"</code>)</p>
+    </article>
+    <article class="card" id="compact-line-number-prefix-format">
+      <div class="card-top">
+        <h3>Compact Line Number Prefix Format <a class="anchor" href="#compact-line-number-prefix-format">#</a></h3>
+      </div>
+      <p>The Read tool output format is being updated from <code>spaces + line number + arrow</code> to a more compact <code>line number + tab</code> format. The Edit tool description dynamically adapts to tell the model which format is in use, reducing confusion when matching indentation.</p>
+<div class="blabel">Evidence</div>
+<p>Dynamic format description (search for <code>"line number + tab"</code>) — controlled by <code>tengu_compact_line_prefix_killswitch</code></p>
+<p><strong>[Gradual Rollout]</strong> — gated by <code>tengu_compact_line_prefix_killswitch</code> feature flag.</p>
+    </article>
+    <article class="card" id="xaa-cross-app-access-protocol-expansion">
+      <div class="card-top">
+        <h3>XAA (Cross-App Access) Protocol Expansion <a class="anchor" href="#xaa-cross-app-access-protocol-expansion">#</a></h3>
+      </div>
+      <p>The MCP OAuth cross-app access (XAA) system has received a major expansion with full PRM (Protected Resource Metadata) discovery, AS (Authorization Server) metadata discovery, and a two-stage token exchange flow (ID token → ID-JAG → access token). New <code>--xaa</code>, <code>--client-id</code>, and <code>--client-secret</code> flags are now available for MCP server configuration. A dedicated <code>XaaTokenExchangeError</code> class provides better error handling with per-stage failure tracking.</p>
+<div class="blabel">Evidence</div>
+<p>XAA protocol flow (search for <code>"XAA: starting cross-app access flow"</code>) — <code>eB1()</code> at line ~327934</p>
+    </article>
+    <article class="card" id="auto-mode-plan-gating-message">
+      <div class="card-top">
+        <h3>Auto Mode Plan-Gating Message <a class="anchor" href="#auto-mode-plan-gating-message">#</a></h3>
+      </div>
+      <p>The message when auto mode is unavailable has been updated from "Auto mode temporarily unavailable" to the more informative "Auto mode is unavailable for your plan", clarifying that the limitation is plan-based rather than temporary.</p>
+<div class="blabel">Evidence</div>
+<p>Plan-gating message (search for <code>"Auto mode is unavailable for your plan"</code>)</p>
+    </article>
+    <article class="card" id="agent-system-prompt-refinements">
+      <div class="card-top">
+        <h3>Agent System Prompt Refinements <a class="anchor" href="#agent-system-prompt-refinements">#</a></h3>
+      </div>
+      <p>Agent system prompts have been refined with more specific guidance:</p>
+<ul><li>New "don't gold-plate" phrasing: "Complete the task fully—don't gold-plate, but don't cut corners"</li><li>More emphatic <code>$TMPDIR</code> guidance: "TMPDIR is automatically set to the correct sandbox-writable directory" (removed fallback variable mention)</li><li>New guidance on failure handling: "diagnose why before switching tactics—read the error, check your assumptions, try a focused fix"</li><li>Fork workers now use a <code>"Your directive:"</code> prefix with a <code>"fork-boilerplate"</code> key instead of embedded boilerplate text</li><li>Summary format now strictly requires <code>&lt;analysis&gt;</code> and <code>&lt;summary&gt;</code> blocks with tool-call prohibition: "CRITICAL: Respond with TEXT ONLY. Do NOT call any tools"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Agent prompt changes (search for <code>"Your directive:"</code> and <code>"CRITICAL: Respond with TEXT ONLY"</code>)</p>
+    </article>
+    <article class="card" id="ultrareview-suggests-ultrareview-pr-for-large-repos">
+      <div class="card-top">
+        <h3>Ultrareview Suggests <code>/ultrareview &lt;PR#&gt;</code> for Large Repos <a class="anchor" href="#ultrareview-suggests-ultrareview-pr-for-large-repos">#</a></h3>
+      </div>
+      <p>When a repository is too large for full-repo review, the suggestion now says "Push a PR and use <code>/ultrareview &lt;PR#&gt;</code> instead" (previously referenced <code>/review</code>).</p>
+<div class="blabel">Evidence</div>
+<p>Large repo message (search for <code>"Repo is too large. Push a PR and use"</code>)</p>
+    </article>
+    <article class="card" id="plugin-telemetry-overhaul">
+      <div class="card-top">
+        <h3>Plugin Telemetry Overhaul <a class="anchor" href="#plugin-telemetry-overhaul">#</a></h3>
+      </div>
+      <p>Plugin analytics have been comprehensively restructured with hashed plugin IDs, scope classification (official, org, user-local, default-bundle), and per-session tracking of enabled plugins. Load failures are now categorized (network, not-found, permission, validation, unknown) and reported with plugin-level metadata.</p>
+<div class="blabel">Evidence</div>
+<p>Plugin telemetry (search for <code>"tengu_plugin_enabled_for_session"</code>) — <code>sC()</code> at line ~431412</p>
+    </article>
+    <article class="card" id="stdout-json-guard">
+      <div class="card-top">
+        <h3>Stdout JSON Guard <a class="anchor" href="#stdout-json-guard">#</a></h3>
+      </div>
+      <p>A new stdout guard (<code>streamJsonStdoutGuard</code>) diverts non-JSON lines that accidentally leak to stdout, preventing them from corrupting structured JSON output in headless/piped modes.</p>
+<div class="blabel">Evidence</div>
+<p>Stdout guard (search for <code>"streamJsonStdoutGuard diverted non-JSON stdout line:"</code>)</p>
+    </article>
+    <article class="card" id="file-diff-rendering-with-streaming-i-o">
+      <div class="card-top">
+        <h3>File Diff Rendering with Streaming I/O <a class="anchor" href="#file-diff-rendering-with-streaming-i-o">#</a></h3>
+      </div>
+      <p>The Write and Edit tool result renderers now use a new streaming file-read approach (<code>ur6()</code> / <code>Pm1()</code>) that reads files through file handles with buffer-based needle search, rather than loading entire files into memory. This improves performance for large file edits by seeking directly to the relevant region.</p>
+<div class="blabel">Evidence</div>
+<p>Streaming file read (search for <code>"Skipping raw transcript read: file too large"</code>) — <code>Pm1()</code> at line ~317956</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Directory removal is now more robust — uses a single <code>rmdir</code> call and handles <code>ENOTDIR</code>/<code>ENOENT</code>/<code>ENOTEMPTY</code> errors gracefully instead of manually checking if a directory is empty first (search for <code>"Could not remove directory at"</code>)</li><li>Lock acquisition failure logging simplified — always wraps errors with a <code>cause</code> chain instead of conditionally stringifying (search for <code>"NON-FATAL: Lock acquisition failed"</code>)</li><li>Skill usage tracking now debounces writes with a minimum interval, preventing rapid config updates when a skill is invoked repeatedly (search for <code>"skillUsage"</code> in <code>bI8()</code>)</li><li>SwarmPermissionPoller now validates and drops malformed permission update entries with a warning instead of crashing (search for <code>"[SwarmPermissionPoller] Dropping malformed permissionUpdate"</code>)</li><li>Advisor feedback message wording corrected: "will apply the feedback" (was: "will now apply the feedback.") (search for <code>"Advisor has reviewed the conversation and will apply the feedback"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The <code>CLAUDE_CODE_ENABLE_XAA=1</code> environment variable is required to use XAA features. Without it, servers configured with <code>oauth.xaa</code> will error on startup.</li><li>The <code>--xaa</code>, <code>--client-id</code>, and <code>--client-secret</code> flags are only supported for HTTP/SSE MCP transports and will be ignored for stdio.</li><li>The compact line prefix format and trusted device enrollment are behind feature flags and may not be active for all users yet.</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

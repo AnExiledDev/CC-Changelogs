@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.98 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.98."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.98</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.98</span></h1>
+<p class="sub">This release introduces the <strong>Monitor tool</strong> for streaming background events, a comprehensive <strong>Vertex AI setup wizard</strong> with credential validation and model pinning, and <strong>Perforce workspace support</strong>. It also adds subprocess environment scrubbing for enhanced security, sleep command blocking in agent mode, model-aware image processing limits, and a new <code>--exclude-dynamic-system-prompt-sections</code> CLI flag for improved prompt cache reuse. The Vertex AI model management system gains automatic upgrade detection and fallback capabilities.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.97 → v2.1.98</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">19</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">3</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="monitor-tool">
+      <div class="card-top">
+        <h3>Monitor Tool <a class="anchor" href="#monitor-tool">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new built-in tool that streams events from background scripts as live notifications in the conversation.</p>
+<div class="blabel">Usage</div>
+<pre><code># Inside a Claude Code session, Claude can use the Monitor tool to:
+# - Tail logs for errors
+# - Watch for file changes
+# - Poll GitHub for new PR comments
+# - Stream events from WebSocket listeners</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Each stdout line from the script becomes a notification in the conversation</li><li>Events arriving within 200ms are batched into a single notification</li><li>Supports <code>persistent: true</code> mode for session-length watches (PR monitoring, log tails)</li><li>Supports <code>timeout_ms</code> for time-limited monitoring</li><li>Monitors that produce too many events are automatically stopped with guidance to restart using tighter filters</li><li>Use <code>TaskStop</code> to cancel a running monitor</li><li>Distinct from <code>Bash</code> with <code>run_in_background</code> — Monitor is for the streaming case ("tell me every time X happens"), while background Bash is for one-shot "wait until done"</li></ul>
+<div class="blabel">Evidence</div>
+<p>MonitorTool definition (search for <code>"stream events from a background script as live notifications"</code>)</p>
+    </article>
+    <article class="card" id="vertex-ai-setup-wizard">
+      <div class="card-top">
+        <h3>Vertex AI Setup Wizard <a class="anchor" href="#vertex-ai-setup-wizard">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>An interactive, multi-step wizard for configuring Google Vertex AI as your model backend, with credential validation and model pinning.</p>
+<div class="blabel">Details</div>
+<ul><li>Step-by-step flow: authentication method → service account key (if applicable) → GCP project → region → credential verification → model pinning → confirmation</li><li>Three authentication methods: Application Default Credentials (gcloud auth), service account key file, or existing environment credentials</li><li>Reads existing gcloud configurations to auto-discover project IDs</li><li>Validates credentials by making a test API call to Vertex AI</li><li>Probes each model tier (Sonnet, Opus, Haiku) with a one-token request to check availability</li><li>Provides specific error messages for common issues: expired credentials, missing permissions, wrong region, missing API enablement</li><li>Model pinning option: pin specific model versions that are confirmed working, or use Claude Code defaults (auto-updates)</li><li>Saves configuration to <code>~/.claude/settings.json</code> under the <code>env</code> key</li><li>For ADC users, reminds that <code>gcloud auth application-default login</code> refreshes credentials automatically</li></ul>
+<div class="blabel">Evidence</div>
+<p>Vertex setup wizard (search for <code>"How do you authenticate to Google Cloud?"</code> and <code>"Pin model versions"</code>)</p>
+    </article>
+    <article class="card" id="vertex-ai-model-upgrade-and-fallback-system">
+      <div class="card-top">
+        <h3>Vertex AI Model Upgrade and Fallback System <a class="anchor" href="#vertex-ai-model-upgrade-and-fallback-system">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Automatic detection of stale Vertex model pins and probing for accessible fallback models when defaults are unavailable.</p>
+<div class="blabel">Details</div>
+<ul><li>On startup (for first-party Vertex users), Claude Code checks whether pinned model versions are outdated compared to built-in defaults</li><li>For each stale tier, it probes Vertex AI to verify the upgrade candidate is accessible (one-token request, 20s timeout)</li><li>If upgrades are found, presents a dialog to update model pins</li><li>Separately, detects unpinned tiers where the default model may not be accessible and finds compatible fallbacks</li><li>Displays warnings when fallback models are used instead of defaults</li><li>Logs telemetry: <code>tengu_vertex_upgrade_check</code> and <code>tengu_vertex_fallback_check</code></li><li>Auto-restarts Claude Code when model configuration changes</li></ul>
+<div class="blabel">Evidence</div>
+<p>Vertex upgrade/fallback system (search for <code>"[vertex-upgrade] tiersWithPin="</code> and <code>"[vertex-fallback] unpinnedTiers="</code>)</p>
+    </article>
+    <article class="card" id="perforce-workspace-support">
+      <div class="card-top">
+        <h3>Perforce Workspace Support <a class="anchor" href="#perforce-workspace-support">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>First-class support for Perforce version control workspaces, including read-only file detection and checkout guidance.</p>
+<div class="blabel">Usage</div>
+<pre><code>export CLAUDE_CODE_PERFORCE_MODE=1</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When enabled, Claude Code detects files that haven't been opened for edit in Perforce</li><li>Write tool returns a specific error message guiding users to run <code>p4 edit &lt;file&gt;</code> before modifying</li><li>Prevents <code>chmod</code> workarounds that would bypass Perforce tracking</li><li>System prompt includes Perforce-specific guidance for the model</li></ul>
+<div class="blabel">Evidence</div>
+<p>Perforce mode (search for <code>"CLAUDE_CODE_PERFORCE_MODE"</code> and <code>"File is read-only — it has not been opened for edit in Perforce"</code>)</p>
+    </article>
+    <article class="card" id="exclude-dynamic-system-prompt-sections-cli-flag">
+      <div class="card-top">
+        <h3><code>--exclude-dynamic-system-prompt-sections</code> CLI Flag <a class="anchor" href="#exclude-dynamic-system-prompt-sections-cli-flag">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Moves per-machine sections (cwd, environment info, memory paths, git status) from the system prompt into the first user message to improve prompt cache reuse across users.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --exclude-dynamic-system-prompt-sections</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Only applies when using the default system prompt (ignored with <code>--system-prompt</code>)</li><li>Particularly useful for teams or CI environments where multiple users/machines share cached prompts</li><li>Defaults to <code>false</code> (disabled)</li></ul>
+<div class="blabel">Evidence</div>
+<p>CLI flag (search for <code>"--exclude-dynamic-system-prompt-sections"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-max-context-tokens-environment-variable">
+      <div class="card-top">
+        <h3><code>CLAUDE_CODE_MAX_CONTEXT_TOKENS</code> Environment Variable <a class="anchor" href="#claude-code-max-context-tokens-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Allows manual control of the maximum context token limit when automatic compaction is disabled.</p>
+<div class="blabel">Usage</div>
+<pre><code>export DISABLE_COMPACT=1
+export CLAUDE_CODE_MAX_CONTEXT_TOKENS=500000</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Only takes effect when <code>DISABLE_COMPACT</code> is set to a truthy value</li><li>Parses the value as an integer; ignores invalid or non-positive values</li><li>When compaction is disabled without this variable, the context limit message now shows "Compaction is disabled." instead of the previous autocompact instructions</li></ul>
+<div class="blabel">Evidence</div>
+<p>Context limit override (search for <code>"CLAUDE_CODE_MAX_CONTEXT_TOKENS"</code> and <code>"Compaction is disabled."</code>)</p>
+    </article>
+    <article class="card" id="claude-code-script-caps-environment-variable">
+      <div class="card-top">
+        <h3><code>CLAUDE_CODE_SCRIPT_CAPS</code> Environment Variable <a class="anchor" href="#claude-code-script-caps-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Enforces per-script call limits in subprocess-scrubbed environments to prevent data exfiltration via repeated write operations.</p>
+<div class="blabel">Usage</div>
+<pre><code>export CLAUDE_CODE_SCRIPT_CAPS=&#x27;{&quot;curl&quot;: 10, &quot;wget&quot;: 5}&#x27;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>JSON object mapping script/command name substrings to maximum call counts</li><li>Tracks cumulative usage across the session</li><li>Throws an error when a cap is exceeded: "Script call limit exceeded: X has been called N times (cap: M)"</li><li>Only active when <code>CLAUDE_CODE_SUBPROCESS_ENV_SCRUB</code> is enabled</li><li>Designed for untrusted-input workflows where exfiltration prevention is critical</li></ul>
+<div class="blabel">Evidence</div>
+<p>Script caps (search for <code>"CLAUDE_CODE_SCRIPT_CAPS"</code> and <code>"Script call limit exceeded"</code>)</p>
+    </article>
+    <article class="card" id="mcp-resource-templates-support">
+      <div class="card-top">
+        <h3>MCP Resource Templates Support <a class="anchor" href="#mcp-resource-templates-support">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Adds support for MCP resource templates, enabling template-based resource discovery with completion and icon support.</p>
+<div class="blabel">Details</div>
+<ul><li>Fetches <code>resourceTemplates</code> alongside existing resources during MCP server initialization</li><li>New <code>mcp-template</code> tool type detection for template-based resource access</li><li>Template resources get their own icon in the UI (distinct from regular <code>mcp-resource</code> icon)</li><li>Supports completions for template arguments via the MCP protocol's <code>complete</code> method</li><li>Template resource IDs use <code>mcp-template::</code> and <code>mcp-template-value::</code> prefixes</li></ul>
+<div class="blabel">Evidence</div>
+<p>MCP templates (search for <code>"mcp-template"</code> and <code>"Failed to fetch resource templates"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">11 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="subprocess-environment-scrubbing-enhancements">
+      <div class="card-top">
+        <h3>Subprocess Environment Scrubbing Enhancements <a class="anchor" href="#subprocess-environment-scrubbing-enhancements">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>CLAUDE_CODE_SUBPROCESS_ENV_SCRUB</code> feature (introduced previously) receives significant hardening in this release:</p>
+<ul><li>Requires <code>bubblewrap</code> (bwrap) on Linux for filesystem sandboxing; provides clear installation instructions if missing</li><li>Creates stub files for common dotfiles (.gitconfig, .bashrc, .npmrc, etc.) to prevent errors in sandboxed environments</li><li>Defines comprehensive filesystem access rules: deny-read for container sockets, deny-write for shell configs, git hooks, CI environment files, and package manager configs</li><li>Adds <code>.git/info/exclude</code> entries for scrub-mode stubs to keep git status clean</li><li>Forces permission mode to default when env scrubbing is active</li><li>New <code>allowUnsandboxedCommands</code> sandbox setting for fine-grained control</li></ul>
+<div class="blabel">Evidence</div>
+<p>Env scrub hardening (search for <code>"bubblewrap is required for subprocess env scrubbing"</code> and <code>"claude-code scrub-mode stubs"</code>)</p>
+    </article>
+    <article class="card" id="sleep-command-blocking-in-agent-mode">
+      <div class="card-top">
+        <h3>Sleep Command Blocking in Agent Mode <a class="anchor" href="#sleep-command-blocking-in-agent-mode">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Long-running foreground <code>sleep</code> commands (≥2 seconds) are now blocked when running in agent mode (<code>tengu_amber_sentinel</code> flag). This prevents agents from wasting time on unnecessary delays.</p>
+<ul><li>Detects <code>sleep N</code> as the first command when N ≥ 2</li><li>Distinguishes between standalone sleeps and sleep-then-continue patterns</li><li>Agents must use <code>run_in_background: true</code> for commands that need delays</li></ul>
+<div class="blabel">Evidence</div>
+<p>Sleep blocking (search for <code>"standalone sleep"</code> and `<code> "</code>sleep N<code> as the first command with N ≥ 2 is blocked" </code>`)</p>
+    </article>
+    <article class="card" id="dynamic-keyboard-hint-components">
+      <div class="card-top">
+        <h3>Dynamic Keyboard Hint Components <a class="anchor" href="#dynamic-keyboard-hint-components">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>All hardcoded keyboard instruction text throughout the UI has been replaced with a reusable <code>A8</code> keyboard chord component. This affects dozens of locations:</p>
+<ul><li>"Esc to cancel" → rendered via <code>A8</code> chord component</li><li>"Enter to confirm" → rendered via <code>A8</code> chord component</li><li>Navigation hints ("↑↓ to scroll", "← → to adjust") → rendered via <code>A8</code> chord components</li><li>Selection hints ("Enter to select", "Tab to switch") → rendered via <code>A8</code> chord components</li></ul>
+<p>This infrastructure enables future support for custom keybindings — the hint text will dynamically reflect any user-configured key remappings.</p>
+<div class="blabel">Evidence</div>
+<p>Keyboard hint refactoring (search for <code>chord:</code> and <code>action:</code> in component definitions)</p>
+    </article>
+    <article class="card" id="worktree-filtering-in-session-browser">
+      <div class="card-top">
+        <h3>Worktree Filtering in Session Browser <a class="anchor" href="#worktree-filtering-in-session-browser">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The session/project browser UI now supports filtering by worktree:</p>
+<ul><li>"only show current worktree" / "show all worktrees" toggle options</li><li>Tracks active worktrees and filters the session list accordingly</li></ul>
+<div class="blabel">Evidence</div>
+<p>Worktree filtering (search for <code>"only show current worktree"</code> and <code>"show all worktrees"</code>)</p>
+    </article>
+    <article class="card" id="model-aware-image-processing-limits">
+      <div class="card-top">
+        <h3>Model-Aware Image Processing Limits <a class="anchor" href="#model-aware-image-processing-limits">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Image processing now respects per-model limits for dimensions and file size, rather than using global constants:</p>
+<ul><li><code>maxWidth</code>, <code>maxHeight</code>, <code>maxBase64Size</code>, and <code>targetRawSize</code> can now vary by model</li><li>Default limits remain at 2000×2000 pixels, 5MB base64, and ~3.75MB target raw size</li><li>The <code>imageLimits</code> parameter is threaded through clipboard paste, content processing, and tool result handling</li><li>Image validation now also checks images inside <code>tool_result</code> content blocks (not just top-level user messages)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Image limits (search for <code>"imageLimits"</code> and <code>"targetRawSize"</code>)</p>
+    </article>
+    <article class="card" id="egrep-and-fgrep-support-in-bash-tool">
+      <div class="card-top">
+        <h3>egrep and fgrep Support in Bash Tool <a class="anchor" href="#egrep-and-fgrep-support-in-bash-tool">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The Bash tool's safe-command validation now recognizes <code>egrep</code> and <code>fgrep</code> as valid commands, applying the same safe flags as <code>grep</code>.</p>
+<div class="blabel">Evidence</div>
+<p>egrep/fgrep support (search for <code>"egrep"</code> and <code>"fgrep"</code> in command safety checks)</p>
+    </article>
+    <article class="card" id="write-tool-directory-validation">
+      <div class="card-top">
+        <h3>Write Tool Directory Validation <a class="anchor" href="#write-tool-directory-validation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The Write tool now validates file modes before writing, preventing attempts to write to directories. Returns an appropriate error when the target path is a directory.</p>
+<div class="blabel">Evidence</div>
+<p>Directory mode check (search for <code>"&amp; 128"</code> bit flag validation)</p>
+    </article>
+    <article class="card" id="github-pr-mergestatestatus">
+      <div class="card-top">
+        <h3>GitHub PR mergeStateStatus <a class="anchor" href="#github-pr-mergestatestatus">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>PR queries now include the <code>mergeStateStatus</code> field, exposing whether a PR is in a clean, has_hooks, or unstable merge state.</p>
+<div class="blabel">Evidence</div>
+<p>PR query enhancement (search for <code>"mergeStateStatus"</code>)</p>
+    </article>
+    <article class="card" id="hook-error-display-improvements">
+      <div class="card-top">
+        <h3>Hook Error Display Improvements <a class="anchor" href="#hook-error-display-improvements">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Non-blocking hook errors now extract and render stderr/stdout output more clearly, making it easier to diagnose hook failures.</p>
+<div class="blabel">Evidence</div>
+<p>Hook error display (search for <code>"hook_non_blocking_error"</code>)</p>
+    </article>
+    <article class="card" id="context-limit-messaging">
+      <div class="card-top">
+        <h3>Context Limit Messaging <a class="anchor" href="#context-limit-messaging">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The context limit reached message has been simplified. When <code>DISABLE_COMPACT</code> is set, the message now says "Compaction is disabled." rather than suggesting <code>/compact</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Context limit message (search for <code>"Context limit reached"</code> and <code>"Compaction is disabled."</code>)</p>
+    </article>
+    <article class="card" id="bedrock-configuration-no-longer-requires-restart">
+      <div class="card-top">
+        <h3>Bedrock Configuration No Longer Requires Restart <a class="anchor" href="#bedrock-configuration-no-longer-requires-restart">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The Bedrock setup wizard message previously said "Bedrock configuration saved to ~/.claude/settings.json. Restart Claude Code to apply." It now simply says "Bedrock configuration saved to ~/.claude/settings.json." — the restart is handled automatically.</p>
+<div class="blabel">Evidence</div>
+<p>String diff shows removal of <code>"Restart Claude Code to apply"</code> from Bedrock setup</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential null reference when trimming text input in internal processing — added optional chaining (<code>text?.trim()</code>) to prevent crashes on undefined text values (search for <code>"text?.trim()"</code>)</li><li>Fixed semantic version prerelease regex pattern by correcting the component order of numeric and non-numeric identifiers (search for <code>"PRERELEASEIDENTIFIER"</code>)</li><li>Improved Bedrock model tier fallback logic by validating environment variable values before applying them as fallback models (search for <code>"[bedrock-fallback]"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="opus-4-6-communication-style-tuning-gradual-rollout">
+      <div class="card-top">
+        <h3>Opus 4.6 Communication Style Tuning [Gradual Rollout] <a class="anchor" href="#opus-4-6-communication-style-tuning-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Differentiated system prompt instructions for Opus 4.6 models that emphasize concise, anti-verbose communication and refined code quality guidance.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>quiet_salted_ember</code> (server-controlled, only applies to Opus 4.6 models)</p>
+<div class="blabel">Details</div>
+<ul><li>When enabled, adds a "Communicating with the user" prompt section instructing the model to give brief updates at key moments rather than verbose explanations</li><li>Includes refined code quality instructions: "Default to writing no comments. Only add one when the WHY is non-obvious"</li><li>Adds anti-verbosity guidance as a separate prompt category</li><li>Includes refined instructions about not adding features/refactoring beyond what was asked</li><li>The <code>cM6()</code> gate function checks both the model family (must include "opus-4-6") and the <code>quiet_salted_ember</code> flag value</li></ul>
+<div class="blabel">Evidence</div>
+<p>Opus 4.6 prompt tuning (gated by <code>quiet_salted_ember</code>, search for <code>"Default to writing no comments"</code> and <code>"Communicating with the user"</code>)</p>
+    </article>
+    <article class="card" id="sage-compass-v2-gradual-rollout">
+      <div class="card-top">
+        <h3>Sage Compass v2 [Gradual Rollout] <a class="anchor" href="#sage-compass-v2-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Updated version of the Sage Compass feature, migrated from <code>tengu_sage_compass</code> to <code>tengu_sage_compass2</code>.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_sage_compass2</code></p>
+<div class="blabel">Details</div>
+<ul><li>The feature flag has been renamed/versioned, suggesting an iteration on the existing Sage Compass feature</li><li>Enabled state is checked via <code>h8("tengu_sage_compass2", {}).enabled ?? !1</code> (default disabled)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Sage Compass v2 (search for <code>"tengu_sage_compass2"</code>)</p>
+    </article>
+    <article class="card" id="agent-mode-command-validation-gradual-rollout">
+      <div class="card-top">
+        <h3>Agent Mode Command Validation [Gradual Rollout] <a class="anchor" href="#agent-mode-command-validation-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Validation layer that blocks certain long-running synchronous bash commands when running in agent mode.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_amber_sentinel</code></p>
+<div class="blabel">Details</div>
+<ul><li>When enabled, checks commands before execution in foreground mode</li><li>Blocks standalone <code>sleep</code> commands with duration ≥ 2 seconds</li><li>Designed to prevent agents from wasting time on unnecessary blocking operations</li><li>Commands can bypass the check by using <code>run_in_background: true</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Agent command validation (gated by <code>tengu_amber_sentinel</code>, search for <code>"standalone sleep"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.47 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.47."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.47</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.47</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.46 → v0.2.47</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">3</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.47 Changelog</p>
+    </article>
+    <article class="card" id="tab-completion-for-files-and-folders">
+      <div class="card-top">
+        <h3>Tab Completion for Files and Folders <a class="anchor" href="#tab-completion-for-files-and-folders">#</a></h3>
+      </div>
+      <ul><li><strong>Press Tab</strong> to auto-complete file and folder names while typing paths</li><li>Works in interactive mode when entering file paths</li><li>Speeds up navigation and reduces typing errors</li></ul>
+    </article>
+    <article class="card" id="auto-accept-mode-for-file-edits">
+      <div class="card-top">
+        <h3>Auto-Accept Mode for File Edits <a class="anchor" href="#auto-accept-mode-for-file-edits">#</a></h3>
+      </div>
+      <ul><li><strong>Press Shift+Tab</strong> to toggle auto-accept mode for file edits</li><li>When enabled, file edits are automatically accepted without confirmation prompts</li><li>Visual indicator shows when auto-accept is active: <code>⏵⏵ auto-accept edits on</code></li><li>Particularly useful for workflows with many trusted file modifications</li></ul>
+    </article>
+    <article class="card" id="automatic-conversation-compaction">
+      <div class="card-top">
+        <h3>️ Automatic Conversation Compaction <a class="anchor" href="#automatic-conversation-compaction">#</a></h3>
+      </div>
+      <ul><li>Conversations can now continue indefinitely without hitting token limits</li><li>Claude automatically compacts older messages when approaching token thresholds</li><li>Toggle this feature on/off using the <code>/config</code> command</li><li>Preserves conversation context while managing token usage efficiently</li></ul>
+    </article>
+    <article class="card" id="improved-thinking-mode-control">
+      <div class="card-top">
+        <h3>Improved Thinking Mode Control <a class="anchor" href="#improved-thinking-mode-control">#</a></h3>
+      </div>
+      <ul><li>New environment variable <code>MAX_THINKING_TOKENS</code> allows precise control over thinking token allocation</li><li>Set a specific number of thinking tokens instead of relying on keyword detection</li><li>Example: <code>export MAX_THINKING_TOKENS=8000</code></li></ul>
+    </article>
+    <article class="card" id="better-error-privacy">
+      <div class="card-top">
+        <h3>Better Error Privacy <a class="anchor" href="#better-error-privacy">#</a></h3>
+      </div>
+      <ul><li>Enhanced redaction of sensitive information in error messages and stack traces</li><li>Automatically redacts:</li><li>Anthropic API keys (<code>sk-ant-*</code>)</li><li>AWS keys (<code>AKIA*</code> patterns)</li><li>GCP keys (<code>AIza*</code> patterns)</li><li>GCP service accounts (<code><em>@</em>.iam.gserviceaccount.com</code>)</li><li>Generic API keys in various formats</li></ul>
+    </article>
+    <article class="card" id="improved-bug-report-titles">
+      <div class="card-top">
+        <h3>Improved Bug Report Titles <a class="anchor" href="#improved-bug-report-titles">#</a></h3>
+      </div>
+      <ul><li>Bug report title generation now creates more technical, descriptive titles</li><li>Better extraction of key error messages for clearer issue tracking</li><li>Fallback to simple title extraction if AI generation fails</li></ul>
+    </article>
+    <article class="card" id="enhanced-permission-prompts">
+      <div class="card-top">
+        <h3>Enhanced Permission Prompts <a class="anchor" href="#enhanced-permission-prompts">#</a></h3>
+      </div>
+      <ul><li>Permission prompts now show numbered options (1, 2, 3) for easier selection</li><li>Type the number to quickly select an option</li><li>Escape key consistently selects "No" across all prompts</li><li>More consistent formatting and better visual hierarchy</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Improvements</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-improvements">
+      <ul><li>Stream imports updated from default imports to named imports for better compatibility</li><li>Process imports now use <code>node:process</code> prefix for clarity</li><li>Removed unused imports and variables for cleaner codebase</li><li>Added fallback behavior for bug report title generation</li></ul>
+    </article>
+    <article class="card" id="using-tab-completion">
+      <div class="card-top">
+        <h3>Using Tab Completion <a class="anchor" href="#using-tab-completion">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <pre><code># Start typing a path and press Tab
+$ claude read /home/user/proj[TAB]
+# Completes to: /home/user/projects/
+
+$ claude edit ./src/comp[TAB]
+# Shows available completions or completes if unique</code></pre>
+    </article>
+    <article class="card" id="toggling-auto-accept-mode">
+      <div class="card-top">
+        <h3>Toggling Auto-Accept Mode <a class="anchor" href="#toggling-auto-accept-mode">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <pre><code># During a conversation, press Shift+Tab
+# You&#x27;ll see: ⏵⏵ auto-accept edits on (shift+tab to toggle)
+
+# All subsequent file edits will be automatically accepted
+# Press Shift+Tab again to disable</code></pre>
+    </article>
+    <article class="card" id="setting-maximum-thinking-tokens">
+      <div class="card-top">
+        <h3>Setting Maximum Thinking Tokens <a class="anchor" href="#setting-maximum-thinking-tokens">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <pre><code># Set a specific thinking token limit
+$ export MAX_THINKING_TOKENS=15000
+$ claude
+
+# Now all thinking operations will use exactly 15000 tokens</code></pre>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

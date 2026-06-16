@@ -4,269 +4,187 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Claude Code — Source-level Changelogs</title>
-<style>
-  :root{
-    --bg:#16140f;--bg-2:#1d1a13;--panel:#211d15;--panel-2:#27221a;
-    --line:#3a3328;--line-soft:#2c2820;
-    --ink:#f3ecdf;--ink-2:#c7bca6;--ink-3:#8f8775;
-    --accent:#d97757;--accent-2:#e89b7f;--accent-ink:#1a120d;
-    --green:#7fae6a;--blue:#7fa8d9;--violet:#b08fd9;--amber:#d9b15a;--red:#d97c7c;
-    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono","Cascadia Code",Consolas,monospace;
-    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    --radius:14px;--shadow:0 12px 40px -18px rgba(0,0,0,.7);
-  }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    margin:0;background:
-      radial-gradient(1100px 520px at 82% -8%,rgba(217,119,87,.16),transparent 60%),
-      radial-gradient(900px 480px at 5% 0%,rgba(127,168,217,.08),transparent 55%),
-      var(--bg);
-    color:var(--ink);font-family:var(--sans);line-height:1.6;
-    -webkit-font-smoothing:antialiased;font-size:15px;min-height:100vh;
-  }
-  a{color:var(--accent-2);text-decoration:none}
-  a:hover{text-decoration:underline}
-  code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);
-    color:var(--accent-2);padding:1px 6px;border-radius:5px;border:1px solid var(--line-soft)}
-  ::selection{background:rgba(217,119,87,.32)}
-
-  .wrap{max-width:900px;margin:0 auto;padding:0 36px}
-
-  /* ---------- Header ---------- */
-  header.hero{padding:60px 0 40px;border-bottom:1px solid var(--line-soft)}
-  .eyebrow{display:flex;align-items:center;gap:12px;color:var(--ink-3);
-    font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600}
-  .logo-dot{width:11px;height:11px;border-radius:50%;
-    background:radial-gradient(circle at 30% 30%,var(--accent-2),var(--accent));
-    box-shadow:0 0 0 4px rgba(217,119,87,.15)}
-  h1.title{font-size:clamp(28px,4vw,44px);line-height:1.08;margin:18px 0 6px;
-    font-weight:800;letter-spacing:-.02em}
-  h1.title .v{
-    background:linear-gradient(92deg,var(--accent),var(--accent-2));
-    -webkit-background-clip:text;background-clip:text;color:transparent}
-  .sub{color:var(--ink-2);font-size:15.5px;margin:12px 0 0;max-width:640px}
-
-  /* ---------- List ---------- */
-  main{padding:36px 0 90px}
-
-  .release-list{display:flex;flex-direction:column;gap:16px}
-
-  .release{
-    background:linear-gradient(180deg,var(--panel),var(--panel-2));
-    border:1px solid var(--line);border-radius:var(--radius);
-    padding:24px 26px;box-shadow:var(--shadow);
-    transition:border-color .2s;
-    display:block;color:inherit;text-decoration:none;
-  }
-  .release:hover{border-color:#5a5040;text-decoration:none}
-  .release:hover .ver{color:var(--accent-2)}
-
-  .release-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
-  .ver{font-size:22px;font-weight:800;letter-spacing:-.02em;
-    color:var(--ink);transition:color .15s;font-family:var(--mono)}
-  .latest-badge{display:inline-flex;align-items:center;
-    background:rgba(217,119,87,.15);border:1px solid rgba(217,119,87,.4);
-    color:var(--accent-2);font-size:10px;font-weight:700;letter-spacing:.08em;
-    text-transform:uppercase;padding:3px 9px;border-radius:999px;
-    margin-left:12px;vertical-align:middle;font-family:var(--sans)}
-
-  .pill-row{display:flex;flex-wrap:wrap;gap:8px;flex-shrink:0}
-  .pill{display:inline-flex;align-items:center;gap:5px;
-    font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:8px;
-    border:1px solid transparent;white-space:nowrap}
-  .pill.feat{color:var(--accent-2);background:rgba(217,119,87,.1);border-color:rgba(217,119,87,.25)}
-  .pill.fix {color:var(--green);background:rgba(127,174,106,.1);border-color:rgba(127,174,106,.25)}
-  .pill.dev {color:var(--violet);background:rgba(176,143,217,.1);border-color:rgba(176,143,217,.25)}
-  .pill.set {color:var(--blue);background:rgba(127,168,217,.1);border-color:rgba(127,168,217,.25)}
-  .pill .num{font-size:13px}
-
-  .summary{color:var(--ink-2);font-size:14.5px;margin:14px 0 0;line-height:1.65}
-  .summary code{font-size:.82em}
-
-  .open-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;
-    font-size:12.5px;font-weight:600;color:var(--ink-3);letter-spacing:.03em;
-    transition:color .15s}
-  .release:hover .open-link{color:var(--accent-2)}
-
-  /* ---------- Footer ---------- */
-  footer{border-top:1px solid var(--line-soft);padding:28px 0 60px;
-    color:var(--ink-3);font-size:13px;line-height:1.7}
-</style>
+<meta name="description" content="Source-level changelogs for every Claude Code release, reverse-engineered from the published npm package."><link rel="stylesheet" href="site.css">
 </head>
 <body>
 
-<header class="hero">
+<div class="nav"><div class="wrap"><div class="row">
+  <a class="brand" href="index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link active" href="index.html">Recent</a>
+  <a class="link" href="archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<header class="hero landing">
   <div class="wrap">
-    <div class="eyebrow"><span class="logo-dot"></span> Claude Code · Source-level changelogs</div>
+    <div class="eyebrow"><span class="logo-dot"></span> Source-level &middot; reverse-engineered from npm</div>
     <h1 class="title"><span class="v">@anthropic-ai/claude-code</span></h1>
-    <p class="sub">Reverse-engineered release notes extracted from published npm packages. Not official Anthropic release notes.</p>
+    <p class="sub">Every release, diffed at the source. Not official Anthropic release notes &mdash; reverse-engineered from the published CLI bundle.</p>
+
+    <div class="hero-grid">
+      <div class="totals">
+        <div class="tot v"><div class="n">416</div><div class="l">Versions</div></div>
+        <div class="tot f"><div class="n">3.9k</div><div class="l">Features</div></div>
+        <div class="tot b"><div class="n">431</div><div class="l">Fixes</div></div>
+        <div class="tot s"><div class="n">24</div><div class="l">Avg / month</div></div>
+      </div>
+      <div class="cadence">
+        <div class="h"><span>Release cadence</span><span>416 releases</span></div>
+        <svg viewBox="0 0 320 54" preserveAspectRatio="none" aria-hidden="true">
+          <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#d97757" stop-opacity=".35"/>
+            <stop offset="1" stop-color="#d97757" stop-opacity="0"/></linearGradient></defs>
+          <polygon fill="url(#cg)" points="0.0,40.5 20.0,14.7 40.0,12.3 60.0,6.5 80.0,13.5 100.0,15.9 120.0,11.2 140.0,13.5 160.0,18.2 180.0,24.1 200.0,22.9 220.0,13.5 240.0,13.5 260.0,20.6 280.0,13.5 300.0,35.8 320.0,29.9 320,54 0,54"/>
+          <polyline fill="none" stroke="#e89b7f" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="0.0,40.5 20.0,14.7 40.0,12.3 60.0,6.5 80.0,13.5 100.0,15.9 120.0,11.2 140.0,13.5 160.0,18.2 180.0,24.1 200.0,22.9 220.0,13.5 240.0,13.5 260.0,20.6 280.0,13.5 300.0,35.8 320.0,29.9"/>
+        </svg>
+        <div class="foot"><span>2025-02-25</span><span>2026-06-16</span></div>
+      </div>
+    </div>
   </div>
 </header>
 
 <div class="wrap">
 <main>
-  <div class="release-list">
-
-    <!-- v2.1.179 -->
-    <a class="release" href="changelog-v2.1.179.html">
-      <div class="release-top">
-        <div>
-          <span class="ver">v2.1.179</span>
-          <span class="latest-badge">latest</span>
-        </div>
-        <div class="pill-row">
-          <span class="pill feat"><span class="num">19</span> features</span>
-          <span class="pill fix"><span class="num">3</span> fixes</span>
-          <span class="pill set"><span class="num">4</span> env vars</span>
-        </div>
-      </div>
-      <p class="summary">Claude Design MCP for UI mockups, a HIPAA status bar indicator, and a model picker "not used recently" section. Also ships better connection-drop messages with partial-response recovery, OAuth retry logic, graceful worktree cwd fallback, and 4 new env vars.</p>
-      <span class="open-link">Open report →</span>
-    </a>
-
-    <!-- v2.1.178 -->
-    <a class="release" href="changelog-v2.1.178.html">
-      <div class="release-top">
-        <div>
-          <span class="ver">v2.1.178</span>
-            </div>
-        <div class="pill-row">
-          <span class="pill feat"><span class="num">18</span> features</span>
-          <span class="pill fix"><span class="num">5</span> fixes</span>
-          <span class="pill set"><span class="num">8</span> env vars</span>
-        </div>
-      </div>
-      <p class="summary">Named-agent swarms replace TeamCreate/TeamDelete — just use <code>Agent</code> with a <code>name</code> now. Also ships: <code>/design-login</code> for design-system OAuth independent of the main session, <code>isolation: "remote"</code> for cloud-hosted subagents, a Fable 5 credits UX overhaul, Foundry capability detection, skill directory scoping, and 8 new env vars.</p>
-      <span class="open-link">Open report →</span>
-    </a>
-
-    <!-- v2.1.177 -->
-    <a class="release" href="changelog-v2.1.177.html">
-      <div class="release-top">
-        <div>
-          <span class="ver">v2.1.177</span>
-        </div>
-        <div class="pill-row">
-          <span class="pill feat"><span class="num">3</span> improvements</span>
-        </div>
-      </div>
-      <p class="summary">Infra patch. Adds server-side model error overrides (<code>tengu-model-error-overrides</code>) so Anthropic can customize error messages and picker hints without a client update. Also restricts the saffron lattice auto-update path to first-party builds.</p>
-      <span class="open-link">Open report →</span>
-    </a>
-
-    <!-- v2.1.176 -->
-    <a class="release" href="changelog-v2.1.176.html">
-      <div class="release-top">
-        <div>
-          <span class="ver">v2.1.176</span>
-        </div>
-        <div class="pill-row">
-          <span class="pill feat"><span class="num">13</span> features</span>
-          <span class="pill fix"><span class="num">5</span> fixes</span>
-        </div>
-      </div>
-      <p class="summary">New <code>footerLinks</code> setting turns regex matches in tool output into clickable REPL footer badges. Projects Tool now surfaces PDFs and file uploads. Also ships: expanded <code>rg</code> flags, a <code>sed</code> static analyzer, tighter <code>rm</code>/<code>rmdir</code> safety, a Notifications settings panel, and explicit fork agent type.</p>
-      <span class="open-link">Open report →</span>
-    </a>
-
-    <!-- v2.1.175 -->
-    <a class="release" href="changelog-v2.1.175.html">
-      <div class="release-top">
-        <div>
-          <span class="ver">v2.1.175</span>
-        </div>
-        <div class="pill-row">
-          <span class="pill feat"><span class="num">8</span> features</span>
-          <span class="pill fix"><span class="num">2</span> fixes</span>
-          <span class="pill set"><span class="num">1</span> env var</span>
-        </div>
-      </div>
-      <p class="summary">Org model allowlist enforcement — admins can now restrict which Claude models users and agents can use via <code>enforceAvailableModels</code>. Blocked model attempts redirect with a clear status-line warning. Also ships <code>CLAUDE_CODE_REMOTE_MEMORY_DIR</code> and sharpened safety message wording.</p>
-      <span class="open-link">Open report →</span>
-    </a>
-
-    <!-- v2.1.174 -->
-    <a class="release" href="changelog-v2.1.174.html">
-      <div class="release-top">
-        <div>
-          <span class="ver">v2.1.174</span>
-        </div>
-        <div class="pill-row">
-          <span class="pill feat"><span class="num">15</span> features</span>
-          <span class="pill fix"><span class="num">4</span> fixes</span>
-          <span class="pill dev"><span class="num">3</span> removed</span>
-        </div>
-      </div>
-      <p class="summary">The new <code>Projects Tool</code> lets Claude Code read and write claude.ai project docs from a session. Also ships: a 10-rule security monitor rewrite, advisor model capability enforcement, Opus 4.6 sunset notifications, and removal of Claude Code Insights.</p>
-      <span class="open-link">Open report →</span>
-    </a>
-
-    <!-- v2.1.173 -->
-    <a class="release" href="changelog-v2.1.173.html">
-      <div class="release-top">
-        <div>
-          <span class="ver">v2.1.173</span>
-        </div>
-        <div class="pill-row">
-          <span class="pill feat"><span class="num">2</span> features</span>
-          <span class="pill fix"><span class="num">1</span> fix</span>
-        </div>
-      </div>
-      <p class="summary">Context-aware safety refusal messages — non-cyber/bio blocks now show a calmer generic message. Also ships: Fable model detection and a Windows sandboxing fix.</p>
-      <span class="open-link">Open report →</span>
-    </a>
-
-    <!-- v2.1.172 -->
-    <a class="release" href="changelog-v2.1.172.html">
-      <div class="release-top">
-        <div><span class="ver">v2.1.172</span></div>
-        <div class="pill-row">
-          <span class="pill feat"><span class="num">21</span> features</span>
-          <span class="pill fix"><span class="num">6</span> fixes</span>
-          <span class="pill set"><span class="num">5</span> flags</span>
-        </div>
-      </div>
-      <p class="summary">The new <code>Artifact</code> tool lets Claude publish HTML and Markdown files to private claude.ai web pages. Also ships: <code>--plugin-dir-no-mcp</code>, targeted ultra auth error messages, a <code>web_fetch</code> URL provenance check, two new env vars, 13 improvements, and 6 bug fixes.</p>
-      <span class="open-link">Open report →</span>
-    </a>
-
-    <!-- v2.1.170 -->
-    <a class="release" href="changelog-v2.1.170.html">
-      <div class="release-top">
-        <div><span class="ver">v2.1.170</span></div>
-        <div class="pill-row">
-          <span class="pill feat"><span class="num">14</span> features</span>
-          <span class="pill fix"><span class="num">4</span> fixes</span>
-          <span class="pill set"><span class="num">6</span> flags</span>
-        </div>
-      </div>
-      <p class="summary">Claude Fable 5 lands as the new highest-tier model with a launch banner, custom-provider env vars, and a <code>fable</code> alias — plus a <code>model_refusal_fallback</code> SDK protocol event, graceful tool-call tombstone cancellation, <code>CLAUDE_CODE_DISABLE_MOUSE</code>, and four bug fixes.</p>
-      <span class="open-link">Open report →</span>
-    </a>
-
-    <!-- v2.1.169 -->
-    <a class="release" href="changelog-v2.1.169.html">
-      <div class="release-top">
-        <div><span class="ver">v2.1.169</span></div>
-        <div class="pill-row">
-          <span class="pill feat"><span class="num">15</span> features</span>
-          <span class="pill fix"><span class="num">2</span> fixes</span>
-          <span class="pill dev"><span class="num">2</span> in-dev</span>
-          <span class="pill set"><span class="num">5</span> flags</span>
-        </div>
-      </div>
-      <p class="summary">A <code>--safe-mode</code> flag for clean-room troubleshooting, the new <code>/design-sync</code> skill, a <code>disableBundledSkills</code> setting, Windows sandbox WFP network filtering, and the completed "remote → cloud session" rename — plus a handful of input and tooling fixes.</p>
-      <span class="open-link">Open report →</span>
-    </a>
-
+  <div class="grid">
+    <a class="release" href="cc-changelogs/changelog-v2.1.179.html" data-search="2.1.179">
+  <div class="release-top">
+    <div><span class="ver">v2.1.179</span><span class="latest-badge">latest</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">19</span> features</span><span class="pill fix"><span class="num">3</span> fixes</span><span class="pill dev"><span class="num">2</span> in-dev</span></div>
   </div>
+<p class="summary">This release adds Claude Design MCP integration, a HIPAA compliance indicator, and a "not used recently" section in the model picker. It also brings multiple reliability…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.178.html" data-search="2.1.178">
+  <div class="release-top">
+    <div><span class="ver">v2.1.178</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">18</span> features</span><span class="pill fix"><span class="num">5</span> fixes</span></div>
+  </div>
+<p class="summary">This release replaces the explicit TeamCreate/TeamDelete tools with a simpler named-agent model, introduces a standalone <code>/design-login</code> command for design-system access…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.177.html" data-search="2.1.177">
+  <div class="release-top">
+    <div><span class="ver">v2.1.177</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">3</span> features</span></div>
+  </div>
+<p class="summary">This is a small patch release focused on internal infrastructure. The main addition is a new model error override system that allows server-side customization of error messages…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.176.html" data-search="2.1.176">
+  <div class="release-top">
+    <div><span class="ver">v2.1.176</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">13</span> features</span><span class="pill fix"><span class="num">5</span> fixes</span></div>
+  </div>
+<p class="summary">This release introduces footer link badges — a new way to configure regex patterns that turn output into clickable links in the REPL footer. It also significantly expands project…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.175.html" data-search="2.1.175">
+  <div class="release-top">
+    <div><span class="ver">v2.1.175</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">8</span> features</span><span class="pill fix"><span class="num">2</span> fixes</span></div>
+  </div>
+<p class="summary">This release introduces a comprehensive model allowlist enforcement system for organizations, allowing admins to restrict which Claude models users and agents can access. Users…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.174.html" data-search="2.1.174">
+  <div class="release-top">
+    <div><span class="ver">v2.1.174</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">15</span> features</span><span class="pill fix"><span class="num">4</span> fixes</span><span class="pill dev"><span class="num">3</span> in-dev</span></div>
+  </div>
+<p class="summary">Version 2.1.174 introduces the Projects Tool, a major new capability that lets Claude Code read and write claude.ai Project documents directly from a session. The release also…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.173.html" data-search="2.1.173">
+  <div class="release-top">
+    <div><span class="ver">v2.1.173</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">2</span> features</span><span class="pill fix"><span class="num">1</span> fixes</span></div>
+  </div>
+<p class="summary">This release improves the clarity of safety-refusal messages by making them context-aware: requests blocked for cybersecurity or biology topics continue to name those topics…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.172.html" data-search="2.1.172">
+  <div class="release-top">
+    <div><span class="ver">v2.1.172</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">21</span> features</span><span class="pill fix"><span class="num">6</span> fixes</span></div>
+  </div>
+<p class="summary">Version 2.1.172 ships the Artifact tool — a new capability letting Claude publish HTML and Markdown files to private claude.ai web pages — alongside improved ultra (cloud review)…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.170.html" data-search="2.1.170">
+  <div class="release-top">
+    <div><span class="ver">v2.1.170</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">14</span> features</span><span class="pill fix"><span class="num">4</span> fixes</span></div>
+  </div>
+<p class="summary">This release introduces Claude Fable 5, a new highest-tier model for the hardest and longest-running tasks, replacing the previous Opus 4.8 launch announcement with a Fable 5…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.169.html" data-search="2.1.169">
+  <div class="release-top">
+    <div><span class="ver">v2.1.169</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">15</span> features</span><span class="pill fix"><span class="num">2</span> fixes</span><span class="pill dev"><span class="num">2</span> in-dev</span></div>
+  </div>
+<p class="summary">This release introduces a <code>--safe-mode</code> flag for troubleshooting with all customizations disabled, a new bundled <code>/design-sync</code> skill for syncing React design systems to…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.168.html" data-search="2.1.168">
+  <div class="release-top">
+    <div><span class="ver">v2.1.168</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">3</span> features</span></div>
+  </div>
+<p class="summary">This is a small maintenance release built on June 6, 2026. The primary substantive change is the addition of extended thinking budget support for the <code>claude-mythos-preview</code> model…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.167.html" data-search="2.1.167">
+  <div class="release-top">
+    <div><span class="ver">v2.1.167</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">4</span> features</span></div>
+  </div>
+<p class="summary">This is a small patch release focused on improvements to host-managed provider deployments. When <code>CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST</code> is explicitly set, auth validation now…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.166.html" data-search="2.1.166">
+  <div class="release-top">
+    <div><span class="ver">v2.1.166</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">12</span> features</span><span class="pill fix"><span class="num">3</span> fixes</span></div>
+  </div>
+<p class="summary">This release renames <code>--remote</code> to <code>--cloud</code> for cloud session management, redesigns the fullscreen renderer upsell as an interactive dialog, and adds <code>fallbackModel</code>…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.165.html" data-search="2.1.165">
+  <div class="release-top">
+    <div><span class="ver">v2.1.165</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">2</span> features</span></div>
+  </div>
+<p class="summary">This is a small patch release built one day after v2.1.163. The two notable functional changes are: conversation summarization can now use extended thinking when the active model…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.163.html" data-search="2.1.163">
+  <div class="release-top">
+    <div><span class="ver">v2.1.163</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">14</span> features</span><span class="pill fix"><span class="num">3</span> fixes</span><span class="pill dev"><span class="num">4</span> in-dev</span></div>
+  </div>
+<p class="summary">This release adds two new hook events (<code>SubagentStop</code> and a formal <code>Stop</code> hook output schema with <code>additionalContext</code>), organization-level version enforcement via…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.140.html" data-search="2.1.140">
+  <div class="release-top">
+    <div><span class="ver">v2.1.140</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">20</span> features</span><span class="pill fix"><span class="num">5</span> fixes</span></div>
+  </div>
+<p class="summary">This release adds experimental TLS termination to the sandbox runtime so HTTPS traffic can be inspected by a per-request filter, and introduces the <code>CLAUDE_CODE_RESUME_PROMPT</code>…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.139.html" data-search="2.1.139">
+  <div class="release-top">
+    <div><span class="ver">v2.1.139</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">11</span> features</span><span class="pill fix"><span class="num">8</span> fixes</span></div>
+  </div>
+<p class="summary">Claude Code 2.1.139 adds several user-visible workflow and administration improvements: a new plugin details command, a built-in Proactive output style, interactive terminal…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+    <a class="release" href="cc-changelogs/changelog-v2.1.138.html" data-search="2.1.138">
+  <div class="release-top">
+    <div><span class="ver">v2.1.138</span></div>
+    <div class="pill-row"><span class="pill feat"><span class="num">1</span> features</span></div>
+  </div>
+<p class="summary">Version 2.1.138 is a very small CLI release. The filtered AST diff shows no added or removed declarations and the string-literal diff contains only build metadata, but one…</p>  <span class="open-link">Open report &rarr;</span>
+</a>
+  </div>
+
+  <p class="browse-all"><a href="archive.html">Browse &amp; search all 416 versions in the archive &rarr;</a></p>
 </main>
 
 <footer>
-  <div>Generated from source-level diffs of the published npm package — reverse-engineered from the bundled CLI, not official Anthropic release notes.</div>
+  <div>Generated from source-level diffs of the published npm package &mdash; reverse-engineered from the bundled CLI, not official Anthropic release notes.</div>
+  <div style="margin-top:8px;font-size:12px">18 recent of 416 versions &middot; cadence from npm publish dates</div>
 </footer>
 </div>
+
 
 </body>
 </html>

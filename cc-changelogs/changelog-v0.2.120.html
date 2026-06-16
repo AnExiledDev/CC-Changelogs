@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.120 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.120."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.120</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.120</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.119 → v0.2.120</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="tool-permission-handling-improvements">
+      <div class="card-top">
+        <h3>Tool Permission Handling Improvements <a class="anchor" href="#tool-permission-handling-improvements">#</a></h3>
+      </div>
+      <h4>Enhanced CLI Tool Filtering</h4>
+<p>The permission system for CLI tools has been improved with better parsing of allowed and disallowed tool arguments:</p>
+<ul><li><strong>New comma-separated tool parsing</strong>: The <code>--allowed-tools</code> and <code>--disallowed-tools</code> CLI arguments now support comma-separated values for specifying multiple tools in a single argument</li></ul>
+<div class="blabel">Example usage</div>
+<pre><code>  # Allow multiple tools with comma separation
+  claude-code --allowed-tools &quot;Read,Write,Edit&quot; 
+  
+  # Disallow specific tools
+  claude-code --disallowed-tools &quot;Bash,WebSearch&quot;
+  
+  # Can still use multiple arguments
+  claude-code --allowed-tools Read --allowed-tools Write</code></pre>
+<ul><li><strong>Improved tool name parsing</strong>: Tool names are now properly trimmed of whitespace and empty values are filtered out, making the tool specification more robust</li></ul>
+    </article>
+    <article class="card" id="internal-changes">
+      <div class="card-top">
+        <h3>Internal Changes <a class="anchor" href="#internal-changes">#</a></h3>
+      </div>
+      <h4>Async MCP Client Discovery</h4>
+<ul><li>Converted the MCP (Model Context Protocol) client discovery function from a wrapped promise to a native async function, improving code clarity and maintainability</li></ul>
+<h4>Stream Import Optimization</h4>
+<ul><li>Consolidated stream imports: Removed redundant <code>stream</code> import and instead imports <code>PassThrough</code> directly from the stream module when needed</li></ul>
+<h4>Process Import Cleanup</h4>
+<ul><li>Simplified process imports by importing <code>cwd</code> directly from <code>node:process</code> instead of importing the entire process module</li></ul>
+    </article>
+    <article class="card" id="technical-details">
+      <div class="card-top">
+        <h3>Technical Details <a class="anchor" href="#technical-details">#</a></h3>
+      </div>
+      <p>The main changes revolve around the <code>tR5</code> function (previously <code>Sy0</code>) which handles tool permissions:</p>
+<pre><code>// New implementation with tool name parsing
+function tR5({ allowedToolsCli, disallowedToolsCli, permissionMode }) {
+  let parsedAllowed = fc1(allowedToolsCli),    // Parse comma-separated values
+      parsedDisallowed = fc1(disallowedToolsCli);
+  return Fb0(
+    {
+      mode: permissionMode,
+      alwaysAllowRules: { cliArg: parsedAllowed },
+      alwaysDenyRules: { cliArg: parsedDisallowed },
+    },
+    Db0(),
+  );
+}</code></pre>
+<p>Where <code>fc1</code> is the new parsing function that:</p>
+<ol><li>Handles null/undefined inputs gracefully</li><li>Splits comma-separated values</li><li>Trims whitespace from each tool name</li><li>Filters out empty strings</li></ol>
+<p>This enhancement makes it easier to specify multiple tools in scripts and command-line usage without needing to repeat the flag multiple times.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

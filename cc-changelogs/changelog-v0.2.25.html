@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.25 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.25."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.25</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.25</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.19 → v0.2.25</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">15</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="fuzzy-matching-for-commands">
+      <div class="card-top">
+        <h3>Fuzzy Matching for Commands <a class="anchor" href="#fuzzy-matching-for-commands">#</a></h3>
+      </div>
+      <ul><li>Introduced fuzzy matching for slash commands (<code>/commands</code>), making it easier to find and execute commands without typing the exact name</li><li>This feature was initially added in v0.2.21 and is now included in this release</li></ul>
+    </article>
+    <article class="card" id="approved-tools-management">
+      <div class="card-top">
+        <h3>Approved Tools Management <a class="anchor" href="#approved-tools-management">#</a></h3>
+      </div>
+      <ul><li>Added new <code>/approved-tools</code> command to manage pre-approved tools</li><li>View, edit, and delete tools that Claude Code can use without asking for permission each time</li><li>Interactive interface shows which specific Bash commands or command patterns are approved</li><li>Provides clear visual indication when editing approved tools with delete/cancel options</li></ul>
+    </article>
+    <article class="card" id="exit-command-aliases">
+      <div class="card-top">
+        <h3>Exit Command Aliases <a class="anchor" href="#exit-command-aliases">#</a></h3>
+      </div>
+      <ul><li>Added <code>/exit</code> and <code>/quit</code> commands to exit the REPL</li><li>These provide more intuitive ways to close the application compared to using Ctrl+C</li></ul>
+    </article>
+    <article class="card" id="enhanced-tool-validation">
+      <div class="card-top">
+        <h3>Enhanced Tool Validation <a class="anchor" href="#enhanced-tool-validation">#</a></h3>
+      </div>
+      <ul><li>Implemented <code>validateInput</code> functionality for tools to ensure input parameters are valid before execution</li><li>Tool requests are now validated before being sent to the API, preventing invalid tool usage</li></ul>
+    </article>
+    <article class="card" id="web-authentication-check">
+      <div class="card-top">
+        <h3>Web Authentication Check <a class="anchor" href="#web-authentication-check">#</a></h3>
+      </div>
+      <ul><li>Added connectivity check to <code>claude.ai/code</code> and Anthropic's API endpoints</li><li>Improved error handling for authentication and network connectivity issues</li></ul>
+    </article>
+    <article class="card" id="session-metrics-tracking">
+      <div class="card-top">
+        <h3>Session Metrics Tracking <a class="anchor" href="#session-metrics-tracking">#</a></h3>
+      </div>
+      <ul><li>Enhanced session tracking with new metrics:</li><li><code>totalCost</code> - tracks API usage costs</li><li><code>totalAPIDuration</code> - measures total API call duration</li><li><code>lastInteractionTime</code> - monitors user activity</li><li><code>readFileAllowedDirectories</code> and <code>writeFileAllowedDirectories</code> - tracks file system permissions</li></ul>
+    </article>
+    <article class="card" id="refactored-error-handling">
+      <div class="card-top">
+        <h3>Refactored Error Handling <a class="anchor" href="#refactored-error-handling">#</a></h3>
+      </div>
+      <ul><li>Simplified error logging function (renamed from <code>V0</code> to <code>A0</code>)</li><li>Improved error message formatting and timestamp tracking</li></ul>
+    </article>
+    <article class="card" id="code-reorganization">
+      <div class="card-top">
+        <h3>️ Code Reorganization <a class="anchor" href="#code-reorganization">#</a></h3>
+      </div>
+      <ul><li>Removed NPM prefix configuration functionality (<code>hQ2</code>, <code>xQ2</code>, <code>cQ2</code>, <code>iQ2</code> functions)</li><li>Cleaned up unused imports and variables</li><li>Updated SDK version references from 0.37.0 to 0.36.3</li><li>Refactored global state management into a centralized <code>eA4()</code> function</li></ul>
+    </article>
+    <article class="card" id="new-utilities">
+      <div class="card-top">
+        <h3>New Utilities <a class="anchor" href="#new-utilities">#</a></h3>
+      </div>
+      <ul><li>Added comprehensive fuzzy search implementation using the Fuse.js algorithm</li><li>Implemented string manipulation utilities (<code>PX</code>, <code>hY9</code>, <code>xY9</code>, <code>eC</code>, <code>nU2</code>, etc.)</li><li>Added countdown timer component (<code>Qf2</code>) for UI timing displays</li></ul>
+    </article>
+    <article class="card" id="managing-approved-tools">
+      <div class="card-top">
+        <h3>Managing Approved Tools <a class="anchor" href="#managing-approved-tools">#</a></h3>
+      </div>
+      <pre><code># View and manage approved tools
+/approved-tools
+
+# The interface will show:
+# - List of currently approved tools
+# - Option to delete specific tools
+# - Clear indication of which Bash commands are pre-approved</code></pre>
+    </article>
+    <article class="card" id="exiting-the-repl">
+      <div class="card-top">
+        <h3>Exiting the REPL <a class="anchor" href="#exiting-the-repl">#</a></h3>
+      </div>
+      <pre><code># Exit using the new commands
+/exit
+# or
+/quit</code></pre>
+    </article>
+    <article class="card" id="fuzzy-command-search">
+      <div class="card-top">
+        <h3>Fuzzy Command Search <a class="anchor" href="#fuzzy-command-search">#</a></h3>
+      </div>
+      <pre><code># Find commands with fuzzy matching
+/app  # might match /approved-tools
+/ex   # might match /exit</code></pre>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The approved tools feature enhances workflow efficiency by reducing permission prompts for trusted commands</li><li>Tool validation ensures safer execution of commands with proper parameter checking</li><li>The fuzzy matching makes the CLI more user-friendly, especially for users who don't remember exact command names</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

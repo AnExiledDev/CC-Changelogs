@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.74 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.74."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.74</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.74</span></h1>
+<p class="sub">Claude Code 1.0.74 introduces Sonnet 4 with 1M token context for eligible organizations, a powerful new custom output modes system that lets you personalize how Claude communicates, and improved bash command handling with enhanced security controls.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.73 → v1.0.74</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">11 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="sonnet-4-with-1m-token-context">
+      <div class="card-top">
+        <h3>Sonnet 4 with 1M Token Context <a class="anchor" href="#sonnet-4-with-1m-token-context">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Access to Claude Sonnet 4 with an extended 1 million token context window for processing large codebases and documents <strong>How to use:</strong></p>
+<pre><code># Select from the model menu
+claude /model
+# Choose &quot;Sonnet (1M context)&quot; option
+
+# Or set directly
+claude /model sonnet[1m]</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Available to eligible organizations only (checked automatically)</li><li>Higher token costs: $6/$22.50 per million tokens (vs $3/$15 for regular Sonnet)</li><li>Automatically selected as default for users with Opus mode and 1M access</li><li>One-time welcome notification explains the feature and rate limit implications</li><li>Access status cached for 1 hour to minimize API calls</li></ul>
+    </article>
+    <article class="card" id="custom-output-modes">
+      <div class="card-top">
+        <h3>Custom Output Modes <a class="anchor" href="#custom-output-modes">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Create personalized output modes that modify how Claude Code communicates with you <strong>How to use:</strong></p>
+<pre><code># Create a new custom output mode
+claude /output-mode:new
+
+# Select from available modes
+claude /output-mode
+
+# Set a mode directly
+claude /output-mode Concise</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Output modes are markdown files with YAML frontmatter stored in <code>~/.claude/output-modes/</code> or <code>.claude/output-modes/</code></li><li>Built-in modes "Insights" and "Learn By Doing" can be overridden with custom versions</li><li>New <code>output-mode-setup</code> agent guides you through creating modes with natural language</li><li>Modes can customize response length, tone, format, and workflow preferences</li><li>Project-level modes allow teams to share communication styles</li></ul>
+    </article>
+    <article class="card" id="opus-plan-mode">
+      <div class="card-top">
+        <h3>Opus Plan Mode <a class="anchor" href="#opus-plan-mode">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New hybrid model option that uses Opus 4.1 in plan mode and Sonnet 4 for execution <strong>How to use:</strong></p>
+<pre><code>claude /model
+# Select &quot;Opus Plan Mode&quot; option</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Description: "Use Opus 4.1 in plan mode, Sonnet 4 otherwise"</li><li>Provides optimal model selection based on the current operation mode</li><li>Automatically switches between models for planning vs implementation</li></ul>
+    </article>
+    <article class="card" id="enhanced-bash-command-generation">
+      <div class="card-top">
+        <h3>Enhanced Bash Command Generation <a class="anchor" href="#enhanced-bash-command-generation">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Improved handling of bash redirections and file descriptors <strong>Impact:</strong> More reliable command execution with complex shell redirections like <code>2&gt;&amp;1</code>, <code>1&gt;/dev/null</code>, and file descriptor routing</p>
+    </article>
+    <article class="card" id="granular-permission-system">
+      <div class="card-top">
+        <h3>Granular Permission System <a class="anchor" href="#granular-permission-system">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Separated trust dialogs into three distinct categories <strong>Impact:</strong> Users can now approve bash commands, hooks, and general operations independently, providing finer control over security permissions</p>
+    </article>
+    <article class="card" id="ui-polish-with-shimmer-effects">
+      <div class="card-top">
+        <h3>UI Polish with Shimmer Effects <a class="anchor" href="#ui-polish-with-shimmer-effects">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Added shimmer colors to all themes for Claude-related UI elements <strong>Impact:</strong> Subtle visual feedback improvements with colors like <code>rgb(245,149,117)</code> for light theme and <code>rgb(235,159,127)</code> for dark theme</p>
+    </article>
+    <article class="card" id="command-source-tracking">
+      <div class="card-top">
+        <h3>Command Source Tracking <a class="anchor" href="#command-source-tracking">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> All built-in commands now include a <code>source: "builtin"</code> field <strong>Impact:</strong> Better organization and potential for future command source filtering or custom command sources</p>
+    </article>
+    <article class="card" id="organization-feature-tracking">
+      <div class="card-top">
+        <h3>Organization Feature Tracking <a class="anchor" href="#organization-feature-tracking">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Added first token date tracking and per-organization feature flag caching <strong>Impact:</strong> Better analytics and feature rollout capabilities for organization-specific features</p>
+    </article>
+    <article class="card" id="fixed-process-import-issue">
+      <div class="card-top">
+        <h3>Fixed: Process Import Issue <a class="anchor" href="#fixed-process-import-issue">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Incorrect import statement for process.cwd</li><li><strong>Cause:</strong> Using default import instead of named import</li><li><strong>Resolution:</strong> Changed from <code>import ndB from "node:process"</code> to <code>import { cwd as RM2 } from "node:process"</code></li></ul>
+    </article>
+    <article class="card" id="fixed-output-mode-key-consistency">
+      <div class="card-top">
+        <h3>Fixed: Output Mode Key Consistency <a class="anchor" href="#fixed-output-mode-key-consistency">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Inconsistent naming between internal keys and display names</li><li><strong>Cause:</strong> Built-in modes used kebab-case internally but title case for display</li><li><strong>Resolution:</strong> Standardized on title case for both internal keys and display ("Insights", "Learn By Doing")</li></ul>
+    </article>
+    <article class="card" id="fixed-statsig-gate-caching">
+      <div class="card-top">
+        <h3>Fixed: Statsig Gate Caching <a class="anchor" href="#fixed-statsig-gate-caching">#</a></h3>
+      </div>
+      <ul><li><strong>Issue:</strong> Feature gates were being fetched repeatedly without caching</li><li><strong>Cause:</strong> Missing cache implementation for Statsig gates</li><li><strong>Resolution:</strong> Added <code>cachedStatsigGates</code> to configuration with proper cache management</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

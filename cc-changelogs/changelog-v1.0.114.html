@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.114 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.114."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.114</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.114</span></h1>
+<p class="sub">Version 1.0.114 introduces macOS filesystem sandboxing, an interactive thinking mode with visual highlighting, and enhanced Windows terminal support. This release focuses on security hardening, improved user experience, and better cross-platform compatibility.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.113 → v1.0.114</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">15</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">15 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="filesystem-sandboxing-for-macos">
+      <div class="card-top">
+        <h3>Filesystem Sandboxing for macOS <a class="anchor" href="#filesystem-sandboxing-for-macos">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Fine-grained filesystem access controls using macOS sandbox-exec, allowing you to restrict which files and directories bash commands can read or write.</p>
+<p><strong>How to use:</strong> Configure in <code>.claude/settings.json</code>:</p>
+<pre><code>{
+  &quot;sandbox&quot;: {
+    &quot;filesystem&quot;: {
+      &quot;read&quot;: {
+        &quot;allow&quot;: [&quot;~/projects/*&quot;, &quot;~/data&quot;],
+        &quot;deny&quot;: [&quot;/etc/passwd&quot;]
+      },
+      &quot;write&quot;: {
+        &quot;allow&quot;: [&quot;~/projects/output/*&quot;],
+        &quot;deny&quot;: [&quot;~/projects/output/protected&quot;]
+      }
+    }
+  }
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Complements existing network sandboxing (v1.0.113 only had network restrictions)</li><li>Read allow-list mode denies all reads except specified paths</li><li>Write deny-list blocks specific paths while allowing essential system paths</li><li>Automatically allows stdout/stderr, temp directories, and Claude config paths</li><li>Supports path expansion (<code>~</code>, <code>./</code>, <code>../</code>) and wildcards (<code>/*</code> suffix only)</li><li>Path validation prevents shell metacharacters (<code>&amp;&amp;</code>, <code>||</code>, <code>;</code>, backticks, <code>$</code>)</li><li><strong>Evidence</strong>: <code>QBB() at line 374281</code>, <code>y41() at line 353864</code></li></ul>
+    </article>
+    <article class="card" id="interactive-thinking-mode-with-visual-highlighting">
+      <div class="card-top">
+        <h3>Interactive Thinking Mode with Visual Highlighting <a class="anchor" href="#interactive-thinking-mode-with-visual-highlighting">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Real-time detection and visual highlighting of thinking trigger words in 7 languages (English, Japanese, Chinese, Spanish, French, German, Korean) with three intensity levels.</p>
+<p><strong>How to use:</strong> Type trigger words in your prompt to activate extended thinking:</p>
+<pre><code># Basic (4,000 tokens): &quot;think&quot;, &quot;考えて&quot;, &quot;想&quot;
+claude &quot;think about the best algorithm for this&quot;
+
+# Medium (10,000 tokens): &quot;think deeply&quot;, &quot;megathink&quot;, &quot;もっと考えて&quot;
+claude &quot;think deeply about the edge cases&quot;
+
+# High (31,999 tokens): &quot;think harder&quot;, &quot;ultrathink&quot;, &quot;熟考&quot;
+claude &quot;think harder about the security implications&quot;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Trigger words are highlighted with shimmer effects as you type</li><li>Status bar shows: "Thinking on • [level] • /t to disable"</li><li>Use <code>/t</code> command to toggle thinking mode on/off</li><li>Intelligently ignores conversational phrases like "I think" and "we think"</li><li>Color-coded by intensity: basic (low), medium (medium), high (max)</li><li><strong>Evidence</strong>: <code>TTA() at line 366061</code>, <code>PTA() at line 366112</code>, <code>fA0() at line 366083</code>, <code>o1Q() at line 436378</code></li></ul>
+    </article>
+    <article class="card" id="windows-terminal-enhanced-support">
+      <div class="card-top">
+        <h3>Windows Terminal Enhanced Support <a class="anchor" href="#windows-terminal-enhanced-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved clear screen handling for Windows Terminal and VSCode integrated terminal on Windows.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Detects Windows Terminal via <code>WT_SESSION</code> environment variable</li><li>Detects VSCode terminal via <code>TERM_PROGRAM</code> environment variable</li><li>Modern Windows terminals now use full clear sequence (<code>\x1B[2J\x1B[3J\x1B[H</code>) that clears scrollback buffer</li><li>Legacy Windows consoles continue using compatible sequence (<code>\x1B[2J\x1B[0f</code>)</li><li>Provides cleaner screen clearing experience in modern Windows environments</li><li><strong>Evidence</strong>: <code>JN9() at line 362129</code>, <code>XN9() at line 362132</code>, <code>FN9() at line 362142</code></li></ul>
+    </article>
+    <article class="card" id="output-truncation-protection">
+      <div class="card-top">
+        <h3>Output Truncation Protection <a class="anchor" href="#output-truncation-protection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatic truncation of bash command output exceeding 64MB to prevent memory issues.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Default limit: 64MB (67,108,736 bytes)</li><li>Truncated output shows: <code>... [output truncated - ${KB}KB removed]</code></li><li>Tracks total bytes received even when truncated</li><li>Prevents crashes from commands generating massive output</li><li><strong>Evidence</strong>: <code>class ga at line 362733</code></li></ul>
+    </article>
+    <article class="card" id="bulk-file-history-restore">
+      <div class="card-top">
+        <h3>Bulk File History Restore <a class="anchor" href="#bulk-file-history-restore">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Restore multiple files from file history backups in a single operation.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Restores files to their pre-session state from backups</li><li>Handles three scenarios: restore from backup, delete new files, skip missing files</li><li>Supports dry-run mode to preview changes</li><li>Returns count of files affected</li><li>Continues on errors with detailed logging</li><li><strong>Evidence</strong>: <code>_3B() at line 393833</code>, <code>k3B() at line 393866</code></li></ul>
+    </article>
+    <article class="card" id="smart-editor-detection">
+      <div class="card-top">
+        <h3>Smart Editor Detection <a class="anchor" href="#smart-editor-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Intelligent editor selection that verifies editors are actually installed before attempting to use them.</p>
+<p><strong>How it works:</strong></p>
+<pre><code># Priority order: $VISUAL → $EDITOR → code → vi → nano
+# Only selects editors that exist on the system
+claude /memory</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Uses <code>which</code> (Unix) or <code>where</code> (Windows) to check editor availability</li><li>Tries VS Code (<code>code</code>), then <code>vi</code>, then <code>nano</code> in order</li><li>Trims whitespace from environment variables to prevent issues</li><li>Throws clear error if no editor is available</li><li>Improves reliability when opening memory files</li><li><strong>Evidence</strong>: <code>If1() at line 404558</code>, <code>V95() at line 404550</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-posttooluse-hook-messages">
+      <div class="card-top">
+        <h3>Enhanced PostToolUse Hook Messages <a class="anchor" href="#enhanced-posttooluse-hook-messages">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Specialized system message types for hook execution outcomes instead of generic informational messages.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New message type: <code>post_tool_hook_success</code> for successful hook completion</li><li>New message type: <code>post_tool_hook_cancelled</code> for user-cancelled hooks</li><li>Clearer semantic representation in message history</li><li>Better structured for UI rendering and debugging</li><li>Note: PostToolUse hooks existed in v1.0.113, only the message types are new</li><li><strong>Evidence</strong>: <code>PIB() at line 398052</code>, <code>jq0() at line 398064</code></li></ul>
+    </article>
+    <article class="card" id="improved-interrupt-messaging">
+      <div class="card-top">
+        <h3>Improved Interrupt Messaging <a class="anchor" href="#improved-interrupt-messaging">#</a></h3>
+      </div>
+      <p><strong>What:</strong> More informative interrupt messages that guide users on what to do next.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Changed from "Interrupted by user" to "Interrupted · What should Claude do instead?"</li><li>Clearer call-to-action for users after interrupting</li><li>Better UX for mid-task cancellations</li><li><strong>Evidence</strong>: <code>lM() at line 373333</code>, <code>t8() at line 373341</code></li></ul>
+    </article>
+    <article class="card" id="environment-variable-support-for-default-haiku-model">
+      <div class="card-top">
+        <h3>Environment Variable Support for Default Haiku Model <a class="anchor" href="#environment-variable-support-for-default-haiku-model">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Configure default Haiku model via <code>ANTHROPIC_DEFAULT_HAIKU_MODEL</code> environment variable.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Allows overriding the default Haiku model for specific use cases</li><li>Falls back to standard Haiku 3.5 if not set</li><li>Useful for testing or using alternative Haiku versions</li><li><strong>Evidence</strong>: <code>FX2() at line 371423</code></li></ul>
+    </article>
+    <article class="card" id="empty-directory-cleanup">
+      <div class="card-top">
+        <h3>Empty Directory Cleanup <a class="anchor" href="#empty-directory-cleanup">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatically removes empty directories after file operations.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Cleans up empty directories left after file deletions</li><li>Prevents directory clutter in file history operations</li><li>Silently handles cases where directory removal fails</li><li><strong>Evidence</strong>: <code>U65() at line 411458</code></li></ul>
+    </article>
+    <article class="card" id="metrics-reset-function">
+      <div class="card-top">
+        <h3>Metrics Reset Function <a class="anchor" href="#metrics-reset-function">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Proper reset of session cost and usage metrics.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Resets total cost, API duration, tool duration, line counts</li><li>Ensures clean state for new sessions</li><li>Prevents metric accumulation across sessions</li><li><strong>Evidence</strong>: <code>Fo1() at line 340029</code></li></ul>
+    </article>
+    <article class="card" id="image-optimization">
+      <div class="card-top">
+        <h3>Image Optimization <a class="anchor" href="#image-optimization">#</a></h3>
+      </div>
+      <ul><li>Added <code>hOA() at line 364421</code> for processing and optimizing base64-encoded images</li></ul>
+    </article>
+    <article class="card" id="string-truncation-utility">
+      <div class="card-top">
+        <h3>String Truncation Utility <a class="anchor" href="#string-truncation-utility">#</a></h3>
+      </div>
+      <ul><li>Added <code>u00() at line 362718</code> for joining and truncating string arrays with size limits</li></ul>
+    </article>
+    <article class="card" id="path-processing-helpers">
+      <div class="card-top">
+        <h3>Path Processing Helpers <a class="anchor" href="#path-processing-helpers">#</a></h3>
+      </div>
+      <ul><li>Added <code>EG1() at line 374270</code> for expanding filesystem paths (<code>~</code>, <code>./</code>, relative to absolute)</li><li>Added <code>NG1() at line 374278</code> for escaping paths in sandbox profiles</li></ul>
+    </article>
+    <article class="card" id="thinking-detection-utilities">
+      <div class="card-top">
+        <h3>Thinking Detection Utilities <a class="anchor" href="#thinking-detection-utilities">#</a></h3>
+      </div>
+      <ul><li>Added <code>$j9() at line 366080</code> for checking if text contains thinking triggers</li><li>Added <code>Nw1() at line 366092</code> for extracting trigger word positions</li><li>Added <code>Ew1() at line 365889</code> for splitting text into highlighted/normal segments</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

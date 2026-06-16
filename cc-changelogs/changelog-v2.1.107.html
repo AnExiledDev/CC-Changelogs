@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.107 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.107."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.107</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.107</span></h1>
+<p class="sub">This release optimizes Opus 4.6 response latency through a new thinking guidance system that reduces unnecessary extended thinking on straightforward tasks, auto-upgrades Opus 4.6 subagents to 1M context windows, and makes "still thinking" progress messages appear much sooner during long operations.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.105 → v2.1.107</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="thinking-guidance-for-opus-4-6-gradual-rollout">
+      <div class="card-top">
+        <h3>Thinking Guidance for Opus 4.6 [Gradual Rollout] <a class="anchor" href="#thinking-guidance-for-opus-4-6-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new system-level optimization for Opus 4.6 that tunes the model's extended thinking behavior, reducing unnecessary reasoning overhead on simple follow-up messages while preserving full thinking on complex tasks.</p>
+<div class="blabel">Details</div>
+<ul><li>Adds a <code>thinking_guidance</code> section to the system prompt instructing Opus 4.6 to calibrate thinking frequency based on task complexity</li><li>On follow-up turns (after the first assistant response), appends a <code>&lt;system-reminder&gt;</code> tag hinting the model to skip thinking blocks for straightforward actions</li><li>Only activates when: using Opus 4.6, thinking is not disabled, and no custom system prompt is set</li><li>Gated by server-side flag <code>loud_sugary_rock</code> — rolling out gradually</li></ul>
+<p>This should result in noticeably faster responses on simple follow-up requests (e.g., "run the tests", "fix that typo") while maintaining full reasoning depth for complex tasks that need it.</p>
+<div class="blabel">Evidence</div>
+<p>Thinking frequency tuning system (search for <code>"tune your thinking frequency"</code>) — gated by <code>loud_sugary_rock</code> in <code>clientDataCache</code>, system reminder at <code>meK</code> (search for <code>"without a thinking block"</code>)</p>
+    </article>
+    <article class="card" id="subagent-opus-4-6-auto-upgrade-to-1m-context">
+      <div class="card-top">
+        <h3>Subagent Opus 4.6 Auto-Upgrade to 1M Context <a class="anchor" href="#subagent-opus-4-6-auto-upgrade-to-1m-context">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Subagents using Opus 4.6 now automatically use the 1M context window when the feature is available, matching the behavior already offered in main conversation model selection.</p>
+<div class="blabel">Details</div>
+<ul><li>When 1M context is available and the resolved subagent model is Opus 4.6, the <code>[1m]</code> suffix is automatically appended</li><li>Applied in both the explicit model override and default model code paths of subagent model resolution</li><li>Does not apply if the model string already includes <code>[1m]</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Auto-upgrade function <code>nc4</code> (search for <code>"opus-4-6"</code> near <code>"[1m]"</code>) applied in subagent model resolution function <code>Eh6</code></p>
+    </article>
+    <article class="card" id="faster-still-thinking-progress-messages">
+      <div class="card-top">
+        <h3>Faster "Still Thinking" Progress Messages <a class="anchor" href="#faster-still-thinking-progress-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The progress messages shown during long-running operations now appear much sooner, reducing the time users wait before seeing reassurance that the model is still working.</p>
+<div class="blabel">Details</div>
+<ul><li>"Thinking a bit longer… still working on it…" — now at 10s (was 30s)</li><li>"Hang tight… really working through this one…" — now at 30s (was 60s)</li><li>"This is a harder one… it might take another minute…" — now at 50s (was 90s)</li><li>"Still going… thanks for hanging in there…" — now at 80s (was 150s)</li><li>"Taking the time to get this right… thanks for your patience…" — now at 120s (was 240s)</li></ul>
+<p>The first progress indicator now appears 3x faster than before (10s vs 30s), providing much quicker feedback during complex reasoning.</p>
+<div class="blabel">Evidence</div>
+<p>Timing thresholds in progress message array (search for <code>"Thinking a bit longer"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

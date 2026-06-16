@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.111 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.111."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.111</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.111</span></h1>
+<p class="sub">This is a major release introducing full support for <strong>Claude Opus 4.7</strong>, a new <strong>"xhigh" effort level</strong>, an <strong>interactive effort selector UI</strong>, <strong>automatic terminal theme detection</strong>, and a new <strong>proxy authentication helper</strong> for enterprise environments. Opus 4.7 becomes the default model for first-party users, with automatic remapping from Opus 4.6. The <code>/effort</code> command now supports five levels instead of four, and the Skills dialog gains a token-count sorting option. Windows users also gain session environment support, previously restricted to macOS and Linux.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.110 → v2.1.111</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">21</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">8</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">21 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="claude-opus-4-7-model-support">
+      <div class="card-top">
+        <h3>Claude Opus 4.7 Model Support <a class="anchor" href="#claude-opus-4-7-model-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Full support for the new Claude Opus 4.7 model across all provider platforms, with automatic remapping from Opus 4.6.</p>
+<div class="blabel">Usage</div>
+<pre><code># Opus 4.7 is now the default for first-party users
+claude
+
+# Explicitly select Opus 4.7
+claude --model claude-opus-4-7
+
+# Opus 4.7 with 1M context window
+claude --model opus[1m]
+
+# Opt out of automatic model remapping
+CLAUDE_CODE_DISABLE_LEGACY_MODEL_REMAP=1 claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Opus 4.7 is automatically selected as the default model for first-party users, replacing Opus 4.6</li><li>Users on Opus 4.6 will see "Model updated to Opus 4.7" with an option to opt out via <code>CLAUDE_CODE_DISABLE_LEGACY_MODEL_REMAP=1</code></li><li>The 1M context window variant is available as "Opus 4.7 (1M context)" in the model picker</li><li>Vertex AI region support added via <code>VERTEX_REGION_CLAUDE_4_7_OPUS</code> environment variable</li><li>First-time users see an onboarding banner: "Opus 4.7 is here" / "Welcome to Opus 4.7 xhigh!"</li><li>Model descriptions updated throughout: "Opus 4.7 · Most capable for complex work"</li><li>Adaptive thinking support extended to Opus 4.7</li><li>The model family reference in system prompts now reads "Claude 4.X" instead of "Claude 4.6 and 4.5"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Opus 4.7 model strings (search for <code>"claude-opus-4-7"</code>) — 0 occurrences in v2.1.110, 144 in v2.1.111. Onboarding via <code>qUY()</code> at line ~546062 (search for <code>"Opus 4.7 is here"</code>)</p>
+    </article>
+    <article class="card" id="new-xhigh-effort-level">
+      <div class="card-top">
+        <h3>New "xhigh" Effort Level <a class="anchor" href="#new-xhigh-effort-level">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new effort level called "xhigh" is added between "high" and "max", providing deeper reasoning capability exclusive to Opus 4.7.</p>
+<div class="blabel">Usage</div>
+<pre><code># Set effort via CLI flag
+claude --effort xhigh
+
+# Set effort in-session
+/effort xhigh</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The effort scale now has five levels: <code>low</code>, <code>medium</code>, <code>high</code>, <code>xhigh</code>, <code>max</code></li><li>"xhigh" is described as "Deeper reasoning than high, just below maximum (Opus 4.7 only)"</li><li>"xhigh" is the automatic default effort level when using Opus 4.7</li><li>If "xhigh" is requested on a model that doesn't support it, it falls back to "high"</li><li>The <code>effortLevel</code> setting now accepts: <code>low</code>, <code>medium</code>, <code>high</code>, <code>xhigh</code>, <code>max</code></li><li>The <code>/effort</code> command help text is updated accordingly</li></ul>
+<div class="blabel">Evidence</div>
+<p>"xhigh" effort level (search for <code>"xhigh"</code>) — 0 occurrences in v2.1.110, 40 in v2.1.111. Default logic in <code>bF1()</code> at line ~237923 (search for <code>"opus-4-7"</code> returning <code>"xhigh"</code>)</p>
+    </article>
+    <article class="card" id="interactive-effort-level-selector">
+      <div class="card-top">
+        <h3>Interactive Effort Level Selector <a class="anchor" href="#interactive-effort-level-selector">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new visual, interactive effort level picker that lets you slide between effort levels using arrow keys.</p>
+<div class="blabel">Usage</div>
+<pre><code>/effort</code></pre>
+<p>Then use <code>←</code>/<code>→</code> arrow keys to move between levels and <code>Enter</code> to confirm.</p>
+<div class="blabel">Details</div>
+<ul><li>When invoked without arguments, <code>/effort</code> opens an interactive dialog</li><li>A visual slider displays a scale from "Speed" to "Intelligence"</li><li>The current selection is highlighted with a <code>▲</code> indicator on the track</li><li>Each level renders with a distinct color and animation style (e.g., "autoAccept-shimmer" for certain levels)</li><li>Press <code>Escape</code> or <code>Ctrl+C</code> to cancel without changing</li></ul>
+<div class="blabel">Evidence</div>
+<p>Effort selector UI in <code>boY()</code> at line ~575448 (search for <code>"←/→ to change effort"</code>)</p>
+    </article>
+    <article class="card" id="auto-theme-detection-match-terminal">
+      <div class="card-top">
+        <h3>Auto Theme Detection (Match Terminal) <a class="anchor" href="#auto-theme-detection-match-terminal">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code can now automatically detect your terminal's light or dark theme and match it, using the "Auto (match terminal)" theme option.</p>
+<div class="blabel">Details</div>
+<ul><li>A new system theme watcher uses OSC 11 terminal escape sequences to query the terminal's background color</li><li>The detected luminance determines whether the terminal is "light" or "dark"</li><li>Supports multiplexers (tmux, screen) with DCS passthrough and fallback detection</li><li>Theme changes are detected dynamically — if you switch your terminal's theme, Claude Code follows</li><li>The "Auto (match terminal)" option is now available in the theme picker</li></ul>
+<div class="blabel">Evidence</div>
+<p>System theme detection via OSC 11 in <code>Wh_()</code> at line ~185609 (search for <code>"systemTheme: OSC 11"</code>) — 0 occurrences in v2.1.110, 2 in v2.1.111</p>
+    </article>
+    <article class="card" id="proxy-authentication-helper">
+      <div class="card-top">
+        <h3>Proxy Authentication Helper <a class="anchor" href="#proxy-authentication-helper">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Enterprise users behind authenticated proxies can now configure a shell command that provides proxy authentication headers, avoiding manual credential management.</p>
+<div class="blabel">Usage</div>
+<pre><code># Enable the proxy auth helper
+export CLAUDE_CODE_ENABLE_PROXY_AUTH_HELPER=1
+
+# Optionally configure the cache TTL (in milliseconds)
+export CLAUDE_CODE_PROXY_AUTH_HELPER_TTL_MS=60000</code></pre>
+<p>Configure <code>proxyAuthHelper</code> in your project or local settings to specify the shell command that outputs a <code>Proxy-Authorization</code> header value.</p>
+<div class="blabel">Details</div>
+<ul><li>When enabled, Claude Code runs the configured helper command to obtain proxy auth credentials</li><li>Credentials are cached with a configurable TTL (via <code>CLAUDE_CODE_PROXY_AUTH_HELPER_TTL_MS</code>)</li><li>If the helper is configured in project/local settings, workspace trust must be accepted before it runs</li><li>HTTP 407 (Proxy Authentication Required) responses now trigger automatic re-authentication</li><li>The <code>Proxy-Authenticate</code> header from 407 responses is passed to the helper as <code>CLAUDE_CODE_PROXY_AUTHENTICATE</code></li><li>Helper failures are logged with details and fall back to previously cached credentials</li><li>The feature is marked "EAP" (Early Access Program) in the settings description</li></ul>
+<div class="blabel">Evidence</div>
+<p>Proxy auth helper in <code>f08()</code> at line ~100631 (search for <code>"proxyAuthHelper"</code>) — 0 occurrences in v2.1.110, 7 in v2.1.111</p>
+    </article>
+    <article class="card" id="sdk-subagent-system-prompt-injection">
+      <div class="card-top">
+        <h3>SDK: Subagent System Prompt Injection <a class="anchor" href="#sdk-subagent-system-prompt-injection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>SDK users can now append custom system prompt content to all Task-tool subagents via a new <code>appendSubagentSystemPrompt</code> option.</p>
+<div class="blabel">Usage</div>
+<pre><code>// In SDK session options
+{
+  appendSubagentSystemPrompt: &quot;Your custom instructions here&quot;
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The <code>appendSubagentSystemPrompt</code> field is propagated to nested subagents automatically</li><li>Gated by the <code>CLAUDE_CODE_ENABLE_APPEND_SUBAGENT_PROMPT</code> environment variable</li><li>Allows SDK consumers to inject additional instructions into every subagent without modifying the main system prompt</li></ul>
+<div class="blabel">Evidence</div>
+<p>SDK subagent prompt support (search for <code>"appendSubagentSystemPrompt"</code>) — 0 occurrences in v2.1.110, 13 in v2.1.111</p>
+    </article>
+    <article class="card" id="sdk-1-hour-cache-ttl-and-query-depth-configuration">
+      <div class="card-top">
+        <h3>SDK: 1-Hour Cache TTL and Query Depth Configuration <a class="anchor" href="#sdk-1-hour-cache-ttl-and-query-depth-configuration">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New SDK schema fields for controlling cache behavior and query depth.</p>
+<div class="blabel">Details</div>
+<ul><li><code>is1hCacheTTL</code>: Boolean flag (default <code>false</code>) to enable 1-hour cache TTL instead of the default 5-minute TTL</li><li><code>queryDepth</code>: Numeric field for configuring query depth in SDK sessions</li><li>These are passed as query parameters in API requests</li></ul>
+<div class="blabel">Evidence</div>
+<p>Cache TTL config (search for <code>"is1hCacheTTL"</code>) — 0 occurrences in v2.1.110, 6 in v2.1.111</p>
+    </article>
+    <article class="card" id="skills-dialog-sort-by-token-count">
+      <div class="card-top">
+        <h3>Skills Dialog: Sort by Token Count <a class="anchor" href="#skills-dialog-sort-by-token-count">#</a></h3>
+      </div>
+      <p>The Skills management dialog (<code>/skills</code>) now supports sorting skills by their token count. Press <code>t</code> to toggle between alphabetical sorting and token-count sorting. When sorted by tokens, the subtitle displays "· sorted by tokens". This helps identify which skills consume the most context.</p>
+<div class="blabel">Evidence</div>
+<p>Token sorting in <code>UlK()</code> at line ~554320 (search for <code>"settings:sortByTokens"</code>) — 0 occurrences in v2.1.110, 4 in v2.1.111</p>
+    </article>
+    <article class="card" id="windows-session-environment-support">
+      <div class="card-top">
+        <h3>Windows Session Environment Support <a class="anchor" href="#windows-session-environment-support">#</a></h3>
+      </div>
+      <p>The restriction preventing session environment initialization on Windows has been removed. Previously, users saw "Session environment not yet supported on Windows" — this message no longer appears, and session environments now work on all platforms.</p>
+<div class="blabel">Evidence</div>
+<p>Removed guard (search for <code>"Session environment not yet supported on Windows"</code>) — present in v2.1.110, absent in v2.1.111</p>
+    </article>
+    <article class="card" id="ultrareview-enhancements">
+      <div class="card-top">
+        <h3>Ultrareview Enhancements <a class="anchor" href="#ultrareview-enhancements">#</a></h3>
+      </div>
+      <p>The <code>/ultrareview</code> command (which existed since v2.1.110) receives several improvements:</p>
+<ul><li>Dynamic cost and duration estimates are now fetched from server configuration instead of being hardcoded (previously "~$10", now configurable like "$10-$20")</li><li>Billing messaging now shows "This review bills as Extra Usage" with cost estimates and a link to billing documentation</li><li>Diff stat scope information is displayed when reviewing a branch</li><li>Bundle size checking warns if the repo is too large to bundle: "Repo is too large to bundle. Push a PR and use <code>/ultrareview &lt;PR#&gt;</code> instead."</li><li>Improved error handling with <code>onBundleFail</code> callbacks and session tracking (<code>sessionId</code>, <code>sessionUrl</code>)</li><li>Feature availability is gated by <code>Yu6()?.enabled === !0</code>, allowing server-side control</li></ul>
+<div class="blabel">Evidence</div>
+<p>Ultrareview enhancements (search for <code>"Ultrareview is currently unavailable."</code>) — new error message in v2.1.111. Cost config via <code>Au6()</code> at line ~552336 (search for <code>"$10-$20"</code>)</p>
+    </article>
+    <article class="card" id="lsp-diagnostics-management">
+      <div class="card-top">
+        <h3>LSP Diagnostics Management <a class="anchor" href="#lsp-diagnostics-management">#</a></h3>
+      </div>
+      <p>The Language Server Protocol manager now tracks document versions with a <code>getDocumentVersion</code> method, ensuring proper version incrementing for <code>didOpen</code> and <code>didChange</code> notifications. Additionally, a new diagnostics purging system drops stale <code>publishDiagnostics</code> entries when files change, with logging: "LSP Diagnostics: Purged N pending entry(ies) referencing ..."</p>
+<div class="blabel">Evidence</div>
+<p>Diagnostics purging in <code>kI8()</code> at line ~293692 (search for <code>"LSP Diagnostics: Purged"</code>)</p>
+    </article>
+    <article class="card" id="sleep-inhibitor-naming">
+      <div class="card-top">
+        <h3>Sleep Inhibitor Naming <a class="anchor" href="#sleep-inhibitor-naming">#</a></h3>
+      </div>
+      <p>The sleep prevention system has been renamed from "caffeinate" to "sleep inhibitor" for cross-platform clarity. Status messages now read:</p>
+<ul><li>"Stopped sleep inhibitor, allowing sleep" (was "Stopped caffeinate, allowing sleep")</li><li>"Restarting sleep inhibitor to maintain prevention" (was "Restarting caffeinate to maintain sleep prevention")</li><li>"sleep inhibitor spawn error:" (was "caffeinate spawn error:")</li></ul>
+<div class="blabel">Evidence</div>
+<p>Renamed messages (search for <code>"sleep inhibitor"</code>) — 0 occurrences in v2.1.110, 3 in v2.1.111</p>
+    </article>
+    <article class="card" id="clear-command-description-clarified">
+      <div class="card-top">
+        <h3>/clear Command Description Clarified <a class="anchor" href="#clear-command-description-clarified">#</a></h3>
+      </div>
+      <p>The <code>/clear</code> command description now reads: "Start a new session with empty context; previous session stays on disk (resumable with /resume)" — replacing the previous "Start fresh: discard the current conversation and context". This clarifies that previous sessions are preserved and resumable.</p>
+<div class="blabel">Evidence</div>
+<p>Updated description (search for <code>"resumable with /resume"</code>)</p>
+    </article>
+    <article class="card" id="improved-version-constraint-error-messages">
+      <div class="card-top">
+        <h3>Improved Version Constraint Error Messages <a class="anchor" href="#improved-version-constraint-error-messages">#</a></h3>
+      </div>
+      <p>Plugin dependency version conflict messages are now more specific, with three distinct error types:</p>
+<ul><li>"has conflicting version requirements (no version satisfies all of: ...)" for disjoint ranges</li><li>"has version requirements too complex to intersect — simplify the ranges: ..." for overly complex constraints</li><li>"has an invalid version requirement among: ..." for malformed version strings</li></ul>
+<div class="blabel">Evidence</div>
+<p>New error messages in <code>ZS8()</code> at line ~257651 (search for <code>"has conflicting version requirements (no version satisfies all of:"</code>)</p>
+    </article>
+    <article class="card" id="improved-bash-command-safety-analysis">
+      <div class="card-top">
+        <h3>Improved Bash Command Safety Analysis <a class="anchor" href="#improved-bash-command-safety-analysis">#</a></h3>
+      </div>
+      <p>Shell command safety checks now categorize different types of risks with specific <code>bashMissKind</code> tags:</p>
+<ul><li><code>multi-cd</code> for commands with multiple directory changes</li><li><code>cd-compound-redirect</code> for compound cd commands with output redirection</li><li><code>shell-operators</code> for dangerous shell metacharacters</li><li>Glob vs variable expansion now distinguished: "Command contains unquoted variable expansion" replaces the previous "Command contains unquoted glob or variable expansion"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Bash safety categorization (search for <code>"bashMissKind"</code>)</p>
+    </article>
+    <article class="card" id="faster-fuzzy-matching-with-damerau-levenshtein">
+      <div class="card-top">
+        <h3>Faster Fuzzy Matching with Damerau-Levenshtein <a class="anchor" href="#faster-fuzzy-matching-with-damerau-levenshtein">#</a></h3>
+      </div>
+      <p>The string distance algorithm used for fuzzy matching (e.g., command suggestions for typos) has been upgraded from standard Levenshtein distance to Damerau-Levenshtein distance, which also considers character transpositions. A configurable <code>maxEditDistance</code> parameter is now available.</p>
+<div class="blabel">Evidence</div>
+<p>Damerau-Levenshtein algorithm in <code>EKY()</code> at line ~421613</p>
+    </article>
+    <article class="card" id="skill-tool-description-improvements">
+      <div class="card-top">
+        <h3>Skill Tool Description Improvements <a class="anchor" href="#skill-tool-description-improvements">#</a></h3>
+      </div>
+      <p>The Skill tool's description and parameter guidance have been refined:</p>
+<ul><li>Skill name parameter now reads: "The name of a skill from the available-skills list. Do not guess names."</li><li>The tool now instructs: "Only invoke a skill that appears in that list, or one the user explicitly typed as <code>/&lt;name&gt;</code> in their message. Never guess or invent a skill name from training data"</li><li>Simplified invocation guidance with explicit instructions for plugin-namespaced skills</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated skill tool description (search for <code>"Do not guess names"</code>)</p>
+    </article>
+    <article class="card" id="mcp-tool-permission-policies">
+      <div class="card-top">
+        <h3>MCP Tool Permission Policies <a class="anchor" href="#mcp-tool-permission-policies">#</a></h3>
+      </div>
+      <p>MCP server tool permissions now support a <code>permission_policy</code> field carried on <code>mcp_set_servers</code> for remote servers, allowing administrators to pre-configure allowed/denied tool lists for MCP tools.</p>
+<div class="blabel">Evidence</div>
+<p>Permission policies (search for <code>"permission_policy"</code>) — 2 occurrences in v2.1.110, 5 in v2.1.111</p>
+    </article>
+    <article class="card" id="powershell-tool-now-feature-flagged-on-windows">
+      <div class="card-top">
+        <h3>PowerShell Tool Now Feature-Flagged on Windows <a class="anchor" href="#powershell-tool-now-feature-flagged-on-windows">#</a></h3>
+      </div>
+      <p>The PowerShell tool on Windows is now controlled by the <code>tengu_cobalt_ridge</code> feature flag instead of being always enabled. Non-Windows platforms continue to respect the <code>CLAUDE_CODE_USE_POWERSHELL_TOOL</code> environment variable. This allows server-side rollout control of the PowerShell tool experience.</p>
+<div class="blabel">Evidence</div>
+<p>Feature flag in <code>ly6()</code> at line ~250722 (search for <code>"tengu_cobalt_ridge"</code>)</p>
+    </article>
+    <article class="card" id="accept-encoding-header-added-to-requests">
+      <div class="card-top">
+        <h3>Accept-Encoding Header Added to Requests <a class="anchor" href="#accept-encoding-header-added-to-requests">#</a></h3>
+      </div>
+      <p>HTTP requests now include an <code>Accept-Encoding: identity</code> header across transport types, which may improve compatibility with certain proxy configurations.</p>
+<div class="blabel">Evidence</div>
+<p>New header (search for <code>"Accept-Encoding"</code>) — 8 occurrences in v2.1.110, 14 in v2.1.111</p>
+    </article>
+    <article class="card" id="system-prompt-streamlining">
+      <div class="card-top">
+        <h3>System Prompt Streamlining <a class="anchor" href="#system-prompt-streamlining">#</a></h3>
+      </div>
+      <p>Several large embedded documentation blocks have been removed from the system prompt and likely externalized:</p>
+<ul><li>Claude API cURL/HTTP documentation (~220 lines)</li><li>Claude API Python documentation (~420 lines)</li><li>Streaming TypeScript documentation (~178 lines)</li><li>Prompt Caching documentation (~171 lines)</li><li>Tool Use Concepts documentation (~287 lines)</li><li>TypeScript API documentation (~333 lines)</li></ul>
+<p>This reduces the token footprint of the system prompt. The documentation content is now served from external skill files or live documentation sources.</p>
+<div class="blabel">Evidence</div>
+<p>Removed documentation blocks (search for <code>"# Claude API — cURL"</code>, <code>"# Claude API — Python"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed case-insensitive path comparison on Windows to correctly handle path matching logic (search for <code>"platform detection and case normalization"</code>)</li></ul>
+<ul><li>Fixed delete-word-before behavior in REPL editor: when the line is empty, the action is now a no-op instead of potentially causing unexpected behavior (search for <code>"delete-word-before"</code>)</li></ul>
+<ul><li>Fixed retry error display to detect SSL errors and show configurable max retries (search for <code>"SSL error detection"</code>)</li></ul>
+<ul><li>Fixed git index refresh to add an early-return guard when the index is null and a prior refresh has already occurred, preventing unnecessary refreshes (search for <code>"lastRefreshMs"</code>)</li></ul>
+<ul><li>Fixed Windows path glob pattern handling to preserve leading slashes instead of stripping them (search for <code>"relativePattern"</code>)</li></ul>
+<ul><li>Fixed Node component rendering to display the <code>name</code> property instead of the entire object (search for <code>"q.name property"</code>)</li></ul>
+<ul><li>Fixed path validation to add null safety check before path derivation, preventing potential crashes when the path is unavailable (search for <code>"if (!K) return !1"</code>)</li></ul>
+<ul><li>Removed stale file tracking length check that could cause early returns, allowing file operations to proceed even with an empty cached file list (search for <code>"cachedTrackedFiles"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>Opus 4.6 users will be automatically remapped to Opus 4.7 on upgrade. To opt out of this remapping, set the environment variable <code>CLAUDE_CODE_DISABLE_LEGACY_MODEL_REMAP=1</code>. The Opus 4.6 model remains available via the model picker as "Opus 4.6" and "Opus 4.6 (1M context)".</p>
+<p>The default effort level for Opus 4.7 is "xhigh". If you previously had your effort level pinned to a specific value, it will be preserved. The new <code>unpinOpus47LaunchEffort</code> configuration flag allows the system to auto-adjust effort on first use of the <code>/effort</code> command.</p>
+<p>The commit message template has been updated from "Claude Opus 4.6" to "Claude Opus 4.7".</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

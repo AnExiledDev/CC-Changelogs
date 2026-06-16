@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.62 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.62."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.62</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.62</span></h1>
+<p class="sub">This release introduces model deprecation warnings for Claude 3 Opus and Claude 3.7 Sonnet, enhances session history search with fuzzy matching across message content, adds a new Slack app installation command, and improves the sandbox configuration with PTY and git config access options.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.61 → v2.0.62</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">13</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="model-deprecation-warnings">
+      <div class="card-top">
+        <h3>Model Deprecation Warnings <a class="anchor" href="#model-deprecation-warnings">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude Code now displays proactive warnings when using models approaching retirement dates. <strong>Details:</strong></p>
+<ul><li>Warns users when using Claude 3 Opus (retiring January 5-15, 2026 depending on provider)</li><li>Warns users when using Claude 3.7 Sonnet (retiring February-May 2026 depending on provider)</li><li>Displays as a high-priority notification: "⚠ [Model Name] will be retired on [Date]. Consider switching to a newer model."</li><li>Different retirement dates based on provider (Bedrock, Vertex, or first-party API)</li><li><strong>Evidence</strong>: <code>$x7()</code> at line 483888, <code>jX1()</code> at line 483910, <code>KW9()</code> at line 483919</li></ul>
+    </article>
+    <article class="card" id="slack-app-installation-command">
+      <div class="card-top">
+        <h3>Slack App Installation Command <a class="anchor" href="#slack-app-installation-command">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New <code>/install-slack-app</code> command to easily install the Claude Slack app. <strong>How to use:</strong></p>
+<pre><code>/install-slack-app</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Opens the Slack Marketplace page for Claude in your browser</li><li>Controlled by <code>code_slack_app_install_banner</code> feature flag</li><li><strong>Evidence</strong>: <code>bH9</code> at line 501391, <code>hH9</code> at line 501394</li></ul>
+    </article>
+    <article class="card" id="chrome-extension-detection">
+      <div class="card-top">
+        <h3>Chrome Extension Detection <a class="anchor" href="#chrome-extension-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude Code can now detect if the Claude for Chrome extension is installed and notify users if not. <strong>Details:</strong></p>
+<ul><li>Detects extension across multiple Chrome profiles</li><li>Shows notification: "Chrome extension not detected · https://claude.ai/chrome to install"</li><li>Works on macOS, Windows, and Linux</li><li><strong>Evidence</strong>: <code>qG9()</code> at line 480314, <code>Zk7()</code> at line 480347, <code>NG9()</code> at line 480378</li></ul>
+    </article>
+    <article class="card" id="plugin-scope-installation">
+      <div class="card-top">
+        <h3>Plugin Scope Installation <a class="anchor" href="#plugin-scope-installation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Plugins can now be installed with different scopes: user, project, or local. <strong>How to use:</strong> When installing a plugin via the UI, you can now choose:</p>
+<ul><li>"Install for you (user scope)" - Available across all projects</li><li>"Install for all collaborators on this repository (project scope)" - Shared via <code>.claude/settings.json</code></li><li>"Install for you, in this repo only (local scope)" - Local only, not committed</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Plugin installation now tracks scope in <code>installed_plugins_v2.json</code></li><li>Supports migration from V1 plugin installation format</li><li><strong>Evidence</strong>: <code>_G9()</code> at line 480734, <code>rE()</code> at line 483476, <code>eI9()</code> at line 483520, <code>Ez9()</code> at line 511472</li></ul>
+    </article>
+    <article class="card" id="enhanced-session-history-search">
+      <div class="card-top">
+        <h3>Enhanced Session History Search <a class="anchor" href="#enhanced-session-history-search">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Session history search now supports fuzzy matching across actual message content, not just titles and summaries. <strong>Details:</strong></p>
+<ul><li>Uses Fuse.js for fuzzy matching with configurable threshold</li><li>Shows matching snippets highlighted in search results</li><li>Searches across message content from conversations</li><li>Results sorted by combination of recency and match score</li><li><strong>Evidence</strong>: <code>Mf7()</code> at line 503542, <code>Lf7()</code> at line 503527, <code>Nf7()</code> at line 503053, Fuse search implementation at line 6186</li></ul>
+    </article>
+    <article class="card" id="improved-plugin-discovery-ui">
+      <div class="card-top">
+        <h3>Improved Plugin Discovery UI <a class="anchor" href="#improved-plugin-discovery-ui">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The plugin browser now includes pagination and improved scrolling for better navigation. <strong>Details:</strong></p>
+<ul><li>Pagination indicator shows current position (e.g., "(1/15)")</li><li>Visual scroll indicators for "more above" and "more below"</li><li>Improved keyboard navigation with j/k support</li><li><strong>Evidence</strong>: <code>js()</code> at line 510132, <code>Ah7</code> (page size = 5) at line 510206</li></ul>
+    </article>
+    <article class="card" id="plugin-error-display">
+      <div class="card-top">
+        <h3>Plugin Error Display <a class="anchor" href="#plugin-error-display">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced plugin error messages with categorized error types and suggested fixes. <strong>Details:</strong></p>
+<ul><li>Errors categorized by type: path-not-found, git-auth-failed, network-error, manifest-parse-error, etc.</li><li>Provides actionable suggestions for each error type</li><li><strong>Evidence</strong>: <code>Yh7()</code> at line 512782, <code>Jh7()</code> at line 512822, <code>Mz9()</code> at line 512863</li></ul>
+    </article>
+    <article class="card" id="enterplanmode-tool-enhancement">
+      <div class="card-top">
+        <h3>EnterPlanMode Tool Enhancement <a class="anchor" href="#enterplanmode-tool-enhancement">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The EnterPlanMode tool description has been significantly expanded with better guidance on when to use it. <strong>Details:</strong></p>
+<ul><li>Now explicitly recommends using plan mode proactively for non-trivial tasks</li><li>Adds "New Feature Implementation" and "Code Modifications" categories</li><li>Provides more nuanced examples including "Add a delete button to the user profile"</li><li>Changes from "err on the side of starting implementation" to "err on the side of planning"</li><li><strong>Evidence</strong>: <code>nc2</code> at line 435451</li></ul>
+    </article>
+    <article class="card" id="sandbox-pty-support">
+      <div class="card-top">
+        <h3>Sandbox PTY Support <a class="anchor" href="#sandbox-pty-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> macOS sandbox now supports pseudo-terminal (PTY) operations when configured. <strong>Details:</strong></p>
+<ul><li>New <code>allowPty</code> configuration option</li><li>Enables <code>/dev/ptmx</code> and <code>/dev/ttysXXX</code> device access</li><li>Required for programs that need terminal control</li><li><strong>Evidence</strong>: <code>m64()</code> at line 49306, PTY sandbox rules at lines 5602-5612</li></ul>
+    </article>
+    <article class="card" id="sandbox-git-config-access-control">
+      <div class="card-top">
+        <h3>Sandbox Git Config Access Control <a class="anchor" href="#sandbox-git-config-access-control">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New <code>allowGitConfig</code> option to control sandbox access to <code>.git/config</code> files. <strong>Details:</strong></p>
+<ul><li>Defaults to false (no access)</li><li>When disabled, <code>.git/config</code> is excluded from sandbox read allowlist</li><li>Accessible via <code>filesystem.allowGitConfig</code> configuration</li><li><strong>Evidence</strong>: <code>xc0()</code> at line 49880, sandbox path handling at line 5178</li></ul>
+    </article>
+    <article class="card" id="ui-rendering-optimization">
+      <div class="card-top">
+        <h3>UI Rendering Optimization <a class="anchor" href="#ui-rendering-optimization">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved terminal UI rendering with dirty node tracking to avoid unnecessary redraws. <strong>Details:</strong></p>
+<ul><li>Nodes now track dirty state to skip unchanged subtrees during render</li><li>Optimized style comparison to avoid unnecessary updates</li><li><strong>Evidence</strong>: <code>ue()</code> at line 194210, <code>Vu1()</code> at line 194183, <code>Fu1()</code> at line 194187</li></ul>
+    </article>
+    <article class="card" id="settings-source-tracking">
+      <div class="card-top">
+        <h3>Settings Source Tracking <a class="anchor" href="#settings-source-tracking">#</a></h3>
+      </div>
+      <ul><li>Added <code>flagSettings</code> as a new settings scope for flag-based settings</li><li>Settings now track their source (managed, user, project, local, flag) for better debugging</li><li><strong>Evidence</strong>: <code>flagSettings</code> at line 2253, scope handling at lines 2476-2481</li></ul>
+    </article>
+    <article class="card" id="plugin-installation-improvements">
+      <div class="card-top">
+        <h3>Plugin Installation Improvements <a class="anchor" href="#plugin-installation-improvements">#</a></h3>
+      </div>
+      <ul><li>Plugin installation now uses versioned paths consistently</li><li>Better handling of local vs. remote plugins during installation</li><li>Migration support from V1 to V2 plugin installation format</li><li><strong>Evidence</strong>: <code>XV0()</code> at line 480814, <code>zk7()</code> at line 480667</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

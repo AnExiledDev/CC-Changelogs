@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.54 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.54."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.54</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.54</span></h1>
+<p class="sub">This is a targeted patch release that fixes file handling on Windows. Three separate file-open operations now use portable string mode flags instead of POSIX numeric constants, resolving potential issues with command output logging and task output on Windows.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.53 → v2.1.54</b></span>    </div>
+    <div class="stats">
+  <div class="stat f zero"><div class="n">0</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li><strong>Fixed file open operations on Windows for bash command output</strong>: The bash command runner now opens its output log file using the portable string flag <code>"w"</code> (write) on Windows, instead of the bitwise POSIX flags <code>O_WRONLY | O_CREAT | O_TRUNC</code>, which may not behave correctly on Windows. Non-Windows platforms continue to use the POSIX flags with <code>O_NOFOLLOW</code> for symlink safety. (search for <code>process.platform === "win32"</code> in <code>pj1</code> at line ~269290)</li></ul>
+<ul><li><strong>Fixed file open operations on Windows for task output appending</strong>: The task output writer class now opens files using the portable string flag <code>"a"</code> (append) on Windows, instead of the bitwise POSIX flags <code>O_WRONLY | O_APPEND | O_CREAT</code>. Previously, there was no Windows-specific handling in this code path. (search for <code>process.platform === "win32"</code> in class <code>z31</code> at line ~130992)</li></ul>
+<ul><li><strong>Fixed file open operations on Windows for task output creation</strong>: The task output file creation function now uses the portable string flag <code>"wx"</code> (exclusive write) on Windows, instead of the bitwise POSIX flags <code>O_WRONLY | O_CREAT | O_EXCL</code>. This ensures exclusive-create semantics work correctly on Windows. (search for <code>process.platform === "win32"</code> in <code>bq8</code> at line ~131075)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

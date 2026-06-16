@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.50 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.50."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.50</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.50</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.49 → v0.2.50</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="mcp-server-project-scope">
+      <div class="card-top">
+        <h3>MCP Server Project Scope <a class="anchor" href="#mcp-server-project-scope">#</a></h3>
+      </div>
+      <ul><li><strong>New "project" scope for MCP servers</strong>: You can now add MCP servers to <code>.mcp.json</code> files and commit them to your repository. This allows teams to share MCP server configurations as part of their project.</li></ul>
+<div class="blabel">Example usage</div>
+<pre><code>  claude mcp add --scope project</code></pre>
+<p>This creates or updates a <code>.mcp.json</code> file in your project root that can be committed to version control.</p>
+    </article>
+    <article class="card" id="memory-system-enhancements">
+      <div class="card-top">
+        <h3>Memory System Enhancements <a class="anchor" href="#memory-system-enhancements">#</a></h3>
+      </div>
+      <ul><li><strong>Memory type selector</strong>: When creating memories, you can now choose between three types:</li><li><strong>Project Memory</strong>: Shared in the project repository (stored in <code>CLAUDE.md</code>)</li><li>Example: "Run lint with the following command after major edits: npm run lint"</li><li><strong>Local Memory</strong>: Private to you in this project (stored in <code>CLAUDE.local.md</code>)</li><li>Example: "Use my sandbox URL for testing: https://myapp.local"</li><li><strong>User Memory</strong>: Available in all your projects (stored in <code>~/.claude/CLAUDE.md</code>)</li><li>Example: "Don't add new comments when editing code"</li></ul>
+<p>The memory selector UI provides arrow key navigation and clear descriptions of each memory type's scope.</p>
+    </article>
+    <article class="card" id="notebook-editing-improvements">
+      <div class="card-top">
+        <h3>Notebook Editing Improvements <a class="anchor" href="#notebook-editing-improvements">#</a></h3>
+      </div>
+      <ul><li><strong>Enhanced Jupyter notebook cell editing</strong>: New dedicated UI for notebook cell operations with better visual feedback</li><li>Supports insert, delete, and replace operations on notebook cells</li><li>Shows cell type (code or markdown) and index information</li><li>Provides syntax-highlighted previews of cell contents</li><li>Displays diffs for cell replacements</li></ul>
+    </article>
+    <article class="card" id="git-operation-tracking">
+      <div class="card-top">
+        <h3>Git Operation Tracking <a class="anchor" href="#git-operation-tracking">#</a></h3>
+      </div>
+      <ul><li><strong>Automatic git operation analytics</strong>: The CLI now tracks when you perform git commits and create pull requests through the bash tool, providing better insights into your workflow patterns.</li></ul>
+    </article>
+    <article class="card" id="file-path-handling">
+      <div class="card-top">
+        <h3>File Path Handling <a class="anchor" href="#file-path-handling">#</a></h3>
+      </div>
+      <ul><li><strong>Better support for files with spaces</strong>: The bash tool now properly handles file paths containing spaces by automatically quoting them</li></ul>
+<p>Example:</p>
+<pre><code>  cd &quot;/Users/name/My Documents&quot;  # Correctly handled
+  python &quot;/path/with spaces/script.py&quot;  # Correctly handled</code></pre>
+    </article>
+    <article class="card" id="input-system">
+      <div class="card-top">
+        <h3>Input System <a class="anchor" href="#input-system">#</a></h3>
+      </div>
+      <ul><li><strong>Refined keyboard shortcuts</strong>: The input system has been optimized with better handling of escape sequences and control keys</li></ul>
+    </article>
+    <article class="card" id="token-usage-warnings">
+      <div class="card-top">
+        <h3>Token Usage Warnings <a class="anchor" href="#token-usage-warnings">#</a></h3>
+      </div>
+      <ul><li><strong>New token threshold warnings</strong>: The system now provides warnings when approaching token limits to help manage long conversations</li></ul>
+    </article>
+    <article class="card" id="removed-features">
+      <div class="card-top">
+        <h3>Removed Features <a class="anchor" href="#removed-features">#</a></h3>
+      </div>
+      <ul><li>Removed several internal memory management functions that were replaced by the new memory type selector</li><li>Removed unused debugging and configuration variables</li><li>Consolidated import statements for better module organization</li></ul>
+    </article>
+    <article class="card" id="internal-improvements">
+      <div class="card-top">
+        <h3>Internal Improvements <a class="anchor" href="#internal-improvements">#</a></h3>
+      </div>
+      <ul><li>Streamlined the CLAUDE.md file discovery system to support the new three-tier memory architecture</li><li>Improved error handling for file operations</li><li>Better organization of keyboard input handling code</li></ul>
+    </article>
+    <article class="card" id="mcp-scope-naming-from-v0-2-49">
+      <div class="card-top">
+        <h3>MCP Scope Naming (from v0.2.49) <a class="anchor" href="#mcp-scope-naming-from-v0-2-49">#</a></h3>
+      </div>
+      <p>Note: The previous version (v0.2.49) renamed MCP server scopes:</p>
+<ul><li>Previous "project" scope → now "local"</li><li>Previous "global" scope → now "user"</li></ul>
+<p>This version (v0.2.50) introduces a new "project" scope that allows committing MCP configurations to repositories.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed issues with notebook cell editing UI layout</li><li>Improved handling of special characters in file paths</li><li>Better error messages for invalid MCP scope specifications</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

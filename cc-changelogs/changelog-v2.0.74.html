@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.74 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.74."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.74</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.74</span></h1>
+<p class="sub">This release adds agentic session search with AI-powered matching, automatic LSP plugin recommendations, and Shift+Enter keybinding support for Kitty, Alacritty, Zed, and Warp terminals. It also includes security hardening for process substitution in bash commands, performance improvements for large git diffs, and the removal of the experimental teammate/swarm feature.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.73 → v2.0.74</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="agentic-session-search">
+      <div class="card-top">
+        <h3>Agentic Session Search <a class="anchor" href="#agentic-session-search">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>AI-powered search that semantically understands your session history to find relevant past conversations.</p>
+<p>Usage: In the session picker, type a search query and the system now uses Claude to intelligently match sessions based on meaning, not just keywords.</p>
+<div class="blabel">Details</div>
+<ul><li>Searches across session titles, tags, branches, summaries, and transcript content</li><li>Prioritizes exact tag matches, then partial matches, then semantic similarity</li><li>Uses a dedicated prompt to rank sessions by relevance</li><li>Can cancel search with Escape while in progress</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>dbA()</code> at line 500168 (agentic search function, contains <code>"Agentic search"</code> log messages and <code>N77</code> system prompt)</p>
+    </article>
+    <article class="card" id="lsp-plugin-recommendations">
+      <div class="card-top">
+        <h3>LSP Plugin Recommendations <a class="anchor" href="#lsp-plugin-recommendations">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Automatic recommendations for LSP plugins based on files you're working with, with one-click installation.</p>
+<p>Usage: When you open a file type that could benefit from LSP support, a prompt offers to install a matching plugin:</p>
+<pre><code>LSP Plugin Recommendation
+─────────────────────────
+Plugin: typescript-lsp
+Triggered by: .ts files
+
+Would you like to install this LSP plugin?
+&gt; Yes, install typescript-lsp
+  No, not now
+  Never for typescript-lsp
+  Disable all LSP recommendations</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Checks if required binary exists before recommending</li><li>Prioritizes official marketplace plugins</li><li>Remembers "never suggest" preferences per plugin</li><li>Auto-disables after 3 consecutive ignored recommendations</li><li>28-second timeout before auto-dismissing</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>y29()</code> at line 472686 (recommendation lookup, contains <code>"[lspRecommendation]"</code> logging), <code>g29()</code> at line 472891 (UI component with <code>"LSP Plugin Recommendation"</code> title)</p>
+    </article>
+    <article class="card" id="terminal-keybinding-setup-kitty-alacritty-zed-and-warp">
+      <div class="card-top">
+        <h3>Terminal Keybinding Setup: Kitty, Alacritty, Zed, and Warp <a class="anchor" href="#terminal-keybinding-setup-kitty-alacritty-zed-and-warp">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p><code>/terminal-setup</code> now supports configuring Shift+Enter keybindings for Kitty, Alacritty, Zed terminals, plus guidance for Warp.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude
+&gt; /terminal-setup</code></pre>
+<div class="blabel">Details</div>
+<ul><li><strong>Kitty</strong>: Adds <code>map shift+enter send_text all \e\r</code> to <code>~/.config/kitty/kitty.conf</code></li><li><strong>Alacritty</strong>: Adds keyboard binding to <code>~/.config/alacritty/alacritty.toml</code></li><li><strong>Zed</strong>: Adds Terminal context binding to <code>~/.config/zed/keymap.json</code></li><li><strong>Warp</strong>: Provides manual configuration instructions (Warp doesn't support custom Shift+Enter)</li><li>Creates backups before modifying existing configs</li><li>Warns if existing Shift+Enter binding conflicts</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>NB3()</code> at line 196977 (Kitty installer, contains <code>"Installed Kitty Shift+Enter key binding"</code>), <code>LB3()</code> at line 197031 (Alacritty installer), <code>MB3()</code> at line 197098 (Zed installer), <code>OB3()</code> at line 197093 (Warp guidance)</p>
+    </article>
+    <article class="card" id="plugin-install-count-caching">
+      <div class="card-top">
+        <h3>Plugin Install Count Caching <a class="anchor" href="#plugin-install-count-caching">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Plugin marketplace now caches install counts for faster browsing.</p>
+<div class="blabel">Details</div>
+<ul><li>Caches are stored in the plugins config directory</li><li>24-hour cache expiry to keep data reasonably fresh</li><li>Improves plugin browser responsiveness</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>RG7()</code> at line 507573 (cache reader with <code>"Install counts cache"</code> messages)</p>
+    </article>
+    <article class="card" id="large-git-diff-performance-optimization">
+      <div class="card-top">
+        <h3>Large Git Diff Performance Optimization <a class="anchor" href="#large-git-diff-performance-optimization">#</a></h3>
+      </div>
+      <p>When working with large diffs (&gt;500 files changed), Claude Code now uses <code>git diff --shortstat</code> first to quickly determine file counts before fetching full diff details. This prevents timeouts on very large changesets.</p>
+<div class="blabel">Evidence</div>
+<p><code>ks5()</code> at line 448558 (parses shortstat format with <code>filesCount</code>, <code>linesAdded</code>, <code>linesRemoved</code>), modified <code>Pl2()</code> at line 448405 (uses <code>Ps5 = 500</code> threshold)</p>
+    </article>
+    <article class="card" id="process-substitution-security-check">
+      <div class="card-top">
+        <h3>Process Substitution Security Check <a class="anchor" href="#process-substitution-security-check">#</a></h3>
+      </div>
+      <p>Bash commands using process substitution (<code>&gt;(...)</code> or <code>&lt;(...)</code>) now require manual approval, as these can execute arbitrary commands that bypass normal validation.</p>
+<div class="blabel">Evidence</div>
+<p>Modified <code>gX1()</code> at line 412086 (contains <code>"Process substitution (&gt;(...) or &lt;(...)) can execute arbitrary commands and requires manual approval"</code>)</p>
+    </article>
+    <article class="card" id="mcp-tool-token-tracking-improvements">
+      <div class="card-top">
+        <h3>MCP Tool Token Tracking Improvements <a class="anchor" href="#mcp-tool-token-tracking-improvements">#</a></h3>
+      </div>
+      <p>Token counting for MCP tools now tracks which tools are actually loaded vs. deferred, providing more accurate context budget reporting when tool search is enabled.</p>
+<div class="blabel">Evidence</div>
+<p><code>jyA()</code> at line 402721 (returns <code>mcpToolTokens</code>, <code>deferredToolTokens</code>, <code>loadedMcpToolNames</code>)</p>
+    </article>
+    <article class="card" id="queued-message-preview-improvements">
+      <div class="card-top">
+        <h3>Queued Message Preview Improvements <a class="anchor" href="#queued-message-preview-improvements">#</a></h3>
+      </div>
+      <p>The UI for queued messages now displays a more compact preview with better layout handling.</p>
+<div class="blabel">Evidence</div>
+<p><code>Bt2()</code> at line 463428 (queued message container with <code>isQueued</code> context)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed thinking trigger word highlighting in user messages to properly segment text around trigger locations (<code>oF0()</code> at line 405859, <code>$o2()</code> at line 452842)</li></ul>
+    </article>
+    <article class="card" id="teammate-swarm-feature-removed">
+      <div class="card-top">
+        <h3>Teammate/Swarm Feature Removed <a class="anchor" href="#teammate-swarm-feature-removed">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The experimental teammate/swarm functionality has been completely removed from this release. This includes:</p>
+<ul><li><code>TeammateTool</code> and all spawn/assignTask operations</li><li><code>TeammateMailbox</code> communication system</li><li>Swarm permission polling</li><li>Plan mode swarm launching options</li><li><code>CLAUDE_CODE_AGENT_ID</code> environment variable handling for teammates</li></ul>
+<p>If you were using the swarm feature, this functionality is no longer available. The agent/subagent system (<code>Task</code> tool) remains available as the supported method for multi-agent workflows.</p>
+<div class="blabel">Evidence</div>
+<p>203 removed functions/variables related to teammate functionality, including <code>TeammateMailbox</code>, <code>TeammateTool</code>, swarm operations</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The teammate/swarm feature was an experimental capability for spawning multiple Claude instances in tmux panes. Its removal simplifies the codebase and focuses multi-agent workflows on the <code>Task</code> tool's subagent system, which provides a more controlled approach to parallelizing work.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

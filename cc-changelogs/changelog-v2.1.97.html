@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.97 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.97."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.97</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.97</span></h1>
+<p class="sub">This release removes the Buddy/Companion feature entirely, adds a new <code>/dream</code> slash command for manual and scheduled memory consolidation, introduces a "brief transcript" view mode and several new configuration options, improves CJK language support for mentions and slash commands, adds Cedar policy language syntax highlighting, and strengthens Bash tool security against network redirections and unsafe environment variables.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.96 → v2.1.97</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">30</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">7</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">3</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="dream-slash-command-gradual-rollout">
+      <div class="card-top">
+        <h3><code>/dream</code> Slash Command [Gradual Rollout] <a class="anchor" href="#dream-slash-command-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new user-invocable slash command for reflective memory consolidation — reviewing recent activity, synthesizing learnings into typed memory files, and pruning stale entries.</p>
+<div class="blabel">Usage</div>
+<pre><code># Manual consolidation
+/dream
+
+# Schedule nightly consolidation
+/dream nightly</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Aliases: <code>/learn</code></li><li>Manual mode (<code>/dream</code> or <code>/dream consolidate</code>) runs an immediate memory consolidation pass</li><li>Schedule mode (<code>/dream nightly</code>) sets up a recurring cron job that runs consolidation overnight</li><li>The schedule persists across sessions (written to <code>.claude/scheduled_tasks.json</code>) and auto-expires after a configurable period</li><li>Cancel scheduled consolidation at any time</li><li>Gated behind the <code>tengu_kairos_dream</code> feature flag — availability may vary</li><li>Previously, only the background auto-dream mechanism existed (silently consolidating between sessions); this command gives users direct control</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill registration with <code>name: "dream"</code>, <code>aliases: ["learn"]</code> (search for <code>"Reflective memory consolidation"</code>) — <code>WKA</code> at line ~636587</p>
+    </article>
+    <article class="card" id="brief-transcript-view-mode">
+      <div class="card-top">
+        <h3>Brief Transcript View Mode <a class="anchor" href="#brief-transcript-view-mode">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new condensed transcript display that collapses sequential tool-use messages into compact summaries showing tool counts and line-change statistics.</p>
+<div class="blabel">Details</div>
+<ul><li>When enabled, back-to-back tool calls between user prompts are collapsed into a single summary line (e.g., "5 reads, 2 edits, +40/-12 lines")</li><li>Individual tool categories tracked: read, search, bash, edit, git, MCP, hooks, and more</li><li>Togglable at runtime via the transcript UI</li><li>New <code>briefTranscript</code> state property controls the display mode</li></ul>
+<div class="blabel">Evidence</div>
+<p>Message collapsing function <code>bd4</code> produces <code>collapsed_read_search</code> and <code>grouped_tool_use</code> objects (search for <code>"collapsed_read_search"</code>)</p>
+    </article>
+    <article class="card" id="viewmode-configuration-setting">
+      <div class="card-top">
+        <h3><code>viewMode</code> Configuration Setting <a class="anchor" href="#viewmode-configuration-setting">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new setting to control the default transcript view mode on startup.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;viewMode&quot;: &quot;default&quot;
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Options: <code>"default"</code>, <code>"verbose"</code>, <code>"focus"</code></li><li>Set in your configuration file to control how the conversation transcript is displayed each time you launch Claude Code</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema definition <code>viewMode: y.enum(["default", "verbose", "focus"])</code> (search for <code>"Default transcript view mode on startup"</code>)</p>
+    </article>
+    <article class="card" id="refreshinterval-for-status-line">
+      <div class="card-top">
+        <h3><code>refreshInterval</code> for Status Line <a class="anchor" href="#refreshinterval-for-status-line">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new configuration option to re-run status line commands at a regular interval, in addition to event-driven updates.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;statusLine&quot;: {
+    &quot;refreshInterval&quot;: 30
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Value is in seconds (minimum: 1)</li><li>Useful for status line commands that show time-varying data (e.g., build status, clock)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema definition <code>refreshInterval: y.number().min(1).optional()</code> (search for <code>"Re-run the status line command every N seconds"</code>)</p>
+    </article>
+    <article class="card" id="cedar-policy-language-syntax-highlighting">
+      <div class="card-top">
+        <h3>Cedar Policy Language Syntax Highlighting <a class="anchor" href="#cedar-policy-language-syntax-highlighting">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Code blocks written in the Cedar policy language are now syntax-highlighted in Claude Code output.</p>
+<div class="blabel">Details</div>
+<ul><li>Recognizes <code>cedar</code> and <code>cedarpolicy</code> as language identifiers in fenced code blocks</li><li>Highlights keywords (<code>permit</code>, <code>forbid</code>, <code>when</code>, <code>unless</code>, <code>if</code>, <code>then</code>, <code>else</code>), built-in types (<code>principal</code>, <code>action</code>, <code>resource</code>, <code>context</code>), and standard Cedar constructs</li><li>Cedar is Amazon's authorization policy language — useful when working with AWS Verified Permissions or custom Cedar policies</li></ul>
+<div class="blabel">Evidence</div>
+<p>Language definition with <code>name: "Cedar"</code>, <code>aliases: ["cedarpolicy"]</code> (search for <code>"permit forbid when unless if then else in has like is"</code>)</p>
+    </article>
+    <article class="card" id="session-mirror-flag-sdk-internal">
+      <div class="card-top">
+        <h3><code>--session-mirror</code> Flag (SDK Internal) <a class="anchor" href="#session-mirror-flag-sdk-internal">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new CLI flag that enables transcript mirroring on stdout for SDK consumers.</p>
+<div class="blabel">Details</div>
+<ul><li>Emits <code>transcript_mirror</code> frames on the stdout JSON stream after each successful local transcript write</li><li>Designed for use by <code>ProcessTransport</code> when a <code>sessionStore</code> is configured — allows the parent process to capture and batch transcript entries</li><li>New <code>transcript_mirror</code> event type added to the SDK schema</li><li>Not intended for direct user invocation; primarily benefits SDK/API integrations</li></ul>
+<div class="blabel">Evidence</div>
+<p>CLI flag <code>"--session-mirror"</code> with description <code>"Emit transcript_mirror frames on stdout"</code> (search for <code>"transcript_mirror"</code>)</p>
+    </article>
+    <article class="card" id="excludedynamicsections-sdk-option">
+      <div class="card-top">
+        <h3><code>excludeDynamicSections</code> SDK Option <a class="anchor" href="#excludedynamicsections-sdk-option">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new SDK configuration option that omits per-user dynamic sections from the cached system prompt.</p>
+<div class="blabel">Details</div>
+<ul><li>When <code>true</code>, working directory, auto-memory path, and other user-specific content are excluded from the system prompt and re-injected as the first user message instead</li><li>Lets cross-user prompt caching hit on a shared static prefix, significantly improving cache efficiency in multi-tenant deployments</li><li>New <code>redirectedContextTokens</code> field in the token usage response tracks how many tokens were redirected</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema property with full description (search for <code>"omit per-user dynamic sections"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">23 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="buddy-companion-feature-removed">
+      <div class="card-top">
+        <h3>Buddy/Companion Feature Removed <a class="anchor" href="#buddy-companion-feature-removed">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The entire Buddy/Companion system has been removed from Claude Code. This includes:</p>
+<ul><li>The <code>/buddy</code> command and companion creature generation</li><li>ASCII art companion display with species, hats, eyes, and rarity tiers</li><li>The companion reaction system that watched conversations and commented in speech bubbles</li><li>The companion mute/unmute toggle in the footer</li><li>The <code>companion_intro</code> dynamic section in system prompts</li><li>The buddy teaser notification ("Hatch a coding buddy") that prompted users to try <code>/buddy</code></li><li>The LLM-powered companion personality generation using Claude API</li><li>The "Voice mode is now available" static footer notice (replaced by a tip — see below)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Removed functions include <code>hn8</code> (buddy_react API), <code>eE_</code> (creature generation), <code>w34</code> (companion_intro), <code>tcK</code> (conversation watcher) — search for <code>"buddy_react"</code> in v2.1.96 only</p>
+    </article>
+    <article class="card" id="cjk-punctuation-support-for-mentions-and-slash-commands">
+      <div class="card-top">
+        <h3>CJK Punctuation Support for Mentions and Slash Commands <a class="anchor" href="#cjk-punctuation-support-for-mentions-and-slash-commands">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p><code>@mentions</code> and <code>/commands</code> now recognize Chinese, Japanese, and Korean sentence-ending punctuation (<code>。</code>, <code>、</code>, <code>？</code>, <code>！</code>) as valid word boundaries. Previously, typing <code>@filename</code> or <code>/command</code> immediately after CJK punctuation would not be recognized.</p>
+<div class="blabel">Evidence</div>
+<p>Regex patterns updated from <code>/(^|\s)/</code> to <code>/(^|[\s。、？！])/</code> in mention and slash command parsers (search for <code>"。、？！"</code>)</p>
+    </article>
+    <article class="card" id="zellij-terminal-multiplexer-detection">
+      <div class="card-top">
+        <h3>Zellij Terminal Multiplexer Detection <a class="anchor" href="#zellij-terminal-multiplexer-detection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Claude Code now detects the Zellij terminal multiplexer environment and reports it alongside TMUX and TERM_PROGRAM in diagnostic output. Some terminal features are gated to avoid conflicts with Zellij's own input handling.</p>
+<div class="blabel">Evidence</div>
+<p>New check <code>process.env.ZELLIJ</code> (search for <code>"ZELLIJ"</code>) — <code>qk_</code> at line ~199074</p>
+    </article>
+    <article class="card" id="warp-terminal-support-expanded">
+      <div class="card-top">
+        <h3>Warp Terminal Support Expanded <a class="anchor" href="#warp-terminal-support-expanded">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Warp Terminal (<code>WarpTerminal</code>) has been added to an additional terminal capability detection list, extending its integration beyond the existing bundle ID mapping and display name.</p>
+<div class="blabel">Evidence</div>
+<p><code>"WarpTerminal"</code> appears in a new terminal identifier array in v2.1.97 (search for <code>"WarpTerminal"</code>)</p>
+    </article>
+    <article class="card" id="voice-notice-replaced-with-contextual-tip">
+      <div class="card-top">
+        <h3>Voice Notice Replaced with Contextual Tip <a class="anchor" href="#voice-notice-replaced-with-contextual-tip">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The persistent "Voice mode is now available · /voice to enable" footer notice has been replaced with a contextual tip (<code>"Use /voice to enable push-to-talk dictation"</code>) that respects cooldown sessions and relevance checks. This reduces visual noise for users who don't use voice mode.</p>
+<div class="blabel">Evidence</div>
+<p>New tip with <code>id: "voice-mode"</code>, <code>cooldownSessions: 10</code> (search for <code>"Use /voice to enable push-to-talk dictation"</code>)</p>
+    </article>
+    <article class="card" id="bash-tool-security-dev-tcp-and-dev-udp-blocking">
+      <div class="card-top">
+        <h3>Bash Tool Security: <code>/dev/tcp</code> and <code>/dev/udp</code> Blocking <a class="anchor" href="#bash-tool-security-dev-tcp-and-dev-udp-blocking">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Redirections targeting <code>/dev/tcp</code> or <code>/dev/udp</code> are now explicitly blocked as network connections. These Bash pseudo-device paths open network sockets and were previously not flagged by the safety checker.</p>
+<div class="blabel">Evidence</div>
+<p>New safety message <code>"Redirect involving /dev/tcp or /dev/udp opens a network connection"</code> (search for <code>"/dev/tcp"</code>)</p>
+    </article>
+    <article class="card" id="bash-tool-environment-variable-validation">
+      <div class="card-top">
+        <h3>Bash Tool: Environment Variable Validation <a class="anchor" href="#bash-tool-environment-variable-validation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The Bash tool now validates environment variable names in command prefixes using a regex pattern (<code>/^([A-Za-z_][A-Za-z0-9_]*)/</code>) and checks them against a safe-list. Commands that set non-safe-listed environment variables require explicit approval.</p>
+<div class="blabel">Evidence</div>
+<p>New function <code>fhz</code> with env var validation regex and <code>Ly6</code> safe-list checker (search for <code>"A-Za-z_][A-Za-z0-9_]*"</code>)</p>
+    </article>
+    <article class="card" id="bash-tool-expanded-argument-parsing">
+      <div class="card-top">
+        <h3>Bash Tool: Expanded Argument Parsing <a class="anchor" href="#bash-tool-expanded-argument-parsing">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The Bash argument parser now handles additional flags for <code>cut</code>, <code>paste</code>, <code>column</code>, and <code>awk</code> commands, properly stripping their flag arguments to extract positional file paths for safety analysis.</p>
+<div class="blabel">Evidence</div>
+<p>New <code>lF1</code> flag-stripping function factory with <code>--delimiter</code>, <code>--output-delimiter</code>, <code>--field-separator</code> support (search for <code>"--delimiter"</code>)</p>
+    </article>
+    <article class="card" id="conversation-branching-size-limit">
+      <div class="card-top">
+        <h3>Conversation Branching Size Limit <a class="anchor" href="#conversation-branching-size-limit">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Conversation branching now validates the transcript file size before attempting to create a branch. If the transcript exceeds the size limit, a clear error message is shown: "Conversation transcript is too large to branch."</p>
+<div class="blabel">Evidence</div>
+<p>Size check in <code>QFK</code> (search for <code>"Conversation transcript is too large to branch"</code>)</p>
+    </article>
+    <article class="card" id="improved-compaction-error-messages">
+      <div class="card-top">
+        <h3>Improved Compaction Error Messages <a class="anchor" href="#improved-compaction-error-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Compaction failure messages are now more specific:</p>
+<ul><li>"Compaction failed · attached media exceeds size limits" — when media attachments are too large</li><li>"Compaction failed · conversation could not be reduced below the context limit" — when the conversation itself is too long</li></ul>
+<div class="blabel">Evidence</div>
+<p>New error strings (search for <code>"Compaction failed · attached media exceeds size limits"</code>)</p>
+    </article>
+    <article class="card" id="max-effort-description-updated">
+      <div class="card-top">
+        <h3>"Max Effort" Description Updated <a class="anchor" href="#max-effort-description-updated">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The "max" effort level description has been simplified from "Maximum capability with deepest reasoning (Opus 4.6 only)" to just "Maximum capability with deepest reasoning", reflecting that max effort is no longer restricted to Opus 4.6.</p>
+<div class="blabel">Evidence</div>
+<p>String change in <code>$p_</code> (search for <code>"Maximum capability with deepest reasoning"</code>)</p>
+    </article>
+    <article class="card" id="session-origin-tracking-in-memory-files">
+      <div class="card-top">
+        <h3>Session Origin Tracking in Memory Files <a class="anchor" href="#session-origin-tracking-in-memory-files">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Memory files written via CLAUDE.md now include an <code>originSessionId</code> field in their YAML frontmatter, alongside the existing <code>created</code> timestamp. This helps trace which session originally created each memory entry.</p>
+<div class="blabel">Evidence</div>
+<p>New frontmatter injection <code>"originSessionId: "</code> in function <code>jE8</code> (search for <code>"originSessionId"</code>)</p>
+    </article>
+    <article class="card" id="keybinding-components-replace-hardcoded-text">
+      <div class="card-top">
+        <h3>Keybinding Components Replace Hardcoded Text <a class="anchor" href="#keybinding-components-replace-hardcoded-text">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Several UI elements that previously displayed hardcoded text like "Enter to apply", "Esc to go back", and "Ctrl+d to show debug info" now use structured keybinding components that respect custom key mappings. This means users who have remapped keys will see the correct bindings in the UI.</p>
+<div class="blabel">Evidence</div>
+<p>Hardcoded <code>"Enter to apply"</code> replaced with <code>J1</code> component; <code>"Esc to go back"</code> replaced with structured <code>W1</code> component (search for <code>"show debug info"</code> and <code>"hide debug info"</code>)</p>
+    </article>
+    <article class="card" id="improved-hook-evaluator-transcript-truncation-and-model-awar">
+      <div class="card-top">
+        <h3>Improved Hook Evaluator: Transcript Truncation and Model Awareness <a class="anchor" href="#improved-hook-evaluator-transcript-truncation-and-model-awar">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Hook evaluators now truncate conversation transcripts to fit within the evaluator's context window and pass the correct model identifier. When truncation occurs, a marker is inserted: "[Earlier conversation truncated to fit the hook evaluator's context window — N earlier messages omitted...]"</p>
+<div class="blabel">Evidence</div>
+<p>Function <code>zQY</code> with truncation logic (search for <code>"Earlier conversation truncated to fit the hook evaluator's context window"</code>)</p>
+    </article>
+    <article class="card" id="routines-configuration-section">
+      <div class="card-top">
+        <h3>"Routines" Configuration Section <a class="anchor" href="#routines-configuration-section">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new <code>"routines"</code> category has been added to the configuration/help system alongside existing sections like commands and workflows.</p>
+<div class="blabel">Evidence</div>
+<p><code>"routines"</code> added to configuration sections list (search for <code>"routines"</code>)</p>
+    </article>
+    <article class="card" id="remote-skills-discovery-tracking">
+      <div class="card-top">
+        <h3>Remote Skills Discovery Tracking <a class="anchor" href="#remote-skills-discovery-tracking">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The agent now tracks remotely-discovered skills (e.g., from MCP servers) via a <code>discoveredRemoteSkills</code> map, enabling better state management when skills become available or unavailable during a session.</p>
+<div class="blabel">Evidence</div>
+<p>New <code>discoveredRemoteSkills: new Map()</code> field in agent state (search for <code>"discoveredRemoteSkills"</code>)</p>
+    </article>
+    <article class="card" id="managed-agents-api-documentation">
+      <div class="card-top">
+        <h3>Managed Agents API Documentation <a class="anchor" href="#managed-agents-api-documentation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Comprehensive documentation for the Managed Agents API has been embedded for the <code>claude-developer-platform</code> skill, covering Python, TypeScript, and cURL/HTTP usage with examples for environments, agents, sessions, SSE streaming, custom tool results, and interrupts.</p>
+<div class="blabel">Evidence</div>
+<p>Documentation strings including <code>"anthropic-beta: managed-agents-2026-04-01"</code> (search for <code>"Managed Agents"</code>)</p>
+    </article>
+    <article class="card" id="agent-inter-tool-narration-suppression">
+      <div class="card-top">
+        <h3>Agent Inter-Tool Narration Suppression <a class="anchor" href="#agent-inter-tool-narration-suppression">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Sub-agents (e.g., Task agents) now receive an explicit instruction: "Do not emit text between tool calls. Inter-tool narration is never shown to the user — go straight to the next tool call." This reduces wasted tokens on text the user never sees.</p>
+<div class="blabel">Evidence</div>
+<p>Instruction string <code>A9Y</code> (search for <code>"Do not emit text between tool calls"</code>)</p>
+    </article>
+    <article class="card" id="worktree-branch-creation-no-track">
+      <div class="card-top">
+        <h3>Worktree Branch Creation: <code>--no-track</code> <a class="anchor" href="#worktree-branch-creation-no-track">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When creating worktree branches, the <code>--no-track</code> flag is now passed to prevent automatic upstream tracking, avoiding potential conflicts with remote branches.</p>
+<div class="blabel">Evidence</div>
+<p>New <code>"--no-track"</code> argument in worktree creation (search for <code>"--no-track"</code>)</p>
+    </article>
+    <article class="card" id="workflow-script-file-write-permissions">
+      <div class="card-top">
+        <h3>Workflow Script File Write Permissions <a class="anchor" href="#workflow-script-file-write-permissions">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Files in the <code>workflows/scripts</code> directory for the current session are now automatically allowed for writing, removing the need for manual permission approval when Claude generates workflow scripts.</p>
+<div class="blabel">Evidence</div>
+<p>Permission reason <code>"Workflow script files for current session are allowed for writing"</code> (search for <code>"Workflow script files"</code>)</p>
+    </article>
+    <article class="card" id="upgrade-flow-conditional-switch-to-team-plan-label">
+      <div class="card-top">
+        <h3>Upgrade Flow: Conditional "Switch to Team Plan" Label <a class="anchor" href="#upgrade-flow-conditional-switch-to-team-plan-label">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The upgrade prompt now shows "Switch to Team plan" instead of "Upgrade to Team plan" when the user is already on a plan, providing more contextually accurate wording.</p>
+<div class="blabel">Evidence</div>
+<p>Conditional label <code>X ? "Switch to Team plan" : "Upgrade to Team plan"</code> (search for <code>"Switch to Team plan"</code>)</p>
+    </article>
+    <article class="card" id="duplicate-key-detection-in-virtual-message-list">
+      <div class="card-top">
+        <h3>Duplicate Key Detection in Virtual Message List <a class="anchor" href="#duplicate-key-detection-in-virtual-message-list">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new diagnostic warning detects duplicate sibling keys in the virtual message list renderer, which could previously cause DOM node leaks via <code>mapRemainingChildren</code> overwrite.</p>
+<div class="blabel">Evidence</div>
+<p>Warning message <code>"VirtualMessageList: duplicate sibling keys"</code> (search for <code>"VirtualMessageList: duplicate sibling keys"</code>)</p>
+    </article>
+    <article class="card" id="read-tool-absolute-paths-always-required">
+      <div class="card-top">
+        <h3>Read Tool: Absolute Paths Always Required <a class="anchor" href="#read-tool-absolute-paths-always-required">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The Read tool documentation now unconditionally requires absolute file paths. The previous conditional behavior (which sometimes allowed relative paths) has been removed for consistency.</p>
+<div class="blabel">Evidence</div>
+<p>Read tool description change — removed conditional <code>qk6()</code> check, hard-codes <code>"must be an absolute path"</code> (search for <code>"must be an absolute path"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed unguarded promise chains in Chrome onboarding and session reconnection that could cause unhandled rejections (search for <code>.catch(w6)</code> in <code>K4A</code> and <code>ABY</code>)</li></ul>
+<ul><li>Fixed text input handling: replaced regex-based <code>.replace(/\r/g, ...)</code> with <code>.replaceAll("\r", ...)</code> and added proper handling for <code>meta+backspace</code>, <code>super+backspace</code>, <code>ctrl+backspace</code>, <code>meta+delete</code>, and <code>super+delete</code> key combinations (search for <code>".replaceAll"</code> in <code>aQ8</code>)</li></ul>
+<ul><li>Fixed CRLF line-ending normalization: content is now normalized with <code>.replace(/\r\n?/g, "\n")</code> before splitting, preventing blank lines or split errors on Windows-originated text (search for <code>"\\r\\n?"</code>)</li></ul>
+<ul><li>Fixed variable reference in text processing: corrected <code>f6.slice(1)</code> to <code>J6.slice(1)</code>, fixing incorrect text extraction (search for <code>J6.slice(1)</code> in <code>kn4</code>)</li></ul>
+<ul><li>Added explicit error type checking for <code>TC6</code> errors in the error handling cascade, preventing these errors from being swallowed by generic catch blocks (search for <code>"instanceof TC6"</code>)</li></ul>
+<ul><li>Fixed permission stripping logic to preserve existing rules and add deduplication when stripping dangerous permissions, preventing accidental rule loss (search for <code>"strippedD"</code> in <code>ex</code>)</li></ul>
+<ul><li>Stale marketplace backup directories (<code>.bak</code>) are now cleaned up alongside the main directory during marketplace refresh (search for <code>".bak"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
+    </article>
+    <article class="card" id="subagent-model-downgrade-opus-to-sonnet-in-development">
+      <div class="card-top">
+        <h3>Subagent Model Downgrade: Opus to Sonnet [In Development] <a class="anchor" href="#subagent-model-downgrade-opus-to-sonnet-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When enabled, this feature automatically downgrades Opus model usage for sub-agents to Sonnet, potentially reducing costs for agentic workflows.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged (disabled by default)</p>
+<div class="blabel">Details</div>
+<ul><li>Gated behind <code>tengu_garnet_loom</code> flag with default <code>!1</code> (false)</li><li>When active and the current model includes "opus", it substitutes a Sonnet model</li><li>Likely intended to balance cost vs. capability for Task sub-agents</li></ul>
+<div class="blabel">Evidence</div>
+<p>Flag check <code>R8("tengu_garnet_loom", !1)</code> that downgrades opus to sonnet (search for <code>"tengu_garnet_loom"</code>)</p>
+    </article>
+    <article class="card" id="bash-allowlist-strip-all-mode-in-development">
+      <div class="card-top">
+        <h3>Bash Allowlist Strip-All Mode [In Development] <a class="anchor" href="#bash-allowlist-strip-all-mode-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A mode that strips all bash command allowlist entries from the permission context, effectively requiring re-approval for all bash commands.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged (disabled by default)</p>
+<div class="blabel">Details</div>
+<ul><li>Gated behind <code>tengu_bash_allowlist_strip_all</code> flag with default <code>!1</code> (false)</li><li>When enabled, the <code>stripAllBashFlag</code> property activates in the permission decision flow</li><li>May be intended as a security hardening measure for sensitive environments</li></ul>
+<div class="blabel">Evidence</div>
+<p>Flag <code>R8("tengu_bash_allowlist_strip_all", !1)</code> assigned to <code>stripAllBashFlag</code> (search for <code>"tengu_bash_allowlist_strip_all"</code>)</p>
+    </article>
+    <article class="card" id="effort-level-clamping-in-development">
+      <div class="card-top">
+        <h3>Effort Level Clamping [In Development] <a class="anchor" href="#effort-level-clamping-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure to cap the maximum effort level based on a model's capability tier, preventing users from setting effort higher than what a model supports.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged (disabled by default)</p>
+<div class="blabel">Details</div>
+<ul><li>Gated behind <code>tengu_pyrite_wren</code> flag with default <code>!1</code> (false)</li><li>Compares the requested effort against the model's position in the effort ranking</li></ul>
+<div class="blabel">Evidence</div>
+<p>Function <code>Uz4</code> gated by <code>R8("tengu_pyrite_wren", !1)</code> (search for <code>"tengu_pyrite_wren"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The removal of the Buddy/Companion feature is a clean removal with no migration needed — the feature was experimental and self-contained. Any companion state stored in your configuration will simply be ignored.</p>
+<p>The new <code>/dream</code> command is gated behind a feature flag (<code>tengu_kairos_dream</code>) and may not be available to all users immediately. The existing background auto-dream mechanism continues to work independently.</p>
+<p>The <code>claude-sonnet-4-6</code> model was already present in v2.1.96; this release adds no new model families but refines model capability detection (the <code>max_effort</code> resolver now properly handles version-based capability checks for Opus/Sonnet &gt;= 4.6).</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

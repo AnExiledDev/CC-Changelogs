@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.70 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.70."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.70</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.70</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.69 → v1.0.70</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-onboarding-experience">
+      <div class="card-top">
+        <h3>New Onboarding Experience <a class="anchor" href="#new-onboarding-experience">#</a></h3>
+      </div>
+      <p>Claude Code now features a comprehensive onboarding flow for first-time users:</p>
+<ul><li><strong>Interactive setup screens</strong> guide you through initial configuration</li><li><strong>Theme selection</strong> to personalize your experience from the start</li><li><strong>Security awareness</strong> with explicit information about Claude's capabilities</li><li><strong>Terminal optimization</strong> with specific key binding recommendations for your terminal</li></ul>
+<p>When you first run Claude Code v1.0.70, you'll be greeted with setup screens that help configure:</p>
+<ul><li>Visual theme preferences</li><li>OAuth login or API key authentication</li><li>Terminal-specific settings (e.g., Option+Enter for new lines in Apple Terminal)</li></ul>
+    </article>
+    <article class="card" id="enhanced-security-model">
+      <div class="card-top">
+        <h3>Enhanced Security Model <a class="anchor" href="#enhanced-security-model">#</a></h3>
+      </div>
+      <ul><li><strong>Explicit permission dialogs</strong> for MCP servers and hooks</li><li><strong>Trust management</strong> for code execution permissions</li><li><strong>API key validation</strong> with user confirmation for custom ANTHROPIC_API_KEY usage</li><li>Clear security notes displayed during onboarding about Claude's file system access</li></ul>
+    </article>
+    <article class="card" id="major-codebase-refactoring">
+      <div class="card-top">
+        <h3>Major Codebase Refactoring <a class="anchor" href="#major-codebase-refactoring">#</a></h3>
+      </div>
+      <ul><li><strong>66.3% structural similarity</strong> to v1.0.69 (significant reorganization)</li><li><strong>2,889 functions removed</strong> and 2,257 new functions added</li><li><strong>Complete removal of Sentry telemetry</strong> and error tracking for improved privacy</li><li>Reduced external dependencies and cleaner module structure</li></ul>
+    </article>
+    <article class="card" id="removed-telemetry">
+      <div class="card-top">
+        <h3>Removed Telemetry <a class="anchor" href="#removed-telemetry">#</a></h3>
+      </div>
+      <p>All Sentry integration has been removed, including:</p>
+<ul><li>Error tracking and reporting</li><li>Performance monitoring</li><li>User activity telemetry</li><li>Database instrumentation (Express, PostgreSQL, MySQL)</li><li>Browser and network instrumentation</li></ul>
+<p>This means Claude Code no longer sends crash reports or usage data to external services, enhancing user privacy.</p>
+    </article>
+    <article class="card" id="module-system-updates">
+      <div class="card-top">
+        <h3>Module System Updates <a class="anchor" href="#module-system-updates">#</a></h3>
+      </div>
+      <ul><li>Added support for <code>createRequire</code> from Node.js native module system</li><li>Better CommonJS and ES module interoperability</li><li>Improved module loading and dependency resolution</li></ul>
+    </article>
+    <article class="card" id="process-handling">
+      <div class="card-top">
+        <h3>Process Handling <a class="anchor" href="#process-handling">#</a></h3>
+      </div>
+      <ul><li>Reorganized Windows-specific ENOENT error handling</li><li>Maintained full cross-platform process spawning support</li><li>Better error messages for missing executables</li></ul>
+    </article>
+    <article class="card" id="file-system-operations">
+      <div class="card-top">
+        <h3>File System Operations <a class="anchor" href="#file-system-operations">#</a></h3>
+      </div>
+      <p>Enhanced file system capabilities with new imports for:</p>
+<ul><li>File watching (<code>watchFile</code>, <code>unwatchFile</code>)</li><li>Stream operations (<code>createReadStream</code>, <code>createWriteStream</code>)</li><li>Path handling for both POSIX and Windows systems</li></ul>
+    </article>
+    <article class="card" id="terminal-integration">
+      <div class="card-top">
+        <h3>Terminal Integration <a class="anchor" href="#terminal-integration">#</a></h3>
+      </div>
+      <ul><li>Automatic detection and optimization for different terminal emulators</li><li>Custom key binding recommendations based on your terminal</li><li>Improved handling of iTerm2 settings restoration</li></ul>
+    </article>
+    <article class="card" id="authentication-flow">
+      <div class="card-top">
+        <h3>Authentication Flow <a class="anchor" href="#authentication-flow">#</a></h3>
+      </div>
+      <ul><li>Clearer distinction between Claude AI subscription and Console API billing</li><li>Better handling of custom API keys with validation</li><li>Streamlined OAuth login process</li></ul>
+    </article>
+    <article class="card" id="export-structure">
+      <div class="card-top">
+        <h3>Export Structure <a class="anchor" href="#export-structure">#</a></h3>
+      </div>
+      <p>The main module now exports three functions:</p>
+<ul><li><code>showSetupScreens</code> - Displays the onboarding flow</li><li><code>setup</code> - Main initialization function</li><li><code>completeOnboarding</code> - Marks onboarding as complete</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>Significant module restructuring for better maintainability</li><li>Removed monitoring and instrumentation code</li><li>Simplified export structure</li><li>Cleaner dependency graph</li></ul>
+    </article>
+    <article class="card" id="performance">
+      <div class="card-top">
+        <h3>Performance <a class="anchor" href="#performance">#</a></h3>
+      </div>
+      <ul><li>Reduced bundle size due to removed dependencies</li><li>Faster startup time without telemetry initialization</li><li>More efficient module loading</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Improved Windows process spawning error handling</li><li>Better Node.js version compatibility checks</li><li>Fixed issues with terminal settings restoration after interruption</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>This version represents a major cleanup and privacy-focused release. The removal of all telemetry and external monitoring makes Claude Code more privacy-respecting while maintaining all core functionality. The new onboarding experience ensures users have a smooth first-run experience with proper configuration and security awareness.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

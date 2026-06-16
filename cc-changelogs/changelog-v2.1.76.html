@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.76 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.76."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.76</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.76</span></h1>
+<p class="sub">This release adds the <code>/effort</code> slash command for controlling model effort level, replaces the interactive hooks editor with a read-only viewer, introduces automatic background memory extraction (feature-flagged), adds a PostCompact hook event, and makes the <code>--plugin-dir</code> flag repeatable for loading multiple session-only plugin directories.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.75 → v2.1.76</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">17</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">17 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="effort-slash-command">
+      <div class="card-top">
+        <h3><code>/effort</code> Slash Command <a class="anchor" href="#effort-slash-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new built-in slash command to view and set the model effort level directly from the REPL, without navigating into <code>/config</code>.</p>
+<div class="blabel">Usage</div>
+<pre><code>/effort              # Show current effort level
+/effort medium       # Set to medium
+/effort max          # Maximum reasoning depth (Opus 4.6 only)
+/effort auto         # Reset to automatic (default)</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Effort levels: <code>low</code>, <code>medium</code>, <code>high</code>, <code>max</code>, <code>auto</code></li><li>Named levels are persisted to user settings (<code>effortLevel</code> in settings.json)</li><li><code>auto</code> clears the setting, returning to the model default</li><li>Each level has a descriptive summary (e.g. "Balanced approach with standard implementation and testing")</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>/effort</code> command registration (search for <code>name: "effort"</code>, <code>description: "Set effort level for model usage"</code>)</p>
+    </article>
+    <article class="card" id="postcompact-hook-event">
+      <div class="card-top">
+        <h3>PostCompact Hook Event <a class="anchor" href="#postcompact-hook-event">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new hook event that fires after conversation compaction completes, letting you run shell commands or prompts in response to compaction.</p>
+<div class="blabel">Details</div>
+<ul><li>Hook event name: <code>PostCompact</code></li><li>Input includes compaction details and the summary text</li><li>Allows post-processing after compaction (e.g., logging, notification, or custom follow-up actions)</li><li>Hook output: exit code 0 shows stdout to user; other exit codes show stderr only</li></ul>
+<div class="blabel">Evidence</div>
+<p>PostCompact hook event definition (search for <code>hook_event_name: C.literal("PostCompact")</code>, <code>"Running PostCompact hooks…"</code>)</p>
+    </article>
+    <article class="card" id="built-in-hooks">
+      <div class="card-top">
+        <h3>Built-in Hooks <a class="anchor" href="#built-in-hooks">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new category of hooks that are registered internally by Claude Code, distinct from user-configured and plugin hooks.</p>
+<div class="blabel">Details</div>
+<ul><li>Shown separately in the hooks viewer as "Built-in Hooks" / "Built-in hooks (registered internally by Claude Code)"</li><li>Cannot be modified by users—they are part of the Claude Code runtime</li><li>Visible in the <code>/hooks</code> UI for transparency</li></ul>
+<div class="blabel">Evidence</div>
+<p>Built-in hooks category (search for <code>"Built-in hooks (registered internally by Claude Code)"</code>)</p>
+    </article>
+    <article class="card" id="bundled-skill-reference-files">
+      <div class="card-top">
+        <h3>Bundled Skill Reference Files <a class="anchor" href="#bundled-skill-reference-files">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Built-in skills can now declare reference files that are extracted to a temporary directory at runtime, making them available for the skill prompt to reference.</p>
+<div class="blabel">Details</div>
+<ul><li>Skills define a <code>files</code> property in their registration, mapping relative paths to file content</li><li>Files are extracted to a per-skill directory inside the Claude Code data directory</li><li>Path traversal is blocked (<code>bundled skill file path escapes skill dir:</code> error)</li><li>Files are written with <code>O_NOFOLLOW</code> to prevent symlink attacks</li><li>The skill prompt is prefixed with <code>Base directory for this skill: &lt;path&gt;</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Bundled skill file extraction (search for <code>"Bundled skill reference files are allowed for reading"</code>, <code>"Failed to extract bundled skill '"</code>)</p>
+    </article>
+    <article class="card" id="hooks-ui-redesigned-as-read-only-viewer">
+      <div class="card-top">
+        <h3>Hooks UI Redesigned as Read-Only Viewer <a class="anchor" href="#hooks-ui-redesigned-as-read-only-viewer">#</a></h3>
+      </div>
+      <p>The <code>/hooks</code> command has been redesigned from a full hook management interface (add, edit, delete) to a read-only viewer. Users can browse hook events, matchers, and see hook details, but can no longer modify hooks through the UI.</p>
+<p>What changed:</p>
+<ul><li>Removed: "Add new hook", "Delete hook?", "Delete matcher?", "Save hook configuration", "Where should this hook be saved?" dialogs</li><li>Added: "Hook details" detail view showing event, matcher, type, source, command/prompt, and status message</li><li>Added: "This menu is read-only. To add or modify hooks, edit settings.json directly or ask Claude."</li><li>Added: "To re-enable hooks, remove <code>disableAllHooks</code> from settings.json or ask Claude."</li><li>Navigation: "Esc to go back" / "Esc to close" guides</li><li>Description changed from "Manage hook configurations" to "View hook configurations"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Read-only hooks viewer (search for <code>"View hook configurations"</code>, <code>"This menu is read-only"</code>, <code>"Hook details"</code>)</p>
+    </article>
+    <article class="card" id="plugin-dir-flag-now-repeatable">
+      <div class="card-top">
+        <h3><code>--plugin-dir</code> Flag Now Repeatable <a class="anchor" href="#plugin-dir-flag-now-repeatable">#</a></h3>
+      </div>
+      <p>The <code>--plugin-dir</code> flag has been updated from accepting a single paths argument to being individually repeatable.</p>
+<p>What changed:</p>
+<ul><li>Old: <code>--plugin-dir &lt;paths...&gt;</code> (space-separated paths in one argument)</li><li>New: <code>--plugin-dir &lt;path&gt;</code> (repeat the flag: <code>--plugin-dir A --plugin-dir B</code>)</li><li>Session-only plugins are now labeled as "Session-only plugins (--plugin-dir):" in the UI</li><li>The reserved marketplace name <code>"inline"</code> is used internally for <code>--plugin-dir</code> session plugins</li></ul>
+<div class="blabel">Evidence</div>
+<p>Repeatable plugin-dir flag (search for <code>"Load plugins from a directory for this session only (repeatable: --plugin-dir A --plugin-dir B)"</code>)</p>
+    </article>
+    <article class="card" id="language-setting-now-includes-voice-dictation">
+      <div class="card-top">
+        <h3>Language Setting Now Includes Voice Dictation <a class="anchor" href="#language-setting-now-includes-voice-dictation">#</a></h3>
+      </div>
+      <p>The preferred language setting description has been expanded to explicitly include voice dictation.</p>
+<p>What changed:</p>
+<ul><li>Old: <code>Preferred language for Claude responses (e.g., "japanese", "spanish")</code></li><li>New: <code>Preferred language for Claude responses and voice dictation (e.g., "japanese", "spanish")</code></li><li>New dictation language display: shows current dictation language with unsupported-language warning</li></ul>
+<div class="blabel">Evidence</div>
+<p>Language setting update (search for <code>"Preferred language for Claude responses and voice dictation"</code>, <code>"Dictation language:"</code>)</p>
+    </article>
+    <article class="card" id="disabled-organization-error-handling">
+      <div class="card-top">
+        <h3>Disabled Organization Error Handling <a class="anchor" href="#disabled-organization-error-handling">#</a></h3>
+      </div>
+      <p>New error messages provide better guidance when an <code>ANTHROPIC_API_KEY</code> belongs to a disabled organization.</p>
+<div class="blabel">Details</div>
+<ul><li>Subscription users: "Your ANTHROPIC_API_KEY belongs to a disabled organization · Unset the environment variable to use your subscription instead"</li><li>Other users: "Your ANTHROPIC_API_KEY belongs to a disabled organization · Update or unset the environment variable"</li><li>Organization verification errors now include actionable guidance about token scope and managed settings</li></ul>
+<div class="blabel">Evidence</div>
+<p>Disabled org handling (search for <code>"organization has been disabled"</code>, <code>"Your ANTHROPIC_API_KEY belongs to a disabled organization"</code>)</p>
+    </article>
+    <article class="card" id="session-transcript-retention-semantics-changed">
+      <div class="card-top">
+        <h3>Session Transcript Retention Semantics Changed <a class="anchor" href="#session-transcript-retention-semantics-changed">#</a></h3>
+      </div>
+      <p>The <code>transcriptRetentionDays</code> setting now has stricter behavior when set to 0.</p>
+<p>What changed:</p>
+<ul><li>Old: "Number of days to retain chat transcripts (0 to disable cleanup)" — 0 meant keep forever</li><li>New: "Number of days to retain chat transcripts (default: 30). Setting to 0 disables session persistence entirely: no transcripts are written and existing transcripts are deleted at startup."</li><li>This is a behavioral change: setting 0 previously preserved transcripts forever; now it deletes them</li></ul>
+<div class="blabel">Evidence</div>
+<p>Transcript retention change (search for <code>"disables session persistence entirely"</code>)</p>
+    </article>
+    <article class="card" id="stale-agent-worktree-cleanup">
+      <div class="card-top">
+        <h3>Stale Agent Worktree Cleanup <a class="anchor" href="#stale-agent-worktree-cleanup">#</a></h3>
+      </div>
+      <p>Agent worktrees that are no longer active are now automatically cleaned up.</p>
+<div class="blabel">Details</div>
+<ul><li>Worktrees with no uncommitted changes and no unpushed commits are removed</li><li>The current session's worktree is never cleaned up</li><li>Cleanup runs <code>git worktree prune</code> after removal</li><li>Logged as: <code>cleanupStaleAgentWorktrees: removed N stale worktree(s)</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Worktree cleanup (search for <code>"cleanupStaleAgentWorktrees"</code>)</p>
+    </article>
+    <article class="card" id="compaction-now-preserves-message-segments">
+      <div class="card-top">
+        <h3>Compaction Now Preserves Message Segments <a class="anchor" href="#compaction-now-preserves-message-segments">#</a></h3>
+      </div>
+      <p>Conversation compaction can now preserve a segment of recent messages instead of summarizing everything.</p>
+<div class="blabel">Details</div>
+<ul><li>Compacted boundaries include a <code>preservedSegment</code> with <code>headUuid</code>, <code>anchorUuid</code>, and <code>tailUuid</code></li><li>Loaders splice the preserved segment at the anchor point so resumed sessions include actual message content</li><li>Metadata is serialized as <code>preserved_segment</code> in transcript files</li></ul>
+<div class="blabel">Evidence</div>
+<p>Preserved segment in compaction (search for <code>"preservedSegment"</code>, <code>"Relink info for messagesToKeep"</code>)</p>
+    </article>
+    <article class="card" id="read-tool-guidance-updated">
+      <div class="card-top">
+        <h3>Read Tool Guidance Updated <a class="anchor" href="#read-tool-guidance-updated">#</a></h3>
+      </div>
+      <p>The Read tool system prompt now encourages partial file reads when the needed section is known.</p>
+<p>What changed:</p>
+<ul><li>Added: "When you already know which part of the file you need, only read that part. This can be important for larger files."</li><li>This supplements the existing guidance about offset/limit parameters</li></ul>
+<div class="blabel">Evidence</div>
+<p>Read tool guidance (search for <code>"When you already know which part of the file you need"</code>)</p>
+    </article>
+    <article class="card" id="pdf-reading-now-requires-anthropic-api">
+      <div class="card-top">
+        <h3>PDF Reading Now Requires Anthropic API <a class="anchor" href="#pdf-reading-now-requires-anthropic-api">#</a></h3>
+      </div>
+      <p>Full PDF reading (without specifying page ranges) now requires the Anthropic API and poppler-utils.</p>
+<p>What changed:</p>
+<ul><li>Old: "PDF reading is not supported. Install poppler-utils..."</li><li>New: "Reading full PDFs is only supported with the Anthropic API. Use the pages parameter to read specific page ranges (e.g., pages: \"1-5\", maximum N pages per request). This requires poppler-utils: install with <code>brew install poppler</code> on macOS or <code>apt-get install poppler-utils</code> on Debian/Ubuntu."</li></ul>
+<div class="blabel">Evidence</div>
+<p>PDF reading message (search for <code>"Reading full PDFs is only supported with the Anthropic API"</code>)</p>
+    </article>
+    <article class="card" id="plugin-dependency-resolution-enhanced">
+      <div class="card-top">
+        <h3>Plugin Dependency Resolution Enhanced <a class="anchor" href="#plugin-dependency-resolution-enhanced">#</a></h3>
+      </div>
+      <p>Plugin dependencies can now be specified as bare names (without <code>@marketplace</code>) and are resolved against the declaring plugin's own marketplace.</p>
+<div class="blabel">Details</div>
+<ul><li><code>Dependency must be a plugin name, optionally qualified with @marketplace</code></li><li>Bare names resolve against the parent plugin's marketplace source</li><li>The <code>"inline"</code> marketplace name is reserved for <code>--plugin-dir</code> session plugins</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin dependency resolution (search for <code>"Dependency must be a plugin name, optionally qualified with @marketplace"</code>)</p>
+    </article>
+    <article class="card" id="lsp-server-manager-reinitialization">
+      <div class="card-top">
+        <h3>LSP Server Manager Reinitialization <a class="anchor" href="#lsp-server-manager-reinitialization">#</a></h3>
+      </div>
+      <p>A new <code>reinitializeLspServerManager()</code> function allows the LSP server manager to be restarted without restarting the entire session, useful when plugin configurations change.</p>
+<div class="blabel">Evidence</div>
+<p>LSP reinit (search for <code>"[LSP MANAGER] reinitializeLspServerManager() called"</code>)</p>
+    </article>
+    <article class="card" id="mcp-tool-call-error-type">
+      <div class="card-top">
+        <h3>MCP Tool Call Error Type <a class="anchor" href="#mcp-tool-call-error-type">#</a></h3>
+      </div>
+      <p>A dedicated <code>McpToolCallError</code> error type has been added for MCP (Model Context Protocol) tool call failures, providing better error categorization.</p>
+<div class="blabel">Evidence</div>
+<p>Error type (search for <code>"McpToolCallError"</code>)</p>
+    </article>
+    <article class="card" id="exitplanmode-tool-description-clarified">
+      <div class="card-top">
+        <h3>ExitPlanMode Tool Description Clarified <a class="anchor" href="#exitplanmode-tool-description-clarified">#</a></h3>
+      </div>
+      <p>The ExitPlanMode tool description now explicitly states it's only for plan mode: "present plan for approval and start coding (plan mode only)". An error message was also added: "You are not in plan mode. This tool is only for exiting plan mode after writing a plan."</p>
+<div class="blabel">Evidence</div>
+<p>ExitPlanMode update (search for <code>"present plan for approval and start coding (plan mode only)"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed autocompact circuit breaker to stop retrying after repeated failures: <code>"autocompact: circuit breaker tripped after N consecutive failures — skipping future attempts this session"</code> (search for <code>"circuit breaker tripped"</code>)</li><li>Prompt/memory count now only counts messages after the last compaction boundary, fixing inflated counts in long sessions (search for <code>"compact_boundary"</code> in <code>UFY</code>)</li><li>Tool schema discovery warning now explains why typed parameters fail and how to fix it: <code>"This tool's schema was not sent to the API — it was not in the discovered-tool set"</code> (search for <code>"This tool's schema was not sent to the API"</code>)</li></ul>
+    </article>
+    <article class="card" id="automatic-memory-extraction-in-development">
+      <div class="card-top">
+        <h3>Automatic Memory Extraction [In Development] <a class="anchor" href="#automatic-memory-extraction-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A background agent that automatically extracts and saves memories from conversations, running alongside the main conversation without user intervention.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged behind <code>tengu_passport_quail</code> (default: <code>false</code>)</p>
+<div class="blabel">Details</div>
+<ul><li>After each turn, a background agent analyzes recent messages and saves relevant information to memory files</li><li>Uses the <code>tengu_bramble_lintel</code> flag to control how many turns to accumulate before running (default: 1)</li><li>Supports both private (user-only) and team (shared) memory scopes</li><li>Team memory format controlled by <code>tengu_swinburne_dune</code> flag (alternative two-step format)</li><li>Tracks which files the conversation has already written to, skipping extraction if the user manually saved memories</li><li>Coalesces rapid extractions: if one is already running, subsequent requests are stashed for a trailing run</li><li>Sends notification: "Saved N memor(y|ies)" when memories are written</li><li>Memory extraction agent is restricted to only Write, Read, and Edit tools within the memory directory</li><li>System prompt: "A background agent automatically extracts and saves memories from this conversation. If the user asks you to remember or forget something, acknowledge it — the save happens automatically."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Memory extraction system (search for <code>"tengu_passport_quail"</code>, <code>"[extractMemories]"</code>, <code>"extract_memories"</code>)</p>
+    </article>
+    <article class="card" id="session-quality-survey-in-development">
+      <div class="card-top">
+        <h3>Session Quality Survey [In Development] <a class="anchor" href="#session-quality-survey-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>An in-session quality survey that can appear when a session is eligible.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged — controlled by a probability setting (suggested starting point: 0.05)</p>
+<div class="blabel">Details</div>
+<ul><li>Configuration: "Probability (0–1) that the session quality survey appears when eligible. 0.05 is a reasonable starting point."</li><li>No evidence of the survey UI itself in the diff, suggesting infrastructure only</li></ul>
+<div class="blabel">Evidence</div>
+<p>Survey config (search for <code>"session quality survey"</code>)</p>
+    </article>
+    <article class="card" id="cancel-async-message-in-development">
+      <div class="card-top">
+        <h3>Cancel Async Message [In Development] <a class="anchor" href="#cancel-async-message-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Ability to cancel a pending async user message from the command queue by UUID.</p>
+<div class="blabel">Status</div>
+<p>Infrastructure added</p>
+<div class="blabel">Details</div>
+<ul><li>Operation: <code>cancel_async_message</code> drops a pending message that hasn't been dequeued yet</li><li>Result includes <code>cancelled</code> boolean: false means the message was already dequeued or never enqueued</li><li>Related to Remote Control bridge functionality</li></ul>
+<div class="blabel">Evidence</div>
+<p>Async message cancellation (search for <code>"cancel_async_message"</code>, <code>"Drops a pending async user message"</code>)</p>
+    </article>
+    <article class="card" id="bridge-debug-commands-internal">
+      <div class="card-top">
+        <h3>Bridge Debug Commands (Internal) <a class="anchor" href="#bridge-debug-commands-internal">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A <code>/bridge-kick</code> debug command for injecting failure states into the Remote Control bridge for manual recovery testing.</p>
+<div class="blabel">Status</div>
+<p>Registered but explicitly disabled (<code>isEnabled: () =&gt; !1</code>)</p>
+<div class="blabel">Details</div>
+<ul><li>Subcommands: <code>close</code>, <code>poll</code>, <code>register</code>, <code>reconnect-session</code>, <code>heartbeat</code>, <code>reconnect</code>, <code>status</code></li><li>Only available when Remote Control is connected (USER_TYPE=ant)</li><li>Intended for internal Anthropic debugging, not user-facing</li></ul>
+<div class="blabel">Evidence</div>
+<p>Bridge debug command (search for <code>"bridge-kick"</code>, <code>"Inject bridge failure states"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

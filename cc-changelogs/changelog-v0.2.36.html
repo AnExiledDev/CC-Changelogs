@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.36 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.36."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.36</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.36</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.35 → v0.2.36</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p>Based on my analysis of the diff between v0.2.35 and v0.2.36, here's the detailed changelog focusing on user-facing features:</p>
+    </article>
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Import MCP Servers from Claude Desktop</h4>
+<p>A new command has been added to seamlessly import MCP server configurations from Claude Desktop:</p>
+<pre><code>claude mcp add-from-claude-desktop</code></pre>
+<p>This command:</p>
+<ul><li>Automatically detects Claude Desktop installations on macOS and WSL</li><li>Presents an interactive multi-select interface to choose which servers to import</li><li>Handles naming conflicts by adding numbered suffixes when servers with the same name already exist</li><li>Shows visual indicators for servers that already exist in your configuration</li></ul>
+<p><strong>Example interaction:</strong></p>
+<pre><code>┌─ Import MCP Servers from Claude Desktop ─────────────────────┐
+│ Import MCP Servers from Claude Desktop                       │
+│ Found 3 MCP servers in Claude Desktop.                       │
+│ Note: Some servers already exist with the same name.         │
+│ Please select the servers you want to import:                │
+│                                                               │
+│ &gt; [✓] filesystem-server                                       │
+│   [ ] github-server (already exists)                          │
+│   [✓] postgres-server                                         │
+└───────────────────────────────────────────────────────────────┘
+  Space to select · Enter to confirm · Esc to cancel</code></pre>
+<h4>Add MCP Servers as JSON Strings</h4>
+<p>You can now add MCP servers directly using JSON configuration:</p>
+<pre><code>claude mcp add-json &lt;name&gt; &lt;json&gt;</code></pre>
+<p>This allows you to quickly configure servers by passing their JSON configuration directly on the command line.</p>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Auto-Compact Enhancement</h4>
+<p>The <code>/compact</code> command has been significantly improved:</p>
+<ul><li>Better conversation summarization using a more sophisticated prompt template</li><li>Improved error handling with clearer user messages</li><li>The summary now includes structured sections:</li></ul>
+<ol><li>Primary Request and Intent</li><li>Key Technical Concepts</li><li>Files and Code Sections</li><li>Problem Solving</li><li>Pending Tasks</li><li>Current Work</li><li>Next Step Recommendation</li></ol>
+<p><strong>Error messages are now more helpful:</strong></p>
+<ul><li>"Not enough messages to compact." - when conversation is too short</li><li>"Conversation too long. Press esc to go up a few messages and try again." - when hitting API limits</li><li>"API Error: Request was aborted." - for network issues</li></ul>
+<h4>Diff Display Improvements</h4>
+<p>The code diff display now supports:</p>
+<ul><li>Option to hide line numbers with the <code>hideLineNumbers</code> parameter</li><li>Option to skip unchanged lines with the <code>skipUnchanged</code> parameter</li><li>Enhanced word-level diff highlighting for better readability</li></ul>
+<h4>File Reading Enhancements</h4>
+<ul><li>New token counting for file content to prevent API overload</li><li>Better error messages when files exceed size limits:</li><li>Size-based: "File content (XKB) exceeds maximum allowed size (YKB)"</li><li>Token-based: "File content (X tokens) exceeds maximum allowed tokens (Y)"</li><li>Improved handling of large file reads with streaming support</li></ul>
+<h4>Shell Improvements</h4>
+<p>The persistent shell has been optimized:</p>
+<ul><li>Better tracking of working directory changes with a "dirty" flag</li><li>Reduced unnecessary <code>pwd</code> calls for better performance</li><li>Enhanced logging for debugging shell operations</li><li>Fixed initialization timeout for shell configuration loading</li></ul>
+<h4>Platform Detection</h4>
+<p>New environment detection capabilities:</p>
+<ul><li><code>isWslEnvironment</code>: Detects if running in WSL</li><li><code>isNpmFromWindowsPath</code>: Detects if npm is being run from Windows path in WSL</li></ul>
+<h4>Configuration</h4>
+<p>New configuration option added:</p>
+<ul><li><code>autoCompactEnabled</code>: Control automatic conversation compacting (default: true)</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed WebFetch tool to properly handle response body streaming and size limits</li><li>Improved error handling for aborted fetch requests</li><li>Better support for safe command execution with enhanced command validation</li></ul>
+    </article>
+    <article class="card" id="technical-improvements">
+      <div class="card-top">
+        <h3>Technical Improvements <a class="anchor" href="#technical-improvements">#</a></h3>
+      </div>
+      <ul><li>Added new utility class <code>Ch</code> for structured tool errors</li><li>Enhanced multi-select component for better user interaction</li><li>Improved token counting accuracy for API request management</li><li>Better handling of WSL environments for cross-platform compatibility</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

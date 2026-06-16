@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.34 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.34."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.34</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.34</span></h1>
+<p class="sub">This is a minor maintenance release with internal improvements to telemetry tracking and code organization. There are no new user-facing features in this version.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.33 → v2.1.34</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enhanced-telemetry-with-rate-limit-tier-tracking">
+      <div class="card-top">
+        <h3>Enhanced Telemetry with Rate Limit Tier Tracking <a class="anchor" href="#enhanced-telemetry-with-rate-limit-tier-tracking">#</a></h3>
+      </div>
+      <p>The analytics system now captures the user's rate limit tier alongside existing subscription information. This provides Anthropic with better visibility into usage patterns across different account types.</p>
+<div class="blabel">Evidence</div>
+<p>Rate limit tier addition to analytics payload (search for <code>"rateLimitTier"</code>)</p>
+    </article>
+    <article class="card" id="refactored-inbox-polling-logic">
+      <div class="card-top">
+        <h3>Refactored Inbox Polling Logic <a class="anchor" href="#refactored-inbox-polling-logic">#</a></h3>
+      </div>
+      <p>The inbox polling system (used for processing queued messages when the session becomes available) has been refactored to accept an explicit <code>enabled</code> parameter. This improves control flow by allowing the polling behavior to be conditionally disabled rather than relying on implicit checks throughout the function.</p>
+<div class="blabel">Evidence</div>
+<p>Inbox poller function signature change — <code>ijq()</code> at line ~547956 (search for <code>"[InboxPoller]"</code>)</p>
+    </article>
+    <article class="card" id="sandboxed-bash-auto-allow-refinement">
+      <div class="card-top">
+        <h3>Sandboxed Bash Auto-Allow Refinement <a class="anchor" href="#sandboxed-bash-auto-allow-refinement">#</a></h3>
+      </div>
+      <p>The logic for automatically allowing Bash commands when sandboxing is enabled now includes an additional validation check. This ensures the auto-allow behavior only applies when specific conditions are met.</p>
+<div class="blabel">Evidence</div>
+<p>Auto-allow condition tightening — <code>b3z()</code> at line ~514497 (search for <code>"isAutoAllowBashIfSandboxedEnabled"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <p>None identified in this release.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>This release contains primarily internal refactoring and telemetry improvements. Users should not notice any behavioral changes. The structural similarity between versions is 99.9%, indicating minimal code changes.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

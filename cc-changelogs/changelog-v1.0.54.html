@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.54 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.54."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.54</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.54</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.53 → v1.0.54</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">13</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">2</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="dynamic-oauth-callback-port-configuration">
+      <div class="card-top">
+        <h3>Dynamic OAuth Callback Port Configuration <a class="anchor" href="#dynamic-oauth-callback-port-configuration">#</a></h3>
+      </div>
+      <ul><li><strong>Added environment variable support for OAuth callbacks</strong>: You can now set <code>MCP_OAUTH_CALLBACK_PORT</code> to specify a custom OAuth callback port</li><li><strong>Improved port selection for Windows</strong>: OAuth callback port range now adapts based on platform (Windows: 39152-49151, others: 49152-65535)</li><li><strong>Example usage</strong>:</li></ul>
+<pre><code>  export MCP_OAUTH_CALLBACK_PORT=45000
+  claude-code</code></pre>
+    </article>
+    <article class="card" id="enhanced-file-system-monitoring">
+      <div class="card-top">
+        <h3>Enhanced File System Monitoring <a class="anchor" href="#enhanced-file-system-monitoring">#</a></h3>
+      </div>
+      <ul><li><strong>New file watcher implementation</strong>: Added comprehensive file system monitoring with <code>chokidar</code> integration for better detection of external file changes</li><li><strong>Settings change detection</strong>: Automatically detects when settings files are modified externally and can reload configurations</li><li><strong>Improved performance</strong>: Better handling of file system events with debouncing and throttling</li></ul>
+    </article>
+    <article class="card" id="settings-configuration-improvements">
+      <div class="card-top">
+        <h3>Settings Configuration Improvements <a class="anchor" href="#settings-configuration-improvements">#</a></h3>
+      </div>
+      <ul><li><strong>Better validation messages</strong>: Settings file validation now provides more descriptive error messages with specific field names</li><li><strong>Schema documentation</strong>: All settings fields now include helpful descriptions in the schema</li><li><strong>New settings options</strong>:</li><li><code>permissions.allow/deny</code>: Glob patterns for file/directory access control</li><li><code>permissions.defaultMode</code>: Default permission mode when Claude Code needs access</li><li><code>permissions.disableBypassPermissionsMode</code>: Option to disable permission bypass</li><li><code>permissions.additionalDirectories</code>: Additional directories to include in permission scope</li><li><code>hooks</code>: Custom commands to run before/after tool executions</li><li><code>forceLoginMethod</code>: Force specific login method ("claudeai" or "console")</li><li><code>otelHeadersHelper</code>: Path to script for OpenTelemetry headers</li></ul>
+    </article>
+    <article class="card" id="shell-environment-improvements">
+      <div class="card-top">
+        <h3>Shell Environment Improvements <a class="anchor" href="#shell-environment-improvements">#</a></h3>
+      </div>
+      <ul><li><strong>Simplified shell snapshots</strong>: Shell environment capture now outputs directly to stdout instead of writing temporary files</li><li><strong>Debug mode support</strong>: When <code>CLAUDE_CODE_DEBUG</code> is set, shell snapshots are saved to disk for troubleshooting</li><li><strong>Removed shell snapshot cleanup</strong>: Eliminated the periodic cleanup of old shell snapshots as they're no longer persisted by default</li></ul>
+    </article>
+    <article class="card" id="enhanced-keyboard-shortcuts">
+      <div class="card-top">
+        <h3>️ Enhanced Keyboard Shortcuts <a class="anchor" href="#enhanced-keyboard-shortcuts">#</a></h3>
+      </div>
+      <ul><li><strong>Platform-specific focus shortcut</strong>:</li><li>Windows: <code>Alt+M</code> to focus on the message input</li><li>Mac/Linux: <code>Cmd+M</code> to focus on the message input</li></ul>
+    </article>
+    <article class="card" id="command-system-enhancements">
+      <div class="card-top">
+        <h3>Command System Enhancements <a class="anchor" href="#command-system-enhancements">#</a></h3>
+      </div>
+      <ul><li><strong>Better error handling for commands</strong>: Failed commands now throw proper <code>CommandError</code> exceptions with context</li><li><strong>Improved command validation</strong>: More specific error messages when using unsupported command types</li><li><strong>New command execution function</strong>: Added <code>K1B</code> for executing prompt commands with better error handling</li></ul>
+    </article>
+    <article class="card" id="url-handling">
+      <div class="card-top">
+        <h3>URL Handling <a class="anchor" href="#url-handling">#</a></h3>
+      </div>
+      <ul><li><strong>Safer URL opening</strong>: Added URL validation before opening in browser to prevent security issues</li><li><strong>Windows PowerShell support</strong>: Improved browser opening on Windows using PowerShell for better compatibility</li></ul>
+    </article>
+    <article class="card" id="data-sharing">
+      <div class="card-top">
+        <h3>Data Sharing <a class="anchor" href="#data-sharing">#</a></h3>
+      </div>
+      <ul><li><strong>Async qualification check</strong>: Added <code>m$1</code> function for checking data sharing qualification asynchronously</li></ul>
+    </article>
+    <article class="card" id="architecture-updates">
+      <div class="card-top">
+        <h3>️ Architecture Updates <a class="anchor" href="#architecture-updates">#</a></h3>
+      </div>
+      <ul><li><strong>New imports</strong>: Added various Node.js stream, path, and process utilities for better system integration</li><li><strong>Constants reorganization</strong>: Moved and consolidated various timeout and configuration constants</li><li><strong>Improved error tracking</strong>: Better Sentry integration with more context for validation errors</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li><strong>Removed duplicate imports</strong>: Cleaned up redundant imports of stream and process modules</li><li><strong>Fixed shell environment issues</strong>: Better handling of shell configuration file detection and sourcing</li><li><strong>Improved Windows compatibility</strong>: Better path handling and process execution on Windows</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Breaking Changes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="breaking-changes">
+      <ul><li><strong>Shell snapshot behavior</strong>: Shell snapshots are no longer automatically saved to disk unless in debug mode</li><li><strong>OAuth port ranges</strong>: Changed default OAuth callback port ranges based on platform</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li><strong>Code refactoring</strong>: Multiple functions renamed and restructured for better maintainability</li><li><strong>New utility classes</strong>: Added file watching and monitoring classes for better file system integration</li><li><strong>Improved type safety</strong>: Better TypeScript/schema definitions for settings validation</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

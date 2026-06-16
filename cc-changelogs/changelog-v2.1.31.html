@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.31 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.31."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.31</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.31</span></h1>
+<p class="sub">This release introduces a major expansion of the Persistent Agent Memory system with a configuration UI, three memory scopes (user, project, local), and MEMORY.md-based storage. It also adds streamlined SDK output message types, improved error messages with actual file size limits, enhanced tool usage instructions in the system prompt, and a session resume hint on exit.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.30 → v2.1.31</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">12</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="persistent-agent-memory-system-gradual-rollout">
+      <div class="card-top">
+        <h3>Persistent Agent Memory System [Gradual Rollout] <a class="anchor" href="#persistent-agent-memory-system-gradual-rollout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A comprehensive persistent memory system that lets Claude remember insights, patterns, and learnings across conversations, stored in MEMORY.md files within configurable directory scopes.</p>
+<div class="blabel">Usage</div>
+<p>Agent memory is configured through a new interactive dialog accessible during onboarding or settings. Users choose one of:</p>
+<ul><li><strong>User scope</strong> (<code>~/.claude/agent-memory/</code>) -- general learnings across all projects</li><li><strong>Project scope</strong> (<code>.claude/agent-memory/</code>) -- project-specific, shared via version control</li><li><strong>Local scope</strong> (<code>.claude/agent-memory-local/</code>) -- project-specific, not checked into version control</li><li><strong>None</strong> -- no persistent memory</li></ul>
+<div class="blabel">Details</div>
+<ul><li>Memory is stored in <code>MEMORY.md</code> files that are automatically loaded into the system prompt</li><li>Claude is instructed to organize memory semantically by topic, not chronologically</li><li>Records insights about problem constraints, strategies that worked or failed, and lessons learned</li><li>Claude proactively updates memory as it discovers useful patterns during work</li><li>MEMORY.md is truncated at 200 lines with a warning when exceeded, encouraging users to compact or reorganize</li><li>When MEMORY.md is empty, Claude is prompted to start recording learnings for future sessions</li><li>Can be disabled with <code>CLAUDE_CODE_DISABLE_AUTO_MEMORY=1</code> environment variable</li></ul>
+<div class="blabel">Evidence</div>
+<p>Persistent Agent Memory feature with configuration UI (search for <code>"Persistent Agent Memory"</code>, <code>"Configure agent memory"</code>, <code>"Organize memory semantically by topic"</code>, and <code>"no persistent memory"</code>). Gated by <code>tengu_oboe</code> feature flag (default <code>!1</code> = false).</p>
+    </article>
+    <article class="card" id="streamlined-sdk-output-types">
+      <div class="card-top">
+        <h3>Streamlined SDK Output Types <a class="anchor" href="#streamlined-sdk-output-types">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Two new message types for SDK consumers that provide a simplified view of Claude's output, stripping away thinking blocks and tool call details.</p>
+<div class="blabel">Details</div>
+<ul><li><code>streamlined_text</code> -- preserves the text content from assistant messages but removes thinking and tool_use blocks</li><li><code>streamlined_tool_use_summary</code> -- replaces verbose tool_use blocks with a human-readable summary string (e.g., "Read 2 files, wrote 1 file")</li><li>These message types are filtered out in the normal CLI transport layer and are intended for SDK streaming consumers</li><li>Marked as <code>@internal</code> in the schema descriptions</li></ul>
+<div class="blabel">Evidence</div>
+<p>New Zod schema types (search for <code>"streamlined_text"</code> and <code>"streamlined_tool_use_summary"</code>)</p>
+    </article>
+    <article class="card" id="session-resume-hint-on-exit">
+      <div class="card-top">
+        <h3>Session Resume Hint on Exit <a class="anchor" href="#session-resume-hint-on-exit">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When a session ends in a TTY terminal, Claude Code now displays a dimmed hint showing the exact command to resume that session.</p>
+<div class="blabel">Details</div>
+<ul><li>Displays <code>Resume this session with: claude --resume &lt;session-id&gt;</code> when exiting</li><li>Only shown in TTY mode (not in piped/scripted contexts)</li><li>Uses the session name if available, or the session ID</li></ul>
+<div class="blabel">Evidence</div>
+<p>Resume hint on exit (search for <code>"Resume this session with:"</code>)</p>
+    </article>
+    <article class="card" id="expanded-tool-usage-instructions-in-system-prompt">
+      <div class="card-top">
+        <h3>Expanded Tool Usage Instructions in System Prompt <a class="anchor" href="#expanded-tool-usage-instructions-in-system-prompt">#</a></h3>
+      </div>
+      <p>The system prompt now provides individual, per-tool instructions for when to use dedicated tools instead of Bash, replacing the previous single-paragraph format. The new format:</p>
+<ul><li>Lists each tool explicitly: Read instead of cat/head/tail/sed, Edit instead of sed/awk, Write instead of cat with heredoc, Glob instead of find/ls, Grep instead of grep/rg</li><li>Uses stronger wording: "Do NOT use the [Bash] to run commands when a relevant dedicated tool is provided"</li><li>Emphasizes this as "CRITICAL to assisting the user"</li><li>Wraps the tool-specific lines inside a top-level instruction, creating a clearer hierarchy</li></ul>
+<p>Previously, Glob and Grep were not explicitly mentioned as alternatives to bash commands.</p>
+<div class="blabel">Evidence</div>
+<p>Expanded tool usage policy (search for <code>"exclusively for system commands and terminal operations that require shell execution"</code> and <code>"Do NOT use the"</code>)</p>
+    </article>
+    <article class="card" id="improved-error-messages-for-large-files">
+      <div class="card-top">
+        <h3>Improved Error Messages for Large Files <a class="anchor" href="#improved-error-messages-for-large-files">#</a></h3>
+      </div>
+      <p>Error messages for oversized PDFs and requests now include the actual size limits and suggest <code>pdftotext</code> as a specific alternative tool.</p>
+<ul><li>Old: <code>"PDF too large. Try reading the file a different way (e.g., extract text with a CLI tool)."</code></li><li>New: <code>"PDF too large (max N pages, Xmb). Try reading the file a different way (e.g., extract text with pdftotext)."</code></li><li>Old: <code>"Request too large. Try with a smaller file."</code></li><li>New: <code>"Request too large (max Xmb). Try with a smaller file."</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Improved error messages with limits (search for <code>"PDF too large ("</code> and <code>"Request too large ("</code>)</p>
+    </article>
+    <article class="card" id="conditional-pricing-in-model-selector">
+      <div class="card-top">
+        <h3>Conditional Pricing in Model Selector <a class="anchor" href="#conditional-pricing-in-model-selector">#</a></h3>
+      </div>
+      <p>Model descriptions in the model picker now conditionally show pricing information based on the user's account type. First-party (subscription) users see cost indicators, while API users do not.</p>
+<div class="blabel">Evidence</div>
+<p>Conditional pricing display (search for <code>H4() !== "firstParty"</code> in model selector functions near line ~147370)</p>
+    </article>
+    <article class="card" id="permission-mode-delegate-description">
+      <div class="card-top">
+        <h3>Permission Mode: Delegate Description <a class="anchor" href="#permission-mode-delegate-description">#</a></h3>
+      </div>
+      <p>The <code>delegate</code> permission mode now has an explicit description in the schema: "Delegate mode, restricts team leader to only Teammate and Task tools." Previously the mode existed in the enum but lacked a description string.</p>
+<div class="blabel">Evidence</div>
+<p>Delegate mode documentation (search for <code>"delegate"</code> in the permission mode <code>.describe()</code> string)</p>
+    </article>
+    <article class="card" id="agent-teams-plan-gating">
+      <div class="card-top">
+        <h3>Agent Teams Plan Gating <a class="anchor" href="#agent-teams-plan-gating">#</a></h3>
+      </div>
+      <p>Agent Teams (TeammateTool, SendMessage, spawnTeam) now checks plan eligibility before allowing team operations. Users on ineligible plans receive a clear error message instead of a silent failure.</p>
+<div class="blabel">Evidence</div>
+<p>Plan check for Agent Teams (search for <code>"Agent Teams is not yet available on your plan."</code>)</p>
+    </article>
+    <article class="card" id="keybindings-schema-url-migration">
+      <div class="card-top">
+        <h3>Keybindings Schema URL Migration <a class="anchor" href="#keybindings-schema-url-migration">#</a></h3>
+      </div>
+      <p>The JSON schema URL for keybindings configuration has migrated from Anthropic's platform domain to SchemaStore, a public schema registry.</p>
+<ul><li>Old: <code>https://platform.claude.com/docs/schemas/claude-code/keybindings.json</code></li><li>New: <code>https://www.schemastore.org/claude-code-keybindings.json</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema URL change (search for <code>"schemastore.org/claude-code-keybindings.json"</code>)</p>
+    </article>
+    <article class="card" id="tool-permission-context-in-system-prompt">
+      <div class="card-top">
+        <h3>Tool Permission Context in System Prompt <a class="anchor" href="#tool-permission-context-in-system-prompt">#</a></h3>
+      </div>
+      <p>The system prompt now includes context about how tool permissions work, explaining that tools are executed in a user-selected permission mode and that denied tool calls should not be re-attempted without adjusting the approach.</p>
+<div class="blabel">Evidence</div>
+<p>Permission context in system prompt (search for <code>"Tools are executed in a user-selected permission mode"</code>)</p>
+    </article>
+    <article class="card" id="websocket-interval-based-keepalive">
+      <div class="card-top">
+        <h3>WebSocket Interval-Based Keepalive <a class="anchor" href="#websocket-interval-based-keepalive">#</a></h3>
+      </div>
+      <p>A new periodic interval-based keepalive mechanism has been added to the WebSocket transport, supplementing the existing activity-triggered keepalive. This should improve connection stability during idle periods in remote sessions.</p>
+<div class="blabel">Evidence</div>
+<p>New keepalive interval (search for <code>"WebSocketTransport: Sent keep_alive (interval)"</code> and <code>keepaliveInterval</code>)</p>
+    </article>
+    <article class="card" id="tool-names-in-messages-in-development">
+      <div class="card-top">
+        <h3>Tool Names in Messages [In Development] <a class="anchor" href="#tool-names-in-messages-in-development">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A feature that changes how deferred tool search prompts are constructed when tool names are injected into messages.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_tst_names_in_messages</code> (default false)</p>
+<div class="blabel">Details</div>
+<ul><li>Controlled by <code>CLAUDE_CODE_TST_NAMES_IN_MESSAGES</code> environment variable or the <code>tengu_tst_names_in_messages</code> feature flag</li><li>When enabled, returns a different tool search prompt variant (<code>CS9</code>) instead of the default</li><li>Appears to change how the ToolSearchTool presents its available tools list</li></ul>
+<div class="blabel">Evidence</div>
+<p>Tool names in messages feature (search for <code>"CLAUDE_CODE_TST_NAMES_IN_MESSAGES"</code>, gated by <code>tengu_tst_names_in_messages</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

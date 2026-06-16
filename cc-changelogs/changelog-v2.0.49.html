@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.49 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.49."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.49</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.49</span></h1>
+<p class="sub">Version 2.0.49 introduces significant infrastructure improvements including a new GrowthBook feature flag system for dynamic feature control, unrestricted model access for Foundry users, and enhanced terminal rendering for emoji and Unicode characters.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.47 → v2.0.49</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="growthbook-feature-flag-integration">
+      <div class="card-top">
+        <h3>GrowthBook Feature Flag Integration <a class="anchor" href="#growthbook-feature-flag-integration">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Complete integration of GrowthBook SDK (v1.6.1) for remote feature management and A/B testing <strong>How to use:</strong></p>
+<pre><code># Enable GrowthBook integration
+export CLAUDE_CODE_ENABLE_GROWTHBOOK=true
+claude</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Enables Anthropic to dynamically control features without CLI updates</li><li>Supports real-time feature flag updates via Server-Sent Events (SSE)</li><li>Implements intelligent caching with 60-second stale TTL and 4-hour max age</li><li>Includes automatic retry logic with exponential backoff</li><li>Features pause when browser tab is hidden to save resources</li><li><strong>Evidence</strong>: <code>bn2()</code> at line 447290, <code>z31</code> class at line 448817, SDK key <code>CO0</code> at line 35311</li></ul>
+    </article>
+    <article class="card" id="github-repository-path-tracking">
+      <div class="card-top">
+        <h3>GitHub Repository Path Tracking <a class="anchor" href="#github-repository-path-tracking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New system to track which local directories correspond to which GitHub repositories <strong>How to use:</strong> This feature works automatically when you work with GitHub repositories. It enables repository-aware context switching and settings. <strong>Details:</strong></p>
+<ul><li>Automatically tracks repo-to-directory mappings in settings</li><li>Enables better multi-repository workflow support</li><li>Stored in <code>githubRepoPaths</code> field in user settings</li><li><strong>Evidence</strong>: <code>lX9()</code> at line 507265, <code>iX9()</code> at line 507276</li></ul>
+    </article>
+    <article class="card" id="unrestricted-model-access-for-foundry-users">
+      <div class="card-top">
+        <h3>Unrestricted Model Access for Foundry Users <a class="anchor" href="#unrestricted-model-access-for-foundry-users">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Foundry deployment users now have access to all Claude models without version restrictions <strong>Details:</strong> Previously, Foundry users had the same model restrictions as first-party users (excluding claude-3-* models). Now Foundry users can access all available models including legacy versions.</p>
+<ul><li><strong>Evidence</strong>: <code>Ez4()</code> at line 86189 vs <code>dC4()</code> at line 86088 in v2.0.47</li></ul>
+    </article>
+    <article class="card" id="enhanced-terminal-text-rendering-for-emoji-and-unicode">
+      <div class="card-top">
+        <h3>Enhanced Terminal Text Rendering for Emoji and Unicode <a class="anchor" href="#enhanced-terminal-text-rendering-for-emoji-and-unicode">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Significantly improved display width calculation for emoji, flag characters, and complex Unicode scripts <strong>Details:</strong></p>
+<ul><li>Adds fast-path optimization for ASCII strings (performance improvement)</li><li>Correctly handles Regional Indicator flag emojis (🇺🇸, 🇬🇧)</li><li>Proper width calculation for keycap sequences (1️⃣, 2️⃣)</li><li>Better support for zero-width characters in Indic, Arabic, and Hebrew scripts</li><li>Prevents terminal misalignment issues with emoji-containing content</li><li><strong>Evidence</strong>: <code>N94()</code> at line 61894, <code>q94()</code> at line 61905, <code>_g0()</code> at line 61921</li></ul>
+    </article>
+    <article class="card" id="improved-https-proxy-compatibility">
+      <div class="card-top">
+        <h3>Improved HTTPS Proxy Compatibility <a class="anchor" href="#improved-https-proxy-compatibility">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced proxy agent with DNS address family normalization <strong>Details:</strong></p>
+<ul><li>Adds custom DNS lookup callback for better proxy compatibility</li><li>Normalizes IPv4/IPv6 address family specifications</li><li>Prevents connection failures with proxies sensitive to address family format</li><li>Maintains existing mTLS certificate support</li><li><strong>Evidence</strong>: <code>WhQ()</code> at line 146672, <code>N$8()</code> at line 146623</li></ul>
+    </article>
+    <article class="card" id="enhanced-settings-file-security-isolation">
+      <div class="card-top">
+        <h3>Enhanced Settings File Security Isolation <a class="anchor" href="#enhanced-settings-file-security-isolation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved protection against accidental modification of parent workspace settings <strong>Details:</strong> When working in a subdirectory, Claude Code now denies write access to parent workspace <code>.claude/settings.json</code> and <code>.claude/settings.local.json</code> files. This prevents unintended configuration changes when working in nested directories.</p>
+<ul><li><strong>Evidence</strong>: <code>oA2()</code> function sandbox configuration (diff line 5527-5531)</li></ul>
+    </article>
+    <article class="card" id="improved-tool-schema-validation">
+      <div class="card-top">
+        <h3>Improved Tool Schema Validation <a class="anchor" href="#improved-tool-schema-validation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> VerifyResult tool now includes JSON Schema in addition to Zod schema <strong>Details:</strong></p>
+<ul><li>Provides dual validation formats for better compatibility</li><li>Enables clearer error messages when tool is used incorrectly</li><li>Supports both <code>inputSchema</code> (Zod) and <code>inputJSONSchema</code> (JSON Schema)</li><li><strong>Evidence</strong>: <code>UM3()</code> at line 497621 vs <code>r$3()</code> at line 494892 in v2.0.47</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>Refactored text segmentation functions for better emoji handling (<code>y44()</code> at line 76651, <code>k44()</code> at line 76643)</li><li>Consolidated import statements for better module organization</li><li>Updated internal function names for consistency (147 functions added, 22 removed)</li></ul>
+    </article>
+    <article class="card" id="infrastructure">
+      <div class="card-top">
+        <h3>Infrastructure <a class="anchor" href="#infrastructure">#</a></h3>
+      </div>
+      <ul><li>Added support for dynamic feature rollouts via remote configuration</li><li>Implemented stale-while-revalidate caching strategy for feature flags</li><li>Enhanced analytics tracking for feature evaluation and experiment participation</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

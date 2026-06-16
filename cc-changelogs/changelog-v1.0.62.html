@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.62 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.62."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.62</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.62</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.61 → v1.0.62</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">11 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enhanced-add-dir-command">
+      <div class="card-top">
+        <h3>🆕 Enhanced <code>/add-dir</code> Command <a class="anchor" href="#enhanced-add-dir-command">#</a></h3>
+      </div>
+      <p>The <code>/add-dir</code> command has been completely redesigned with an interactive UI and persistent storage options:</p>
+<p><strong>Usage:</strong> <code>/add-dir &lt;directory-path&gt;</code></p>
+<ul><li><strong>Interactive Selection</strong>: When adding a directory, you now get three options:</li><li><code>Yes, for this session</code> - Adds the directory only for the current session</li><li><code>Yes, remember</code> - Adds the directory and saves it to local settings for future sessions</li><li><code>No</code> - Cancels the operation</li></ul>
+<ul><li><strong>Visual Feedback</strong>: The command now displays:</li><li>The directory path being added in cyan</li><li>A clear explanation that Claude will be able to read files and make edits in this directory</li><li>Better error messages if the path is invalid</li></ul>
+<ul><li><strong>Persistent Storage</strong>: When choosing "Yes, remember", the directory is saved to your local settings and will be available in future sessions</li></ul>
+    </article>
+    <article class="card" id="agent-mentions-with-syntax">
+      <div class="card-top">
+        <h3>🆕 Agent Mentions with @-syntax <a class="anchor" href="#agent-mentions-with-syntax">#</a></h3>
+      </div>
+      <p>You can now mention agents directly in your prompts using the <code>@agent-</code> syntax:</p>
+<p><strong>Usage:</strong> <code>@agent-&lt;agent-type&gt;</code></p>
+<p>Example:</p>
+<pre><code>Please help me refactor this code @agent-refactoring-specialist</code></pre>
+<p>The system will automatically detect and process agent mentions in your messages.</p>
+    </article>
+    <article class="card" id="session-start-hooks">
+      <div class="card-top">
+        <h3>🆕 Session Start Hooks <a class="anchor" href="#session-start-hooks">#</a></h3>
+      </div>
+      <p>A new hook system that runs when starting a new session, allowing for automatic context injection and initialization tasks. This runs automatically on startup unless using <code>--continue</code>, <code>--resume</code>, or <code>--teleport</code> flags.</p>
+    </article>
+    <article class="card" id="directory-path-autocomplete-internal-enhancement">
+      <div class="card-top">
+        <h3>🆕 Directory Path Autocomplete (Internal Enhancement) <a class="anchor" href="#directory-path-autocomplete-internal-enhancement">#</a></h3>
+      </div>
+      <p>Added intelligent directory path completion that:</p>
+<ul><li>Supports <code>~</code> for home directory expansion</li><li>Provides up to 10 directory suggestions</li><li>Filters hidden directories (starting with <code>.</code>)</li><li>Caches results for 5 minutes for better performance</li></ul>
+    </article>
+    <article class="card" id="tool-selection-ui-enhancements">
+      <div class="card-top">
+        <h3>Tool Selection UI Enhancements <a class="anchor" href="#tool-selection-ui-enhancements">#</a></h3>
+      </div>
+      <p>The tool selection interface has been significantly improved:</p>
+<ul><li><strong>MCP Server Grouping</strong>: MCP tools are now grouped by server for easier management</li><li><strong>New Categories</strong>: Tools are now organized into:</li><li>Read-only tools</li><li>Edit tools</li><li>Execution tools</li><li>MCP tools (new dedicated category)</li><li>Other tools (new category for miscellaneous tools)</li><li><strong>Advanced Options</strong>: Replaced "Show individual tools" with "Show advanced options" that reveals:</li><li>MCP servers with tool counts</li><li>Individual tool selection</li><li><strong>Better Navigation</strong>: Header sections are now non-interactive and properly skipped during keyboard navigation</li><li><strong>Escape to Cancel</strong>: Press <code>Esc</code> to cancel tool selection and use initial tools</li></ul>
+    </article>
+    <article class="card" id="ripgrep-integration-improvements">
+      <div class="card-top">
+        <h3>Ripgrep Integration Improvements <a class="anchor" href="#ripgrep-integration-improvements">#</a></h3>
+      </div>
+      <ul><li>Centralized ripgrep path resolution with better quoting for paths containing spaces</li><li>More robust handling of bundled vs system ripgrep</li><li>Improved alias generation in shell snapshots with proper escaping</li></ul>
+    </article>
+    <article class="card" id="settings-watcher-optimization">
+      <div class="card-top">
+        <h3>Settings Watcher Optimization <a class="anchor" href="#settings-watcher-optimization">#</a></h3>
+      </div>
+      <p>The settings file watcher has been streamlined:</p>
+<ul><li>Removed redundant state tracking</li><li>Simplified change detection logic</li><li>More efficient memory usage</li><li>Better event handling for file changes</li></ul>
+    </article>
+    <article class="card" id="performance-enhancements">
+      <div class="card-top">
+        <h3>Performance Enhancements <a class="anchor" href="#performance-enhancements">#</a></h3>
+      </div>
+      <ul><li>Connection check interval increased to 30 seconds (from 1 second on non-Mac platforms)</li><li>Added caching for directory listing operations (5-minute TTL)</li><li>Optimized settings watcher to reduce memory footprint</li></ul>
+    </article>
+    <article class="card" id="code-quality">
+      <div class="card-top">
+        <h3>Code Quality <a class="anchor" href="#code-quality">#</a></h3>
+      </div>
+      <ul><li>Better error handling for agent mentions</li><li>Improved type safety with centralized MCP tool detection</li><li>More consistent path resolution across the codebase</li><li>Enhanced stream handling with proper PassThrough imports</li></ul>
+    </article>
+    <article class="card" id="fixed">
+      <div class="card-top">
+        <h3>Fixed <a class="anchor" href="#fixed">#</a></h3>
+      </div>
+      <ul><li>Proper handling of spaces in ripgrep paths on all platforms</li><li>Correct escaping of quotes in shell snapshot generation</li><li>Better error messages for invalid session IDs in <code>--print</code> mode</li></ul>
+    </article>
+    <article class="card" id="architecture">
+      <div class="card-top">
+        <h3>️ Architecture <a class="anchor" href="#architecture">#</a></h3>
+      </div>
+      <ul><li>New <code>SessionStart</code> hook type added to the hook system</li><li>Centralized MCP tool identification with <code>Is1()</code> function</li><li>Improved modularity for agent mention processing</li><li>Better separation of concerns in the <code>/add-dir</code> command implementation</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.9 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.9."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.9</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.9</span></h1>
+<p class="sub">This release adds Opus 4.5 upgrade nudges for users on older Opus models, introduces a new <code>plansDirectory</code> setting to customize where plan files are stored, enhances MCP tool search with better scoring for server and action names, and includes new telemetry for SSL/TLS certificate configurations. Internal improvements include a new HybridTransport for remote sessions with retry logic.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.8 → v2.1.9</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">9</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="plans-directory-configuration">
+      <div class="card-top">
+        <h3>Plans Directory Configuration <a class="anchor" href="#plans-directory-configuration">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>You can now specify a custom directory for plan files via the <code>plansDirectory</code> setting.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;plansDirectory&quot;: &quot;./plans&quot;
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The directory must be within the project root</li><li>If not specified, plans are stored in the default session directory</li><li>Useful for keeping plan files in version control alongside your project</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>jN()</code> at line 300782 (plans directory resolution, contains <code>"plansDirectory must be within project root"</code>)</p>
+    </article>
+    <article class="card" id="opus-4-5-upgrade-nudge">
+      <div class="card-top">
+        <h3>Opus 4.5 Upgrade Nudge <a class="anchor" href="#opus-4-5-upgrade-nudge">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Users on older Opus 4.x models (Opus 4.0, 4.1) now see a notification suggesting they upgrade to Opus 4.5.</p>
+<div class="blabel">Details</div>
+<ul><li>Only shows for first-party users (claude.ai)</li><li>Displays: "Opus 4.5 is available and is our best model for coding"</li><li>Includes a hint to use <code>/model</code> command to upgrade</li><li>Nudge appears for ~10 seconds then dismisses</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>vN9()</code> at line 535826 (opus upgrade nudge, contains <code>"opus-45-upgrade-nudge"</code>, <code>"Opus 4.5 is available and is our best model for coding"</code>)</p>
+    </article>
+    <article class="card" id="enable-tool-search-percentage-control">
+      <div class="card-top">
+        <h3>ENABLE_TOOL_SEARCH Percentage Control <a class="anchor" href="#enable-tool-search-percentage-control">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>ENABLE_TOOL_SEARCH</code> environment variable now supports percentage-based control with the <code>auto:N</code> syntax.</p>
+<div class="blabel">Usage</div>
+<pre><code>ENABLE_TOOL_SEARCH=auto:50  # 50% tool search probability
+ENABLE_TOOL_SEARCH=auto:0   # Equivalent to &quot;tst&quot; (always tool search)
+ENABLE_TOOL_SEARCH=auto:100 # Equivalent to standard/mcp-cli modes</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Values are clamped between 0-100</li><li>Invalid values log a warning and fall back to defaults</li><li>Provides fine-grained control over tool search behavior</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>DX0()</code> at line 292496 (auto percentage parser, contains <code>"Invalid ENABLE_TOOL_SEARCH value"</code>, <code>"expected auto:N where N is a number"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-mcp-tool-search-scoring">
+      <div class="card-top">
+        <h3>Enhanced MCP Tool Search Scoring <a class="anchor" href="#enhanced-mcp-tool-search-scoring">#</a></h3>
+      </div>
+      <p>Tool search now provides better relevance scoring for MCP tools by parsing server and action names from the tool name format (<code>mcp__server__action_name</code>).</p>
+<div class="blabel">Details</div>
+<ul><li>Server name exact matches: +12 points</li><li>Server name partial matches: +6 points</li><li>Action name exact matches: +8 points</li><li>Action name partial matches: +4 points</li><li>Full name matches: +3 points</li><li>Description word boundary matches: +2 points</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>EQ7()</code> at line 428976 (MCP tool name parser, uses regex <code>mcp__</code>)</p>
+    </article>
+    <article class="card" id="hybridtransport-for-remote-sessions">
+      <div class="card-top">
+        <h3>HybridTransport for Remote Sessions <a class="anchor" href="#hybridtransport-for-remote-sessions">#</a></h3>
+      </div>
+      <p>Remote sessions now use a hybrid transport that sends messages via HTTP POST with WebSocket fallback, improving reliability.</p>
+<div class="blabel">Details</div>
+<ul><li>Implements retry logic with exponential backoff (up to 10 attempts)</li><li>Converts WebSocket URLs to HTTP POST endpoints for <code>events</code> API</li><li>Client errors (4xx except 429) are not retried</li><li>Maximum backoff delay of 8 seconds</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Yv0</code> class at line 542866 (HybridTransport, contains <code>"HybridTransport: POST URL"</code>, <code>"cli_hybrid_transport_initialized"</code>)</p>
+    </article>
+    <article class="card" id="staging-environment-detection">
+      <div class="card-top">
+        <h3>Staging Environment Detection <a class="anchor" href="#staging-environment-detection">#</a></h3>
+      </div>
+      <p>Sessions can now properly detect and connect to staging environments (staging.claude.ai) for internal testing.</p>
+<div class="blabel">Evidence</div>
+<p><code>Q65()</code> at line 298312 (staging detection, contains <code>"_staging_"</code>, <code>"https://staging.claude.ai"</code>)</p>
+    </article>
+    <article class="card" id="ssl-tls-certificate-telemetry">
+      <div class="card-top">
+        <h3>SSL/TLS Certificate Telemetry <a class="anchor" href="#ssl-tls-certificate-telemetry">#</a></h3>
+      </div>
+      <p>New telemetry tracks SSL/TLS certificate configuration for debugging connectivity issues.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects <code>NODE_EXTRA_CA_CERTS</code> environment variable</li><li>Detects <code>CLAUDE_CODE_CLIENT_CERT</code> for mTLS</li><li>Detects <code>--use-system-ca</code> and <code>--use-openssl-ca</code> Node.js options</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>wT7()</code> at line 545895 (certificate telemetry, contains <code>"has_node_extra_ca_certs"</code>, <code>"has_use_system_ca"</code>)</p>
+    </article>
+    <article class="card" id="session-phase-status-tracking">
+      <div class="card-top">
+        <h3>Session Phase Status Tracking <a class="anchor" href="#session-phase-status-tracking">#</a></h3>
+      </div>
+      <p>Internal support for tracking session phases: planning, implementing, reviewing, verifying.</p>
+<div class="blabel">Evidence</div>
+<p><code>Vd5()</code> at line 373496 (phase status mapper, contains <code>"planning"</code>, <code>"implementing"</code>, <code>"reviewing"</code>, <code>"verifying"</code>)</p>
+    </article>
+    <article class="card" id="improved-screen-buffer-reuse">
+      <div class="card-top">
+        <h3>Improved Screen Buffer Reuse <a class="anchor" href="#improved-screen-buffer-reuse">#</a></h3>
+      </div>
+      <p>The terminal rendering system now reuses screen buffers for better memory efficiency, reducing allocations during rendering.</p>
+<div class="blabel">Evidence</div>
+<p><code>C3B()</code> at line 187260 (resetScreen function, screen buffer management)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed MCP client cleanup to properly handle timeouts during disconnect (<code>bd()</code> at line 296688, 5-second timeout for cleanup)</li><li>Improved screen array handling to prevent resizing issues in edge cases</li></ul>
+    </article>
+    <article class="card" id="btw-side-questions-in-development">
+      <div class="card-top">
+        <h3>/btw Side Questions [In Development] <a class="anchor" href="#btw-side-questions-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure for asking quick side questions without interrupting the main conversation.</p>
+<div class="blabel">Status</div>
+<p>Stubbed - <code>isEnabled: () =&gt; !1</code> (always returns false)</p>
+<div class="blabel">Details</div>
+<ul><li>Command exists: <code>/btw &lt;question&gt;</code></li><li>Full UI component exists with loading spinner</li><li>Error handling for failed responses</li><li>Dismiss with Enter or Escape</li><li>The command type changed from <code>"local"</code> to <code>"local-jsx"</code> (JSX component rendering)</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>eB7</code> at line 437798 (btw command, <code>isEnabled: () =&gt; !1</code>, contains <code>"/btw"</code>, <code>"Answering..."</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

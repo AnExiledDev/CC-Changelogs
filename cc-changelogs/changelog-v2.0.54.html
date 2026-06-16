@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.54 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.54."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.54</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.54</span></h1>
+<p class="sub">This release introduces enterprise hook control via <code>allowManagedHooksOnly</code>, adds telemetry event sampling to reduce observability costs, and begins testing a new CDN infrastructure with "dark read" parallel downloads. Terminal progress indicators are now more compatible across different terminal emulators.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.53 → v2.0.54</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">11 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enterprise-hook-control-allowmanagedhooksonly-policy-setting">
+      <div class="card-top">
+        <h3>Enterprise Hook Control: <code>allowManagedHooksOnly</code> Policy Setting <a class="anchor" href="#enterprise-hook-control-allowmanagedhooksonly-policy-setting">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New policy setting that restricts hook execution to only those defined in managed enterprise settings, blocking user, project, local, and plugin hooks.</p>
+<p><strong>How to use:</strong> Configure in your managed policy settings:</p>
+<pre><code>{
+  &quot;policySettings&quot;: {
+    &quot;allowManagedHooksOnly&quot;: true,
+    &quot;hooks&quot;: {
+      &quot;PreToolUse&quot;: [...]
+    }
+  }
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>When enabled, only hooks from <code>policySettings.hooks</code> will execute</li><li>Plugin hooks are explicitly skipped with log message "Skipping plugin hooks - allowManagedHooksOnly is enabled"</li><li>Complements existing <code>disableAllHooks</code> setting by providing a middle ground</li><li><strong>Evidence</strong>: <code>eQ1()</code> at line 337237, <code>VA0()</code> at line 337232, policy schema at line 503153</li></ul>
+    </article>
+    <article class="card" id="telemetry-event-sampling">
+      <div class="card-top">
+        <h3>Telemetry Event Sampling <a class="anchor" href="#telemetry-event-sampling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Probabilistic sampling mechanism that reduces telemetry overhead by logging only a configurable fraction of events.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Sampling rates configured via Statsig dynamic config <code>tengu_event_sampling_config</code></li><li>Per-event sample rates between 0 and 1 (0% to 100%)</li><li>When sampled, events include <code>sample_rate</code> metadata for statistical reconstruction</li><li>Events with <code>sample_rate: 0</code> are completely dropped</li><li><strong>Evidence</strong>: <code>lg1()</code> at line 231903, <code>ZD6()</code> at line 231900, modified <code>ZA()</code> at line 507257</li></ul>
+    </article>
+    <article class="card" id="cdn-dark-read-testing">
+      <div class="card-top">
+        <h3>CDN Dark Read Testing <a class="anchor" href="#cdn-dark-read-testing">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Parallel download attempts from new CDN infrastructure (<code>downloads.claude.ai</code>) alongside the primary Google Cloud Storage source, for performance testing without user impact.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Runs silently in background during binary downloads</li><li>Collects latency, success/failure, and error type metrics</li><li>Reports via <code>tengu_native_cdn_dark_read_failure</code> telemetry event</li><li>Creates temporary <code>claude-cdn-dark-read-*</code> directories, automatically cleaned up</li><li><strong>Evidence</strong>: <code>kp5()</code> at line 428907, <code>Ah2</code> CDN URL at line 428959</li></ul>
+    </article>
+    <article class="card" id="mcp-endpoint-warning-system">
+      <div class="card-top">
+        <h3>MCP Endpoint Warning System <a class="anchor" href="#mcp-endpoint-warning-system">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New warning when MCP endpoint files cannot be found, with automatic fallback to state files.</p>
+<p><strong>How it appears:</strong></p>
+<pre><code>Warning: MCP endpoint file not found at &lt;path&gt; (session: &lt;id&gt;). Falling back to state file.</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Warning displays once per session (uses <code>lV9</code> flag to prevent spam)</li><li>Error messages now include session IDs and file paths for easier debugging</li><li><strong>Evidence</strong>: <code>DH()</code> at line 519760, warning message at line 519769</li></ul>
+    </article>
+    <article class="card" id="smarter-terminal-progress-indicators">
+      <div class="card-top">
+        <h3>Smarter Terminal Progress Indicators <a class="anchor" href="#smarter-terminal-progress-indicators">#</a></h3>
+      </div>
+      <p><strong>What:</strong> OSC 9;4 taskbar progress sequences now only emit for terminals that properly support them.</p>
+<p><strong>Details:</strong></p>
+<ul><li><strong>Enabled for</strong>: ConEmu (via ConEmuANSI/ConEmuPID/ConEmuTask env vars) and Ghostty (TERM=xterm-ghostty)</li><li><strong>Disabled for</strong>: Windows Terminal (WT_SESSION) and non-TTY environments</li><li>Prevents garbled output in unsupported terminals</li><li><strong>Evidence</strong>: New <code>GQ6()</code> function at line 220728, conditional rendering at line 220776</li></ul>
+    </article>
+    <article class="card" id="session-memory-path-refactoring">
+      <div class="card-top">
+        <h3>Session Memory Path Refactoring <a class="anchor" href="#session-memory-path-refactoring">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Session memory now uses project-based paths instead of global paths, with centralized helper functions.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New path: <code>&lt;project-dir&gt;/&lt;session-id&gt;/session-memory/</code> instead of <code>&lt;global-config&gt;/session-memory/</code></li><li>Three new helpers: <code>zI1()</code> (base path), <code>_B1()</code> (summary.md path), <code>zP3()</code> (path check)</li><li>New <code>summary.md</code> file with structured template (Task specification, Files and Functions, Workflow, etc.)</li><li>Better isolation between projects and sessions</li><li><strong>Evidence</strong>: <code>zI1()</code> at line 506034, <code>_B1()</code> at line 506037, <code>jG2()</code> summary reader at line 340819</li></ul>
+    </article>
+    <article class="card" id="plan-mode-data-handling-refactored">
+      <div class="card-top">
+        <h3>Plan Mode Data Handling Refactored <a class="anchor" href="#plan-mode-data-handling-refactored">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Plan injection/stripping moved from inline code to dedicated helper functions for cleaner architecture.</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>O_2()</code> at line 403698: Adds plan content to ExitPlanMode tool input</li><li><code>R_2()</code> at line 403754: Strips plan field from tool outputs in conversation history</li><li>Improves code maintainability and separation of concerns</li><li><strong>Evidence</strong>: See lines referenced above, formerly inline at v2.0.53:404788-404791</li></ul>
+    </article>
+    <article class="card" id="binary-download-telemetry">
+      <div class="card-top">
+        <h3>Binary Download Telemetry <a class="anchor" href="#binary-download-telemetry">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Successful binary downloads now report latency metrics.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>tengu_binary_download_success</code> event with <code>latency_ms</code> and <code>is_cdn</code> fields</li><li>Helps track download performance across different sources</li><li><strong>Evidence</strong>: <code>Bh2()</code> at line 428934, telemetry call at line 428563</li></ul>
+    </article>
+    <article class="card" id="overflowtest-tool-removed">
+      <div class="card-top">
+        <h3>OverflowTest Tool Removed <a class="anchor" href="#overflowtest-tool-removed">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Internal testing tool for generating large outputs has been removed from the codebase.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Tool was only available when <code>ENABLE_OVERFLOW_TEST_TOOL</code> environment variable was set</li><li>Used for testing tool result persistence with configurable output sizes (1-10000 KB)</li><li>Some orphaned schema definitions remain as dead code (<code>BdZ</code>, <code>GdZ</code> at line 475943)</li><li><strong>Evidence</strong>: Full removal from v2.0.53 lines 475722-475818</li></ul>
+    </article>
+    <article class="card" id="import-reorganization">
+      <div class="card-top">
+        <h3>Import Reorganization <a class="anchor" href="#import-reorganization">#</a></h3>
+      </div>
+      <ul><li>Various import statements reorganized and consolidated</li><li>No functional impact on users</li><li><strong>Evidence</strong>: Multiple import changes in diff (stream, child_process, crypto, fs, path modules)</li></ul>
+    </article>
+    <article class="card" id="hook-loading-functions-renamed">
+      <div class="card-top">
+        <h3>Hook Loading Functions Renamed <a class="anchor" href="#hook-loading-functions-renamed">#</a></h3>
+      </div>
+      <ul><li><code>ZA0</code> → <code>DA0</code>, <code>YLA</code> → <code>XLA</code> for hook initialization</li><li>Now use centralized <code>VA0()</code> to get hooks respecting <code>allowManagedHooksOnly</code></li><li><strong>Evidence</strong>: Lines 337259-337268 in v2.0.54</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

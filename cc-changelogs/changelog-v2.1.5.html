@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.5 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.5."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.5</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.5</span></h1>
+<p class="sub">This is a maintenance release with no user-facing changes. The update consists entirely of internal code refactoring—specifically, modernizing import statements to use ES module named imports instead of default imports for Node.js built-in modules.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.4 → v2.1.5</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">2</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <p>None.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="improvements">
+      <p>None.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <p>None.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes (Not User-Facing)</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes-not-user-facing">
+      <p>This release refactors how Node.js built-in modules are imported throughout the codebase:</p>
+<ul><li><strong>Import modernization</strong>: Changed from default imports (e.g., <code>import fs from "node:fs"</code>) to named imports (e.g., <code>import { readFileSync, existsSync } from "node:fs"</code>).</li></ul>
+<ul><li><strong>Affected modules</strong>: <code>node:child_process</code>, <code>node:fs</code>, <code>node:os</code>, <code>node:path</code>, <code>node:process</code>, <code>node:util</code>, <code>crypto</code>, <code>https</code>, <code>stream</code>, <code>path</code>, <code>child_process</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>The diff shows 15 removed import statements and 15 added import statements with restructured named imports. Structural similarity is 99.9% with 8,487 internal variable renames typical of minification differences.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>Users upgrading from v2.1.4 should experience no behavioral differences. This release appears to be a housekeeping update to improve code consistency and potentially enable tree-shaking optimizations in the bundler.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

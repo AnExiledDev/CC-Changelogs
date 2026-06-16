@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.55 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.55."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.55</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.55</span></h1>
+<p class="sub">This is a small maintenance release focused on internal reliability improvements. File operations have been simplified to remove overly restrictive <code>O_NOFOLLOW</code> flags that could cause issues on setups with symbolic links, and session ID generation has been streamlined to use UUID-based identifiers.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.54 → v2.1.55</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="simplified-file-open-operations-for-better-symlink-compatibi">
+      <div class="card-top">
+        <h3>Simplified file open operations for better symlink compatibility <a class="anchor" href="#simplified-file-open-operations-for-better-symlink-compatibi">#</a></h3>
+      </div>
+      <p>File operations for log files and session tracking previously used low-level POSIX flags including <code>O_NOFOLLOW</code>, which prevents opening files through symbolic links. This has been replaced with standard file mode strings (<code>"a"</code> for append, <code>"w"</code> for write). Users whose <code>~/.claude</code> directory or log paths involve symbolic links (e.g., pointing to a different disk or partition) should experience fewer file operation errors.</p>
+<div class="blabel">Evidence</div>
+<p>Removal of <code>O_NOFOLLOW</code> flag usage — previously set via <code>R46.O_NOFOLLOW ?? 0</code> in the old version; zero occurrences remain in v2.1.55. Affects the log writer class (search for <code>"local_bash"</code>) and session file creation.</p>
+    </article>
+    <article class="card" id="streamlined-session-id-generation">
+      <div class="card-top">
+        <h3>Streamlined session ID generation <a class="anchor" href="#streamlined-session-id-generation">#</a></h3>
+      </div>
+      <p>Internal session identifiers (used for log files and remote agent tracking) now use UUID-based generation instead of custom random-byte character sampling. IDs are slightly shorter (6 hex characters from a UUID vs 8 base-36 characters from random bytes). Remote agent sessions now derive their ID directly from the parent session ID (search for <code>"remote_agent"</code>) rather than generating an independent random ID, which improves traceability during debugging.</p>
+<div class="blabel">Evidence</div>
+<p>Removed charset <code>"0123456789abcdefghijklmnopqrstuvwxyz"</code> (2 of 4 instances removed), replaced with <code>randomUUID</code> substring approach (search for <code>replace(/-/g, "").substring(0, 6)</code>).</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>No new features, CLI flags, slash commands, environment variables, or feature flags were added in this release.</li><li>No breaking changes. All improvements are backward-compatible internal refinements.</li><li>Build number changed from 2160 to 2171.</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

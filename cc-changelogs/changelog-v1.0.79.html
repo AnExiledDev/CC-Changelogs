@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.79 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.79."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.79</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.79</span></h1>
+<p class="sub">v1.0.79 updates the GitHub Actions integration documentation URLs and adds enhanced telemetry tracking for subscription types.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.78 → v1.0.79</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="github-actions-documentation-reorganization">
+      <div class="card-top">
+        <h3>GitHub Actions Documentation Reorganization <a class="anchor" href="#github-actions-documentation-reorganization">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Updated all GitHub Actions setup documentation links to point to new dedicated documentation files <strong>Previous:</strong> Links pointed to README hash fragments like <code>#manual-setup-direct-api</code> <strong>New:</strong> Links now point to dedicated docs at <code>https://github.com/anthropics/claude-code-action/blob/main/docs/setup.md</code> <strong>Impact:</strong> Users get more comprehensive setup instructions in a dedicated documentation structure</p>
+    </article>
+    <article class="card" id="enhanced-telemetry">
+      <div class="card-top">
+        <h3>Enhanced Telemetry <a class="anchor" href="#enhanced-telemetry">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Added subscription type and first token timestamp tracking to the identity provider <strong>New data collected:</strong></p>
+<ul><li><code>subscriptionType</code>: Tracks user's subscription tier (enterprise/team/pro/max/free)</li><li><code>firstTokenTime</code>: Records when user first authenticated with Claude Code</li><li><code>organizationUUID</code>: Added to custom IDs for better org-level analytics</li></ul>
+<p><strong>Impact:</strong> Better understanding of user segments and engagement patterns while maintaining privacy</p>
+    </article>
+    <article class="card" id="github-actions-environment-detection">
+      <div class="card-top">
+        <h3>GitHub Actions Environment Detection <a class="anchor" href="#github-actions-environment-detection">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Enhanced telemetry when running in GitHub Actions environment <strong>New data collected when <code>GITHUB_ACTIONS=true</code>:</strong></p>
+<ul><li><code>githubEventName</code>: The event that triggered the workflow</li><li><code>githubActionsRunnerEnvironment</code>: Runner environment details</li><li><code>githubActionsRunnerOs</code>: Operating system of the runner</li><li><code>githubActor</code>: User who triggered the action</li><li><code>githubRepositoryOwner</code>: Repository owner information</li></ul>
+<p><strong>Impact:</strong> Better support and debugging for Claude Code running in CI/CD pipelines</p>
+    </article>
+    <article class="card" id="module-import-optimization">
+      <div class="card-top">
+        <h3>Module Import Optimization <a class="anchor" href="#module-import-optimization">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Switched from default imports to named imports for Node.js built-in modules <strong>Changes:</strong></p>
+<ul><li><code>import crypto from "crypto"</code> → <code>import { createHash, randomBytes } from "crypto"</code></li><li><code>import stream from "stream"</code> → <code>import { PassThrough } from "stream"</code></li><li><code>import process from "node:process"</code> → <code>import { cwd } from "node:process"</code></li></ul>
+<p><strong>Impact:</strong> Slightly improved tree-shaking and bundle optimization</p>
+    </article>
+    <article class="card" id="output-style-function-addition">
+      <div class="card-top">
+        <h3>Output Style Function Addition <a class="anchor" href="#output-style-function-addition">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Added new function <code>L8B()</code> for retrieving output style configurations <strong>Purpose:</strong> Supports future output style customization features <strong>Impact:</strong> Foundation for customizable Claude response styles</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The GitHub Actions feature (<code>/install-github-app</code> command) existed in v1.0.78 and remained functionally unchanged</li><li>Variable names in minified code changed due to the build process (e.g., <code>zgB</code> → <code>WgB</code>, <code>EgB</code> → <code>JgB</code>)</li><li>Version bump primarily for documentation updates and telemetry enhancements</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

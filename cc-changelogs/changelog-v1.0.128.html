@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.128 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.128."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.128</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.128</span></h1>
+<p class="sub">Version 1.0.128 introduces a comprehensive plugin marketplace system enabling plugin discovery and installation from multiple sources (npm, GitHub, git repositories, and local paths). The release also enhances the notification system with priority-based queuing and adds Claude Agent SDK support to better track programmatic usage.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.127 → v1.0.128</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="plugin-marketplace-system">
+      <div class="card-top">
+        <h3>Plugin Marketplace System <a class="anchor" href="#plugin-marketplace-system">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A complete plugin distribution and installation infrastructure that enables discovering and installing plugins from centralized marketplaces.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Enable a plugin from a marketplace
+# Use the format: plugin-name@marketplace-name
+claude settings --set enabledPlugins.formatter@official=true</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Marketplace manifests (<code>marketplace.json</code>) define available plugins with metadata</li><li>Multiple marketplace sources supported: URL, GitHub repos, Git URLs, NPM packages, and local files</li><li>Plugin sources: npm packages, GitHub repositories, git URLs, local directories</li><li>Plugin ID format: <code>plugin@marketplace</code> (e.g., <code>code-formatter@official-plugins</code>)</li><li>Marketplaces cached in <code>~/.config/claude-code/plugins/marketplaces/</code></li><li>Plugin installations cached in <code>~/.config/claude-code/plugins/cache/</code></li><li>Strict mode (default) requires <code>plugin.json</code> manifest in plugin folder</li><li>Non-strict mode uses marketplace entry as manifest if <code>plugin.json</code> is missing</li><li>Supports plugin versioning, categories, tags, and rich metadata</li><li><strong>Evidence</strong>: <code>ba4()</code> marketplace loader at line 377017, <code>la4()</code> plugin cacher at line 377152, <code>aa4()</code> plugin loader at line 377392, marketplace schemas at lines 376680-376846</li></ul>
+    </article>
+    <article class="card" id="claude-agent-sdk-integration">
+      <div class="card-top">
+        <h3>Claude Agent SDK Integration <a class="anchor" href="#claude-agent-sdk-integration">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added support for tracking when Claude Code is invoked through the Claude Agent SDK, enabling better analytics and contextual identity.</p>
+<p><strong>How it works:</strong> When the <code>CLAUDE_AGENT_SDK_VERSION</code> environment variable is set, it's automatically included in telemetry and user agent strings.</p>
+<p><strong>Details:</strong></p>
+<ul><li>User agent string enhanced from <code>claude-cli/1.0.128 (external, &lt;entrypoint&gt;)</code> to <code>claude-cli/1.0.128 (external, &lt;entrypoint&gt;, agent-sdk/&lt;version&gt;)</code> when SDK is used</li><li>New <code>agentSdkVersion</code> field in telemetry data (line 440142)</li><li>Enables Anthropic to distinguish direct CLI usage from SDK-mediated usage</li><li><strong>Evidence</strong>: <code>IM()</code> user agent function at line 368228, telemetry field at lines 140142-440144</li></ul>
+    </article>
+    <article class="card" id="adaptive-system-prompt-identity">
+      <div class="card-top">
+        <h3>Adaptive System Prompt Identity <a class="anchor" href="#adaptive-system-prompt-identity">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude Code now uses different identity strings based on operational context (interactive CLI vs non-interactive SDK usage).</p>
+<p><strong>Details:</strong></p>
+<ul><li><strong>Interactive CLI mode:</strong> "You are Claude Code, Anthropic's official CLI for Claude."</li><li><strong>SDK with custom system prompt:</strong> "You are Claude Code, Anthropic's official CLI for Claude, running within the Claude Agent SDK."</li><li><strong>SDK without custom prompt:</strong> "You are a Claude agent, built on Anthropic's Claude Agent SDK."</li><li>Vertex AI provider always uses the standard CLI identity</li><li>Enables context-aware behavior based on how Claude Code is being used</li><li><strong>Evidence</strong>: Identity selection function <code>A$1()</code> at line 366028, identity strings at lines 366024-366027</li></ul>
+    </article>
+    <article class="card" id="file-checkpointing-enablement">
+      <div class="card-top">
+        <h3>File Checkpointing Enablement <a class="anchor" href="#file-checkpointing-enablement">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Unlocked the file checkpointing ("Rewind") feature that allows reverting file changes to previous snapshots.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Feature existed in previous versions but was hardcoded to disabled</li><li>Now activatable via the <code>tengu_use_file_checkpoints</code> feature flag</li><li>UI toggle added in settings: "Checkpointing (Rewind)" (line 400220)</li><li>Can be disabled via <code>CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING</code> environment variable</li><li>Tracks file modifications and creates snapshots at message boundaries</li><li>Enables rewinding files to previous states during conversations</li><li>Disabled in headless mode</li><li>Still behind a feature flag for gradual rollout</li><li><strong>Evidence</strong>: Activation function <code>u7()</code> at line 380874, UI controls at lines 400220-400237</li></ul>
+    </article>
+    <article class="card" id="enhanced-notification-system">
+      <div class="card-top">
+        <h3>Enhanced Notification System <a class="anchor" href="#enhanced-notification-system">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Replaced simple single-notification system with a sophisticated priority-based queue.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Four priority levels: immediate (0), high (1), medium (2), low (3)</li><li>Notifications queued and displayed based on priority sorting</li><li>"Immediate" priority can interrupt currently displayed notifications</li><li>State structure: <code>{ current: notification | null, queue: notification[] }</code></li><li>Notifications support rich content via <code>jsx</code> property for React components</li><li>Unique <code>key</code> property for deduplication</li><li>Visual theming via <code>color</code> property</li><li>Default 8000ms timeout (configurable via <code>timeoutMs</code>)</li><li><strong>Evidence</strong>: Priority queue function <code>Qz()</code> at line 363067, priority sorting <code>F19()</code> at line 363140, priority mapping at line 363139</li></ul>
+    </article>
+    <article class="card" id="optimized-credential-storage">
+      <div class="card-top">
+        <h3>Optimized Credential Storage <a class="anchor" href="#optimized-credential-storage">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Refactored credential storage from factory functions to singleton objects with memoized read operations.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Keychain storage (<code>Hy1</code>) and plaintext storage (<code>pZ1</code>) now singleton objects</li><li>Read operations memoized to avoid redundant file/keychain access</li><li>Storage path computation cached via <code>jV0()</code> helper</li><li>Explicit cache invalidation after <code>update()</code> or <code>delete()</code> ensures correctness</li><li>Improved performance through reduced object allocation and I/O operations</li><li>No user-visible changes to behavior</li><li><strong>Evidence</strong>: Keychain singleton at line 378779, plaintext singleton at line 378823, path memoization at line 378818</li></ul>
+    </article>
+    <article class="card" id="plugin-manifest-schema-enhancements">
+      <div class="card-top">
+        <h3>Plugin Manifest Schema Enhancements <a class="anchor" href="#plugin-manifest-schema-enhancements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Extended plugin manifest schema with richer metadata and flexible configuration options.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Support for <code>homepage</code>, <code>repository</code>, <code>license</code>, and <code>keywords</code> fields</li><li>Plugin name validation enforces kebab-case (no spaces allowed)</li><li>Author information with name, email, and URL</li><li>Marketplace entries support categories and tags for discoverability</li><li>Additional hooks via manifest: inline hook definitions or paths to hook files</li><li>Additional commands/agents via manifest file references</li><li>MCP server configurations can be specified in plugin manifests</li><li>Semantic versioning support following semver.org specification</li><li><strong>Evidence</strong>: Plugin manifest schema at lines 376570-376602, hooks schema at line 376603, commands schema at line 376631</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Refactored notification system architecture from component-local to global state management</li><li>Renamed minified function names as part of routine obfuscation (e.g., <code>BM()</code> → <code>IM()</code>, <code>m7()</code> → <code>u7()</code>)</li><li>Updated URL reference from <code>https://claude.ai/code</code> to <code>https://claude.com/claude-code</code> (line 385020)</li><li>Added synchronized rendering control via ANSI escape sequences: <code>Mt1</code> (start) and <code>Ot1</code> (end) at lines 357199-357200</li><li>Enhanced plugin loading with support for multiple command/agent paths via <code>commandsPaths</code> and <code>agentsPaths</code> arrays</li><li>Added helper functions for git operations, npm package installation, and directory copying</li><li>Improved error handling with specific error types like <code>cC</code> for invalid schemas</li></ul>
+    </article>
+    <article class="card" id="plugin-marketplace-file-structure">
+      <div class="card-top">
+        <h3>Plugin Marketplace File Structure <a class="anchor" href="#plugin-marketplace-file-structure">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <pre><code>~/.config/claude-code/plugins/
+├── known_marketplaces.json       # Registry of configured marketplaces
+├── marketplaces/                 # Cached marketplace manifests
+│   └── &lt;marketplace-name&gt;/
+│       └── marketplace.json
+└── cache/                        # Installed plugin files
+    └── &lt;plugin-name&gt;/
+        ├── .claude-plugin/
+        │   └── plugin.json
+        ├── commands/
+        ├── agents/
+        └── hooks/</code></pre>
+    </article>
+    <article class="card" id="marketplace-manifest-format">
+      <div class="card-top">
+        <h3>Marketplace Manifest Format <a class="anchor" href="#marketplace-manifest-format">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <pre><code>{
+  &quot;name&quot;: &quot;Official Plugins&quot;,
+  &quot;owner&quot;: { &quot;name&quot;: &quot;Anthropic&quot;, &quot;email&quot;: &quot;support@anthropic.com&quot; },
+  &quot;plugins&quot;: [
+    {
+      &quot;id&quot;: &quot;formatter&quot;,
+      &quot;name&quot;: &quot;Code Formatter&quot;,
+      &quot;source&quot;: { &quot;source&quot;: &quot;npm&quot;, &quot;package&quot;: &quot;@anthropic/formatter-plugin&quot; },
+      &quot;category&quot;: &quot;development&quot;,
+      &quot;tags&quot;: [&quot;formatting&quot;, &quot;code-quality&quot;]
+    }
+  ]
+}</code></pre>
+    </article>
+    <article class="card" id="breaking-changes">
+      <div class="card-top">
+        <h3>Breaking Changes <a class="anchor" href="#breaking-changes">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>None - all changes are backward compatible or additive.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

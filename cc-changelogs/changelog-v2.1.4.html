@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.4 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.4."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.4</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.4</span></h1>
+<p class="sub">This is a minor maintenance release that adds a new environment variable to disable background tasks and improves OAuth authentication reliability with automatic token refresh on 401 errors. The changes are primarily internal with one user-configurable option.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.3 → v2.1.4</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="environment-variable-to-disable-background-tasks">
+      <div class="card-top">
+        <h3>Environment Variable to Disable Background Tasks <a class="anchor" href="#environment-variable-to-disable-background-tasks">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New <code>CLAUDE_CODE_DISABLE_BACKGROUND_TASKS</code> environment variable allows disabling the background task functionality.</p>
+<div class="blabel">Usage</div>
+<pre><code>export CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1
+claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When set, the <code>run_in_background</code> parameter documentation is hidden from tool descriptions</li><li>The <code>ctrl+b</code> shortcut to background a task is disabled</li><li>Background agent execution via <code>run_in_background</code> parameter is disabled</li><li>Useful for environments where background task management is not desired or causes issues</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Go8()</code> at line 280507 (background task doc generator, checks <code>CLAUDE_CODE_DISABLE_BACKGROUND_TASKS</code>); <code>ifA</code> at line 447674 (Task agent parameter schema, gated by same env var)</p>
+    </article>
+    <article class="card" id="oauth-401-automatic-retry">
+      <div class="card-top">
+        <h3>OAuth 401 Automatic Retry <a class="anchor" href="#oauth-401-automatic-retry">#</a></h3>
+      </div>
+      <p>Improved authentication reliability by automatically refreshing OAuth tokens when a 401 Unauthorized response is received from the API.</p>
+<div class="blabel">Details</div>
+<ul><li>When an API request fails with 401, the system now automatically refreshes the access token and retries the request</li><li>Reduces authentication failures during long sessions where tokens may expire</li><li>Telemetry event <code>tengu_grove_oauth_401_received</code> tracks when this occurs</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>GY1()</code> at line 317361 (OAuth retry wrapper, emits <code>"tengu_grove_oauth_401_received"</code> telemetry)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>Build time updated from <code>2026-01-09T21:05:14Z</code> to <code>2026-01-10T22:23:05Z</code></li><li>High structural similarity (99.9%) indicates this is a minor patch release with targeted changes</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

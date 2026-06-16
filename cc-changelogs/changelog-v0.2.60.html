@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.60 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.60."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.60</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.60</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.59 → v0.2.60</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.60 Changelog</p>
+    </article>
+    <article class="card" id="git-worktree-tips">
+      <div class="card-top">
+        <h3>Git Worktree Tips <a class="anchor" href="#git-worktree-tips">#</a></h3>
+      </div>
+      <ul><li><strong>New contextual tip system</strong>: Claude Code now provides helpful tips based on your usage patterns. The first tip encourages users to leverage git worktrees for running multiple Claude sessions in parallel.</li><li>The tip appears after 50+ startups when you have only 1 or 0 git worktrees configured</li><li>Tips have a cooldown period (30 sessions for the git worktree tip) to avoid being repetitive</li><li>Example: You'll see "※ Tip: Use git worktrees to run multiple Claude sessions in parallel. [Learn more]" with a link to documentation</li></ul>
+    </article>
+    <article class="card" id="enhanced-telemetry">
+      <div class="card-top">
+        <h3>Enhanced Telemetry <a class="anchor" href="#enhanced-telemetry">#</a></h3>
+      </div>
+      <ul><li>Added startup telemetry that tracks:</li><li>Whether you're in a git repository</li><li>Number of git worktrees configured</li><li>Memory usage patterns</li></ul>
+    </article>
+    <article class="card" id="non-interactive-mode-p-print">
+      <div class="card-top">
+        <h3>Non-Interactive Mode (-p/--print) <a class="anchor" href="#non-interactive-mode-p-print">#</a></h3>
+      </div>
+      <ul><li><strong>Improved transcript output</strong>: When using <code>claude -p</code> for non-interactive mode, the transcript now filters out progress messages, providing cleaner output</li><li>The JSON output structure remains unchanged but benefits from the cleaner transcript</li></ul>
+    </article>
+    <article class="card" id="configuration-storage">
+      <div class="card-top">
+        <h3>Configuration Storage <a class="anchor" href="#configuration-storage">#</a></h3>
+      </div>
+      <ul><li>Added new configuration fields:</li><li><code>tipsHistory</code>: Tracks which tips have been shown and when</li><li><code>memoryUsageCount</code>: Tracks memory feature usage</li></ul>
+    </article>
+    <article class="card" id="conversation-compaction">
+      <div class="card-top">
+        <h3>Conversation Compaction <a class="anchor" href="#conversation-compaction">#</a></h3>
+      </div>
+      <ul><li>Improved conversation compaction with better context handling:</li><li>Now properly clears file timestamps after compaction</li><li>Better integration with the conversation context system</li></ul>
+    </article>
+    <article class="card" id="import-optimizations">
+      <div class="card-top">
+        <h3>Import Optimizations <a class="anchor" href="#import-optimizations">#</a></h3>
+      </div>
+      <ul><li>Switched from default imports to named imports for better tree-shaking:</li><li><code>import { PassThrough as V39 } from "stream"</code> instead of <code>import og4 from "stream"</code></li><li><code>import { cwd as gH0 } from "node:process"</code> instead of <code>import Zr2 from "node:process"</code></li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>Refactored the main entry point to separate concerns:</li><li>Input handling logic extracted to <code>ra5()</code> function</li><li>Main application logic moved to <code>aa5()</code> function</li><li>Better separation between interactive and non-interactive modes</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed issues with non-interactive mode (-p) that were mentioned as resolved in v0.2.59</li><li>Improved error handling in the startup sequence</li></ul>
+    </article>
+    <article class="card" id="running-claude-in-non-interactive-mode-with-cleaner-output">
+      <div class="card-top">
+        <h3>Running Claude in non-interactive mode with cleaner output: <a class="anchor" href="#running-claude-in-non-interactive-mode-with-cleaner-output">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <pre><code># Get a clean response without progress indicators
+claude -p &quot;Explain this code&quot; &lt; myfile.js
+
+# Get structured JSON output
+claude -p --json &quot;Summarize this file&quot; &lt; README.md</code></pre>
+    </article>
+    <article class="card" id="the-git-worktree-tip-will-appear-automatically-when-relevant">
+      <div class="card-top">
+        <h3>The git worktree tip will appear automatically when relevant: <a class="anchor" href="#the-git-worktree-tip-will-appear-automatically-when-relevant">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <pre><code>$ claude
+※ Tip: Use git worktrees to run multiple Claude sessions in parallel. Learn more
+&gt; </code></pre>
+<p>This tip helps users discover that they can use git worktrees to run multiple Claude sessions simultaneously in different directories, which is particularly useful for large refactoring tasks or when working on multiple features.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.30 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.30."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.30</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.30</span></h1>
+<p class="sub">Version 2.0.30 introduces Language Server Protocol (LSP) support, enabling Claude to access code intelligence features like go-to-definition, find-references, and hover documentation. It also adds enhanced sandbox security controls and refactors the internal tool execution architecture for better concurrent processing.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.29 → v2.0.30</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="lsp-language-server-protocol-tool">
+      <div class="card-top">
+        <h3>LSP (Language Server Protocol) Tool <a class="anchor" href="#lsp-language-server-protocol-tool">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A new tool that integrates Language Server Protocol servers to provide code intelligence features directly to Claude.</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Claude can now use LSP operations when analyzing code
+# The tool works automatically when LSP servers are configured</code></pre>
+<p><strong>Supported operations:</strong></p>
+<ul><li><code>goToDefinition</code>: Find where a symbol is defined</li><li><code>findReferences</code>: Find all references to a symbol</li><li><code>hover</code>: Get hover information (documentation, type info) for a symbol</li><li><code>documentSymbol</code>: Get all symbols (functions, classes, variables) in a document</li><li><code>workspaceSymbol</code>: Search for symbols across the entire workspace</li></ul>
+<p><strong>Configuration:</strong> LSP servers can be configured in two ways:</p>
+<ol><li><strong>Plugin-based configuration:</strong> Plugins can define LSP servers via <code>.lsp.json</code> files or in their manifest's <code>lspServers</code> property</li><li><strong>Project configuration:</strong> LSP server settings include command, args, supported languages, transport type (stdio/socket), initialization options, and workspace settings</li></ol>
+<p><strong>Requirements:</strong></p>
+<ul><li>All operations require <code>filePath</code>, <code>line</code> (0-indexed), and <code>character</code> (0-indexed) parameters</li><li>LSP servers must be configured for the file type; operations will return an error if no server is available</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li><strong>Evidence</strong>: LSP tool definition at <code>at1()</code> at line 455338, LSP server manager initialization at line 454707</li><li>Plugin LSP configuration loading at <code>Ig2()</code> at line 454527</li><li>Comprehensive error handling for LSP failures including: <code>lsp-config-invalid</code>, <code>lsp-server-start-failed</code>, <code>lsp-server-crashed</code>, <code>lsp-request-timeout</code>, <code>lsp-request-failed</code></li><li>LSP URI decoding support at line 205830 (<code>uO0()</code> function)</li></ul>
+    </article>
+    <article class="card" id="magic-docs-auto-update-system">
+      <div class="card-top">
+        <h3>Magic Docs Auto-Update System <a class="anchor" href="#magic-docs-auto-update-system">#</a></h3>
+      </div>
+      <p><strong>What:</strong> An automated documentation maintenance system that updates project documentation files based on conversations with Claude.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>When you work with Claude and learn new information about your codebase, the system can automatically update designated "Magic Doc" files</li><li>Uses a specialized <code>magic-docs</code> agent type that reads existing documentation and incorporates new learnings</li><li>Focuses on high-level architecture, patterns, and entry points rather than exhaustive code details</li></ul>
+<p><strong>Philosophy:</strong></p>
+<ul><li>Keeps documentation CURRENT (not a changelog or history)</li><li>Updates information in-place to reflect the current state</li><li>Removes or replaces outdated information</li><li>Emphasizes terseness: "High signal only. No filler words."</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>magic-docs</code> agent type at line 476091, documentation update prompt generator <code>Aa5()</code> at line 475984</p>
+    </article>
+    <article class="card" id="enhanced-sandbox-security-policy">
+      <div class="card-top">
+        <h3>Enhanced Sandbox Security Policy <a class="anchor" href="#enhanced-sandbox-security-policy">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A new configuration option <code>allowUnsandboxedCommands</code> that provides policy-level control over the <code>dangerouslyDisableSandbox</code> parameter.</p>
+<p><strong>How to use:</strong></p>
+<pre><code>// In your settings
+{
+  &quot;sandbox&quot;: {
+    &quot;allowUnsandboxedCommands&quot;: false  // Enforce sandbox-only mode
+  }
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li><strong>Default:</strong> <code>true</code> (maintains backward compatibility)</li><li><strong>When set to <code>false</code>:</strong> All commands run in sandbox mode regardless of the <code>dangerouslyDisableSandbox</code> parameter</li><li><strong>Enforcement:</strong> The security check at <code>Q9A()</code> at line 249229 validates both the parameter AND the policy setting</li><li><strong>User communication:</strong> Claude receives different system prompt instructions based on this setting (lines 208919-208942)</li><li><strong>Evidence</strong>: Configuration schema at line 473000, getter function <code>XP8()</code> at line 208521</li></ul>
+    </article>
+    <article class="card" id="refactored-tool-execution-architecture">
+      <div class="card-top">
+        <h3>Refactored Tool Execution Architecture <a class="anchor" href="#refactored-tool-execution-architecture">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Internal tool execution system migrated from function-based approach to a class-based queue system with better concurrent execution support.</p>
+<p><strong>Technical details:</strong></p>
+<ul><li>New <code>Qr1</code> class manages tool execution queue with status tracking ("queued" → "executing" → "completed" → "yielded")</li><li>Intelligent concurrency: Tools marked as concurrency-safe can execute in parallel, while non-concurrent-safe tools block subsequent processing</li><li>Feature-flag controlled: Uses <code>tengu_streaming_tool_execution</code> flag to gradually roll out new architecture</li><li>Backward compatible: Falls back to renamed legacy functions (<code>Ev5()</code> at line 429788) when feature flag is disabled</li></ul>
+<p><strong>User impact:</strong></p>
+<ul><li>Better responsiveness when Claude uses multiple tools simultaneously</li><li>More efficient parallel processing of independent operations</li><li>Improved result streaming as tools complete</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Qr1</code> class definition at line 429311, feature flag check at line 429499</p>
+    </article>
+    <article class="card" id="command-redirection-safety">
+      <div class="card-top">
+        <h3>Command Redirection Safety <a class="anchor" href="#command-redirection-safety">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced validation and handling of shell command redirections for safer execution.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Command parser <code>SP()</code> at line 208476 separates redirections from commands</li><li>Safety validation detects dangerous redirection patterns</li><li>Already existed in v2.0.29 but continues to provide protection in v2.0.30</li></ul>
+<div class="blabel">Evidence</div>
+<p>Function <code>SP()</code> at line 208476 (v2.0.30), existed as <code>whA()</code> at line 204320 (v2.0.29)</p>
+    </article>
+    <article class="card" id="todowrite-tool-documentation">
+      <div class="card-top">
+        <h3>TodoWrite Tool Documentation <a class="anchor" href="#todowrite-tool-documentation">#</a></h3>
+      </div>
+      <p>The TodoWrite tool documentation remains unchanged between v2.0.29 and v2.0.30. All guidance on when to use the tool, task states, and management practices are identical.</p>
+<div class="blabel">Evidence</div>
+<p>Documentation at lines 204989-205176 (v2.0.30), previously at lines 204886-205072 (v2.0.29)</p>
+    </article>
+    <article class="card" id="exitplanmode-tool">
+      <div class="card-top">
+        <h3>ExitPlanMode Tool <a class="anchor" href="#exitplanmode-tool">#</a></h3>
+      </div>
+      <p>The ExitPlanMode tool continues to exist with the same functionality as in v2.0.29. This tool prompts users to exit plan mode after planning is complete.</p>
+<div class="blabel">Evidence</div>
+<p>Tool description at line 432519 (v2.0.29), continues in v2.0.30 with updated variable names</p>
+    </article>
+    <article class="card" id="internal-refactoring">
+      <div class="card-top">
+        <h3>Internal Refactoring <a class="anchor" href="#internal-refactoring">#</a></h3>
+      </div>
+      <ul><li>Removed several internal functions related to command history and UI components (non-user-facing)</li><li>Added new internal error handling and validation classes for LSP protocol support</li><li>Tool execution helper functions renamed but functionality preserved for backward compatibility</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

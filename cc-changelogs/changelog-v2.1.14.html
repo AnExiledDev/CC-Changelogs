@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.14 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.14."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.14</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.14</span></h1>
+<p class="sub">This release renames <code>MCPSearch</code> to <code>ToolSearch</code> to better reflect its broader tool discovery capabilities, adds support for dynamically discovered skills from <code>.claude/skills</code> directories, introduces a new <code>CLAUDE_CODE_GLOB_TIMEOUT_SECONDS</code> environment variable for controlling glob timeouts, and simplifies the ExitPlanMode tool documentation. Additionally, Claude.ai MCP server integration has been expanded with improved telemetry and eligibility checking.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.12 → v2.1.14</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="toolsearch-renamed-from-mcpsearch">
+      <div class="card-top">
+        <h3>ToolSearch (renamed from MCPSearch) <a class="anchor" href="#toolsearch-renamed-from-mcpsearch">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>MCPSearch</code> tool has been renamed to <code>ToolSearch</code> to better reflect its ability to search for and load both MCP tools and deferred built-in tools.</p>
+<p>Usage: The tool works the same way but with the new name:</p>
+<pre><code>ToolSearch with query: &quot;select:NotebookEdit&quot;
+ToolSearch with query: &quot;slack&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Direct selection mode: Use <code>select:&lt;tool_name&gt;</code> for exact tool loading</li><li>Keyword search: Use natural language to find relevant tools</li><li>Now supports loading deferred built-in tools in addition to MCP tools</li><li>Documentation updated throughout to reference the new name</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>aj</code> at line 280183 (tool name constant, contains <code>"ToolSearch"</code>)</p>
+    </article>
+    <article class="card" id="configurable-glob-timeout">
+      <div class="card-top">
+        <h3>Configurable Glob Timeout <a class="anchor" href="#configurable-glob-timeout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new environment variable <code>CLAUDE_CODE_GLOB_TIMEOUT_SECONDS</code> allows customizing the timeout for glob/ripgrep operations.</p>
+<div class="blabel">Usage</div>
+<pre><code>export CLAUDE_CODE_GLOB_TIMEOUT_SECONDS=30
+claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Default timeout remains 20 seconds (60 seconds on WSL)</li><li>Set a custom value in seconds to override the default</li><li>Useful for large codebases where glob operations may take longer</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>r0Q()</code> at line 30721 (ripgrep executor, contains <code>"CLAUDE_CODE_GLOB_TIMEOUT_SECONDS"</code>)</p>
+    </article>
+    <article class="card" id="dynamic-skill-discovery">
+      <div class="card-top">
+        <h3>Dynamic Skill Discovery <a class="anchor" href="#dynamic-skill-discovery">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Skills can now be discovered dynamically from <code>.claude/skills</code> directories at any level of the project hierarchy.</p>
+<div class="blabel">Details</div>
+<ul><li>Scans for <code>SKILL.md</code> files in subdirectories of <code>.claude/skills</code></li><li>Skills are discovered based on directory triggers during operation</li><li>Enables projects to define reusable skills that Claude can invoke</li><li>Skills defined in parent directories are also discovered</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>vl5()</code> at line 373896 (dynamic skill discovery, references <code>"SKILL.md"</code> and <code>"dynamic_skill"</code>)</p>
+    </article>
+    <article class="card" id="skills-with-required-mcp-server-dependencies">
+      <div class="card-top">
+        <h3>Skills with Required MCP Server Dependencies <a class="anchor" href="#skills-with-required-mcp-server-dependencies">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Skills can now specify required MCP servers and will only be available when those servers are connected.</p>
+<div class="blabel">Details</div>
+<ul><li>Skills can declare <code>requiredMcpServers</code> as dependencies</li><li>Skill availability is filtered based on connected MCP servers</li><li>Enables context-aware skill loading</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>UV0()</code> at line 313441 (MCP server requirement check, contains <code>"requiredMcpServers"</code>)</p>
+    </article>
+    <article class="card" id="webfetch-github-url-guidance">
+      <div class="card-top">
+        <h3>WebFetch GitHub URL Guidance <a class="anchor" href="#webfetch-github-url-guidance">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>WebFetch tool documentation now recommends using the <code>gh</code> CLI for GitHub URLs.</p>
+<div class="blabel">Details</div>
+<ul><li>New guidance: "For GitHub URLs, prefer using the gh CLI via Bash instead (e.g., gh pr view, gh issue view, gh api)"</li><li>Reduces reliance on web scraping for GitHub content</li><li>Leverages the more reliable <code>gh</code> CLI for GitHub operations</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>AwQ</code> at line 96805 (WebFetch tool description, contains <code>"gh pr view, gh issue view, gh api"</code>)</p>
+    </article>
+    <article class="card" id="simplified-exitplanmode-tool-description">
+      <div class="card-top">
+        <h3>Simplified ExitPlanMode Tool Description <a class="anchor" href="#simplified-exitplanmode-tool-description">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The ExitPlanMode tool documentation has been simplified by removing the <code>allowedPrompts</code> permission request section.</p>
+<div class="blabel">Details</div>
+<ul><li>Removed detailed instructions about requesting Bash permissions during plan approval</li><li>Streamlines the plan mode workflow</li><li>Documentation now focuses on core functionality</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Zn2</code> at line 416019 (ExitPlanMode description, no longer contains <code>"allowedPrompts"</code>)</p>
+    </article>
+    <article class="card" id="claude-ai-mcp-server-integration-improvements">
+      <div class="card-top">
+        <h3>Claude.ai MCP Server Integration Improvements <a class="anchor" href="#claude-ai-mcp-server-integration-improvements">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Enhanced Claude.ai MCP server integration with better eligibility checking and telemetry.</p>
+<div class="blabel">Details</div>
+<ul><li>New eligibility states tracked: <code>disabled_gate</code>, <code>disabled_env_var</code>, <code>no_oauth_token</code>, <code>missing_scope</code>, <code>eligible</code></li><li>Requires <code>user:mcp_servers</code> OAuth scope</li><li>Can be disabled via <code>ENABLE_CLAUDEAI_MCP_SERVERS</code> environment variable</li><li>Improved logging for debugging MCP server connectivity</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Q_0</code> at line 458270 (Claude.ai MCP initialization, contains <code>"tengu_claudeai_mcp_eligibility"</code>)</p>
+    </article>
+    <article class="card" id="prompt-suggestion-mode-improvements">
+      <div class="card-top">
+        <h3>Prompt Suggestion Mode Improvements <a class="anchor" href="#prompt-suggestion-mode-improvements">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The prompt suggestion system now supports a new "stated intent" mode in addition to the existing "user intent" mode.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>stated_intent</code> mode focuses on finding explicitly stated next steps from user messages</li><li>Looks for multi-part requests ("do X and Y"), stated intent ("then I'll Z"), and answers to Claude's questions</li><li>Controlled by <code>tengu_plank_river_frost</code> feature flag</li><li>Provides more conservative suggestions based on user's explicit plans</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>ls5</code> at line 395184 (stated intent prompt, contains <code>"stated_intent"</code> and <code>"SEARCH FOR"</code>)</p>
+    </article>
+    <article class="card" id="git-clone-with-sha-support">
+      <div class="card-top">
+        <h3>Git Clone with SHA Support <a class="anchor" href="#git-clone-with-sha-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Git clone operations now support checking out specific commit SHAs in addition to branches.</p>
+<div class="blabel">Details</div>
+<ul><li>Uses <code>--no-checkout</code> flag followed by SHA fetch and checkout</li><li>Falls back to <code>--unshallow</code> fetch if shallow fetch of SHA fails</li><li>Enables working with specific commit references</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>FU7()</code> at line 497957 (git clone function, contains <code>"--no-checkout"</code> and <code>"checkout"</code>)</p>
+    </article>
+    <article class="card" id="debug-log-cleanup">
+      <div class="card-top">
+        <h3>Debug Log Cleanup <a class="anchor" href="#debug-log-cleanup">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added automatic cleanup of old debug log files.</p>
+<div class="blabel">Details</div>
+<ul><li>Cleans up <code>.txt</code> files from the debug directory</li><li>Removes files older than a threshold date</li><li>Helps manage disk space from accumulated debug logs</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Tj7()</code> at line 530506 (debug cleanup function, accesses <code>"debug"</code> directory)</p>
+    </article>
+    <article class="card" id="tool-usage-tracking-for-deferred-tools">
+      <div class="card-top">
+        <h3>Tool Usage Tracking for Deferred Tools <a class="anchor" href="#tool-usage-tracking-for-deferred-tools">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added tracking infrastructure for deferred tool usage patterns.</p>
+<div class="blabel">Details</div>
+<ul><li>Tracks <code>usageCount</code> and <code>lastUsedAt</code> for tools</li><li>Enables smarter tool deferral decisions based on usage frequency</li><li>Similar tracking added for skill usage with time-decay weighting</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>R22()</code> at line 280135 (tool usage tracker, contains <code>"toolUsage"</code>, <code>"usageCount"</code>, <code>"lastUsedAt"</code>)</p>
+    </article>
+    <article class="card" id="proxy-configuration-improvements">
+      <div class="card-top">
+        <h3>Proxy Configuration Improvements <a class="anchor" href="#proxy-configuration-improvements">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added support for <code>no_proxy</code> and <code>NO_PROXY</code> environment variables.</p>
+<div class="blabel">Details</div>
+<ul><li>New function to read proxy bypass configuration</li><li>Improves compatibility with corporate network environments</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>kx3()</code> at line 155303 (proxy config reader, contains <code>"no_proxy"</code> and <code>"NO_PROXY"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Refactored ripgrep execution to use spawn with better timeout handling</li><li>Added <code>REPL</code> tool type constant for future use</li><li>Improved border style handling in UI components</li><li>Various code organization and cleanup changes</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

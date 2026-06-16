@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.73 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.73."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.73</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.73</span></h1>
+<p class="sub">This release adds the <code>--remote-control</code> CLI flag for launching Remote Control sessions directly from the command line, introduces native clipboard image reading on macOS for faster paste workflows, and deprecates the <code>/output-style</code> command in favor of <code>/config</code>. Under the hood, it adds a new <code>modelOverrides</code> enterprise setting, improves plugin dependency resolution, strengthens Bash command safety analysis, and adds SSH session management infrastructure for remote connections.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.72 → v2.1.73</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">14 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="remote-control-cli-flag">
+      <div class="card-top">
+        <h3><code>--remote-control</code> CLI Flag <a class="anchor" href="#remote-control-cli-flag">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Start Claude Code with Remote Control enabled directly from the command line, optionally naming the session.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --remote-control
+claude --remote-control my-project
+claude --rc my-project          # shorthand alias</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Launches Claude in "spawn mode," which lets you create new sessions in the current project from Claude Code on Web or the Mobile app</li><li>Supports <code>--spawn=same-dir</code> (default) or <code>--spawn=worktree</code> for git worktree isolation</li><li>Includes a circuit breaker: if Remote Control encounters repeated failures, it disables itself for the session with a message to restart</li><li>Checks account eligibility and shows <code>"Remote Control is not enabled for your account; --rc flag ignored."</code> if unavailable</li></ul>
+<div class="blabel">Evidence</div>
+<p>Remote Control spawn mode (search for <code>"--remote-control"</code>, <code>"Alias for --remote-control"</code>, <code>"Remote Control disabled after repeated failures"</code>)</p>
+    </article>
+    <article class="card" id="model-id-override-mapping-enterprise">
+      <div class="card-top">
+        <h3>Model ID Override Mapping (Enterprise) <a class="anchor" href="#model-id-override-mapping-enterprise">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Enterprise administrators can now map Anthropic model IDs to provider-specific model IDs (e.g., Bedrock inference profile ARNs) via managed settings.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>modelOverrides</code> setting in the configuration schema</li><li>Maps standard Anthropic model names (e.g., <code>"claude-opus-4-6"</code>) to provider-specific identifiers</li><li>Reverse mapping is applied when resolving model families, so features that depend on knowing the model class (opus/sonnet/haiku) continue to work correctly</li><li>Typically set by enterprise administrators in managed settings files, not by end users</li></ul>
+<div class="blabel">Evidence</div>
+<p>Model override resolver — <code>Wfq()</code> and <code>Dk1()</code> at ~line 529379 (search for <code>"Override mapping from Anthropic model ID"</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-configuration-inspector">
+      <div class="card-top">
+        <h3>Auto Mode Configuration Inspector <a class="anchor" href="#auto-mode-configuration-inspector">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New subcommands for inspecting how auto mode is configured, useful for debugging why auto mode approves or denies certain actions.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude auto-mode                # overview of classifier configuration
+claude auto-mode defaults       # print default environment, allow, and deny rules as JSON
+claude auto-mode config         # print effective config (your settings merged with defaults)</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>defaults</code> prints the built-in auto mode rules as JSON</li><li><code>config</code> shows the merged view: your custom settings where they exist, defaults otherwise</li><li>Helps diagnose unexpected auto mode approval or denial behavior</li></ul>
+<div class="blabel">Evidence</div>
+<p>Auto mode inspection commands (search for <code>"Print the default auto mode environment"</code>, <code>"Print the effective auto mode config"</code>, <code>"Inspect auto mode classifier configuration"</code>)</p>
+    </article>
+    <article class="card" id="new-keyboard-shortcuts">
+      <div class="card-top">
+        <h3>New Keyboard Shortcuts <a class="anchor" href="#new-keyboard-shortcuts">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Three new global application keybindings are now available.</p>
+<div class="blabel">Details</div>
+<ul><li><code>app:globalSearch</code> — trigger global search</li><li><code>app:quickOpen</code> — quick-open file picker</li><li><code>app:toggleBrief</code> — toggle brief output mode (bound to <code>Ctrl+Shift+B</code>)</li></ul>
+<div class="blabel">Evidence</div>
+<p>New keybinding action identifiers (search for <code>"app:globalSearch"</code>, <code>"app:quickOpen"</code>, <code>"app:toggleBrief"</code>)</p>
+    </article>
+    <article class="card" id="native-clipboard-image-reading-on-macos">
+      <div class="card-top">
+        <h3>Native Clipboard Image Reading on macOS <a class="anchor" href="#native-clipboard-image-reading-on-macos">#</a></h3>
+      </div>
+      <p>Clipboard image detection and reading on macOS now uses a native module when available (gated by the <code>tengu_collage_kaleidoscope</code> flag), bypassing the slower <code>osascript</code> approach. When a clipboard image is detected, users see an <code>"Image in clipboard · [key] to paste"</code> notification. The native path reads PNG data directly, handles resizing, and falls back to the original osascript method if the native module is unavailable.</p>
+<div class="blabel">Evidence</div>
+<p>Native clipboard reader (search for <code>"native clipboard reader unavailable"</code>, <code>"Image in clipboard"</code>, <code>"tengu_collage_kaleidoscope"</code>)</p>
+    </article>
+    <article class="card" id="plugin-dependency-resolution">
+      <div class="card-top">
+        <h3>Plugin Dependency Resolution <a class="anchor" href="#plugin-dependency-resolution">#</a></h3>
+      </div>
+      <p>Plugin installation now resolves transitive dependencies. When installing a plugin that declares dependencies, Claude Code validates the entire dependency closure and reports issues clearly:</p>
+<ul><li>Dependency cycles are detected and reported: <code>"Dependency cycle: A → B → A"</code></li><li>Cross-marketplace dependencies are blocked with an explanation</li><li>Missing dependencies report which marketplace they expected to be in</li><li>Installation messages now show the dependency count: <code>"✓ Installed my-plugin (+ 2 dependencies)"</code></li><li>Disabled dependencies are flagged: <code>"disabled — enable it or remove the dependency"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin dependency resolver (search for <code>"Dependency cycle"</code>, <code>"cross-marketplace"</code>, <code>"not found in any configured marketplace"</code>)</p>
+    </article>
+    <article class="card" id="improved-bash-command-safety-analysis">
+      <div class="card-top">
+        <h3>Improved Bash Command Safety Analysis <a class="anchor" href="#improved-bash-command-safety-analysis">#</a></h3>
+      </div>
+      <p>The Bash command safety checker now correctly parses command wrappers that prepend the real command, preventing false safety denials when using common Unix utilities:</p>
+<ul><li><code>timeout</code> — parses <code>--foreground</code>, <code>--kill-after</code>, <code>--preserve-status</code>, <code>--signal</code>, and duration arguments</li><li><code>stdbuf</code> — parses <code>-i</code>, <code>-o</code>, <code>-e</code> buffer-mode flags</li><li><code>env</code> — parses environment variable assignments and <code>-i</code>, <code>-0</code>, <code>-u</code>, <code>-v</code> flags</li><li><code>time</code>, <code>nohup</code>, <code>nice</code> — unwrapped to find the actual command being run</li><li>These wrappers are recursively stripped before analyzing the inner command for safety</li></ul>
+<div class="blabel">Evidence</div>
+<p>Command wrapper parsing (search for <code>"--foreground"</code>, <code>"--kill-after"</code>, <code>"--preserve-status"</code>, <code>"stdbuf"</code>)</p>
+    </article>
+    <article class="card" id="output-style-deprecated-in-favor-of-config">
+      <div class="card-top">
+        <h3><code>/output-style</code> Deprecated in Favor of <code>/config</code> <a class="anchor" href="#output-style-deprecated-in-favor-of-config">#</a></h3>
+      </div>
+      <p>The <code>/output-style</code> command has been deprecated. It now shows a message directing users to <code>/config</code> or the settings file. The command is hidden from help output but still works for backwards compatibility.</p>
+<div class="blabel">Evidence</div>
+<p>Deprecation handler (search for <code>"/output-style has been deprecated"</code>, <code>"Deprecated: use /config to change output style"</code>)</p>
+    </article>
+    <article class="card" id="simplified-effort-level-setting">
+      <div class="card-top">
+        <h3>Simplified Effort Level Setting <a class="anchor" href="#simplified-effort-level-setting">#</a></h3>
+      </div>
+      <p>The <code>effortLevel</code> setting description was simplified from <code>"Persisted effort level for supported models. \"max\" is session-scoped and not persisted."</code> to just <code>"Persisted effort level for supported models."</code> — the session-scoped restriction on "max" has been lifted.</p>
+<div class="blabel">Evidence</div>
+<p>Effort level schema change (search for <code>"Persisted effort level for supported models"</code>)</p>
+    </article>
+    <article class="card" id="rewritten-sendusermessage-prompt">
+      <div class="card-top">
+        <h3>Rewritten SendUserMessage Prompt <a class="anchor" href="#rewritten-sendusermessage-prompt">#</a></h3>
+      </div>
+      <p>The system prompt for the <code>SendUserMessage</code> tool has been significantly condensed. The old version was a detailed multi-paragraph guide with examples. The new version is a concise description: <code>"Send a message the user will read. Text outside this tool is visible in the detail view, but most won't open it — the answer lives here."</code> The companion "Talking to the user" guide has similarly been streamlined to focus on the key pattern: replies go through <code>SendUserMessage</code>; text outside it should be assumed unread.</p>
+<div class="blabel">Evidence</div>
+<p>Rewritten prompt (search for <code>"Send a message the user will read"</code>, <code>"## Talking to the user"</code>)</p>
+    </article>
+    <article class="card" id="improved-team-memory-sync-delta-pushes">
+      <div class="card-top">
+        <h3>Improved Team Memory Sync (Delta Pushes) <a class="anchor" href="#improved-team-memory-sync-delta-pushes">#</a></h3>
+      </div>
+      <p>Team memory synchronization now supports hash-based conflict resolution with <code>entryChecksums</code>. Instead of pulling and re-pushing the entire memory file on conflict, the system probes the server for per-entry hashes (<code>?view=hashes</code>), enabling delta-based pushes. This reduces bandwidth and merge conflicts for organizations with large shared memory files.</p>
+<div class="blabel">Evidence</div>
+<p>Hash-based sync (search for <code>"entryChecksums"</code>, <code>"Conflict resolution hashes probe"</code>, <code>"team-memory-sync: server response missing entryChecksums"</code>)</p>
+    </article>
+    <article class="card" id="terminal-identification-via-xtversion">
+      <div class="card-top">
+        <h3>Terminal Identification via XTVERSION <a class="anchor" href="#terminal-identification-via-xtversion">#</a></h3>
+      </div>
+      <p>Claude Code now queries the terminal emulator for its identity using the XTVERSION escape sequence. This can be used to tailor behavior to specific terminals. If the terminal ignores the query, it logs <code>"XTVERSION: no reply"</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Terminal identification (search for <code>"XTVERSION"</code>)</p>
+    </article>
+    <article class="card" id="plan-mode-verbosity-control">
+      <div class="card-top">
+        <h3>Plan Mode Verbosity Control <a class="anchor" href="#plan-mode-verbosity-control">#</a></h3>
+      </div>
+      <p>Plan mode now supports multiple verbosity levels for Phase 4 (Final Plan) output, controlled by the <code>tengu_pewter_ledger</code> feature flag. Options include <code>"trim"</code> (concise), <code>"cut"</code> (minimal, no context section), and <code>"cap"</code> (hard 40-line limit, no prose). The default behavior is unchanged.</p>
+<div class="blabel">Evidence</div>
+<p>Plan mode variants (search for <code>"tengu_pewter_ledger"</code>, <code>"Hard limit: 40 lines"</code>)</p>
+    </article>
+    <article class="card" id="output-token-tracking-per-turn">
+      <div class="card-top">
+        <h3>Output Token Tracking Per Turn <a class="anchor" href="#output-token-tracking-per-turn">#</a></h3>
+      </div>
+      <p>A new metadata display now shows output token usage per turn and per session: <code>"Output tokens — turn: X · session: Y"</code>. This gives users better visibility into how many tokens each response consumes.</p>
+<div class="blabel">Evidence</div>
+<p>Token tracking (search for <code>"Output tokens — turn"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Orphaned bash tasks from exiting agents are now killed automatically, preventing zombie processes from accumulating (search for <code>"killBashTasksForAgent: killing orphaned bash task"</code>)</li><li>Voice mode now handles early pre-transcript errors gracefully by retrying once, and ignores stale <code>onError</code> callbacks from previous sessions (search for <code>"early voice_stream error (pre-transcript), retrying once"</code>, <code>"ignoring onError from stale session"</code>)</li><li>OAuth token expiration during bridge/REPL sessions now shows a clear message directing users to run <code>/login</code> (search for <code>"OAuth token expired and could not be refreshed. Run /login to re-authenticate."</code>)</li><li>Bridge REPL initialization now tracks consecutive failures and stops retrying after a threshold, preventing infinite retry loops (search for <code>"consecutive init failures, not retrying this session"</code>)</li><li>Hook success content changed from <code>"Success"</code> / <code>"Condition met"</code> to empty string, reducing noise in hook output</li><li>SSL certificate errors now provide actionable guidance: set <code>NODE_EXTRA_CA_CERTS</code> or ask IT to allowlist <code>*.anthropic.com</code> (search for <code>"SSL certificate error"</code>)</li><li>Cron job deletion errors now provide clear messages: <code>"Cannot delete cron job '...'"</code> (search for <code>"Cannot delete cron job"</code>)</li><li>Orphaned cron jobs (for agents that no longer exist) are now automatically cleaned up (search for <code>"gone, removing orphaned cron"</code>)</li><li>Durable cron jobs are now explicitly blocked for teammate sessions with a clear error message (search for <code>"durable crons are not supported for teammates"</code>)</li><li>Environment variables related to <code>ANTHROPIC_UNIX_SOCKET</code> connections are now stripped when applying config-level env overrides, preventing socket connection leaks across configurations (search for <code>"ANTHROPIC_UNIX_SOCKET"</code> in <code>Rr6()</code>)</li><li>Text selection in the terminal now uses word-boundary-aware double-click selection with proper anchor span tracking (search for <code>"anchorSpan"</code> with <code>kind: "word"</code>)</li></ul>
+    </article>
+    <article class="card" id="ssh-remote-sessions">
+      <div class="card-top">
+        <h3>SSH Remote Sessions <a class="anchor" href="#ssh-remote-sessions">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure for managing SSH-based remote sessions, enabling Claude Code to connect to and manage remote machines.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged / Infrastructure</p>
+<div class="blabel">Details</div>
+<ul><li>Full SSH session lifecycle management with connect, disconnect, reconnect, and cleanup hooks</li><li>Automatic reconnection on SSH connection drops with configurable retry attempts</li><li>Permission request handling for SSH sessions</li><li>Remote stderr capture and exit code reporting</li><li>Log messages: <code>"[useSSHSession] connected"</code>, <code>"[useSSHSession] ssh dropped, reconnecting"</code>, <code>"[useSSHSession] ssh process exited (giving up)"</code></li><li>Related: <code>"Remote session ended."</code>, <code>"Remote stderr (exit ...)"</code>, <code>"SSH session failed before connecting."</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>SSH session manager (search for <code>"[useSSHSession]"</code>, <code>"SSH connection dropped"</code>, <code>"SSH session failed before connecting"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.41 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.41."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.41</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.41</span></h1>
+<p class="sub">Version 2.0.41 introduces major improvements to git workflow management, including automatic tracking of uncommitted changes and unpushed commits, enhanced multi-agent planning with structured 4-phase workflows, and better terminal rendering with improved ANSI escape sequence handling and Unicode support.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.37 → v2.0.41</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">21</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">21 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="git-repository-status-tracking">
+      <div class="card-top">
+        <h3>Git Repository Status Tracking <a class="anchor" href="#git-repository-status-tracking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Comprehensive git status detection for branch management and workflow automation</p>
+<p><strong>How it works:</strong></p>
+<ul><li>Automatically detects commits ahead of default branch (main/master)</li><li>Checks for uncommitted changes in working directory</li><li>Detects unpushed commits to remote</li><li>Warns before switching branches with uncommitted/unpushed work</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>New functions: <code>lJ1()</code> at line 87137 (comprehensive status aggregator), <code>Hn9()</code> at line 87127 (commit counting), <code>dJ1()</code> at line 87177 (default branch detection)</li><li>Integrated into branch switching workflows</li><li>Prevents accidental loss of work during teleport operations</li><li><strong>Evidence</strong>: <code>lJ1()</code> at line 87137, <code>Hn9()</code> at line 87127, <code>dJ1()</code> at line 87177 in pretty-v2.0.41.js</li></ul>
+    </article>
+    <article class="card" id="uncommitted-changes-ui">
+      <div class="card-top">
+        <h3>Uncommitted Changes UI <a class="anchor" href="#uncommitted-changes-ui">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Interactive dialog when switching branches with uncommitted or unpushed changes</p>
+<p><strong>How to trigger:</strong></p>
+<pre><code># Automatically appears when switching branches with uncommitted work
+claude  # then use teleport feature</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Shows different warnings for uncommitted changes vs unpushed commits</li><li>Provides three options: Continue without committing, Commit and push changes, Cancel operation</li><li>Prevents data loss during branch switches</li><li><strong>Evidence</strong>: <code>uT2()</code> at line 428379 in pretty-v2.0.41.js (replaces unrelated function at line 428358 in v2.0.37)</li></ul>
+    </article>
+    <article class="card" id="automatic-upstream-branch-setup">
+      <div class="card-top">
+        <h3>Automatic Upstream Branch Setup <a class="anchor" href="#automatic-upstream-branch-setup">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatically configures upstream tracking after git checkout</p>
+<p><strong>How it works:</strong> After checking out a branch, automatically runs:</p>
+<pre><code>git branch --set-upstream-to=origin/&lt;branch&gt; &lt;branch&gt;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Checks if upstream is already configured</li><li>Verifies remote branch exists before setting upstream</li><li>Logs all actions for debugging</li><li>Called automatically after branch checkout operations</li><li><strong>Evidence</strong>: <code>tl5()</code> at line 427581 in pretty-v2.0.41.js (new function, doesn't exist in v2.0.37)</li></ul>
+    </article>
+    <article class="card" id="brace-expansion-for-claude-md-paths">
+      <div class="card-top">
+        <h3>Brace Expansion for CLAUDE.md Paths <a class="anchor" href="#brace-expansion-for-claude-md-paths">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Glob-style brace expansion in CLAUDE.md frontmatter configuration</p>
+<p><strong>How to use:</strong></p>
+<pre><code>paths: src/{components,utils}/{*.ts,*.tsx}</code></pre>
+<p>Expands to:</p>
+<pre><code>src/components/*.ts
+src/components/*.tsx
+src/utils/*.ts
+src/utils/*.tsx</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Custom implementation supporting nested braces</li><li>Recursive expansion for complex patterns</li><li>Used in CLAUDE.md frontmatter <code>paths:</code> field</li><li><strong>Evidence</strong>: <code>nP0()</code> at line 52984, <code>aP0()</code> at line 53002 in pretty-v2.0.41.js (not present in v2.0.37)</li></ul>
+    </article>
+    <article class="card" id="vcs-account-linking">
+      <div class="card-top">
+        <h3>VCS Account Linking <a class="anchor" href="#vcs-account-linking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> OAuth-based GitHub account linking with Claude account</p>
+<p><strong>How it works:</strong></p>
+<ul><li>Automatically detects GitHub authentication via <code>gh</code> CLI</li><li>Links GitHub account to Anthropic backend</li><li>Enables enhanced GitHub integration features</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>API endpoint: <code>https://api.anthropic.com/api/claude_code/link_vcs_account</code></li><li>Feature flag: <code>vcs_account_linking_enabled</code></li><li>Runs in background after authentication</li><li>Tracks organization UUID and billing type</li><li><strong>Evidence</strong>: <code>cl5()</code> at line 426586, <code>mt1()</code> at line 426608 in pretty-v2.0.41.js (not in v2.0.37)</li></ul>
+    </article>
+    <article class="card" id="conductor-app-detection">
+      <div class="card-top">
+        <h3>Conductor App Detection <a class="anchor" href="#conductor-app-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Detects when running inside Conductor desktop app</p>
+<p><strong>Details:</strong></p>
+<ul><li>Checks <code>process.env.__CFBundleIdentifier === "com.conductor.app"</code></li><li>Allows behavior customization for Conductor environment</li><li>Similar to existing IDE detection (VSCode, Cursor, etc.)</li><li><strong>Evidence</strong>: <code>Vb9()</code> at line 47155 in pretty-v2.0.41.js (v2.0.37 has different code at line 47461)</li></ul>
+    </article>
+    <article class="card" id="glob-operations-with-ripgrep-experimental">
+      <div class="card-top">
+        <h3>Glob Operations with Ripgrep (Experimental) <a class="anchor" href="#glob-operations-with-ripgrep-experimental">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Optional performance optimization using ripgrep for file pattern matching</p>
+<p><strong>How to use:</strong> Requires feature flag <code>tengu_glob_with_rg</code> to be enabled.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Uses <code>rg --files --glob &lt;pattern&gt;</code> for matching</li><li>Sorts results by modification time</li><li>Includes hidden files</li><li>Respects ignore patterns</li><li>Performance benefit for large codebases</li><li><strong>Evidence</strong>: Feature flag check at line 483919 in pretty-v2.0.41.js (not in v2.0.37)</li></ul>
+    </article>
+    <article class="card" id="enhanced-multi-agent-plan-mode">
+      <div class="card-top">
+        <h3>Enhanced Multi-Agent Plan Mode <a class="anchor" href="#enhanced-multi-agent-plan-mode">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Structured 4-phase planning workflow with parallel agent coordination</p>
+<p><strong>How it works:</strong></p>
+<ol><li><strong>Phase 1: Initial Understanding</strong> - Read 3-4 relevant files, clarify ambiguities</li><li><strong>Phase 2: Multi-Agent Planning</strong> - Launch 2 to N agents in parallel with different perspectives</li><li><strong>Phase 3: Synthesis</strong> - Collect responses, ask trade-off questions</li><li><strong>Phase 4: Final Plan</strong> - Present synthesized recommendation</li></ol>
+<p><strong>Details:</strong></p>
+<ul><li>Quality over quantity: meaningful contrasts between agent perspectives</li><li>Dynamic perspective generation (e.g., "simplicity vs performance vs maintainability")</li><li>Parallel agent launches in single message (multiple tool calls)</li><li>Context-aware perspective selection based on task type</li><li><strong>Evidence</strong>: Enhanced workflow at line 475195 in pretty-v2.0.41.js (basic version at line 473774 in v2.0.37)</li></ul>
+    </article>
+    <article class="card" id="network-path-security-enhancements">
+      <div class="card-top">
+        <h3>Network Path Security Enhancements <a class="anchor" href="#network-path-security-enhancements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Expanded detection of suspicious Windows network paths</p>
+<p><strong>Improvements over v2.0.37:</strong></p>
+<ul><li>Added DavWWWRoot detection (WebDAV mounted drives)</li><li>Added IP address-based UNC path detection (IPv4 and IPv6)</li><li>Added forward slash variants for all patterns</li><li>Added SSL port notation patterns (<code>@SSL@</code>, <code>@\d+@SSL</code>)</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Protects against WebDAV attacks</li><li>Validates paths before execution</li><li>Shows security warnings for suspicious paths</li><li><strong>Evidence</strong>: <code>ddA()</code> at line 222047 in pretty-v2.0.41.js (enhanced from <code>i2Q()</code> at line 222404 in v2.0.37)</li></ul>
+    </article>
+    <article class="card" id="ansi-escape-sequence-handling">
+      <div class="card-top">
+        <h3>ANSI Escape Sequence Handling <a class="anchor" href="#ansi-escape-sequence-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved parsing of terminal color codes and escape sequences</p>
+<p><strong>Details:</strong></p>
+<ul><li>Proper handling of 256-color codes (<code>ESC[38;5;Nm</code>)</li><li>Proper handling of RGB color codes (<code>ESC[38;2;R;G;Bm</code>)</li><li>Fixes rendering bugs with complex color sequences</li><li>More accurate terminal width calculations</li><li><strong>Evidence</strong>: <code>Km9()</code> at line 76407, <code>Em9()</code> at line 76423 in pretty-v2.0.41.js (different code at same lines in v2.0.37)</li></ul>
+    </article>
+    <article class="card" id="unicode-text-segmentation">
+      <div class="card-top">
+        <h3>Unicode Text Segmentation <a class="anchor" href="#unicode-text-segmentation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Better handling of emoji and full-width characters in terminal output</p>
+<p><strong>Details:</strong></p>
+<ul><li>Uses <code>Intl.Segmenter</code> for proper grapheme cluster detection</li><li>Detects full-width characters (CJK, emoji) for alignment</li><li>Prevents terminal rendering issues with Unicode</li><li><strong>Evidence</strong>: <code>Nm9()</code> at line 76699, <code>$m9</code> initialization at line 76716 in pretty-v2.0.41.js (enhanced from v2.0.37)</li></ul>
+    </article>
+    <article class="card" id="todolist-tool-documentation">
+      <div class="card-top">
+        <h3>TodoList Tool Documentation <a class="anchor" href="#todolist-tool-documentation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Comprehensive examples and guidance for todo list usage</p>
+<p><strong>Improvements:</strong></p>
+<ul><li>Added 4 detailed examples of when TO use (dark mode implementation, function renaming, e-commerce features, React optimization)</li><li>Added 4 examples of when NOT to use (simple questions, informational requests, single edits, commands)</li><li>Clarified <code>activeForm</code> requirement ("Fix bug" → "Fixing bug")</li><li>Emphasized exactly ONE task must be in_progress at a time</li><li>Added guidance not to mark tasks complete if tests fail</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Better user experience through clearer task status</li><li>Prevents misuse for trivial tasks</li><li>Ensures systematic progress tracking</li><li><strong>Evidence</strong>: Enhanced documentation in <code>Kv0</code> tool description at lines 1287-1469 in diff</li></ul>
+    </article>
+    <article class="card" id="exitplanmode-tool-clarification">
+      <div class="card-top">
+        <h3>ExitPlanMode Tool Clarification <a class="anchor" href="#exitplanmode-tool-clarification">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Clearer guidance on appropriate use of plan mode</p>
+<p><strong>Details:</strong></p>
+<ul><li>Only for tasks requiring code implementation planning</li><li>NOT for research/understanding tasks</li><li>Must clarify ambiguities before exiting</li><li>Added 3 specific examples distinguishing planning vs research</li><li><strong>Evidence</strong>: Enhanced guidance in <code>a12()</code> at lines 1902-1917 in diff</li></ul>
+    </article>
+    <article class="card" id="lsp-diagnostic-improvements">
+      <div class="card-top">
+        <h3>LSP Diagnostic Improvements <a class="anchor" href="#lsp-diagnostic-improvements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Better handling of Language Server Protocol diagnostics</p>
+<p><strong>Details:</strong></p>
+<ul><li>Deduplication of diagnostics across multiple LSP servers</li><li>More detailed logging for diagnostic delivery</li><li>Better error messages for malformed LSP responses</li><li>Reduces duplicate error reports in editor</li><li><strong>Evidence</strong>: Enhanced diagnostic handling at lines 1710-1734 in diff</li></ul>
+    </article>
+    <article class="card" id="error-message-improvements">
+      <div class="card-top">
+        <h3>Error Message Improvements <a class="anchor" href="#error-message-improvements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> More specific error types and clearer user feedback</p>
+<p><strong>New error types:</strong></p>
+<ul><li><code>repeated_529</code> - Rate limit errors with specific guidance</li><li><code>prompt_too_long</code> - Oversized prompts with size information</li><li><code>pdf_too_large</code> - PDF page limit violations</li><li><code>oauth_org_not_allowed</code> - OAuth restriction details</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Better categorization of error conditions</li><li>More actionable error messages</li><li>Context-specific troubleshooting hints</li><li><strong>Evidence</strong>: New error types at lines 1499-1554 in diff</li></ul>
+    </article>
+    <article class="card" id="slash-command-documentation">
+      <div class="card-top">
+        <h3>Slash Command Documentation <a class="anchor" href="#slash-command-documentation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced explanation of slash command behavior</p>
+<p><strong>Details:</strong></p>
+<ul><li>Clearer explanation that commands expand to prompts</li><li>Shows <code>&lt;command-message&gt;</code> format example</li><li>Warning not to invoke commands already running</li><li>Better understanding of command execution model</li><li><strong>Evidence</strong>: Enhanced documentation at lines 96963-96982 in diff</li></ul>
+    </article>
+    <article class="card" id="mcp-tool-token-tracking">
+      <div class="card-top">
+        <h3>MCP Tool Token Tracking <a class="anchor" href="#mcp-tool-token-tracking">#</a></h3>
+      </div>
+      <p>Separate token usage tracking for MCP tools, distinguishing them from built-in tools in context window breakdown.</p>
+<div class="blabel">Evidence</div>
+<p>Token tracking at lines 97073-97152 in diff</p>
+    </article>
+    <article class="card" id="hook-summary-messages">
+      <div class="card-top">
+        <h3>Hook Summary Messages <a class="anchor" href="#hook-summary-messages">#</a></h3>
+      </div>
+      <p>Consolidated plugin hook execution summaries showing hook count, errors, and prevention status with better formatting.</p>
+<div class="blabel">Evidence</div>
+<p><code>FaQ()</code>, <code>ij6()</code> at lines 3166-3181, 1625-1648 in diff</p>
+    </article>
+    <article class="card" id="terminal-hyperlink-support">
+      <div class="card-top">
+        <h3>Terminal Hyperlink Support <a class="anchor" href="#terminal-hyperlink-support">#</a></h3>
+      </div>
+      <p>Added OSC 8 hyperlink support for creating clickable links in supported terminals using standard ANSI escape sequences.</p>
+<div class="blabel">Evidence</div>
+<p><code>X16()</code> at lines 1595-1606 in diff</p>
+    </article>
+    <article class="card" id="truncation-indicators">
+      <div class="card-top">
+        <h3>Truncation Indicators <a class="anchor" href="#truncation-indicators">#</a></h3>
+      </div>
+      <p>Better warnings for truncated content, showing kilobytes removed for large tool results and warnings for git status truncation.</p>
+<div class="blabel">Evidence</div>
+<p>Improvements at lines 1174, 2150-2151 in diff</p>
+    </article>
+    <article class="card" id="thinking-mode-metadata">
+      <div class="card-top">
+        <h3>Thinking Mode Metadata <a class="anchor" href="#thinking-mode-metadata">#</a></h3>
+      </div>
+      <p>Enhanced thinking mode integration with better metadata passing and settings synchronization for <code>alwaysThinkingEnabled</code>.</p>
+<div class="blabel">Evidence</div>
+<p><code>dwQ()</code>, <code>pwQ()</code> at lines 61382-61438, 3485-3486 in diff</p>
+<p><strong>Note:</strong> This changelog covers changes from v2.0.37 to v2.0.41. All line numbers reference the prettified source files in the archive. Function names are from the minified/obfuscated source and may not reflect original implementation names.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.132 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.132."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.132</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.132</span></h1>
+<p class="sub">This release adds Linux sandbox configuration for custom <code>bwrap</code> and <code>socat</code> binaries, improves MCP startup handling with a new wait tool behind a rollout flag, and makes WebFetch failures more actionable by returning HTTP status details instead of opaque fetch errors. It also includes several terminal and background-session refinements, plus dark-launched <code>/goal</code> infrastructure that is present in the build but not enabled.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.131 → v2.1.132</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">1</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="custom-linux-sandbox-binary-paths">
+      <div class="card-top">
+        <h3>Custom Linux Sandbox Binary Paths <a class="anchor" href="#custom-linux-sandbox-binary-paths">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Linux users can now configure exact <code>bwrap</code> and <code>socat</code> binary paths for sandbox and proxy bridge setup.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;sandbox&quot;: {
+    &quot;bwrapPath&quot;: &quot;/usr/bin/bwrap&quot;,
+    &quot;socatPath&quot;: &quot;/usr/bin/socat&quot;
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>bwrapPath</code> controls the bubblewrap executable used for Linux sandboxing.</li><li><code>socatPath</code> controls the executable used for HTTP/SOCKS bridge processes.</li><li>Claude Code validates that configured paths are executable and reports clearer errors if not.</li><li>This is useful on systems where these tools are installed outside <code>PATH</code>, or where a managed environment pins exact binary locations.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Sandbox schema adds <code>bwrapPath</code> and <code>socatPath</code> settings (search for <code>"Linux only: absolute path to the bwrap"</code> and <code>"Linux only: absolute path to the socat binary"</code>)</p>
+    </article>
+    <article class="card" id="mcp-wait-for-servers-gradual-rollout">
+      <div class="card-top">
+        <h3>MCP Wait For Servers [Gradual Rollout] <a class="anchor" href="#mcp-wait-for-servers-gradual-rollout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude can wait briefly for MCP servers that are still connecting, then continue once their tools are available.</p>
+<div class="blabel">Usage</div>
+<pre><code>Claude calls WaitForMcpServers when an MCP server is still connecting.</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The new <code>WaitForMcpServers</code> tool waits for all pending servers, or for specific server names.</li><li>Results distinguish connected, failed, still pending, needs-auth, disabled, and unknown servers.</li><li>Missing-tool guidance now tells Claude when a requested MCP tool belongs to a server that is still connecting.</li><li>The tool is gated by <code>tengu_ashen_kelp</code>, so it may not be visible for every user yet.</li></ul>
+<div class="blabel">Evidence</div>
+<p>MCP wait tool and gated enablement (search for <code>"WaitForMcpServers"</code> and <code>"The MCP server '"</code>)</p>
+    </article>
+    <article class="card" id="webfetch-http-error-results">
+      <div class="card-top">
+        <h3>WebFetch HTTP Error Results <a class="anchor" href="#webfetch-http-error-results">#</a></h3>
+      </div>
+      <p>WebFetch now returns structured HTTP failure information when a server responds with an error status, including status text and <code>Retry-After</code> when present. This should help users distinguish an authentication-required page, a rate limit, and a normal fetch failure without guessing from a generic exception.</p>
+<div class="blabel">Evidence</div>
+<p>WebFetch HTTP error result text (search for <code>"The server returned HTTP"</code> and <code>"The response body was not retrieved"</code>)</p>
+    </article>
+    <article class="card" id="fullscreen-renderer-controls">
+      <div class="card-top">
+        <h3>Fullscreen Renderer Controls <a class="anchor" href="#fullscreen-renderer-controls">#</a></h3>
+      </div>
+      <p>Terminal fullscreen behavior is more conservative and easier to override. Claude Code now recognizes <code>CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN</code> as an explicit opt-out, and it auto-disables fullscreen on Windows-over-SSH ConPTY sessions unless <code>CLAUDE_CODE_NO_FLICKER=1</code> is set.</p>
+<div class="blabel">Evidence</div>
+<p>Fullscreen environment handling (search for <code>"CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN"</code> and <code>"fullscreen disabled: Windows over SSH"</code>)</p>
+    </article>
+    <article class="card" id="background-session-detach-key">
+      <div class="card-top">
+        <h3>Background Session Detach Key <a class="anchor" href="#background-session-detach-key">#</a></h3>
+      </div>
+      <p>Background session instructions now consistently use <code>Ctrl+Z</code> to detach, replacing older <code>Ctrl+B then d</code> and <code>Ctrl+Q</code> guidance in redraw/startup messages.</p>
+<div class="blabel">Evidence</div>
+<p>Background session prompts (search for <code>"Ctrl+Z to detach"</code>)</p>
+    </article>
+    <article class="card" id="mcp-connection-resilience">
+      <div class="card-top">
+        <h3>MCP Connection Resilience <a class="anchor" href="#mcp-connection-resilience">#</a></h3>
+      </div>
+      <p>Remote MCP retry behavior now logs recovery and stops retrying once failed remote servers recover. MCP stdio transports also detect excessive non-protocol stdout and disconnect before unbounded memory growth.</p>
+<div class="blabel">Evidence</div>
+<p>MCP retry and stdout overflow handling (search for <code>"[MCP] Retry: all remote servers recovered, stopping"</code> and <code>"StdoutOverflowError"</code>)</p>
+    </article>
+    <article class="card" id="bash-safety-detection">
+      <div class="card-top">
+        <h3>Bash Safety Detection <a class="anchor" href="#bash-safety-detection">#</a></h3>
+      </div>
+      <p>Read-only command validation gained additional shell-edge-case detection, especially around zsh recursive evaluation, array subscripts, assignment side effects, redirect expansion, and escaped brace handling. These checks reduce cases where a command that looks harmless can still execute dynamic shell code.</p>
+<div class="blabel">Evidence</div>
+<p>Shell safety reasons (search for <code>"zsh $name[expr]"</code>, <code>"assignment alters command lookup/execution"</code>, and <code>"Redirect target starts with ="</code>)</p>
+    </article>
+    <article class="card" id="long-running-command-guidance">
+      <div class="card-top">
+        <h3>Long-Running Command Guidance <a class="anchor" href="#long-running-command-guidance">#</a></h3>
+      </div>
+      <p>The Bash tool description now explains <code>run_in_background</code> more directly and removes stale advice to read output later immediately. Claude Code also includes stronger guidance to avoid foreground <code>sleep</code> and use background commands or Monitor for waiting.</p>
+<div class="blabel">Evidence</div>
+<p>Background command guidance (search for <code>"</code>run_in_background<code> runs the command detached"</code> and <code>"Foreground </code>sleep<code> is blocked"</code>)</p>
+    </article>
+    <article class="card" id="policy-limit-cache-handling">
+      <div class="card-top">
+        <h3>Policy Limit Cache Handling <a class="anchor" href="#policy-limit-cache-handling">#</a></h3>
+      </div>
+      <p>When policy limits are fetched and no restrictions apply, Claude Code now preserves an explicit cached empty result instead of treating it like a deleted cache file. This should reduce noisy policy-limit cache churn in environments with no active restrictions.</p>
+<div class="blabel">Evidence</div>
+<p>Policy limit cache message (search for <code>"Policy limits: No restrictions (cached empty)"</code>)</p>
+    </article>
+    <article class="card" id="service-availability-messages">
+      <div class="card-top">
+        <h3>Service Availability Messages <a class="anchor" href="#service-availability-messages">#</a></h3>
+      </div>
+      <p>Daemon/service messages now distinguish unsupported installation from on-demand operation, making platform limitations clearer.</p>
+<div class="blabel">Evidence</div>
+<p>Service messaging (search for <code>"service install not available on this platform"</code> and <code>"service uninstall not available on linux"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>WebFetch now reports HTTP status responses as tool results instead of falling through to less-informative request failures (search for <code>"The server returned HTTP"</code>)</li></ul>
+<ul><li>MCP stdio servers that write too much non-JSON data to stdout are disconnected with a clear overflow error instead of allowing unbounded buffering (search for <code>"wrote &gt;"</code> and <code>"without a JSON-RPC message boundary"</code>)</li></ul>
+<ul><li>Fullscreen mode is now disabled automatically for Windows-over-SSH ConPTY sessions where the alternate-screen renderer is known to misbehave (search for <code>"fullscreen disabled: Windows over SSH"</code>)</li></ul>
+<ul><li>Policy-limit fetches with no restrictions now cache the empty state instead of deleting the cache on the old 404 path (search for <code>"Policy limits: No restrictions (cached empty)"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
+    </article>
+    <article class="card" id="goal-command-in-development">
+      <div class="card-top">
+        <h3>Goal Command [In Development] <a class="anchor" href="#goal-command-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>/goal</code> command is being prepared to set a session-scoped stopping condition so Claude keeps working until a stated goal is met.</p>
+<div class="blabel">Status</div>
+<p>Disabled/stubbed</p>
+<div class="blabel">Details</div>
+<ul><li>The implementation adds <code>/goal &lt;condition&gt;</code>, <code>/goal clear</code>, status rendering, and a session-scoped Stop hook.</li><li>Goal state records the condition, iteration count, and set time.</li><li>The command currently has <code>isEnabled: () =&gt; !1</code>, so users cannot invoke it in this build.</li><li>The existing <code>/loops</code> UI can see and manipulate related Stop-hook entries, but <code>/goal</code> itself remains unavailable.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Disabled goal command implementation (search for <code>"Set a goal — keep working until the condition is met"</code> and <code>"No goal set. Usage: </code>/goal &lt;condition&gt;<code>"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

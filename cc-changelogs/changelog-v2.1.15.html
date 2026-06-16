@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.15 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.15."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.15</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.15</span></h1>
+<p class="sub">This release introduces internal cowork plugin directory support for development/testing workflows, activates API billing attribution headers, and significantly improves UI performance through comprehensive React Compiler automatic memoization adoption.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.14 → v2.1.15</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="cowork-plugins-directory-support-hidden">
+      <div class="card-top">
+        <h3>Cowork Plugins Directory Support [Hidden] <a class="anchor" href="#cowork-plugins-directory-support-hidden">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new hidden <code>--cowork</code> flag enables an alternate plugin directory for development and testing workflows.</p>
+<div class="blabel">Usage</div>
+<pre><code># Via CLI flag
+claude plugins list --cowork
+claude plugins install my-plugin --cowork
+
+# Via environment variable
+CLAUDE_CODE_USE_COWORK_PLUGINS=true claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When enabled, plugins are stored in <code>cowork_plugins/</code> instead of <code>plugins/</code></li><li>Settings file changes to <code>cowork_settings.json</code> instead of <code>settings.json</code></li><li>The <code>--cowork</code> flag is hidden from help output (<code>.hideHelp()</code>)</li><li>Only available with <code>user</code> scope for certain commands; attempting to use with other scopes results in an error</li><li>Can be enabled via <code>CLAUDE_CODE_USE_COWORK_PLUGINS</code> environment variable</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Cn5()</code> at line 90980 (plugin directory selector, contains <code>"cowork_plugins"</code>), CLI definitions at line 560985 (contains <code>"--cowork", "Use cowork_plugins directory"</code>)</p>
+    </article>
+    <article class="card" id="api-billing-attribution-headers">
+      <div class="card-top">
+        <h3>API Billing Attribution Headers <a class="anchor" href="#api-billing-attribution-headers">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now sends version and entrypoint information in API requests for better usage tracking and diagnostics.</p>
+<div class="blabel">Details</div>
+<ul><li>Header format: <code>x-anthropic-billing-header: cc_version=2.1.15.{hash}; cc_entrypoint={entrypoint}</code></li><li>The entrypoint is read from <code>CLAUDE_CODE_ENTRYPOINT</code> environment variable (defaults to "unknown")</li><li>Previously this header was stubbed to always return an empty string (gated by <code>tengu_ant_attribution_header_new</code> flag)</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>X61()</code> at line 158274 (attribution header generator, contains <code>"x-anthropic-billing-header"</code>)</p>
+    </article>
+    <article class="card" id="react-compiler-memoization">
+      <div class="card-top">
+        <h3>React Compiler Memoization <a class="anchor" href="#react-compiler-memoization">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The entire UI layer has been updated to use React Compiler's automatic memoization through <code>useMemoCache</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>In v2.1.14: Only 1 reference to <code>react.memo_cache_sentinel</code> (the definition in React internals)</li><li>In v2.1.15: 736 usages across UI components</li><li>A new shared <code>e()</code> function wraps <code>useMemoCache</code> for use across all components</li><li>This provides automatic fine-grained memoization without manual <code>useMemo</code>/<code>useCallback</code> calls</li><li>Should improve rendering performance by avoiding unnecessary re-renders</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>e = function(A) { return dn5.H.useMemoCache(A) }</code> at line 92039, 736 occurrences of <code>Symbol.for("react.memo_cache_sentinel")</code> checks throughout UI code</p>
+    </article>
+    <article class="card" id="remote-mode-state-tracking">
+      <div class="card-top">
+        <h3>Remote Mode State Tracking <a class="anchor" href="#remote-mode-state-tracking">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Added internal state tracking for remote/teleport mode sessions.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>isRemoteMode</code> boolean state in the global state object</li><li>Getter <code>Hf1()</code> and setter <code>Fg6()</code> functions added</li><li>Used to modify behavior when running in remote session context (e.g., preventing empty input submission)</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>k6.isRemoteMode = A</code> at line 2350, usage checks at lines 548372 and 548402</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The <code>--cowork</code> flag and cowork plugins directory are hidden internal features, likely intended for Anthropic development and testing workflows. They are not documented in public help output and should be considered unsupported for general users.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

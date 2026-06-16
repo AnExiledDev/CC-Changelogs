@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.123 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.123."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.123</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.123</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.122 → v0.2.123</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p>Based on my analysis of the diff file for version 0.2.123, here is the detailed changelog:</p>
+    </article>
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>🆕 New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Claude 3.7 Sonnet Model Support</h4>
+<ul><li><strong>New Model Available</strong>: Added support for Claude 3.7 Sonnet, the latest and most capable model</li><li><strong>Default Model Update</strong>: Claude 3.7 Sonnet is now the default recommended model</li><li><strong>Model Selection UI</strong>: Updated model selector now shows:</li><li>"Sonnet (recommended)" - Claude 3.7 Sonnet for daily use · $3/$15 per Mtok</li><li>For MAX users: "Default (recommended)" - Use the best available model for MAX usage limits</li><li><strong>New Model String Functions</strong>: Added <code>sonnet37</code> model references alongside existing <code>haiku35</code> and <code>sonnet35</code></li></ul>
+<h4>AWS Bedrock Integration Improvements</h4>
+<ul><li><strong>Dynamic Model Discovery</strong>: Added automatic detection of available Anthropic models in AWS Bedrock</li><li><strong>Model Inference Profiles</strong>: New support for AWS Bedrock inference profiles to discover and use available Claude models</li><li><strong>Auto-configuration</strong>: The CLI now automatically finds and configures available Claude models when using Bedrock as the provider:</li></ul>
+<pre><code>  // Example of discovered models:
+  {
+    haiku35: &quot;claude-3-5-haiku-20241022&quot;,
+    sonnet35: &quot;claude-3-5-sonnet-20241022&quot;, 
+    sonnet37: &quot;claude-3-7-sonnet-20250219&quot;
+  }</code></pre>
+<h4>Native Binary Auto-Updater (Experimental)</h4>
+<ul><li><strong>Local Installation Support</strong>: New native binary installation and update system that doesn't require npm</li><li><strong>Auto-Update Mechanism</strong>: Automatic background updates without requiring restarts</li><li><strong>Shell Integration</strong>: Automatically sets up <code>claude</code> alias in your shell configuration (.bashrc, .zshrc, or .config/fish/config.fish)</li><li><strong>Version Management</strong>: Tracks "latest" and "known-good" versions with automatic fallback</li><li><strong>Update Status Display</strong>: Shows update progress and success/failure status in the UI</li><li><strong>Installation Command</strong>: Run migration with the new installation system when feature is enabled</li></ul>
+<h4>IDE Integration Enhancements</h4>
+<ul><li><strong>Real-time Diagnostics</strong>: New diagnostics integration that tracks code issues in real-time</li><li><strong>Diagnostic Tracking</strong>: Monitors and reports new diagnostic issues (errors, warnings, lints) that appear after file edits</li><li><strong>Smart Diagnostic Filtering</strong>: Only shows diagnostics that appeared after Claude made changes, filtering out pre-existing issues</li><li><strong>Multi-source Support</strong>: Handles diagnostics from both regular files (<code>file://</code>) and Claude's virtual file system (<code>_claude_fs_right:</code>)</li><li><strong>Linter Recognition</strong>: Identifies diagnostics from popular linters including ESLint, Prettier, Pylint, RuboCop, and many others</li></ul>
+<h4>Enhanced Rate Limit Handling</h4>
+<ul><li><strong>MAX Tier Detection</strong>: New ability to detect Claude MAX subscription tiers (5x and 20x rate limits)</li><li><strong>Intelligent Fallback</strong>: Automatic model fallback when hitting rate limits for MAX users</li><li><strong>Unified Rate Limit System</strong>: New <code>unifiedRateLimitFallbackAvailable</code> flag for better rate limit management</li><li><strong>Quota Checking</strong>: New <code>D65()</code> function to check API quota status</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Permission System Enhancements</h4>
+<ul><li><strong>Detailed Decision Reasons</strong>: Permission prompts now show exactly why a permission was allowed or denied</li><li><strong>Rule Suggestions</strong>: When permissions are denied, the system suggests appropriate rules to allow the action</li><li><strong>Multi-level Reasoning</strong>: Shows permission decisions for subcommands with hierarchical reasoning display</li><li><strong>Visual Indicators</strong>: Uses colored checkmarks (✓) and crosses (✗) to indicate allowed/denied permissions</li></ul>
+<h4>Configuration Management</h4>
+<ul><li><strong>Migration System</strong>: New automatic migration for moving API keys and environment variables to user settings</li><li><strong>Environment Variable Migration</strong>: Migrates global config environment variables to user settings</li><li><strong>Forced Local Installation</strong>: Can automatically migrate users from npm global installation to local installation</li></ul>
+<h4>UI/UX Improvements</h4>
+<ul><li><strong>Message Idle Notifications</strong>: New <code>messageIdleNotifThresholdMs</code> setting (default: 60000ms) for idle notifications</li><li><strong>Auto-compact Messages</strong>: Better handling of message compaction for cleaner conversation display</li><li><strong>Improved Error Messages</strong>: New <code>RetryError</code> class provides better context for retry failures</li><li><strong>Enhanced Tooltips</strong>: More descriptive tooltips for model selection and feature explanations</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed duplicate imports and variable declarations</li><li>Removed unused model configuration functions</li><li>Improved handling of MCP (Model Context Protocol) tool filtering</li><li>Better error handling for AWS Bedrock model discovery</li><li>Fixed issues with diagnostic file path matching</li></ul>
+    </article>
+    <article class="card" id="internal-changes">
+      <div class="card-top">
+        <h3>Internal Changes <a class="anchor" href="#internal-changes">#</a></h3>
+      </div>
+      <ul><li><strong>New Utility Functions</strong>:</li><li><code>EU4()</code>: Combines and deduplicates arrays</li><li><code>yZ2()</code>: Checks for set intersections</li><li><code>a25()</code>: Merges message contents</li><li><code>vS2()</code>: Finds related tool uses in conversation</li></ul>
+<ul><li><strong>Improved Tool Filtering</strong>: Enhanced logic for filtering available tools based on permissions and MCP capabilities</li><li><strong>Code Organization</strong>: Better separation of concerns for model management, diagnostics, and permissions</li></ul>
+    </article>
+    <article class="card" id="notes-for-developers">
+      <div class="card-top">
+        <h3>Notes for Developers <a class="anchor" href="#notes-for-developers">#</a></h3>
+      </div>
+      <ul><li>The native auto-updater is controlled by the <code>ENABLE_IDE_INTEGRATION</code> environment variable</li><li>AWS Bedrock integration requires proper AWS credentials configured</li><li>The diagnostics feature integrates with IDEs through MCP protocol</li><li>Model strings are now dynamically determined based on the provider (claude.ai vs Bedrock)</li></ul>
+<p>This update focuses heavily on improving the model selection experience, adding support for the latest Claude 3.7 Sonnet model, and providing better integration with AWS Bedrock and development environments through enhanced diagnostics support.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.61 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.61."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.61</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.61</span></h1>
+<p class="sub">This is a maintenance release containing internal code refactoring only. There are no user-facing changes, new features, or bug fixes in this version.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.60 → v2.0.61</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">1</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="import-statement-modernization">
+      <div class="card-top">
+        <h3>Import Statement Modernization <a class="anchor" href="#import-statement-modernization">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Internal code refactoring that reorganizes how Node.js modules are imported.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Converted 16 default imports to named/destructured imports</li><li>No runtime behavior changes</li><li>No impact on CLI functionality or performance</li><li><strong>Evidence</strong>: <code>import@16646</code> at line 16647 in v2.0.60 changed from <code>import eD1 from "node:child_process"</code> to destructured <code>import { spawn as v84, spawnSync as b84 } from "child_process"</code> at line 47888 in v2.0.61</li></ul>
+<p><strong>Affected modules:</strong></p>
+<ul><li><code>node:child_process</code></li><li><code>node:fs</code></li><li><code>node:os</code></li><li><code>node:path</code></li><li><code>node:process</code></li><li><code>node:util</code></li><li><code>crypto</code></li><li><code>https</code></li><li><code>stream</code></li></ul>
+<p><strong>Note:</strong> Users do not need to take any action for this release. All existing commands, flags, and workflows continue to work identically to v2.0.60.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

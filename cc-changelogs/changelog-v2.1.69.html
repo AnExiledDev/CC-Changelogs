@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.69 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.69."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.69</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.69</span></h1>
+<p class="sub">This release is a major update that introduces Remote Control Server mode for persistent multi-session hosting, an Ultraplan feature for remote session planning, a completely overhauled memory system with typed categories, live plugin reloading via <code>/reload-plugins</code>, the <code>--prefill</code> CLI flag, native mouse-based text selection and copying, scrollable UI views, auto theme detection, MCPB bundle tooling, and significant improvements to ToolSearch, command safety, and the hooks system.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.68 → v2.1.69</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">26</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">5</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">26 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="remote-control-server-mode">
+      <div class="card-top">
+        <h3>Remote Control Server Mode <a class="anchor" href="#remote-control-server-mode">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new <code>server</code> subcommand for <code>claude remote-control</code> that runs as a persistent server accepting multiple concurrent sessions from claude.ai/code.</p>
+<div class="blabel">Usage</div>
+<pre><code># Start a server where all sessions share the current directory
+claude remote-control server
+
+# Each session gets an isolated git worktree (max N sessions)
+claude remote-control server --spawn-worktree-sessions [&lt;N&gt;]
+
+# All sessions share the current directory (default behavior, max N sessions)
+claude remote-control server --spawn-same-dir-sessions [&lt;N&gt;]
+
+# Additional server options
+claude remote-control server --idle-timeout &lt;ms&gt;    # Timeout for detached sessions
+claude remote-control server --max-sessions &lt;n&gt;     # Max concurrent sessions
+claude remote-control server --workspace &lt;dir&gt;      # Default working directory
+claude remote-control server --auth-token &lt;token&gt;   # Bearer token for auth
+claude remote-control server --host &lt;string&gt;        # Bind address
+claude remote-control server --port &lt;number&gt;        # Listen port</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Runs as a persistent daemon that accepts connections without pre-creating an initial session</li><li>Supports <code>cc+unix://</code> protocol for Unix domain socket connections</li><li>Session management with <code>server-sessions.json</code> persistence and <code>server.lock</code> for single-instance enforcement</li><li>Configurable spawn modes: shared directory (default) or isolated git worktrees</li><li>Sessions can be created, attached, detached, and destroyed independently</li><li>Policy-controllable via <code>allow_remote_control</code> organization policy</li></ul>
+<div class="blabel">Evidence</div>
+<p>Remote Control server mode (search for <code>"Start a Claude Code session server"</code>, <code>"--spawn-worktree-sessions"</code>, <code>"server-sessions.json"</code>)</p>
+    </article>
+    <article class="card" id="ultraplan">
+      <div class="card-top">
+        <h3>Ultraplan <a class="anchor" href="#ultraplan">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new remote-session-based planning mode that generates comprehensive implementation plans using a dedicated remote session.</p>
+<div class="blabel">Details</div>
+<ul><li>Triggered when planning complex implementations</li><li>Runs a remote session that produces a structured <code>&lt;ultraplan&gt;</code> block</li><li>Displays "Ultraplanning…" progress indicator during generation</li><li>The generated plan is written to a plan file for user review</li><li>After review, the user can approve and proceed to implementation</li></ul>
+<div class="blabel">Evidence</div>
+<p>Ultraplan feature (search for <code>"Ultraplanning…"</code>, <code>"Ultraplan complete"</code>, <code>"ultraplan"</code>)</p>
+    </article>
+    <article class="card" id="prefill-cli-flag">
+      <div class="card-top">
+        <h3><code>--prefill</code> CLI Flag <a class="anchor" href="#prefill-cli-flag">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Pre-fill the prompt input with text without automatically submitting it, allowing the user to review and edit before sending.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --prefill &quot;implement a function that&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Text appears in the input field ready for editing</li><li>Unlike <code>--print</code>, does not auto-submit — the user can modify the prompt before pressing Enter</li><li>Useful for templates, repetitive prompts, or workflow scripting</li></ul>
+<div class="blabel">Evidence</div>
+<p>Prefill flag (search for <code>"--prefill"</code>, <code>"Pre-fill the prompt input with text without submitting it"</code>)</p>
+    </article>
+    <article class="card" id="reload-plugins-command">
+      <div class="card-top">
+        <h3><code>/reload-plugins</code> Command <a class="anchor" href="#reload-plugins-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Reload and activate plugin changes in the current session without needing to restart Claude Code.</p>
+<div class="blabel">Usage</div>
+<pre><code>/reload-plugins</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Activates pending plugin installations, removals, and configuration changes</li><li>Replaces the previous behavior of requiring a full restart after plugin changes</li><li>Messages like "Run /reload-plugins to activate" now appear after plugin changes instead of "Restart Claude Code"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin reload (search for <code>"/reload-plugins"</code>, <code>"Activate pending plugin changes in the current session"</code>)</p>
+    </article>
+    <article class="card" id="mouse-based-text-selection-and-copy">
+      <div class="card-top">
+        <h3>Mouse-Based Text Selection and Copy <a class="anchor" href="#mouse-based-text-selection-and-copy">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Native mouse text selection with drag-to-select and clipboard copy support in the terminal UI.</p>
+<div class="blabel">Details</div>
+<ul><li>Click and drag to select text in the terminal output</li><li>Selected text can be copied to the system clipboard via OSC 52 escape sequence</li><li><code>noSelect</code> regions prevent selection of UI chrome (status bars, borders) while allowing content selection</li><li>Selection state tracks anchor/focus positions with full drag handling</li><li><code>from-left-edge</code> option extends no-select regions from the left edge of the terminal</li></ul>
+<div class="blabel">Evidence</div>
+<p>Text selection system (search for <code>"isDragging"</code>, <code>"copySelection"</code>, <code>"noSelect"</code>)</p>
+    </article>
+    <article class="card" id="scrollable-ui-views">
+      <div class="card-top">
+        <h3>Scrollable UI Views <a class="anchor" href="#scrollable-ui-views">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Terminal UI components can now use <code>overflowY: "scroll"</code> to create scrollable content areas with sticky-scroll behavior.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>scroll</code> overflow mode alongside existing <code>hidden</code> and <code>visible</code></li><li><code>stickyScroll</code> attribute auto-scrolls to bottom as new content arrives</li><li>Tracks <code>scrollHeight</code>, <code>scrollViewportHeight</code>, and <code>scrollTop</code> for programmatic scroll control</li><li>Content outside the visible viewport is culled for rendering performance</li></ul>
+<div class="blabel">Evidence</div>
+<p>Scroll support (search for <code>"stickyScroll"</code>, <code>"scrollViewportHeight"</code>, <code>overflowY</code>)</p>
+    </article>
+    <article class="card" id="auto-theme-detection">
+      <div class="card-top">
+        <h3>Auto Theme Detection <a class="anchor" href="#auto-theme-detection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code can now automatically detect the system light/dark theme setting and follow it.</p>
+<div class="blabel">Details</div>
+<ul><li>New "Auto (follow system)" theme option</li><li>On macOS, reads <code>AppleInterfaceStyle</code> from system defaults to detect Dark Mode</li><li>Falls back to "dark" on non-macOS platforms</li><li>Theme updates when toggling between light and dark mode</li></ul>
+<div class="blabel">Evidence</div>
+<p>Auto theme (search for <code>"Auto (follow system)"</code>, <code>"AppleInterfaceStyle"</code>)</p>
+    </article>
+    <article class="card" id="memory-system-overhaul">
+      <div class="card-top">
+        <h3>Memory System Overhaul <a class="anchor" href="#memory-system-overhaul">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Complete restructuring of the persistent memory system with typed categories, frontmatter format, and two-step save process.</p>
+<div class="blabel">Details</div>
+<ul><li>Four memory types: <code>user</code> (preferences/role), <code>feedback</code> (corrections/guidance), <code>project</code> (ongoing work context), and <code>reference</code> (external system pointers)</li><li>Memories use markdown files with YAML frontmatter (<code>name</code>, <code>description</code>, <code>type</code> fields)</li><li>Two-step save: write the memory file, then add a pointer in the memory index</li><li>Clear guidance on what NOT to save (code patterns, git history, ephemeral details)</li><li>When users correct information stated from memory, the stored entry must be updated</li><li><code>CLAUDE_COWORK_MEMORY_PATH_OVERRIDE</code> environment variable to customize the memory directory</li></ul>
+<div class="blabel">Evidence</div>
+<p>Memory system (search for <code>"## Types of memory"</code>, <code>"## What NOT to save in memory"</code>, <code>"CLAUDE_COWORK_MEMORY_PATH_OVERRIDE"</code>)</p>
+    </article>
+    <article class="card" id="mcpb-bundle-tooling">
+      <div class="card-top">
+        <h3>MCPB Bundle Tooling <a class="anchor" href="#mcpb-bundle-tooling">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure for creating, validating, packing, and unpacking MCP Bundle (MCPB) files — a packaging format for MCP server plugins.</p>
+<div class="blabel">Usage</div>
+<pre><code>mcpb pack       # Create a .mcpb bundle from a directory
+mcpb validate   # Validate a manifest.json</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Interactive manifest.json creation wizard with prompts for name, version, tools, prompts, screenshots, and more</li><li><code>.mcpbignore</code> support to exclude files from bundles</li><li>Schema validation for manifest files</li><li>Bundle unpacking and verification</li><li>Supports Node.js and Python version constraints</li><li>Platform compatibility settings (macOS, Linux, Windows)</li></ul>
+<div class="blabel">Evidence</div>
+<p>MCPB support (search for <code>"A MCPB bundle"</code>, <code>"mcpb pack"</code>, <code>".mcpbignore"</code>)</p>
+    </article>
+    <article class="card" id="git-subdir-plugin-source">
+      <div class="card-top">
+        <h3>git-subdir Plugin Source <a class="anchor" href="#git-subdir-plugin-source">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Plugins can now be sourced from a subdirectory within a larger repository (monorepo support).</p>
+<div class="blabel">Details</div>
+<ul><li>Uses sparse checkout (<code>--filter=tree:0</code>) to minimize bandwidth for monorepo plugins</li><li>Only the specified subdirectory is materialized; the rest of the repo is not downloaded</li><li>Requires git version 2.25 or later for cone mode support</li><li>Falls back to unshallow fetch if sparse-checkout fails</li></ul>
+<div class="blabel">Evidence</div>
+<p>git-subdir support (search for <code>"git-subdir"</code>, <code>"Subdirectory within the repo containing the plugin"</code>)</p>
+    </article>
+    <article class="card" id="binary-content-handling">
+      <div class="card-top">
+        <h3>Binary Content Handling <a class="anchor" href="#binary-content-handling">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Improved detection and handling of binary file content, with disk-based storage for large binary results.</p>
+<div class="blabel">Details</div>
+<ul><li>Sophisticated binary detection using byte analysis (null bytes, control characters)</li><li>Extensive list of known binary file extensions (images, audio, video, archives, executables, etc.)</li><li>Binary content from tool results can be saved to disk and referenced by path</li><li>Support for Office documents, archives, and other binary MIME types</li></ul>
+<div class="blabel">Evidence</div>
+<p>Binary content (search for <code>"Binary content ("</code>, <code>"Binary content could not be saved to disk"</code>)</p>
+    </article>
+    <article class="card" id="new-hook-events">
+      <div class="card-top">
+        <h3>New Hook Events <a class="anchor" href="#new-hook-events">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Three new hook event types for more granular automation control.</p>
+<div class="blabel">Details</div>
+<ul><li><code>InstructionsLoaded</code>: Fires when an instruction file (CLAUDE.md or rule) is loaded</li><li><code>TaskCompleted</code>: Can prevent continuation after task completion (<code>"TaskCompleted hook prevented continuation"</code>)</li><li><code>TeammateIdle</code>: Can prevent continuation when a teammate goes idle (<code>"TeammateIdle hook prevented continuation"</code>)</li><li>Hooks support <code>agent_type</code> and <code>agent_id</code> context fields for subagent-aware automation</li><li>Background hooks with <code>async</code> mode that wake the model on exit code 2</li></ul>
+<div class="blabel">Evidence</div>
+<p>New hooks (search for <code>"InstructionsLoaded"</code>, <code>"TaskCompleted hook prevented continuation"</code>, <code>"TeammateIdle hook prevented continuation"</code>)</p>
+    </article>
+    <article class="card" id="settings-visibility-and-debug">
+      <div class="card-top">
+        <h3>Settings Visibility and Debug <a class="anchor" href="#settings-visibility-and-debug">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New settings API that returns effective merged settings plus raw per-source settings in merge order.</p>
+<div class="blabel">Details</div>
+<ul><li>Shows settings from all sources (User, Project, Local, Managed) with merge ordering</li><li>Labeled "Ordered low-to-high priority — later entries override earlier ones"</li><li>Makes it clear where each setting value comes from</li></ul>
+<div class="blabel">Evidence</div>
+<p>Settings debug (search for <code>"Effective merged settings plus raw per-source settings in merge order"</code>)</p>
+    </article>
+    <article class="card" id="toolsearch-multi-select-and-search-hints">
+      <div class="card-top">
+        <h3>ToolSearch Multi-Select and Search Hints <a class="anchor" href="#toolsearch-multi-select-and-search-hints">#</a></h3>
+      </div>
+      <p>ToolSearch now supports loading multiple deferred tools at once with comma-separated <code>select:</code> syntax (e.g., <code>"select:Read,Edit,Grep"</code>). Tools can also display search hints alongside their names for better discoverability. A new <code>partial select</code> mode handles cases where some tools in a multi-select query are found while others are missing.</p>
+<div class="blabel">Evidence</div>
+<p>ToolSearch improvements (search for <code>"select:Read,Edit,Grep"</code>, <code>"searchHint"</code>, <code>"partial select"</code>)</p>
+    </article>
+    <article class="card" id="deferred-tools-announced-via-system-reminders">
+      <div class="card-top">
+        <h3>Deferred Tools Announced via System Reminders <a class="anchor" href="#deferred-tools-announced-via-system-reminders">#</a></h3>
+      </div>
+      <p>Deferred tools are now announced through system-reminder messages in the conversation rather than a static list, controlled by the <code>tengu_glacier_2xr</code> feature flag. This makes tool availability more dynamic and context-aware.</p>
+<div class="blabel">Evidence</div>
+<p>Deferred tools announcement (search for <code>"Deferred tools are announced via system-reminder messages"</code>)</p>
+    </article>
+    <article class="card" id="improved-command-shell-safety-checks">
+      <div class="card-top">
+        <h3>Improved Command Shell Safety Checks <a class="anchor" href="#improved-command-shell-safety-checks">#</a></h3>
+      </div>
+      <p>New obfuscation detection for potentially dangerous shell commands:</p>
+<ul><li>Quoted newlines followed by <code>#</code>-prefixed lines that could hide arguments</li><li>Consecutive quote characters at word start (potential obfuscation)</li><li>Empty quote pairs adjacent to quoted dashes (flag obfuscation)</li><li>Quoted brace characters inside brace contexts (brace expansion obfuscation)</li><li>Excess closing braces after quote stripping</li></ul>
+<div class="blabel">Evidence</div>
+<p>Safety checks (search for <code>"Command contains a quoted newline followed by a #-prefixed line"</code>)</p>
+    </article>
+    <article class="card" id="enableweakernetworkisolation-sandbox-setting">
+      <div class="card-top">
+        <h3><code>enableWeakerNetworkIsolation</code> Sandbox Setting <a class="anchor" href="#enableweakernetworkisolation-sandbox-setting">#</a></h3>
+      </div>
+      <p>New sandbox option for macOS that allows access to <code>com.apple.trustd.agent</code> within the sandbox. This is needed for Go-based CLI tools (gh, gcloud, terraform, etc.) to verify TLS certificates when using <code>httpProxyPort</code> with a MITM proxy and custom CA.</p>
+<div class="blabel">Evidence</div>
+<p>Network isolation setting (search for <code>"enableWeakerNetworkIsolation"</code>, <code>"Reduces security"</code>)</p>
+    </article>
+    <article class="card" id="thinking-summaries-in-transcript-view">
+      <div class="card-top">
+        <h3>Thinking Summaries in Transcript View <a class="anchor" href="#thinking-summaries-in-transcript-view">#</a></h3>
+      </div>
+      <p>New <code>showThinkingSummaries</code> setting to display thinking summaries when viewing the transcript (ctrl+o). Default: false.</p>
+<div class="blabel">Evidence</div>
+<p>Thinking summaries (search for <code>"Show thinking summaries in the transcript view"</code>)</p>
+    </article>
+    <article class="card" id="plugintrustmessage-for-enterprise">
+      <div class="card-top">
+        <h3><code>pluginTrustMessage</code> for Enterprise <a class="anchor" href="#plugintrustmessage-for-enterprise">#</a></h3>
+      </div>
+      <p>Enterprise administrators can now configure a custom message appended to the plugin trust warning shown before installation, via <code>pluginTrustMessage</code> in managed settings or MDM policy. Useful for adding organization-specific guidance.</p>
+<div class="blabel">Evidence</div>
+<p>Plugin trust message (search for <code>"pluginTrustMessage"</code>, <code>"Custom message to append to the plugin trust warning"</code>)</p>
+    </article>
+    <article class="card" id="includecoworkinstructions-setting">
+      <div class="card-top">
+        <h3><code>includeCoworkInstructions</code> Setting <a class="anchor" href="#includecoworkinstructions-setting">#</a></h3>
+      </div>
+      <p>New setting to control whether built-in commit and PR workflow instructions are included in Claude's system prompt. Default: true.</p>
+<div class="blabel">Evidence</div>
+<p>Cowork instructions setting (search for <code>"Include built-in commit and PR workflow instructions"</code>)</p>
+    </article>
+    <article class="card" id="pathpattern-for-marketplace-restrictions">
+      <div class="card-top">
+        <h3><code>pathPattern</code> for Marketplace Restrictions <a class="anchor" href="#pathpattern-for-marketplace-restrictions">#</a></h3>
+      </div>
+      <p>Marketplace sources of type <code>strictKnownMarketplaces</code> can now use <code>pathPattern</code> — a regex matched against <code>.path</code> of file and directory sources — to allow filesystem-based marketplaces alongside network source restrictions.</p>
+<div class="blabel">Evidence</div>
+<p>Path pattern restrictions (search for <code>"pathPattern"</code>, <code>"Regex pattern matched against the .path field"</code>)</p>
+    </article>
+    <article class="card" id="improved-subagent-system-prompt">
+      <div class="card-top">
+        <h3>Improved Subagent System Prompt <a class="anchor" href="#improved-subagent-system-prompt">#</a></h3>
+      </div>
+      <p>Subagent prompts have been refined:</p>
+<ul><li>Clearer instruction formatting with separate lines for avoiding emojis and colons before tool calls</li><li>Different response expectations based on agent role: detailed writeup for some, concise reports for others</li><li>Agents now use absolute paths in their final responses</li><li>Verification agent type added for post-task validation</li><li>Teammates explicitly cannot spawn other teammates (flat team roster)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Subagent improvements (search for <code>"Teammates cannot spawn other teammates"</code>, <code>"NOTE: You just closed out 3+ tasks"</code>)</p>
+    </article>
+    <article class="card" id="improved-summary-compaction-system">
+      <div class="card-top">
+        <h3>Improved Summary/Compaction System <a class="anchor" href="#improved-summary-compaction-system">#</a></h3>
+      </div>
+      <p>The conversation summary system has been significantly revised:</p>
+<ul><li>New <code>&lt;&lt;ANALYSIS_INSTRUCTION&gt;&gt;</code> placeholder system for injecting analysis instructions</li><li>Support for partial compaction of only recent messages when earlier context is retained</li><li>Lean compaction mode (<code>tengu_lean_cast</code>) with shorter analysis prompts focused on coverage over detail</li><li>Better handling of large conversation files via optimized <code>compact_boundary</code> detection for files over 64MB</li></ul>
+<div class="blabel">Evidence</div>
+<p>Summary improvements (search for <code>"&lt;&lt;ANALYSIS_INSTRUCTION&gt;&gt;"</code>, <code>"tengu_lean_cast"</code>)</p>
+    </article>
+    <article class="card" id="fast-mode-availability-messaging">
+      <div class="card-top">
+        <h3>Fast Mode Availability Messaging <a class="anchor" href="#fast-mode-availability-messaging">#</a></h3>
+      </div>
+      <p>Fast mode status messages now distinguish between general unavailability and network-specific issues:</p>
+<ul><li>"Fast mode is currently unavailable" for general outages</li><li>"Fast mode unavailable due to network connectivity issues" for network errors</li><li>Default status changed from "disabled" to more descriptive states</li></ul>
+<div class="blabel">Evidence</div>
+<p>Fast mode messaging (search for <code>"Fast mode is currently unavailable"</code>, <code>"Fast mode unavailable due to network connectivity issues"</code>)</p>
+    </article>
+    <article class="card" id="inquirer-js-prompt-library">
+      <div class="card-top">
+        <h3>Inquirer.js Prompt Library <a class="anchor" href="#inquirer-js-prompt-library">#</a></h3>
+      </div>
+      <p>A full Inquirer.js-style prompt library has been embedded for interactive CLI prompts, with proper error handling (<code>AbortPromptError</code>, <code>CancelPromptError</code>, <code>ExitPromptError</code>), pagination, arrow-key navigation, and multi-select support. This replaces ad-hoc prompt implementations.</p>
+<div class="blabel">Evidence</div>
+<p>Inquirer integration (search for <code>"AbortPromptError"</code>, <code>"[Inquirer] Hook functions can only be called from within a prompt"</code>)</p>
+    </article>
+    <article class="card" id="managed-plugin-trust-messaging">
+      <div class="card-top">
+        <h3>Managed Plugin Trust Messaging <a class="anchor" href="#managed-plugin-trust-messaging">#</a></h3>
+      </div>
+      <p>Plugins managed by organization policy now display "Managed by your organization — contact your admin" instead of generic status messages.</p>
+<div class="blabel">Evidence</div>
+<p>Managed plugins (search for <code>"Managed by your organization"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed sandbox cleanup: <code>cleanupAfterCommand</code> is now exposed on the sandbox API for proper resource cleanup after command execution (search for <code>"cleanupAfterCommand"</code>)</li></ul>
+<ul><li>Fixed lock file handling: Force-removal of stale lock files now logs the action and handles failures gracefully (search for <code>"Force-removed lock file at"</code>, <code>"Failed to force-remove lock file"</code>)</li></ul>
+<ul><li>Fixed symlink resolution in path operations: New <code>Fsq</code> function properly resolves symlinks by walking up the directory tree and handling broken symlinks gracefully (search for <code>"realpathSync"</code> in added functions)</li></ul>
+<ul><li>Removed <code>microcompact</code> feature: The <code>Context microcompacted</code> flow has been removed, simplifying the compaction pipeline (search for <code>"microcompact"</code> — present in old, absent in new context references)</li></ul>
+<ul><li>Removed <code>coral_reef_opus2</code> client data check and <code>crystal_beam</code> budget token feature — these were internal feature gates that have been cleaned up</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The Remote Control <code>server</code> subcommand is a significant architectural addition. Previous versions only supported basic remote-control connections — the new server mode enables persistent multi-session hosting with session lifecycle management, making it suitable for team environments and CI/CD integrations. Both <code>--spawn-same-dir-sessions</code> (default) and <code>--spawn-worktree-sessions</code> require the <code>server</code> subcommand; attempting to use them with the base <code>remote-control</code> command will produce an error.</p>
+<p>The memory system overhaul changes the recommended format for memory files. While existing plain-text memories will likely continue to work, adopting the new frontmatter format (<code>name</code>, <code>description</code>, <code>type</code> fields) is recommended for better relevance matching in future conversations.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.8 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.8."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.8</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.8</span></h1>
+<p class="sub">This release adds the <code>/fork</code> command for creating conversation forks, extends browser extension support beyond Chrome to include Brave, Edge, Arc, Chromium, Vivaldi, and Opera, and introduces macOS sleep prevention during long operations. The "ultrathink" keyword is now deprecated since thinking budget is max by default.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.7 → v2.1.8</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="fork-command">
+      <div class="card-top">
+        <h3>/fork Command <a class="anchor" href="#fork-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Create a fork of the current conversation at any point, branching off into a separate session while preserving the original context.</p>
+<div class="blabel">Usage</div>
+<pre><code>/fork              # Fork with auto-generated name
+/fork my-branch    # Fork with custom name</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Creates a complete copy of the conversation up to the current point</li><li>Automatically switches you to the new forked session</li><li>Preserves all message history, attachments, and context</li><li>Emits telemetry event <code>tengu_conversation_forked</code></li><li>Use <code>/resume</code> to switch between original and forked sessions</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>cK7</code> at line 489820 (<code>name: "fork"</code>, <code>description: "Create a fork of the current conversation at this point"</code>)</p>
+    </article>
+    <article class="card" id="multi-browser-extension-support">
+      <div class="card-top">
+        <h3>Multi-Browser Extension Support <a class="anchor" href="#multi-browser-extension-support">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The "Claude in Chrome" browser extension now supports multiple Chromium-based browsers beyond just Google Chrome.</p>
+<div class="blabel">Details</div>
+<ul><li>Newly supported browsers: <strong>Brave</strong>, <strong>Microsoft Edge</strong>, <strong>Arc</strong>, <strong>Chromium</strong>, <strong>Vivaldi</strong>, <strong>Opera</strong></li><li>Auto-detects installed browsers and configures native messaging hosts for each</li><li>Registers appropriate Windows registry keys for each browser</li><li>Cross-platform support (macOS, Linux, Windows)</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>txA</code> at line 295966 (browser config object with <code>"brave"</code>, <code>"arc"</code>, <code>"edge"</code>, <code>"chromium"</code>, <code>"vivaldi"</code>, <code>"opera"</code> entries and <code>NativeMessagingHosts</code> paths)</p>
+    </article>
+    <article class="card" id="macos-sleep-prevention">
+      <div class="card-top">
+        <h3>macOS Sleep Prevention <a class="anchor" href="#macos-sleep-prevention">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now automatically prevents macOS from sleeping during long-running operations.</p>
+<p>Usage: Automatic—no user action required.</p>
+<div class="blabel">Details</div>
+<ul><li>Uses macOS <code>caffeinate -i</code> command to prevent idle sleep</li><li>Active only during operations that need it (reference-counted)</li><li>Automatically restarts caffeinate every 4 minutes to maintain prevention during very long tasks</li><li>Properly cleans up on session exit</li><li>Only applies to macOS; no effect on other platforms</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>OW9()</code> at line 517291 (<code>caffeinate</code>, <code>-i</code>, <code>-t</code>, <code>"Started caffeinate to prevent sleep"</code>)</p>
+    </article>
+    <article class="card" id="plan-mode-interview-skip">
+      <div class="card-top">
+        <h3>Plan Mode Interview Skip <a class="anchor" href="#plan-mode-interview-skip">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>In plan mode, you can now skip the AskUserQuestion interview and jump straight to planning.</p>
+<div class="blabel">Details</div>
+<ul><li>When answering plan mode questions, a new option appears: "Skip interview and plan immediately"</li><li>Also adds "Chat about this" option for discussing questions with Claude</li><li>Navigate between options using arrow keys</li><li>Useful when you want Claude to proceed without answering all clarifying questions</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>kD9()</code> at line 521459 (<code>"Skip interview and plan immediately"</code>, <code>"Chat about this"</code>)</p>
+    </article>
+    <article class="card" id="claude-folder-session-permissions">
+      <div class="card-top">
+        <h3>.claude Folder Session Permissions <a class="anchor" href="#claude-folder-session-permissions">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new permission scope for allowing Claude to edit its own configuration files within <code>.claude/</code> directories.</p>
+<div class="blabel">Details</div>
+<ul><li>When Claude requests to edit files in <code>.claude/</code>, a new option appears: "Yes, and allow Claude to edit its own settings for this session"</li><li>Grants session-scoped permission for the <code>/.claude/**</code> glob pattern</li><li>Streamlines workflows where Claude needs to update its own configuration</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>GrA</code> at line 96077 (<code>"/.claude/**"</code>), <code>LN7()</code> at line 517637 (<code>scope: "claude-folder"</code>)</p>
+    </article>
+    <article class="card" id="context-microcompaction-boundaries">
+      <div class="card-top">
+        <h3>Context Microcompaction Boundaries <a class="anchor" href="#context-microcompaction-boundaries">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New internal infrastructure for tracking context compression events in long conversations.</p>
+<div class="blabel">Details</div>
+<ul><li>Adds <code>microcompact_boundary</code> system message type</li><li>Tracks metadata about compaction: trigger, tokens saved, compacted tool IDs</li><li>Used internally for session memory management</li><li>No direct user interaction required</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Uv2()</code> at line 430955 (<code>subtype: "microcompact_boundary"</code>, <code>content: "Context microcompacted"</code>)</p>
+    </article>
+    <article class="card" id="tmux-integration-improvements">
+      <div class="card-top">
+        <h3>tmux Integration Improvements <a class="anchor" href="#tmux-integration-improvements">#</a></h3>
+      </div>
+      <p>Adds platform-specific installation instructions when tmux is not found:</p>
+<ul><li>macOS: <code>brew install tmux</code></li><li>Linux: <code>sudo apt install tmux</code> or <code>sudo dnf install tmux</code></li><li>Windows: Suggests WSL or Cygwin</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>ZI9()</code> at line 513876 (<code>"Install tmux with: brew install tmux"</code>)</p>
+    </article>
+    <article class="card" id="settings-validation-for-cleanup">
+      <div class="card-top">
+        <h3>Settings Validation for Cleanup <a class="anchor" href="#settings-validation-for-cleanup">#</a></h3>
+      </div>
+      <p>When settings have validation errors but <code>cleanupPeriodDays</code> is explicitly set, cleanup is now skipped with a clear warning message rather than potentially misbehaving.</p>
+<div class="blabel">Evidence</div>
+<p><code>ww9()</code> at line 540061 (<code>"Skipping cleanup: settings have validation errors but cleanupPeriodDays was explicitly set"</code>)</p>
+    </article>
+    <article class="card" id="oauth-metadata-discovery">
+      <div class="card-top">
+        <h3>OAuth Metadata Discovery <a class="anchor" href="#oauth-metadata-discovery">#</a></h3>
+      </div>
+      <p>MCP OAuth connections now attempt to auto-discover OAuth metadata from the server, improving compatibility with OAuth providers.</p>
+<div class="blabel">Evidence</div>
+<p><code>g92()</code> at line 296348 (<code>"Set OAuth metadata from server discovery"</code>)</p>
+    </article>
+    <article class="card" id="file-download-for-api-sessions">
+      <div class="card-top">
+        <h3>File Download for API Sessions <a class="anchor" href="#file-download-for-api-sessions">#</a></h3>
+      </div>
+      <p>Adds file download infrastructure for SDK/API sessions with retries and parallel download support.</p>
+<div class="blabel">Evidence</div>
+<p><code>HR7()</code> at line 537150 (<code>files-api-2025-04-14</code>, <code>"/v1/files/${A}/content"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed variable expansion detection to properly recognize both <code>$VAR</code> and <code>%VAR%</code> patterns (<code>Xh()</code> at line 501011)</li><li>Internal telemetry function renames for consistency (multiple functions)</li></ul>
+    </article>
+    <article class="card" id="ultrathink-keyword-deprecated">
+      <div class="card-top">
+        <h3>Ultrathink Keyword Deprecated <a class="anchor" href="#ultrathink-keyword-deprecated">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>ultrathink</code> keyword no longer has any effect.</p>
+<div class="blabel">Details</div>
+<ul><li>Previous behavior: typing "ultrathink" in a message would enable extended thinking</li><li>New behavior: Thinking budget is now <strong>max by default</strong> for all messages</li><li>Users may see a tip: "Ultrathink no longer does anything. Thinking budget is now max by default."</li><li>The regex pattern still exists but the parsing/detection logic has been removed</li></ul>
+<div class="blabel">Evidence</div>
+<p>Tip at line 528403 (<code>"ultrathink-deprecated"</code>, <code>"Ultrathink no longer does anything. Thinking budget is now max by default."</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

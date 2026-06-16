@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.175 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.175."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.175</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.175</span></h1>
+<p class="sub">This release introduces a comprehensive model allowlist enforcement system for organizations, allowing admins to restrict which Claude models users and agents can access. Users affected by these policies now see clear warning indicators in the status line and informational messages explaining why a model switch was blocked or redirected.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.174 → v2.1.175</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="organization-enforced-model-allowlist-enforceavailablemodels">
+      <div class="card-top">
+        <h3>Organization-Enforced Model Allowlist (<code>enforceAvailableModels</code>) <a class="anchor" href="#organization-enforced-model-allowlist-enforceavailablemodels">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Administrators can now configure an <code>availableModels</code> allowlist in policy settings to restrict which Claude models users and agents are permitted to use. When <code>enforceAvailableModels</code> is set to true alongside a non-empty <code>availableModels</code> list, any attempt to use a model outside the list is silently redirected to the next allowed model, and a warning is displayed.</p>
+<div class="blabel">Details</div>
+<ul><li>Controlled via the <code>enforceAvailableModels</code> and <code>availableModels</code> keys in organization policy settings</li><li>If the user's preferred model (from CLI flag, SDK request, or <code>/model</code> switch) is not in the allowlist, Claude Code falls back to the nearest allowed model</li><li>Model overrides (<code>modelOverrides</code>) allow admins to map model aliases or families to specific allowed variants</li><li>The system applies a "cascade trust" model: if an admin policy source exists but fails to load, enforcement is suspended and a warning is logged rather than silently defaulting to less-restricted behavior</li><li>Plan mode also respects the allowlist — if the Opus or Haiku upgrade model used during planning is not in the allowlist, planning falls back to the resting model with a logged warning</li><li>Agent and skill model requests are checked against the allowlist; blocked models trigger a notification rather than silently using an unauthorized model</li></ul>
+<div class="blabel">Evidence</div>
+<p>New policy enforcement engine (search for <code>"enforceAvailableModels: a policy source exists but failed to load"</code>)</p>
+    </article>
+    <article class="card" id="model-restriction-warning-in-status-line">
+      <div class="card-top">
+        <h3>Model Restriction Warning in Status Line <a class="anchor" href="#model-restriction-warning-in-status-line">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When an organization policy forces a different model than you requested, a warning indicator now appears in the status line showing what you asked for and what is actually being used.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>model-restricted</code> warning entry in the status line, displayed at the <code>warning</code> tier (higher prominence than informational indicators)</li><li>The warning shows both the requested model name and the effective model being used</li><li>Replaces the <code>model-source</code> info indicator when a restriction is active — the two do not display simultaneously</li><li>The session also emits an inline warning message at startup when a startup-time restriction is detected</li></ul>
+<div class="blabel">Evidence</div>
+<p>New status line entry (search for <code>"model-restricted"</code>)</p>
+    </article>
+    <article class="card" id="set-by-your-organization-model-indicator">
+      <div class="card-top">
+        <h3>"Set by your organization" Model Indicator <a class="anchor" href="#set-by-your-organization-model-indicator">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When your active model has been selected or constrained by an organization policy, a <code>· Set by your organization</code> suffix now appears in model information displays.</p>
+<div class="blabel">Evidence</div>
+<p>New indicator function (search for <code>"· Set by your organization"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-remote-memory-dir-environment-variable">
+      <div class="card-top">
+        <h3><code>CLAUDE_CODE_REMOTE_MEMORY_DIR</code> Environment Variable <a class="anchor" href="#claude-code-remote-memory-dir-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new environment variable lets you specify a custom directory for remote memory storage, overriding the default location.</p>
+<div class="blabel">Usage</div>
+<pre><code>CLAUDE_CODE_REMOTE_MEMORY_DIR=/path/to/memory claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>If set, remote memory reads and writes use the specified directory instead of the default path</li><li>Useful in containerized or shared environments where memory files should reside at a specific location</li></ul>
+<div class="blabel">Evidence</div>
+<p>New env variable handler (search for <code>"CLAUDE_CODE_REMOTE_MEMORY_DIR"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="sharper-model-restriction-notifications-for-agents">
+      <div class="card-top">
+        <h3>Sharper Model Restriction Notifications for Agents <a class="anchor" href="#sharper-model-restriction-notifications-for-agents">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When an agent or skill requests a model that is blocked by the <code>availableModels</code> allowlist, a medium-priority warning notification is now shown to the user identifying which agent type made the request and what restriction was applied. Previously, blocked model requests could fail silently.</p>
+<div class="blabel">Evidence</div>
+<p>New <code>onModelRestricted</code> callback in agent invocation (search for <code>"agent-model-restricted-"</code>)</p>
+    </article>
+    <article class="card" id="safer-model-change-handling-in-sdk-remote-sessions">
+      <div class="card-top">
+        <h3>Safer Model Change Handling in SDK/Remote Sessions <a class="anchor" href="#safer-model-change-handling-in-sdk-remote-sessions">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>set_model</code> and session-initialization code paths now verify model names against the allowlist before applying them. If a model is not allowed, the change is rejected and the user sees an actionable warning message instead of the session silently using an unexpected model.</p>
+<div class="blabel">Evidence</div>
+<p>Updated <code>onSetModel</code> handler (search for <code>"model-restricted-bridge-"</code>)</p>
+    </article>
+    <article class="card" id="availablemodels-propagated-from-policy-tier">
+      <div class="card-top">
+        <h3><code>availableModels</code> Propagated from Policy Tier <a class="anchor" href="#availablemodels-propagated-from-policy-tier">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The policy settings merge now correctly propagates <code>availableModels</code> from the first (highest-priority) policy tier into the merged view used by the allowlist checker. In the previous version this field was not forwarded through the merge, so the new enforcement system could not see it.</p>
+<div class="blabel">Evidence</div>
+<p>Policy merge update (search for <code>"availableModels: w[0]?.availableModels"</code>)</p>
+    </article>
+    <article class="card" id="improved-safety-message-wording">
+      <div class="card-top">
+        <h3>Improved Safety Message Wording <a class="anchor" href="#improved-safety-message-wording">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The message shown when a model declines a request due to safety measures now reads "has safety measures that flagged something in this session" (previously "has measures that flagged something in this session"). The wording more clearly attributes the behavior to safety systems rather than the model generically.</p>
+<div class="blabel">Evidence</div>
+<p>Wording change (search for <code>"has safety measures that flagged something in this session"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed plan-mode model selection not checking the allowlist when upgrading from Haiku or Opus plan model — the upgrade model is now validated and falls back gracefully with a warning rather than attempting to use an unauthorized model. (search for <code>"Plan mode: the haiku plan upgrade model is not in the availableModels allowlist"</code>)</li></ul>
+<ul><li>Fixed a regression where model name matching used an incomplete word-boundary check that could incorrectly match substring model names in the allowlist. The new matcher (<code>ekK</code>) requires non-alphanumeric boundaries on both sides of the match. (search for <code>"ekK"</code> — the new boundary-aware substring matcher)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.175.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.175.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

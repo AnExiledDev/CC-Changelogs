@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.2 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.2."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.2</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.2</span></h1>
+<p class="sub">This release adds a new permission explainer feature that shows risk assessments for tool actions, improves git commit attribution handling for <code>--amend</code> operations, and removes the experimental bash output summarization system. It also adds winget installation detection on Windows, better image validation, and fixes for transient git states during commit attribution.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.1 → v2.1.2</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="permission-explainer-gradual-rollout">
+      <div class="card-top">
+        <h3>Permission Explainer [Gradual Rollout] <a class="anchor" href="#permission-explainer-gradual-rollout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new feature that analyzes tool use requests and displays risk assessments (LOW/MEDIUM/HIGH) with explanations when Claude requests permissions.</p>
+<div class="blabel">Details</div>
+<ul><li>Evaluates commands before execution and categorizes risk levels</li><li>LOW risk: Standard dev workflows (git operations, tests, installs, builds)</li><li>MEDIUM risk: Bulk deletions, complex shell pipelines, config modifications</li><li>HIGH risk: Dangerous or irreversible operations, system-level changes</li><li>Only displays warnings for MEDIUM and HIGH risk actions</li><li>Controlled by <code>tengu_permission_explainer</code> feature flag</li><li>Can be enabled via <code>PERMISSION_EXPLAINER_ENABLED=true</code> environment variable</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Hu2()</code> at line 417436 (permission explainer generator, contains <code>"tengu_permission_explainer"</code>)</p>
+    </article>
+    <article class="card" id="windows-winget-installation-detection">
+      <div class="card-top">
+        <h3>Windows Winget Installation Detection <a class="anchor" href="#windows-winget-installation-detection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now detects when it was installed via Windows Package Manager (winget) for better installation source tracking.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects winget installations by checking execution path patterns</li><li>Recognizes <code>Microsoft\WinGet\Packages</code> and <code>Microsoft\WinGet\Links</code> paths</li><li>Installation source now reports "winget" instead of "unknown" on Windows</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>KF0()</code> at line 370058 (winget detection, contains <code>/Microsoft[/\\]WinGet[/\\]Packages/i</code>)</p>
+    </article>
+    <article class="card" id="improved-git-commit-attribution-for-amends">
+      <div class="card-top">
+        <h3>Improved Git Commit Attribution for Amends <a class="anchor" href="#improved-git-commit-attribution-for-amends">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Git commit attribution now properly handles <code>git commit --amend</code> operations by recalculating and replacing existing Claude trailers.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects when a commit command includes <code>--amend</code></li><li>Strips existing Claude attribution trailers before recalculating</li><li>Properly replaces <code>Claude-Generated-By</code>, <code>Claude-Steers</code>, <code>Claude-Permission-Prompts</code>, <code>Claude-Escapes</code>, and <code>Claude-Plan</code> fields</li><li>Prevents duplicate or stale attribution data in amended commits</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>v$7()</code> at line 531681 (amend attribution handler, contains <code>"--amend"</code> detection and trailer replacement)</p>
+    </article>
+    <article class="card" id="transient-git-state-detection">
+      <div class="card-top">
+        <h3>Transient Git State Detection <a class="anchor" href="#transient-git-state-detection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Commit attribution now skips processing during transient git states to prevent interference with ongoing operations.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects rebase, merge, cherry-pick, and bisect operations</li><li>Checks for <code>.git/rebase-merge</code>, <code>.git/rebase-apply</code>, <code>.git/MERGE_HEAD</code>, <code>.git/CHERRY_PICK_HEAD</code>, <code>.git/BISECT_LOG</code></li><li>Prevents attribution from running during these incomplete states</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>_RB()</code> at line 226382 (transient state checker, contains <code>".git/rebase-merge"</code>)</p>
+    </article>
+    <article class="card" id="image-size-validation">
+      <div class="card-top">
+        <h3>Image Size Validation <a class="anchor" href="#image-size-validation">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Validates image sizes before sending to the API and provides clear error messages when images exceed limits.</p>
+<div class="blabel">Details</div>
+<ul><li>Checks base64-encoded image sizes against API limits</li><li>Provides human-readable size information (KB/MB) in error messages</li><li>Reports which specific images are too large when multiple exceed limits</li><li>Suggests resizing images before sending</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>urB()</code> at line 278763 (image validator, contains <code>"exceeds API limit"</code>)</p>
+    </article>
+    <article class="card" id="bash-security-check-for-malformed-token-injection">
+      <div class="card-top">
+        <h3>Bash Security Check for Malformed Token Injection <a class="anchor" href="#bash-security-check-for-malformed-token-injection">#</a></h3>
+      </div>
+      <p>Commands with ambiguous syntax containing command separators (<code>;</code>, <code>&amp;&amp;</code>, <code>||</code>) combined with unbalanced brackets, parentheses, or quotes now trigger permission prompts to prevent potential injection attacks.</p>
+<div class="blabel">Evidence</div>
+<p><code>_j5()</code> at line 366196 (security checker, contains <code>"MALFORMED_TOKEN_INJECTION"</code>)</p>
+    </article>
+    <article class="card" id="windows-managed-settings-migration-warning">
+      <div class="card-top">
+        <h3>Windows Managed Settings Migration Warning <a class="anchor" href="#windows-managed-settings-migration-warning">#</a></h3>
+      </div>
+      <p>Users on Windows with managed settings in the deprecated <code>C:\ProgramData\ClaudeCode\</code> location now see a warning notification to contact their administrator about migrating to <code>C:\Program Files\ClaudeCode\</code>.</p>
+<div class="blabel">Evidence</div>
+<p><code>K89()</code> at line 475350 (deprecation warning, contains <code>"ProgramData\\ClaudeCode\\managed-settings.json"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-plugin-management-ui">
+      <div class="card-top">
+        <h3>Enhanced Plugin Management UI <a class="anchor" href="#enhanced-plugin-management-ui">#</a></h3>
+      </div>
+      <p>The plugin management interface has been refactored with improved state handling, better MCP server grouping under parent plugins, and clearer status indicators for pending operations.</p>
+<div class="blabel">Evidence</div>
+<p><code>gK9()</code> at line 512088 (plugin manager, contains <code>"pendingToggle"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Removed experimental bash output summarization feature that could cause inconsistent output handling (<code>j22()</code> at line 299915, contained <code>"bash_output_summarization"</code>)</li><li>Removed <code>tengu_tool_result_persistence</code> feature flag and associated tool result truncation logic that was gated behind it (<code>V71()</code> at line 294547)</li><li>Removed background plan verification agent (<code>VerifyPlanExecution</code>) that ran automatically after plan completion (<code>i39()</code> at line 474724)</li><li>Fixed plan mode tracking to properly count user prompts since plan exit (<code>Zp5()</code> at line 403780)</li></ul>
+    </article>
+    <article class="card" id="custom-environment-variables-warning">
+      <div class="card-top">
+        <h3>Custom Environment Variables Warning <a class="anchor" href="#custom-environment-variables-warning">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure added to detect and warn about custom environment variables in project/local settings.</p>
+<div class="blabel">Status</div>
+<p>Code exists but appears to be internal validation only.</p>
+<div class="blabel">Details</div>
+<ul><li>Maintains an allowlist (<code>i9A</code>) of known/safe environment variable names</li><li>Can detect when project settings contain non-allowlisted env vars</li><li>Function <code>iC9()</code> returns list of settings files with custom env vars</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>uC9()</code> at line 530822 (env validator, checks against <code>i9A</code> allowlist)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The bash output summarization feature has been completely removed. If you relied on the automatic summarization of verbose command output, you may see more raw output in tool results. The feature was experimental and gated behind feature flags.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

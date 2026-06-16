@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.170 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.170."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.170</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.170</span></h1>
+<p class="sub">This release introduces Claude Fable 5, a new highest-tier model for the hardest and longest-running tasks, replacing the previous Opus 4.8 launch announcement with a Fable 5 announcement banner. The release also hardens how tool calls are handled when a server-side model fallback retracts in-flight work, adds a new SDK protocol event for model refusal fallbacks, and tracks usage-credit overage state from the API.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.169 → v2.1.170</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="claude-fable-5-model-support">
+      <div class="card-top">
+        <h3>Claude Fable 5 Model Support <a class="anchor" href="#claude-fable-5-model-support">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Claude Fable 5 is now a supported model in Claude Code, positioned as the most capable option for the hardest and longest-running tasks.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --model fable
+claude --model claude-fable-5</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Alias <code>fable</code> (and <code>fable[1m]</code> for 1M context) resolve to Fable 5</li><li>Full model IDs: <code>claude-fable-5</code> (firstParty, vertex, foundry, gateway), <code>anthropic.claude-fable-5</code> (Bedrock/Mantle)</li><li>Context window: 64k default output / 128k max — same as Opus 4.8</li><li>Default effort level: <code>high</code> (same as Opus 4.8)</li><li>Fable 5 appears at the top of the <code>/model</code> picker for eligible accounts</li><li>A companion model, <code>claude-mythos-5</code>, is also registered internally for the safety-refusal fallback lane</li><li>The <code>/model</code> command's help text now reads: "Provide an alias for the latest model (e.g. 'fable', 'opus', or 'sonnet') or a model's full name (e.g. 'claude-fable-5')."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Model ID registration and picker entry (search for <code>"claude-fable-5"</code> and <code>"Fable 5 · Most capable for your hardest and longest-running tasks"</code>)</p>
+    </article>
+    <article class="card" id="fable-5-environment-variables-for-custom-providers">
+      <div class="card-top">
+        <h3>Fable 5 Environment Variables for Custom Providers <a class="anchor" href="#fable-5-environment-variables-for-custom-providers">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Four new environment variables let BYOC (Bring Your Own Claude) and API-gateway deployments point Claude Code at a custom Fable 5 endpoint.</p>
+<div class="blabel">Usage</div>
+<pre><code>export ANTHROPIC_DEFAULT_FABLE_MODEL=my-fable-5-endpoint
+export ANTHROPIC_DEFAULT_FABLE_MODEL_NAME=&quot;My Fable 5&quot;
+export ANTHROPIC_DEFAULT_FABLE_MODEL_DESCRIPTION=&quot;Custom Fable 5 model&quot;
+export ANTHROPIC_DEFAULT_FABLE_MODEL_SUPPORTED_CAPABILITIES=vision,tools</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>ANTHROPIC_DEFAULT_FABLE_MODEL</code> — custom Fable 5 model ID (enables the alias and fallback logic even on non-firstParty providers)</li><li><code>ANTHROPIC_DEFAULT_FABLE_MODEL_NAME</code> — display name shown in the model picker</li><li><code>ANTHROPIC_DEFAULT_FABLE_MODEL_DESCRIPTION</code> — description shown alongside the model</li><li><code>ANTHROPIC_DEFAULT_FABLE_MODEL_SUPPORTED_CAPABILITIES</code> — capabilities string for the model</li><li><code>VERTEX_REGION_CLAUDE_FABLE_5</code> — region override for Fable 5 on Vertex AI (same pattern as the existing <code>VERTEX_REGION_CLAUDE_*</code> vars)</li><li>When <code>ANTHROPIC_DEFAULT_FABLE_MODEL</code> is set, Claude Code shows a "Custom Fable model" entry in the picker in place of the default Fable 5 entry (on non-firstParty providers)</li><li>A new fallback hint is also surfaced for providers where these vars are absent: "To enable automatic fallback on this provider, set <code>ANTHROPIC_DEFAULT_FABLE_MODEL</code> to your Fable 5 model ID and <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code> to your Opus 4.8 model ID."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Env var registration (search for <code>"ANTHROPIC_DEFAULT_FABLE_MODEL"</code>) and custom-model picker entry (search for <code>"Custom Fable model"</code>)</p>
+    </article>
+    <article class="card" id="fable-5-launch-announcement-banner">
+      <div class="card-top">
+        <h3>Fable 5 Launch Announcement Banner <a class="anchor" href="#fable-5-launch-announcement-banner">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>First-party users who have Fable 5 available see a one-time "Fable 5 is here!" announcement at session start, replacing the old Opus 4.8 announcement.</p>
+<div class="blabel">Details</div>
+<ul><li>For users on Fable 5: "Fable 5 is here! Our newest model for complex, long-running work"</li><li>For users not yet on Fable 5 but with access to the picker: "Meet Fable 5, our newest model for complex, long-running work. Try anytime with /model."</li><li>If the account uses plan limits and the plan-limits end date is in the future: "Included in your plan limits until [date], then switch to usage credits to continue."</li><li>Controlled by the <code>tengu_saffron_lattice</code> feature flag (fields: <code>enabled</code>, <code>planLimitsEndDate</code>, <code>hideRateLimitsDescription</code>)</li><li>Shown once; suppressed after first view via <code>tengu_fable5_launch_shown</code> telemetry event</li></ul>
+<div class="blabel">Evidence</div>
+<p>Announcement component and feature flag (search for <code>"Fable 5 is here!"</code> and <code>"tengu_saffron_lattice"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-disable-mouse-environment-variable">
+      <div class="card-top">
+        <h3><code>CLAUDE_CODE_DISABLE_MOUSE</code> Environment Variable <a class="anchor" href="#claude-code-disable-mouse-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new environment variable to disable mouse support in the CLI.</p>
+<div class="blabel">Usage</div>
+<pre><code>export CLAUDE_CODE_DISABLE_MOUSE=1
+claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When set to any truthy value, mouse interaction support is disabled in the terminal UI</li><li>Useful in environments where mouse events interfere with other terminal applications or multiplexers</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>rEH()</code> function (search for <code>"CLAUDE_CODE_DISABLE_MOUSE"</code>)</p>
+    </article>
+    <article class="card" id="model-refusal-fallback-sdk-protocol-event">
+      <div class="card-top">
+        <h3>Model Refusal Fallback SDK Protocol Event <a class="anchor" href="#model-refusal-fallback-sdk-protocol-event">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>model_refusal_fallback</code> system event is now emitted over the SDK protocol whenever the primary model returns a safety refusal and the session automatically retries on a fallback model.</p>
+<div class="blabel">Details</div>
+<ul><li>Event fields: <code>trigger: "refusal"</code>, <code>direction: "retry" | "revert" | "sticky"</code>, <code>original_model</code>, <code>fallback_model</code>, <code>request_id</code>, <code>api_refusal_category</code> (e.g. <code>"cyber"</code>, <code>"bio"</code>), <code>api_refusal_explanation</code>, <code>retracted_message_uuids</code></li><li><code>retracted_message_uuids</code> lists the wire UUIDs of messages that were rolled back by the fallback — SDK consumers should evict these from transcript state on receipt</li><li>The <code>supersedes</code> field on incoming messages was also updated: it can now include tombstoned <code>tool_result</code> frames from the refused leg, not only assistant frames</li><li><code>refusalFallbackLaneEnabled</code> and <code>refusalFallbackSettingToggleVisible</code> are now communicated from the daemon to the main process at startup rather than read directly from a feature flag, making these states available to SDK consumers via init</li></ul>
+<div class="blabel">Evidence</div>
+<p>New schema definition (search for <code>"model_refusal_fallback"</code> and <code>"retracted_message_uuids"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="xhigh-effort-warning">
+      <div class="card-top">
+        <h3>xhigh Effort Warning <a class="anchor" href="#xhigh-effort-warning">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When a model session is set to <code>xhigh</code> (max) effort, a new advisory message is now shown in the model selector: "May use excessive tokens resulting in long response times or overthinking. Use sparingly for the hardest tasks."</p>
+<div class="blabel">Evidence</div>
+<p>New constant (search for <code>"May use excessive tokens resulting in long response times or overthinking"</code>)</p>
+    </article>
+    <article class="card" id="cleaner-safety-refusal-error-messages">
+      <div class="card-top">
+        <h3>Cleaner Safety Refusal Error Messages <a class="anchor" href="#cleaner-safety-refusal-error-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The error message displayed when a model refuses a request for safety reasons was reworded. Previously the wording varied based on category ("cybersecurity or biology topics" vs "sensitive topics"); it now consistently reads: "[Model] has safety measures that flag messages on most cybersecurity or biology topics (https://www.anthropic.com/legal/aup). They may flag safe, normal content as well. These measures let us bring you Mythos-level capability in other areas sooner, and we're working to refine them."</p>
+<div class="blabel">Evidence</div>
+<p>Updated refusal error renderer (search for <code>"has safety measures that flag messages on most cybersecurity or biology topics"</code>)</p>
+    </article>
+    <article class="card" id="model-picker-deduplication">
+      <div class="card-top">
+        <h3>Model Picker Deduplication <a class="anchor" href="#model-picker-deduplication">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The model option list now de-duplicates entries by value before rendering. Duplicate rows are silently dropped with a warning log entry: "model options: dropping duplicate row [label] (value [value])". Disabled entries are sorted to the bottom of the list, after all enabled options.</p>
+<div class="blabel">Evidence</div>
+<p>New deduplication pass (search for <code>"model options: dropping duplicate row"</code>)</p>
+    </article>
+    <article class="card" id="subagent-model-picker-includes-fable">
+      <div class="card-top">
+        <h3>Subagent Model Picker Includes Fable <a class="anchor" href="#subagent-model-picker-includes-fable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The model picker used when configuring subagents (e.g. in the Workflow tool's agent options) now includes a Fable option alongside Sonnet, Opus, and Haiku. This allows subagents to be spawned on Fable 5 when available.</p>
+<div class="blabel">Evidence</div>
+<p>Subagent model list (search for <code>"Most capable for your hardest and longest-running tasks"</code> in the subagent picker function)</p>
+    </article>
+    <article class="card" id="fable-5-noted-in-system-prompt-model-guidance">
+      <div class="card-top">
+        <h3>Fable 5 Noted in System Prompt Model Guidance <a class="anchor" href="#fable-5-noted-in-system-prompt-model-guidance">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The system prompt context now mentions Fable 5 when describing available models: "The most recent Claude models are Fable 5 and the Claude 4.X family. Model IDs — Fable 5: '[id]', Opus 4.8: '[id]', Sonnet 4.6: '[id]', Haiku 4.5: '[id]'."</p>
+<div class="blabel">Evidence</div>
+<p>Updated system prompt string (search for <code>"The most recent Claude models are Fable 5"</code>)</p>
+    </article>
+    <article class="card" id="overageinuse-rate-limit-field">
+      <div class="card-top">
+        <h3><code>overageInUse</code> Rate Limit Field <a class="anchor" href="#overageinuse-rate-limit-field">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new <code>overageInUse</code> boolean is parsed from the <code>anthropic-ratelimit-unified-overage-in-use: true</code> response header. When this field is set on the rate limit state, registered overage listeners are notified. This enables the UI to react immediately when Fable 5 usage transitions into the credit-based overage regime.</p>
+<div class="blabel">Evidence</div>
+<p>Header parsing and listener notification (search for <code>"anthropic-ratelimit-unified-overage-in-use"</code>)</p>
+    </article>
+    <article class="card" id="model-not-found-error-now-carries-notfound-flag">
+      <div class="card-top">
+        <h3>Model Not Found Error Now Carries <code>notFound</code> Flag <a class="anchor" href="#model-not-found-error-now-carries-notfound-flag">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When model validation fails because the model ID was not found (HTTP 404 or message containing "model:"), the returned validation object now includes <code>notFound: true</code> in addition to the error string. This allows callers to distinguish "not found" from other validation failures.</p>
+<div class="blabel">Evidence</div>
+<p>Model validation error handling (search for <code>"notFound: !0"</code>)</p>
+    </article>
+    <article class="card" id="settings-documentation-updated-for-fable">
+      <div class="card-top">
+        <h3>Settings Documentation Updated for Fable <a class="anchor" href="#settings-documentation-updated-for-fable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The internal settings schema reference (used by the <code>update-config</code> skill and related tooling) now shows <code>fable</code> as a valid model option: <code>"model": "sonnet", // or "fable", "opus", "haiku", full model ID</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Settings schema doc (search for <code>"// or \"fable\", \"opus\", \"haiku\""</code>)</p>
+    </article>
+    <article class="card" id="effort-flag-passthrough-now-requires-all-three-models-launch">
+      <div class="card-top">
+        <h3>Effort Flag Passthrough Now Requires All Three Models Launched <a class="anchor" href="#effort-flag-passthrough-now-requires-all-three-models-launch">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>--effort</code> flag is now passed to subprocesses (e.g. headless subagent spawns) only when all three model launch flags — Opus 4.7, Opus 4.8, and Fable 5 — have been acknowledged by the user (<code>unpinOpus47LaunchEffort</code>, <code>unpinOpus48LaunchEffort</code>, <code>unpinFable5LaunchEffort</code> all true). Previously only Opus 4.7 and Opus 4.8 were required.</p>
+<div class="blabel">Evidence</div>
+<p>Conditional effort passthrough (search for <code>"unpinFable5LaunchEffort"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Server fallback tombstone cancels in-flight tool calls gracefully — when a server-side refusal fallback retracts a tool dispatch mid-flight, tool calls now return a clean cancellation result with message "Tool dispatch was retracted by a server fallback; the input may be truncated." instead of raising an uncaught exception. The abort signal reason <code>"server-fallback-tombstone"</code> is checked at each phase: validate input, permission, pre-call, and post-call. (search for <code>"Tool dispatch was retracted by a server fallback"</code>)</li></ul>
+<ul><li>Fable 5 usage-credit 429 errors handled correctly — the retry-on-overload logic now correctly skips retrying 429 responses that contain "usage credits are required" or "extra usage is required" when the overage-disabled reason is <code>fetch_error</code> or <code>org_level_disabled_until</code>, preventing unnecessary retries in permanent overage states. (search for <code>"usage credits are required"</code>)</li></ul>
+<ul><li>Session prompt history no longer skips when session persistence is forced — the <code>CLAUDE_CODE_FORCE_SESSION_PERSISTENCE</code> env var check was removed from the prompt-history skip condition, fixing a case where history could be skipped unexpectedly when session persistence was forced via env var. (search for <code>"CLAUDE_CODE_FORCE_SESSION_PERSISTENCE"</code>)</li></ul>
+<ul><li>Mantle provider uses Opus 4.7 instead of 4.8 — <code>HT()</code> (the default Opus model resolver) now returns <code>opus47</code> when the provider is <code>"mantle"</code>, matching the correct model availability on that provider. (search for <code>"r6() === \"mantle\""</code>)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.170.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.170.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

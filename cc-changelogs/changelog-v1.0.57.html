@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.57 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.57."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.57</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.57</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.56 → v1.0.57</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="pr-comments-prompt-optimization">
+      <div class="card-top">
+        <h3>pr-comments Prompt Optimization <a class="anchor" href="#pr-comments-prompt-optimization">#</a></h3>
+      </div>
+      <p>The <code>pr-comments</code> prompt feature now uses Claude 3.5 Haiku model for improved performance when fetching and analyzing GitHub pull request comments. This optimization provides faster responses while maintaining quality for this specific use case.</p>
+<p><strong>Example usage remains the same:</strong></p>
+<pre><code># Fetch comments from the current PR
+claude pr-comments
+
+# With additional context
+claude pr-comments &quot;focus on security-related feedback&quot;</code></pre>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Improvements</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-improvements">
+      <ul><li><strong>Code cleanup</strong>: Removed numerous unused internal functions and variables, reducing bundle size and improving performance</li><li><strong>Dependency updates</strong>: Updated AWS SDK components for better compatibility</li><li><strong>Infrastructure improvements</strong>: Enhanced support for model-specific prompt configurations</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Details</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-details">
+      <p>The primary change allows individual prompt features to specify which Claude model they use. The <code>pr-comments</code> feature now explicitly uses <code>claude-3-5-haiku-20241022</code> instead of the default model, optimizing for speed and cost-efficiency when processing pull request comments.</p>
+<p>This update indicates a move toward task-specific model optimization, where different features can leverage the most appropriate Claude model based on their complexity and performance requirements.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>No breaking changes</li><li>No new CLI commands or flags</li><li>Existing pr-comments functionality remains unchanged from a user perspective</li><li>The model change is automatic and requires no configuration</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

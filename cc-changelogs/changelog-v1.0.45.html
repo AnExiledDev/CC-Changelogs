@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.45 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.45."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.45</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.45</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.44 → v1.0.45</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">2</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v1.0.45 Changelog</p>
+    </article>
+    <article class="card" id="agent-system-enhancement">
+      <div class="card-top">
+        <h3>Agent System Enhancement <a class="anchor" href="#agent-system-enhancement">#</a></h3>
+      </div>
+      <ul><li><strong>New Agent Tool</strong>: Introduced a powerful new <code>Task</code> tool that allows launching specialized agents to handle complex, multi-step tasks autonomously</li><li>Multiple agent types available including: <code>general-purpose</code>, <code>context-collector</code>, <code>tech-researcher</code>, <code>test-engineer</code>, and more</li><li>Agents can be run in parallel for improved performance</li><li>Each agent type has specific tool access and use cases</li></ul>
+<p><strong>Usage example:</strong></p>
+<pre><code>  /task &quot;Research the authentication system in this codebase&quot; --agent-type investigator</code></pre>
+    </article>
+    <article class="card" id="enhanced-metrics-system">
+      <div class="card-top">
+        <h3>Enhanced Metrics System <a class="anchor" href="#enhanced-metrics-system">#</a></h3>
+      </div>
+      <ul><li>Added organization-level metrics opt-out checking</li><li>New API endpoint integration for checking metrics preferences</li><li>Improved metrics logging with better error handling</li></ul>
+    </article>
+    <article class="card" id="file-writing-improvements">
+      <div class="card-top">
+        <h3>File Writing Improvements <a class="anchor" href="#file-writing-improvements">#</a></h3>
+      </div>
+      <ul><li><strong>Atomic File Writes</strong>: Implemented atomic file writing to prevent data corruption</li><li>Creates temporary files first, then renames them atomically</li><li>Preserves original file permissions</li><li>Automatic fallback to non-atomic writes if atomic operation fails</li><li>Better error handling and logging for file operations</li></ul>
+    </article>
+    <article class="card" id="ui-enhancements">
+      <div class="card-top">
+        <h3>UI Enhancements <a class="anchor" href="#ui-enhancements">#</a></h3>
+      </div>
+      <ul><li><strong>Custom Spinner Words</strong>: Removed the built-in spinner word generation system</li><li>Now fetches spinner words from a remote configuration source</li><li>More dynamic and customizable loading messages</li></ul>
+    </article>
+    <article class="card" id="smart-quote-handling">
+      <div class="card-top">
+        <h3>Smart Quote Handling <a class="anchor" href="#smart-quote-handling">#</a></h3>
+      </div>
+      <ul><li>Added intelligent quote normalization for better text matching</li><li>Handles smart quotes (curly quotes) and converts them to standard quotes</li><li>Improves search and text matching accuracy</li></ul>
+    </article>
+    <article class="card" id="utility-functions">
+      <div class="card-top">
+        <h3>️ Utility Functions <a class="anchor" href="#utility-functions">#</a></h3>
+      </div>
+      <ul><li>Added new array manipulation functions:</li><li><code>shuffle</code>: Randomly shuffle array elements</li><li><code>sample</code>: Get random samples from arrays</li><li><code>sampleSize</code>: Get multiple random samples with specified size</li><li>Added number utility functions for better numeric operations</li></ul>
+    </article>
+    <article class="card" id="security-improvements">
+      <div class="card-top">
+        <h3>Security Improvements <a class="anchor" href="#security-improvements">#</a></h3>
+      </div>
+      <ul><li>Enhanced WSL detection for better platform-specific handling</li><li>Improved process isolation and security checks</li></ul>
+    </article>
+    <article class="card" id="deprecated-components">
+      <div class="card-top">
+        <h3>Deprecated Components <a class="anchor" href="#deprecated-components">#</a></h3>
+      </div>
+      <ul><li>Removed the legacy <code>Search</code> tool (replaced by enhanced <code>Grep</code> functionality)</li><li>Removed hardcoded spinner word list and generation logic</li><li>Removed General Availability announcement components</li><li>Removed various unused utility functions</li></ul>
+    </article>
+    <article class="card" id="performance">
+      <div class="card-top">
+        <h3>Performance <a class="anchor" href="#performance">#</a></h3>
+      </div>
+      <ul><li>Optimized file operations with atomic writes</li><li>Better caching for metrics API calls (1-hour cache)</li><li>Improved parallel agent execution</li></ul>
+    </article>
+    <article class="card" id="error-handling">
+      <div class="card-top">
+        <h3>Error Handling <a class="anchor" href="#error-handling">#</a></h3>
+      </div>
+      <ul><li>Enhanced error reporting for file operations</li><li>Better fallback mechanisms for failed operations</li><li>Improved logging throughout the application</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential file corruption issues during concurrent writes</li><li>Improved handling of symlinks during file operations</li><li>Better error recovery for failed atomic write operations</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Breaking Changes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="breaking-changes">
+      <ul><li>The <code>Search</code> tool has been removed - use <code>Grep</code> instead</li><li>File writing now uses atomic operations by default, which may affect custom file watchers</li></ul>
+<p>This release focuses on reliability, performance, and the introduction of the powerful new Agent system for handling complex tasks. The atomic file writing ensures data integrity, while the new agent architecture allows for more sophisticated multi-step operations.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

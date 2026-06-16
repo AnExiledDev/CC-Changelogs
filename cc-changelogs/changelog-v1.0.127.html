@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.127 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.127."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.127</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.127</span></h1>
+<p class="sub">Version 1.0.127 focuses on internal code refactoring and improvements with 98.9% structural similarity to v1.0.126. The main user-facing changes include enhanced sandbox command filtering capabilities, improved UI text clarity for history search and file restoration, and updated color scheme implementation using ANSI color names.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.126 → v1.0.127</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enhanced-sandbox-command-filtering">
+      <div class="card-top">
+        <h3>Enhanced Sandbox Command Filtering <a class="anchor" href="#enhanced-sandbox-command-filtering">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added support for substring-based command filtering in the sandbox configuration through the new <code>tengu_sandbox_disabled_commands</code> feature gate.</p>
+<p><strong>How it works:</strong></p>
+<p>The sandbox now supports two methods for disabling commands:</p>
+<ol><li>Exact command matching (existing <code>unsandboxedCommands</code> in settings)</li><li>Substring matching (new <code>tengu_sandbox_disabled_commands</code> feature flag)</li></ol>
+<p><strong>Details:</strong></p>
+<ul><li>Substring matching allows blocking commands that contain specific patterns anywhere in the command string</li><li>The new <code>tengu_sandbox_disabled_commands</code> feature flag provides <code>commands</code> and <code>substrings</code> arrays</li><li>Both methods are combined when evaluating whether a command should bypass sandboxing</li><li><strong>Evidence</strong>: <code>Qg2()</code> function at line 379010 in v1.0.127 (replaces <code>qu2()</code> at line 383844 in v1.0.126)</li></ul>
+    </article>
+    <article class="card" id="improved-diff-stats-display-component">
+      <div class="card-top">
+        <h3>Improved Diff Stats Display Component <a class="anchor" href="#improved-diff-stats-display-component">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New unified component for displaying file change statistics during restore operations.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Created <code>kGB()</code> helper component at line 413123 to consistently display file names and diff stats</li><li>Shows either the single filename or count of multiple files</li><li>Displays insertions (+) and deletions (-) with appropriate colors</li><li>Simplifies the restore UI presentation</li><li><strong>Evidence</strong>: <code>kGB()</code> component at line 413123 (new in v1.0.127, did not exist in v1.0.126)</li></ul>
+    </article>
+    <article class="card" id="clearer-history-search-prompts">
+      <div class="card-top">
+        <h3>Clearer History Search Prompts <a class="anchor" href="#clearer-history-search-prompts">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Updated history search interface text for better clarity.</p>
+<p><strong>Changes:</strong></p>
+<ul><li>Changed "bck-i-search:" to "search prompts:"</li><li>Changed "failing bck-i-search:" to "no matching prompt:"</li><li>Added visible cursor in search field (previously hidden)</li><li><strong>Evidence</strong>: Modified in function at line 425036 in v1.0.127 (was at line 429928 in v1.0.126)</li></ul>
+<p><strong>Why it matters:</strong> The new prompts use plain language instead of technical terminal jargon, making the feature more discoverable and user-friendly.</p>
+    </article>
+    <article class="card" id="better-file-restore-messaging">
+      <div class="card-top">
+        <h3>Better File Restore Messaging <a class="anchor" href="#better-file-restore-messaging">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved clarity when viewing file restoration previews.</p>
+<p><strong>Changes:</strong></p>
+<ul><li>When no files changed: Now shows "The code has <strong>not changed</strong>" instead of "The code will be <strong>restored</strong>"</li><li>Simplified multi-file display using the new <code>kGB</code> component</li><li>More consistent formatting across different restore scenarios</li><li><strong>Evidence</strong>: Function <code>ey6()</code> at line 413105 in v1.0.127 (was <code>ek6()</code> at line 415828 in v1.0.126)</li></ul>
+<p><strong>Why it matters:</strong> Users can now immediately understand whether there are actual changes to review or if the code state is unchanged.</p>
+    </article>
+    <article class="card" id="color-scheme-refactoring">
+      <div class="card-top">
+        <h3>Color Scheme Refactoring <a class="anchor" href="#color-scheme-refactoring">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Internal refactoring of color definitions from hex values to ANSI color names.</p>
+<p><strong>Changes:</strong></p>
+<ul><li>Light theme colors now use <code>"ansi:colorName"</code> format (e.g., <code>"ansi:magenta"</code>, <code>"ansi:blueBright"</code>)</li><li>Dark theme colors similarly use ANSI names</li><li>Added new <code>clawd_body</code> color property</li><li><strong>Evidence</strong>: Color objects <code>QlQ</code> and <code>ZlQ</code> around line 356107-356221 in v1.0.127 (replaced <code>rlQ</code> and <code>olQ</code> at line 356102-356158 in v1.0.126)</li></ul>
+<p><strong>Why it matters:</strong> While mostly internal, this improves cross-platform color rendering and maintainability. Users may notice slightly improved color consistency across different terminal emulators.</p>
+    </article>
+    <article class="card" id="model-and-output-style-selection-refactoring">
+      <div class="card-top">
+        <h3>Model and Output Style Selection Refactoring <a class="anchor" href="#model-and-output-style-selection-refactoring">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Restructured the model and output style selection menus for better code organization.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Model selection function restructured (was <code>bz5()</code> at line 438053, now <code>bK5()</code> at line 435315)</li><li>Output style selection function restructured (was <code>mz5()</code> at line 438157, now <code>mK5()</code> at line 435411)</li><li>Callback functions extracted for cleaner separation of concerns</li><li>No functional changes to user experience</li><li><strong>Evidence</strong>: Functions <code>bK5()</code> and <code>mK5()</code> at lines 435315 and 435411 in v1.0.127</li></ul>
+    </article>
+    <article class="card" id="code-refactoring">
+      <div class="card-top">
+        <h3>Code Refactoring <a class="anchor" href="#code-refactoring">#</a></h3>
+      </div>
+      <ul><li>Removed unused stream import variable (import renamed internally)</li><li>Extensive variable and function renaming (8,964 renames)</li><li>46 additions, 101 deletions, 19 modifications to declarations</li><li>Improved code structure while maintaining 98.9% structural similarity</li><li>No tree-sitter functionality was removed (still present in v1.0.127)</li></ul>
+<p><strong>Note:</strong> The majority of changes in this release are internal refactorings that improve code maintainability without affecting user-visible behavior.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

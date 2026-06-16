@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.106 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.106."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.106</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.106</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.105 → v0.2.106</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">4</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="external-claude-md-file-security">
+      <div class="card-top">
+        <h3>External CLAUDE.md File Security <a class="anchor" href="#external-claude-md-file-security">#</a></h3>
+      </div>
+      <ul><li><strong>Added security dialog for external file references</strong>: When CLAUDE.md files reference files outside the current working directory, users now see a warning dialog asking for explicit permission. This enhances security by preventing unauthorized access to files outside the project.</li><li>New settings: <code>hasClaudeMdExternalIncludesApproved</code> and <code>hasClaudeMdExternalIncludesWarningShown</code> track user preferences</li><li>Dialog options: "Yes, I trust this repository" or "No, disable external includes"</li><li>Keyboard shortcuts: Enter to confirm, Escape to disable external includes</li></ul>
+    </article>
+    <article class="card" id="http-headers-support-for-sse-connections">
+      <div class="card-top">
+        <h3>HTTP Headers Support for SSE Connections <a class="anchor" href="#http-headers-support-for-sse-connections">#</a></h3>
+      </div>
+      <ul><li><strong>Custom headers for Server-Sent Events (SSE)</strong>: Added ability to specify custom HTTP headers when configuring SSE transport for MCP servers</li><li>New <code>headers</code> field in MCP server configuration</li><li>Interactive header input during server setup with format: <code>Header-Name: value</code></li><li>Examples: <code>X-Api-Key: abc123</code>, <code>Authorization: Bearer token</code></li></ul>
+    </article>
+    <article class="card" id="session-history-improvements">
+      <div class="card-top">
+        <h3>Session History Improvements <a class="anchor" href="#session-history-improvements">#</a></h3>
+      </div>
+      <ul><li><strong>Migrated from SQLite to JSONL format</strong>: Session history is now stored in lightweight JSONL files instead of SQLite database</li><li>Sessions stored in <code>~/.claude/projects/[project-name]/[session-id].jsonl</code></li><li>Improved performance and simpler file-based storage</li><li>Automatic migration of existing session data</li></ul>
+    </article>
+    <article class="card" id="enhanced-macos-terminal-detection">
+      <div class="card-top">
+        <h3>Enhanced macOS Terminal Detection <a class="anchor" href="#enhanced-macos-terminal-detection">#</a></h3>
+      </div>
+      <ul><li><strong>Better IDE detection on macOS</strong>: Improved detection of Visual Studio Code, Cursor, and Windsurf when launched from their integrated terminals</li><li>Automatically finds the correct <code>code</code>, <code>cursor</code>, or <code>windsurf</code> command path</li><li>Works by traversing parent processes to find the IDE application</li></ul>
+    </article>
+    <article class="card" id="code-quality">
+      <div class="card-top">
+        <h3>Code Quality <a class="anchor" href="#code-quality">#</a></h3>
+      </div>
+      <ul><li><strong>Trimming improvements</strong>: Added <code>trimKeepingFinalNewline</code> function to preserve final newlines while trimming trailing whitespace</li><li><strong>Debounced operations</strong>: Integrated lodash debounce for better performance in UI operations</li><li><strong>React hooks</strong>: Added <code>useOnUnmount</code> and <code>useDebouncedCallback</code> for cleaner component lifecycle management</li></ul>
+    </article>
+    <article class="card" id="prompt-caching">
+      <div class="card-top">
+        <h3>Prompt Caching <a class="anchor" href="#prompt-caching">#</a></h3>
+      </div>
+      <ul><li><strong>Flexible caching control</strong>: Split <code>generateSummary</code> into two functions:</li><li><code>generateSummaryWithCaching</code>: Enables prompt caching for better performance</li><li><code>generateSummaryWithoutCaching</code>: Disables caching when needed</li></ul>
+    </article>
+    <article class="card" id="file-editing-validation">
+      <div class="card-top">
+        <h3>File Editing Validation <a class="anchor" href="#file-editing-validation">#</a></h3>
+      </div>
+      <ul><li><strong>Stricter validation for file edits</strong>: The edit validation now specifically checks for the presence of file edit tools rather than just any tool use, preventing false positives</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li><strong>Fixed parameter order</strong>: Corrected parameter order in <code>collectIncludedPaths</code> function</li><li><strong>Improved error handling</strong>: Better error messages for invalid HTTP headers</li><li><strong>Session file handling</strong>: More robust session file creation and management</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-changes">
+      <ul><li>Removed several database-related functions (<code>saveMessage</code>, <code>saveConversationChain</code>, <code>getConversationSummaries</code>, <code>saveConversationSummary</code>)</li><li>Replaced SQLite-based history with file-based JSONL storage</li><li>Added new imports for file system operations and stream handling</li><li>Updated version string to "0.2.106"</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

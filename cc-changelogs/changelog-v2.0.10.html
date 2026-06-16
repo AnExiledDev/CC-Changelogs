@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.10 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.10."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.10</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.10</span></h1>
+<p class="sub">Version 2.0.10 introduces intelligent shell completion for Bash commands, MCP server management in the command palette, enhanced plugin error tracking, and several improvements to model switching and telemetry handling. The release also includes internal rendering system refactoring for better maintainability.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.9 → v2.0.10</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">23</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">23 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="shell-completion-support">
+      <div class="card-top">
+        <h3>Shell Completion Support <a class="anchor" href="#shell-completion-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added intelligent tab-completion for bash and zsh shells when typing commands in the Bash tool <strong>How to use:</strong> While typing a command in the Bash tool, press Tab to see completion suggestions for:</p>
+<ul><li>Commands (e.g., <code>git st</code> → <code>git status</code>)</li><li>Files and directories (with trailing <code>/</code> for directories)</li><li>Shell variables (for inputs starting with <code>$</code>)</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Automatically detects your shell type (bash or zsh) from <code>$SHELL</code> environment variable</li><li>Context-aware completion: determines whether you're typing a command, file path, or variable based on cursor position</li><li>Bash completion uses <code>compgen -c</code> (commands), <code>compgen -f</code> (files), <code>compgen -v</code> (variables)</li><li>Zsh completion uses native zsh parameter and command arrays</li><li>Limited to 100 suggestions per request for performance</li><li><strong>Evidence</strong>: <code>M0Q()</code> at line 420086, <code>wn5()</code> at line 420018, <code>qn5()</code> at line 420051, <code>En5()</code> at line 420059, <code>Nn5()</code> at line 420067 in v2.0.10</li></ul>
+    </article>
+    <article class="card" id="mcp-server-toggling-in-command-palette">
+      <div class="card-top">
+        <h3>MCP Server Toggling in Command Palette <a class="anchor" href="#mcp-server-toggling-in-command-palette">#</a></h3>
+      </div>
+      <p><strong>What:</strong> MCP servers now appear in the command palette and can be toggled on/off with a keystroke <strong>How to use:</strong></p>
+<pre><code># Open command palette (typically Ctrl+P or Cmd+P)
+# Type server name to filter
+# Press Enter to toggle server on/off</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Servers are displayed with visual indicators: <code>✓</code> (enabled) or <code>○</code> (disabled)</li><li>Format: <code>[mcp] server-name</code> with description <code>enabled (⏎ to toggle)</code></li><li>The <code>ide</code> server is excluded from the list</li><li>Filtering works on server names (case-insensitive)</li><li>Toggle action immediately enables/disables the server</li><li><strong>Evidence</strong>: <code>On5()</code> at line 420158 in v2.0.10 (was empty array stub <code>bF5()</code> at line 419342 in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="model-switching-from-plan-mode">
+      <div class="card-top">
+        <h3>Model Switching from Plan Mode <a class="anchor" href="#model-switching-from-plan-mode">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude can now suggest switching to a different model when exiting plan mode <strong>How to use:</strong> When Claude presents a plan and exits plan mode, it may automatically switch to a more appropriate model based on task complexity. The model choice is shown in the status display.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>model</code> parameter in ExitPlanMode tool schema</li><li>Session-scoped model override via <code>mainLoopModelForSession</code> state variable</li><li>Session override takes precedence over base model setting</li><li>Status command shows: <code>Current model: &lt;model&gt; (session override from plan mode)</code> when active</li><li>Base model remains unchanged for future sessions</li><li><strong>Evidence</strong>: <code>bY7</code> schema at line 416861, <code>mainLoopModelForSession</code> state at line 448805 in v2.0.10 (did not exist in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="telemetry-flush-on-logout">
+      <div class="card-top">
+        <h3>Telemetry Flush on Logout <a class="anchor" href="#telemetry-flush-on-logout">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Telemetry data is now properly flushed when logging out, with configurable timeout <strong>How to use:</strong> Set the <code>CLAUDE_CODE_OTEL_FLUSH_TIMEOUT_MS</code> environment variable to control flush timeout (default: 5000ms):</p>
+<pre><code>export CLAUDE_CODE_OTEL_FLUSH_TIMEOUT_MS=10000
+claude</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>DEB()</code> async function handles telemetry flushing with timeout protection</li><li>Default timeout is 5000ms (vs 1000ms for shutdown)</li><li>Uses <code>Promise.race()</code> to enforce timeout</li><li>Flushes both trace provider and metrics provider</li><li>Logs success/timeout/error messages at appropriate levels</li><li>Integrated into logout flow via <code>IL0()</code> function</li><li><strong>Evidence</strong>: <code>DEB()</code> at line 398367 in v2.0.10 (did not exist in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="dynamic-environment-selection">
+      <div class="card-top">
+        <h3>Dynamic Environment Selection <a class="anchor" href="#dynamic-environment-selection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Environment providers are now fetched dynamically from the API instead of using hardcoded values <strong>How to use:</strong> This happens automatically when creating remote sessions. The first available environment is selected and logged.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New API endpoint: <code>/v1/environment_providers</code></li><li>Fetches available environments with authentication headers</li><li>Validates that environments are available before session creation</li><li>Logs selected environment: <code>Selected environment: &lt;id&gt; (&lt;name&gt;)</code></li><li>15-second timeout for API request</li><li>Replaces hardcoded environment ID <code>env_011CSUkSjSxeWzWtatWym6Yn</code></li><li><strong>Evidence</strong>: <code>mMB()</code> at line 404246 in v2.0.10 (different function in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="dynamic-configuration-caching">
+      <div class="card-top">
+        <h3>Dynamic Configuration Caching <a class="anchor" href="#dynamic-configuration-caching">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Statsig dynamic configurations are now cached in application state for faster access <strong>How to use:</strong> This is automatic. Config values are returned immediately from cache while fresh values are fetched in the background.</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>cachedDynamicConfigs</code> object in state stores config values by key</li><li><code>B2Q(configName, defaultValue)</code> retrieves cached value immediately, fetches fresh value asynchronously</li><li><code>Q2Q(configName)</code> clears a specific cached config</li><li>Reduces repeated API calls to Statsig</li><li>Improves initial render performance</li><li><strong>Evidence</strong>: <code>cachedDynamicConfigs</code> at line 440962, <code>B2Q()</code> at line 441924, <code>Q2Q()</code> at line 441937 in v2.0.10 (did not exist in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="enhanced-plugin-error-tracking">
+      <div class="card-top">
+        <h3>Enhanced Plugin Error Tracking <a class="anchor" href="#enhanced-plugin-error-tracking">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Plugin loading failures are now tracked individually with structured error information instead of failing silently</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>errors</code> array in plugins state stores error details with source attribution</li><li>Individual try-catch blocks around commands, agents, and hooks loading prevent cascading failures</li><li>Error objects include <code>source</code> field: <code>"plugin-commands"</code>, <code>"plugin-agents"</code>, <code>"plugin-hooks"</code>, or <code>"plugin-loading"</code></li><li>Error count included in startup logs: <code>Loaded plugins - ... Errors: ${count}</code></li><li>If one plugin component fails to load, others still attempt to load</li><li><strong>Evidence</strong>: <code>ad1()</code> at line 423922, errors field at line 448824 in v2.0.10 (errors ignored in <code>dMB()</code> at line 422999 in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="external-editor-experience">
+      <div class="card-top">
+        <h3>External Editor Experience <a class="anchor" href="#external-editor-experience">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> External editors now launch in alternate screen buffer for cleaner terminal experience</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added <code>AAQ()</code> function that wraps editor invocation with terminal screen switching</li><li>Uses <code>\x1B[?1049h</code> to enable alternate screen before launching editor</li><li>Uses <code>\x1B[?1049l</code> to restore original screen after editor exits</li><li>Prevents editor output from polluting the Claude Code interface</li><li>Cleans up temporary files after editor closes</li><li>Supports <code>$VISUAL</code>, <code>$EDITOR</code>, and fallback editors (code, vi, nano)</li><li><strong>Evidence</strong>: <code>AAQ()</code> at line 422356 in v2.0.10 (screen buffer codes existed but not integrated in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="model-descriptions-for-claude">
+      <div class="card-top">
+        <h3>Model Descriptions for Claude <a class="anchor" href="#model-descriptions-for-claude">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Model options now include descriptions specifically tailored for Claude's decision-making</p>
+<p><strong>Details:</strong></p>
+<ul><li>Added <code>descriptionForModel</code> field to model configurations</li><li>Sonnet 4.5: "the most powerful model. Generally best for most coding tasks"</li><li>Sonnet (1M context): "with 1M context window - for long sessions with large codebases"</li><li>Opus 4.1: "slower and more expensive than Sonnet, generally not recommended over Sonnet 4.5"</li><li>Helps Claude make better model switching decisions when exiting plan mode</li><li><strong>Evidence</strong>: <code>kB4.descriptionForModel</code> at line 364157, <code>fL1.descriptionForModel</code> at line 364164, <code>wtA.descriptionForModel</code> at line 364173 in v2.0.10 (did not exist in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="environment-variable-parsing-for-mcp-commands">
+      <div class="card-top">
+        <h3>Environment Variable Parsing for MCP Commands <a class="anchor" href="#environment-variable-parsing-for-mcp-commands">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Enhanced validation of environment variable formats in <code>claude mcp add</code> command</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>OI6()</code> function validates <code>KEY=value</code> format using regex <code>/^[A-Za-z_][A-Za-z0-9_]*=/</code></li><li>Validates variable names start with letter or underscore</li><li>Variable names can contain letters, numbers, and underscores</li><li>Prevents malformed environment variables from being added to MCP server configurations</li><li><strong>Evidence</strong>: <code>OI6()</code> at line 386305 in v2.0.10 (did not exist in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="installation-notification-system">
+      <div class="card-top">
+        <h3>Installation Notification System <a class="anchor" href="#installation-notification-system">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Installation messages and warnings are now managed through a centralized notification system</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>N2Q()</code> hook processes installation messages on startup</li><li>Messages categorized by priority: high (errors, action required), medium (path/alias issues), low (info)</li><li>Messages displayed with appropriate colors: error (red), warning (yellow)</li><li>Uses <code>XO()</code> to fetch installation messages</li><li>Integrates with the notification queue system</li><li><strong>Evidence</strong>: <code>N2Q()</code> at line 425522 in v2.0.10 (did not exist in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="top-of-feed-tips">
+      <div class="card-top">
+        <h3>Top-of-Feed Tips <a class="anchor" href="#top-of-feed-tips">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Added configurable tips system that displays messages at the top of the conversation feed</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>u_0()</code> component renders tips with color options: warning, error, or dimmed</li><li>Tips cached in dynamic configs via <code>A2Q</code> config key</li><li><code>Ma5()</code> hook retrieves current tip using <code>B2Q()</code></li><li>Automatically invalidates cache when tip changes</li><li>Default state: <code>{ tip: "", color: "dim" }</code></li><li><strong>Evidence</strong>: <code>u_0()</code> at line 424743, <code>Ma5()</code> at line 424769 in v2.0.10 (did not exist in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="authentication-token-handling">
+      <div class="card-top">
+        <h3>Authentication Token Handling <a class="anchor" href="#authentication-token-handling">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Authentication functions now accept optional <code>allowedSettingSources</code> parameter for better source control</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>FO(allowedSettingSources)</code> function signature updated (was <code>VO()</code>)</li><li><code>he(allowedSettingSources)</code> function now accepts sources parameter</li><li><code>z4Q(allowedSettingSources)</code> ensures token availability (was <code>qjB()</code>)</li><li>Allows filtering which settings sources can provide authentication tokens</li><li><strong>Evidence</strong>: <code>FO()</code> at line 440418, <code>Xr4()</code> at line 376327 in v2.0.10 (different signatures in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="debug-log-symlink-management">
+      <div class="card-top">
+        <h3>Debug Log Symlink Management <a class="anchor" href="#debug-log-symlink-management">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Latest debug log file now has a symlink for easier access</p>
+<p><strong>Details:</strong></p>
+<ul><li>New <code>G$Q</code> function creates <code>latest</code> symlink to current debug log</li><li><code>MH1()</code> returns debug log path (with <code>CLAUDE_CODE_DEBUG_LOGS_DIR</code> support)</li><li><code>On1()</code> returns path to <code>latest</code> symlink</li><li>Symlink automatically updated on each run</li><li>Located in debug directory: <code>~/.cache/claude-code/&lt;workspace&gt;/debug/latest</code></li><li><strong>Evidence</strong>: <code>G$Q</code> at line 341114, <code>MH1()</code> at line 341106, <code>On1()</code> at line 341111 in v2.0.10 (did not exist in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="rendering-system-architecture">
+      <div class="card-top">
+        <h3>Rendering System Architecture <a class="anchor" href="#rendering-system-architecture">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Terminal rendering logic refactored into dedicated classes for better separation of concerns</p>
+<p><strong>Details:</strong></p>
+<ul><li>Main component class renamed from <code>MC1</code> to <code>OC1</code> and simplified</li><li>New <code>dt1</code> class encapsulates all terminal output rendering logic</li><li>Rendering function <code>ft1()</code> now uses closure pattern (was <code>giQ()</code>)</li><li>Layout calculation moved into renderer (was separate <code>calculateLayout()</code> method)</li><li>Frame state (<code>prevFrame</code>, <code>fullStaticOutput</code>) moved to <code>dt1.state</code></li><li>Buffer class renamed from <code>b41</code> to <code>f41</code> (functionally identical)</li><li>Improved code organization and maintainability</li><li>No user-visible changes</li><li><strong>Evidence</strong>: <code>OC1</code> at line 358599, <code>dt1</code> at line 357561, <code>ft1()</code> at line 357320 in v2.0.10 (was <code>MC1</code> at line 358357, inline rendering in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="model-status-display">
+      <div class="card-top">
+        <h3>Model Status Display <a class="anchor" href="#model-status-display">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> <code>/model</code> command now shows session override information when active</p>
+<p><strong>Details:</strong></p>
+<ul><li>Displays both current model and base model when session override is active</li><li>Format: <code>Current model: &lt;bold&gt;ModelName&lt;/bold&gt; (session override from plan mode)\nBase model: &lt;base-model&gt;</code></li><li>Bold formatting applied to session override model name via <code>p1.bold()</code> / <code>HM()</code> function</li><li>Helps users understand when plan mode has changed their model</li><li><strong>Evidence</strong>: <code>Yr5()</code> at line 431964 in v2.0.10 (was simpler <code>zz5()</code> at line 431016 in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="console-patching-behavior">
+      <div class="card-top">
+        <h3>Console Patching Behavior <a class="anchor" href="#console-patching-behavior">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Console.log and console.error now route through global error handlers instead of internal write methods</p>
+<p><strong>Details:</strong></p>
+<ul><li>Console output now logged via <code>r()</code> function with prefix: <code>console.log: &lt;message&gt;</code></li><li>Console errors now reported via <code>J1()</code> with error object and category code <code>Fa0</code> (292)</li><li>Removed special case filtering for React error message "The above error occurred"</li><li>More consistent error tracking and logging</li><li><strong>Evidence</strong>: <code>patchConsole()</code> in <code>OC1</code> at line 358722 in v2.0.10 (was different in <code>MC1.patchConsole()</code> at line 358579 in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="lodash-utility-functions">
+      <div class="card-top">
+        <h3>Lodash Utility Functions <a class="anchor" href="#lodash-utility-functions">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added proper implementations of <code>trim</code>, <code>toNumber</code>, <code>debounce</code>, and <code>throttle</code> from lodash</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>b7Q()</code> (trim) - removes leading/trailing whitespace at line 335245</li><li><code>d7Q()</code> (toNumber) - converts values to numbers, handles special formats at line 335259</li><li><code>CXQ()</code> (debounce) - debounces function calls with leading/trailing options at line 336928</li><li><code>tXQ()</code> (throttle) - throttles function calls with configurable timing at line 337236</li><li>These replace or supplement existing implementations for better compatibility</li><li><strong>Evidence</strong>: Added functions at lines 335238-337246 in v2.0.10 (partial or missing in v2.0.9)</li></ul>
+    </article>
+    <article class="card" id="state-management-updates">
+      <div class="card-top">
+        <h3>State Management Updates <a class="anchor" href="#state-management-updates">#</a></h3>
+      </div>
+      <ul><li>Added <code>mainLoopModelForSession: null</code> to initial state for session-scoped model overrides</li><li>Added <code>errors: []</code> to plugins state structure</li><li>Added <code>cachedDynamicConfigs: {}</code> to state for configuration caching</li><li>Default state object renamed from <code>QH</code> to <code>Iz</code></li></ul>
+    </article>
+    <article class="card" id="import-reorganization">
+      <div class="card-top">
+        <h3>Import Reorganization <a class="anchor" href="#import-reorganization">#</a></h3>
+      </div>
+      <ul><li>Added <code>import { cwd as w7A } from "node:process"</code> at line 357756</li><li>Added <code>import { createHash as dt4, randomBytes as ct4 } from "crypto"</code> at line 379140</li><li>Added <code>import { exec as yt5 } from "child_process"</code> at line 440404</li><li>Added <code>import { PassThrough as a18 } from "stream"</code> at line 445653</li><li>Removed <code>import NzQ from "stream"</code> (replaced with named import)</li><li>Removed <code>import q6Q from "node:process"</code> (no longer needed)</li><li>Removed <code>import { resolve as A5Q } from "path"</code> (renamed to <code>L5Q</code>)</li></ul>
+    </article>
+    <article class="card" id="function-removals">
+      <div class="card-top">
+        <h3>Function Removals <a class="anchor" href="#function-removals">#</a></h3>
+      </div>
+      <ul><li>Removed <code>giQ()</code> rendering function (replaced by <code>ft1()</code>)</li><li>Removed <code>HnQ()</code> log factory (replaced by <code>dt1</code> class)</li><li>Removed <code>DnQ</code> log factory wrapper (replaced by <code>dt1</code> class)</li><li>Removed <code>c3A</code> and <code>p3A</code> React contexts for stdout/stderr (unused)</li><li>Removed <code>MC1</code> class (replaced by <code>OC1</code>)</li><li>Removed <code>wU1()</code> no-op function at line 361922</li><li>Removed <code>i81()</code> and <code>o24()</code> opus plan detection functions</li><li>Removed <code>js4()</code> auth header function (replaced by <code>Xr4()</code>)</li><li>Removed <code>bF6()</code> and <code>jD0</code> static renderer class</li><li>Removed <code>qD6()</code> editor helper (replaced by <code>$Y1()</code>)</li><li>Removed <code>Eb()</code> model hook (replaced by <code>sb()</code>)</li><li>Removed <code>bF5()</code> empty MCP server filter (replaced by <code>On5()</code>)</li><li>Removed <code>dMB()</code> plugin loading (replaced by <code>ad1()</code>)</li><li>Removed <code>RV5</code> opus plan welcome banner</li><li>Removed <code>zz5()</code> simple model status (replaced by <code>Yr5()</code>)</li></ul>
+    </article>
+    <article class="card" id="file-path-constants">
+      <div class="card-top">
+        <h3>File Path Constants <a class="anchor" href="#file-path-constants">#</a></h3>
+      </div>
+      <ul><li>Log directory structure simplified in <code>cO</code> object (was <code>oJ</code>)</li><li>Removed <code>debugLog()</code> function from path helpers (now uses <code>MH1()</code>)</li><li>Added path separator constant <code>OK</code> at line 438815</li></ul>
+    </article>
+    <article class="card" id="thinking-feature-constants">
+      <div class="card-top">
+        <h3>Thinking Feature Constants <a class="anchor" href="#thinking-feature-constants">#</a></h3>
+      </div>
+      <ul><li>Added <code>Ny2 = "tmp-preserve-thinking-2025-10-01"</code> constant at line 376351</li></ul>
+<p>This changelog represents a careful analysis of v2.0.10, distinguishing between truly new features, enhancements to existing functionality, and internal refactoring. All claims have been verified against both versions with specific line number references.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

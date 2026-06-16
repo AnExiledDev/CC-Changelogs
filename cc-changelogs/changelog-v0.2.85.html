@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.85 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.85."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.85</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.85</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.84 → v0.2.85</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">4</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Environment Variable Management</h4>
+<ul><li><strong>Enhanced environment variable handling</strong>: Environment variables are now loaded from multiple sources in a hierarchical manner. The new system merges environment variables from:</li><li>Local settings (<code>localSettings</code>)</li><li>Project settings (<code>projectSettings</code>)</li><li>Managed settings (<code>managedSettings</code>)</li></ul>
+<p>This allows for more flexible configuration management across different scopes.</p>
+<h4>Model Support</h4>
+<ul><li><strong>Added support for Claude 3.5 Sonnet v2 (October 2022 release)</strong>:</li><li>First-party API: <code>claude-3-5-sonnet-20241022</code></li><li>AWS Bedrock: <code>anthropic.claude-3-5-sonnet-20241022-v2:0</code></li><li>Google Vertex: <code>claude-3-5-sonnet-v2@20241022</code></li></ul>
+<p>The new model includes updated pricing:</p>
+<ul><li>Input tokens: $3 per million</li><li>Output tokens: $15 per million</li><li>Prompt cache write: $3.75 per million</li><li>Prompt cache read: $0.30 per million</li></ul>
+<h4>Cost Tracking</h4>
+<ul><li><strong>Improved unknown model cost handling</strong>: When using models without known pricing information, the system now properly flags this with <code>hasUnknownModelCost = true</code> to alert users that cost calculations may be incomplete.</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Settings Management</h4>
+<ul><li><strong>New settings hierarchy</strong>: Settings can now be stored at different levels with clear visual indicators:</li><li>Local project settings: <code>On this machine in [path]</code></li><li>Project settings: <code>Checked in at .claude/settings.json</code></li></ul>
+<ul><li><strong>Settings persistence</strong>: New functions for reading and writing settings with proper JSON formatting and indentation.</li></ul>
+<h4>Performance</h4>
+<ul><li><strong>Lazy initialization</strong>: Added lazy loading for certain operations using a new <code>jx1</code> function that initializes components only when needed.</li></ul>
+<h4>Developer Experience</h4>
+<ul><li><strong>Better cost display</strong>: The cost summary now handles cases where cost calculation might be unavailable, providing clearer feedback to users.</li></ul>
+    </article>
+    <article class="card" id="technical-changes">
+      <div class="card-top">
+        <h3>Technical Changes <a class="anchor" href="#technical-changes">#</a></h3>
+      </div>
+      <ul><li>Bumped version from 0.37.0 to 0.40.0</li><li>Refactored stream imports to use named imports (<code>PassThrough</code>) instead of default imports</li><li>Improved process imports to use named imports (<code>cwd</code>) for better tree-shaking</li><li>Added schema validation for package information using Zod</li><li>Removed git checkout special case handling from permission checks</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed environment variable loading to properly merge variables from all configuration sources</li><li>Improved error handling for model configuration fetching with proper fallback behavior</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

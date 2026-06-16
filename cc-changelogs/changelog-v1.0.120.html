@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.120 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.120."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.120</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.120</span></h1>
+<p class="sub">Version 1.0.120 introduces persistent file history across session resumes, a redesigned filesystem permissions model with simplified configuration, enhanced MCP server support with dynamic header generation, and critical security improvements for symlink handling.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.119 → v1.0.120</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">26</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">17 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="file-history-persistence-across-sessions">
+      <div class="card-top">
+        <h3>File History Persistence Across Sessions <a class="anchor" href="#file-history-persistence-across-sessions">#</a></h3>
+      </div>
+      <p><strong>What:</strong> File backup snapshots are now persisted to session logs and restored when resuming previous sessions, preserving the complete file modification history across Claude Code restarts.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>During execution, file history snapshots are automatically saved to the session log file</li><li>When resuming a session (e.g., <code>claude --resume &lt;session-id&gt;</code>), backup files from the previous session are hard-linked or copied to the new session directory</li><li>The file history UI state is fully restored, showing which files were tracked and their modification history</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Session log entries now include a new type: <code>"file-history-snapshot"</code> at <code>insertFileHistorySnapshot()</code> at line 438449</li><li>New function <code>a_1()</code> at line 384641 handles cross-session backup file migration</li><li>New function <code>t11()</code> at line 384611 generates session-specific backup file paths</li><li>New function <code>n_1()</code> at line 384636 processes snapshots to extract tracked files for UI restoration</li><li>Session log class now includes <code>fileHistorySnapshots</code> Map at line 438396</li><li>Backup files are stored per session in <code>~/.config/claude/file-history/&lt;sessionId&gt;/</code></li></ul>
+<div class="blabel">Evidence</div>
+<p><code>insertFileHistorySnapshot()</code> at line 438449, <code>a_1()</code> at line 384641, <code>t11()</code> at line 384611, <code>n_1()</code> at line 384636, <code>fileHistorySnapshots</code> field at line 438396</p>
+    </article>
+    <article class="card" id="mcp-dynamic-header-generation-with-headershelper">
+      <div class="card-top">
+        <h3>MCP Dynamic Header Generation with headersHelper <a class="anchor" href="#mcp-dynamic-header-generation-with-headershelper">#</a></h3>
+      </div>
+      <p><strong>What:</strong> MCP server configurations can now specify a shell command that generates HTTP headers dynamically at runtime, enabling secure credential management and token rotation.</p>
+<p><strong>How to use:</strong></p>
+<pre><code>{
+  &quot;mcpServers&quot;: {
+    &quot;my-api&quot;: {
+      &quot;transport&quot;: {
+        &quot;type&quot;: &quot;sse&quot;,
+        &quot;url&quot;: &quot;https://api.example.com/sse&quot;,
+        &quot;headers&quot;: {
+          &quot;X-Static-Header&quot;: &quot;value&quot;
+        },
+        &quot;headersHelper&quot;: &quot;~/scripts/get-auth-token.sh&quot;
+      }
+    }
+  }
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>The <code>headersHelper</code> command must output valid JSON with string key-value pairs</li><li>Dynamic headers override static headers (merge strategy: <code>{...static, ...dynamic}</code>)</li><li>Includes workspace trust security checks for project/local-scoped servers at <code>Xo6()</code> at line 393477</li><li>Comprehensive validation ensures proper JSON format and string values</li><li>Errors are logged with telemetry event <code>tengu_mcp_headersHelper_missing_trust</code></li><li>Use cases: fetching tokens from credential managers, generating time-based auth, reading secrets from environment-specific sources</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Xo6()</code> function at line 393477, <code>uw0()</code> merge function at line 393531, schema definitions at lines 353050-353074</p>
+    </article>
+    <article class="card" id="unix-domain-socket-support-for-network-permissions">
+      <div class="card-top">
+        <h3>Unix Domain Socket Support for Network Permissions <a class="anchor" href="#unix-domain-socket-support-for-network-permissions">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Network permissions now support Unix domain sockets for local IPC, enabling tools like SSH agents and Docker to work within the sandbox.</p>
+<p><strong>How to configure:</strong></p>
+<pre><code>{
+  &quot;permissions&quot;: {
+    &quot;network&quot;: {
+      &quot;allowUnixSockets&quot;: true  // Allow all Unix sockets
+    }
+  }
+}</code></pre>
+<p>Or with specific paths:</p>
+<pre><code>{
+  &quot;permissions&quot;: {
+    &quot;network&quot;: {
+      &quot;allowUnixSockets&quot;: [
+        &quot;/var/run/docker.sock&quot;,
+        &quot;~/.ssh/agent.sock&quot;
+      ]
+    }
+  }
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Three modes: <code>true</code> (allow all), <code>false</code> (block all - default), or array of specific socket paths</li><li>Currently implemented for macOS sandbox profiles using <code>(remote unix-socket)</code> directive</li><li>Essential for Docker, SSH agents, and other development tools requiring local IPC</li><li>Type: <code>boolean | string[]</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema definition at lines 354206-354217, implementation at lines 374968-374975, parameter usage at line 375216</p>
+    </article>
+    <article class="card" id="slashcommand-tool-validation">
+      <div class="card-top">
+        <h3>SlashCommand Tool Validation <a class="anchor" href="#slashcommand-tool-validation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The internal <code>SlashCommand</code> tool now includes comprehensive input validation before execution, catching errors early and providing clear error messages.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Validates command format with error code 1 at <code>validateInput()</code> at line 425333</li><li>Checks if command exists with error code 2</li><li>Verifies command can be loaded with error code 3</li><li>Detects <code>disableModelInvocation</code> conflicts with error code 4</li><li>Ensures command is prompt-based with error code 5</li><li>Validation occurs before permission checks, improving error reporting</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>validateInput()</code> method at lines 425333-425369 in <code>X21</code> tool definition</p>
+    </article>
+    <article class="card" id="symlink-resolution-in-permission-checks">
+      <div class="card-top">
+        <h3>Symlink Resolution in Permission Checks <a class="anchor" href="#symlink-resolution-in-permission-checks">#</a></h3>
+      </div>
+      <p><strong>What:</strong> File permission checks now resolve symlinks and verify that BOTH the symlink path AND its target are allowed, preventing permission bypass attacks via symlinks.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>When checking read/edit permissions for <code>/home/user/project/link</code>, Claude Code now resolves it to its real path (e.g., <code>/etc/passwd</code>)</li><li>Both paths are checked against permission rules</li><li>Access is denied if EITHER path is restricted</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>New function <code>CD1()</code> at line 339792 returns array of [original_path, resolved_path]</li><li>Helper function <code>fW()</code> at line 339783 performs symlink resolution using <code>realpathSync()</code></li><li>Integrated into read permissions at <code>o11()</code> at line 439057</li><li>Integrated into edit permissions at <code>dd()</code> at line 439126</li><li>Integrated into working directory checks at <code>QE()</code> at line 438915</li><li>Gracefully handles non-existent files and resolution errors</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>CD1()</code> at line 339792, <code>fW()</code> at line 339783, read permission integration at lines 439066-439084, edit permission integration at lines 439133-439154</p>
+    </article>
+    <article class="card" id="enhanced-bash-command-analysis">
+      <div class="card-top">
+        <h3>Enhanced Bash Command Analysis <a class="anchor" href="#enhanced-bash-command-analysis">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved detection of shell variable expansion and command substitution in bash commands for more accurate file path extraction.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Now detects patterns like <code>$VARIABLE</code> and <code>$(command)</code> in command arguments at <code>Ng6()</code> at line 382386</li><li>Sets <code>mayHaveUnknownFiles</code> flag when variable expansion is detected</li><li>Prevents false positives in automatic file reading after bash execution</li><li>More conservative approach to file permission pre-approval</li></ul>
+<div class="blabel">Evidence</div>
+<p>Variable expansion detection at lines 382407-382412 in <code>Ng6()</code> function</p>
+    </article>
+    <article class="card" id="redesigned-filesystem-permissions-model">
+      <div class="card-top">
+        <h3>Redesigned Filesystem Permissions Model <a class="anchor" href="#redesigned-filesystem-permissions-model">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The filesystem permissions configuration has been completely redesigned with a simplified, asymmetric approach: reads use denylist-only mode, writes use allowlist-only mode.</p>
+<p><strong>Old model (v1.0.119):</strong></p>
+<pre><code>{
+  &quot;permissions&quot;: {
+    &quot;filesystem&quot;: {
+      &quot;read&quot;: {
+        &quot;allowAllExcept&quot;: [&quot;/etc/&quot;, &quot;/private/&quot;]
+      },
+      &quot;write&quot;: {
+        &quot;denyAllExcept&quot;: [&quot;/home/user/project/&quot;]
+      }
+    }
+  }
+}</code></pre>
+<p><strong>New model (v1.0.120):</strong></p>
+<pre><code>{
+  &quot;permissions&quot;: {
+    &quot;filesystem&quot;: {
+      &quot;read&quot;: {
+        &quot;denyOnly&quot;: [&quot;/etc/passwd&quot;, &quot;/private/keys/&quot;]
+      },
+      &quot;write&quot;: {
+        &quot;allowOnly&quot;: [&quot;/home/user/project/&quot;],
+        &quot;includeDefaults&quot;: true,
+        &quot;denyWithinAllow&quot;: [&quot;./.claude/&quot;]
+      }
+    }
+  }
+}</code></pre>
+<p><strong>Key differences:</strong></p>
+<ul><li><strong>Read permissions</strong>: Only <code>denyOnly</code> mode (assumes open by default, deny specific paths)</li><li><strong>Write permissions</strong>: Only <code>allowOnly</code> mode (assumes closed by default, allow specific paths)</li><li><strong>Lost feature</strong>: Can no longer do restrictive read permissions (<code>denyAllExcept</code> for reads is removed)</li><li><strong>New feature</strong>: <code>denyWithinAllow</code> allows exceptions within allowed write paths</li><li><strong>Breaking change</strong>: Existing v1.0.119 configurations are incompatible</li></ul>
+<div class="blabel">Evidence</div>
+<p>New schemas at lines 354053-354067 (<code>ew9</code> and <code>Aq9</code>), old schemas removed from lines 354007-354030 (<code>y10</code> and <code>k10</code>), new implementation at lines 374904-374938 (<code>ob6()</code> and <code>tb6()</code>)</p>
+    </article>
+    <article class="card" id="tool-output-schemas">
+      <div class="card-top">
+        <h3>Tool Output Schemas <a class="anchor" href="#tool-output-schemas">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Several tools now include explicit <code>outputSchema</code> definitions alongside their existing <code>inputSchema</code>, improving type safety and documentation.</p>
+<p><strong>Tools updated:</strong></p>
+<ul><li>Read tool: <code>outputSchema</code> at <code>th6</code> at line 381201</li><li>Edit tool: <code>outputSchema</code> at <code>yGB</code> at line 395229</li><li>MultiEdit tool: <code>outputSchema</code> at <code>xo6</code> at line 395850</li><li>Write tool: <code>outputSchema</code> at <code>co6</code> at line 396008</li><li>Bash tool: <code>outputSchema</code> at <code>np6</code> at line 387039</li><li>Grep tool: <code>outputSchema</code> at <code>sW5</code> at line 420771</li><li>WebFetch tool: <code>outputSchema</code> at <code>bW5</code> at line 417012</li><li>SlashCommand tool: <code>outputSchema</code> at <code>XX5</code> at line 425324</li></ul>
+<div class="blabel">Evidence</div>
+<p>Multiple schema definitions across tool implementations</p>
+    </article>
+    <article class="card" id="documentation-url-updates">
+      <div class="card-top">
+        <h3>Documentation URL Updates <a class="anchor" href="#documentation-url-updates">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Internal documentation URLs have been updated from <code>docs.anthropic.com</code> to <code>docs.claude.com</code>.</p>
+<p><strong>Examples:</strong></p>
+<ul><li>Permissions docs: <code>https://docs.claude.com/en/docs/claude-code/iam#configuring-permissions</code></li><li>Environment variables: <code>https://docs.claude.com/en/docs/claude-code/settings#environment-variables</code></li><li>Hooks documentation: <code>https://docs.claude.com/en/docs/claude-code/hooks</code></li><li>Claude Code docs map: <code>https://docs.claude.com/en/docs/claude-code/claude_code_docs_map.md</code></li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Cq9</code> object at line 354656, <code>pQ5</code> variable at line 403791, version constants at line 371686</p>
+    </article>
+    <article class="card" id="consumer-terms-update-ui">
+      <div class="card-top">
+        <h3>Consumer Terms Update UI <a class="anchor" href="#consumer-terms-update-ui">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Two new UI components display information about updates to Anthropic's Consumer Terms and Privacy Policy.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Pre-acceptance message function <code>pW5()</code> at line 418651 (effective September 28, 2025)</li><li>Post-acceptance message function <code>iW5()</code> at line 418738</li><li>Includes information about model training opt-in and data retention changes</li><li>Provides links to updated terms, privacy policy, and announcement</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>pW5()</code> at line 418651, <code>iW5()</code> at line 418738</p>
+    </article>
+    <article class="card" id="session-log-transcript-format">
+      <div class="card-top">
+        <h3>Session Log Transcript Format <a class="anchor" href="#session-log-transcript-format">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Session log transcripts now include a <code>fileHistorySnapshots</code> field in addition to existing fields.</p>
+<p><strong>Format change:</strong></p>
+<pre><code>{
+  date, messages, fullPath, value, created, modified,
+  firstPrompt, messageCount, isSidechain, leafUuid,
+  summary, checkpoints,
+  fileHistorySnapshots,  // NEW
+  gitBranch
+}</code></pre>
+<div class="blabel">Evidence</div>
+<p><code>cRB()</code> function at line 438159, new parameter at line 438184</p>
+    </article>
+    <article class="card" id="removed-redundant-slash-command-execution-logic">
+      <div class="card-top">
+        <h3>Removed Redundant Slash Command Execution Logic <a class="anchor" href="#removed-redundant-slash-command-execution-logic">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed duplicate condition check in slash command processing that always evaluated to true.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Old code at line 1373: <code>if (!0) Y(!0);</code> - condition always true, always executed</li><li>New code at line 1499: <code>Y(!0);</code> - executes directly without redundant check</li><li>No functional change, just cleaner code</li></ul>
+<div class="blabel">Evidence</div>
+<p>Comparison of <code>lNB()</code> function structure at lines 424900-425196</p>
+    </article>
+    <article class="card" id="stream-import-refactoring">
+      <div class="card-top">
+        <h3>Stream Import Refactoring <a class="anchor" href="#stream-import-refactoring">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Changed stream module import from default import to named import for better clarity.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Old: <code>import dFQ from "stream";</code> (line 338181 removed)</li><li>New: <code>import { PassThrough as rr5 } from "stream";</code> (line 443623 added)</li><li>More explicit about what's being imported</li><li>Better tree-shaking support</li></ul>
+<div class="blabel">Evidence</div>
+<p>Import statement change at line 443623</p>
+    </article>
+    <article class="card" id="file-history-cleanup-on-session-expiry">
+      <div class="card-top">
+        <h3>File History Cleanup on Session Expiry <a class="anchor" href="#file-history-cleanup-on-session-expiry">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New cleanup function removes expired file history backup directories based on the configured retention period.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>yr5()</code> at line 442733 removes backup directories older than retention threshold</li><li>Respects <code>cleanupPeriodDays</code> setting from configuration</li><li>Returns statistics: <code>{ messages: count, errors: count }</code></li><li>Integrated into session cleanup routine at <code>rQQ()</code> at line 442760</li><li>Empty directories are removed after cleanup</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>yr5()</code> at line 442733, integration at line 442760 (previously <code>uQQ()</code>)</p>
+    </article>
+    <article class="card" id="documentation-reference-updates">
+      <div class="card-top">
+        <h3>Documentation Reference Updates <a class="anchor" href="#documentation-reference-updates">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Internal documentation and error message references updated across the codebase.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Version updated from <code>1.0.119</code> to <code>1.0.120</code> in constants</li><li>README URL updated: <code>https://docs.claude.com/s/claude-code</code></li><li>Issue reporting: <code>https://github.com/anthropics/claude-code/issues</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Version constants at <code>Gt()</code> and <code>RU()</code> at lines 371752-371755</p>
+    </article>
+    <article class="card" id="removed-internal-functions">
+      <div class="card-top">
+        <h3>Removed Internal Functions <a class="anchor" href="#removed-internal-functions">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Several internal functions were removed as part of the permissions model refactoring.</p>
+<p><strong>Removed functions:</strong></p>
+<ul><li><code>sBB()</code> - Generic allow/deny rule generator (line 374871-374901)</li><li><code>pBB()</code> - Old read permission default paths (line 374680-374713)</li><li><code>i9B()</code> - Old bash file path analyzer (line 382301-382346)</li><li>Various permission getter functions: <code>ZQB()</code>, <code>GQB()</code>, <code>YQB()</code>, <code>pb6()</code>, <code>ib6()</code>, <code>JQB()</code> (lines 375215-375242)</li></ul>
+<p><strong>Reason:</strong> Replaced by new permission model implementation with separate read/write functions.</p>
+<div class="blabel">Evidence</div>
+<p>Diff sections showing removed functions</p>
+    </article>
+    <article class="card" id="github-actions-workflow-variables">
+      <div class="card-top">
+        <h3>GitHub Actions Workflow Variables <a class="anchor" href="#github-actions-workflow-variables">#</a></h3>
+      </div>
+      <p><strong>What:</strong> GitHub Actions workflow YAML templates updated (renamed internal variables).</p>
+<p><strong>Details:</strong></p>
+<ul><li>Variables <code>wDB</code> and <code>qDB</code> renamed to <code>PDB</code> and <code>jDB</code></li><li>No functional changes to the workflows themselves</li><li>Both templates remain identical in content</li></ul>
+<div class="blabel">Evidence</div>
+<p>Variables at lines 408499 and 408550</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Verification Checklist</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="verification-checklist">
+      <ul><li>[x] File history persistence verified as NEW in v1.0.120 (did not exist in v1.0.119)</li><li>[x] Permissions model verified as completely redesigned, not enhanced</li><li>[x] MCP headersHelper verified as NEW functionality</li><li>[x] Symlink resolution verified as NEW security feature</li><li>[x] Unix socket support verified as NEW capability</li><li>[x] All major claims include specific function names and line numbers</li><li>[x] Distinguished between NEW and ENHANCED features</li><li>[x] Excluded internal refactoring with no user impact</li><li>[x] Provided concrete usage examples for new features</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

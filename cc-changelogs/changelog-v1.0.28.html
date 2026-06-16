@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.28 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.28."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.28</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.28</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.27 → v1.0.28</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Model Selection Command Menu</h4>
+<ul><li>Added new interactive model selection functionality that allows users to switch between different Claude models during a session</li><li>When invoked, users can navigate through available models and select their preferred model</li><li>Includes keyboard shortcuts: ESC key to cancel and keep current model</li><li>The selected model is displayed in bold text for clarity</li><li>Example usage: The menu will show available models and allow selection via arrow keys</li></ul>
+<h4>Enhanced MCP (Model Context Protocol) Support</h4>
+<ul><li>Added <code>MAX_MCP_OUTPUT_TOKENS</code> environment variable to control the maximum tokens for MCP output</li><li>Default value: 25,000 tokens (configurable via environment variable)</li><li>Example: <code>export MAX_MCP_OUTPUT_TOKENS=50000</code> to increase the limit</li></ul>
+<h4>Improved Resume Command</h4>
+<ul><li>Refactored the <code>resume</code> command to use a more robust component-based architecture</li><li>Better error handling when loading conversations</li><li>Async loading with proper state management</li><li>Shows loading state while fetching conversations</li><li>Filters out sidechain conversations automatically</li></ul>
+    </article>
+    <article class="card" id="improvements">
+      <div class="card-top">
+        <h3>Improvements <a class="anchor" href="#improvements">#</a></h3>
+      </div>
+      <h4>Image Processing Enhancements</h4>
+<ul><li>Added new <code>TG5</code> function for more robust image file handling</li><li>Improved error recovery when image processing fails</li><li>Better support for empty image files with specific error messages</li><li>Maintains original media type when fallback processing is used</li></ul>
+<h4>Configuration Directory Resolution</h4>
+<ul><li>Enhanced config directory resolution to respect XDG Base Directory specification</li><li>Priority order:</li></ul>
+<ol><li><code>CLAUDE_CONFIG_DIR</code> environment variable (if set)</li><li><code>XDG_CONFIG_HOME/claude</code> (if XDG_CONFIG_HOME is set)</li><li>Default: <code>~/.claude</code></li></ol>
+<ul><li>Example: <code>export XDG_CONFIG_HOME=/custom/config</code> will use <code>/custom/config/claude</code></li></ul>
+<h4>Multi-Edit Operations</h4>
+<ul><li>Added <code>iK1</code> function to properly handle edit operations with default values</li><li>Ensures <code>replace_all</code> parameter defaults to <code>false</code> when not specified</li><li>Improves consistency in batch edit operations</li></ul>
+    </article>
+    <article class="card" id="technical-improvements">
+      <div class="card-top">
+        <h3>Technical Improvements <a class="anchor" href="#technical-improvements">#</a></h3>
+      </div>
+      <h4>Better Environment Variable Handling</h4>
+<ul><li>More defensive checks for <code>CLAUDE_CODE_ENTRYPOINT</code> to prevent duplicate assignments</li><li>Cleaner initialization in both CLI and MCP modes</li></ul>
+<h4>Error Handling</h4>
+<ul><li>Added <code>AH1</code> (FallbackTriggeredError) class for better model fallback error reporting</li><li>Includes original and fallback model information in error messages</li></ul>
+<h4>Process Management</h4>
+<ul><li>Changed from hardcoded <code>/bin/bash</code> paths to more portable process execution</li><li>Better support for different shell environments</li></ul>
+<h4>Metrics and Telemetry</h4>
+<ul><li>Added terminal type tracking in metrics (<code>terminal.type</code> attribute)</li><li>Helps understand user environments for better support</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed duplicate import issues with stream modules</li><li>Removed redundant process import</li><li>Improved native installation detection logic</li><li>Better handling of thinking tokens with configurable defaults</li></ul>
+    </article>
+    <article class="card" id="internal-changes">
+      <div class="card-top">
+        <h3>Internal Changes <a class="anchor" href="#internal-changes">#</a></h3>
+      </div>
+      <ul><li>Updated version number to 1.0.28</li><li>Refined internal function naming and structure</li><li>Improved code organization with better separation of concerns</li><li>Enhanced type safety with new schema definitions for tool responses</li></ul>
+<p>Note: This version maintains 99.8% structural similarity with v1.0.27, ensuring stability while adding targeted improvements.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

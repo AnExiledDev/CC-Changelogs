@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.60 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.60."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.60</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.60</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.59 → v1.0.60</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="major-features">
+      <div class="card-top">
+        <h3>Major Features <a class="anchor" href="#major-features">#</a></h3>
+      </div>
+      <h4>Agent Management System (New!)</h4>
+<ul><li><strong>New <code>/agents</code> command</strong>: Create and manage custom subagents that Claude can delegate tasks to</li><li>Create agents with specialized system prompts and tool access</li><li>Choose between AI-generated or manual agent configuration</li><li>Agents can be stored at project level (<code>.claude/agents/</code>) or personal level (<code>~/.claude/agents/</code>)</li><li>Built-in agents are always available and cannot be modified</li><li>Each agent can have a custom background color for visual distinction</li></ul>
+<p><strong>Example usage:</strong></p>
+<pre><code># Open the agent management interface
+/agents</code></pre>
+<h4>Background Shell Management Tools (New!)</h4>
+<ul><li><strong>KillShell Tool</strong>: Kill a running background shell by its ID</li><li>Use <code>/bashes</code> command to find shell IDs</li><li>Returns success/failure status</li></ul>
+<ul><li><strong>BashOutput Tool</strong>: Retrieve output from background shells</li><li>Returns only new output since last check</li><li>Shows stdout, stderr, and shell status</li><li>Automatically truncates very long outputs</li></ul>
+    </article>
+    <article class="card" id="enhanced-features">
+      <div class="card-top">
+        <h3>Enhanced Features <a class="anchor" href="#enhanced-features">#</a></h3>
+      </div>
+      <h4>Bash Output Summarization</h4>
+<ul><li>Claude now intelligently summarizes verbose command outputs</li><li>Summaries are triggered for outputs over 5000 characters</li><li>Original output is preserved and can be viewed in verbose mode</li><li>Includes sections for: Overview, Detailed Summary, Errors, and Verbatim Output</li><li>Particularly useful for build logs, test results, and repetitive debug output</li></ul>
+<p><strong>Example scenario:</strong></p>
+<pre><code># Running a command with verbose output
+npm run build
+
+# Claude will automatically summarize if output is lengthy, showing:
+[Summarized output]
+Overview: Build completed successfully...
+Detailed summary: ...
+Errors: None encountered
+Verbatim output: [key snippets preserved]</code></pre>
+<h4>Spinner Tips</h4>
+<ul><li>Tips functionality has been made configurable</li><li>Tips are now fetched dynamically based on user preferences</li><li>Improved tip management system</li></ul>
+    </article>
+    <article class="card" id="ui-ux-improvements">
+      <div class="card-top">
+        <h3>UI/UX Improvements <a class="anchor" href="#ui-ux-improvements">#</a></h3>
+      </div>
+      <h4>Enhanced Dialog Components</h4>
+<ul><li>New <code>bv1</code> component for better dialog presentation</li><li>Improved escape key handling with "Press Esc again to exit" confirmation</li><li>Consistent styling with rounded borders and proper spacing</li></ul>
+<h4>OAuth Flow Improvements</h4>
+<ul><li>Added manual code entry support for OAuth authentication</li><li>Better error handling with retry options</li><li>Visual improvements during the authentication process</li><li>Support for long-lived tokens (1 year expiry) for GitHub Actions</li></ul>
+    </article>
+    <article class="card" id="technical-improvements">
+      <div class="card-top">
+        <h3>Technical Improvements <a class="anchor" href="#technical-improvements">#</a></h3>
+      </div>
+      <h4>️ Command System Enhancements</h4>
+<ul><li>New agent type system with built-in types:</li><li><code>general-purpose</code>: General multi-step task handling</li><li><code>context-collector</code>: Codebase exploration and metrics</li><li><code>tech-researcher</code>: Technical solution research</li><li><code>test-engineer</code>: Test writing and maintenance</li><li><code>spec-designer</code>: Specification refinement</li><li><code>file-organizer</code>: File operations and organization</li><li><code>comment-writer</code>: Code documentation</li><li><code>investigator</code>: Deep code investigation</li><li><code>refactoring-specialist</code>: Code improvement</li><li><code>code-auditor</code>: Architecture and security analysis</li><li><code>implementation-engineer</code>: Feature implementation</li><li><code>documentation-specialist</code>: Comprehensive documentation</li><li><code>style-fixer</code>: Code formatting and style</li></ul>
+<h4>Aliases and Usability</h4>
+<ul><li><code>/clear</code> command now also responds to <code>/reset</code> alias</li><li>Improved permission handling for additional working directories</li><li>Better path resolution and validation</li></ul>
+    </article>
+    <article class="card" id="developer-experience">
+      <div class="card-top">
+        <h3>Developer Experience <a class="anchor" href="#developer-experience">#</a></h3>
+      </div>
+      <h4>Agent Creation Workflow</h4>
+<ol><li><strong>Choose location</strong>: Project or personal agents directory</li><li><strong>Creation method</strong>: AI-generated or manual configuration</li><li><strong>Define purpose</strong>: Describe what the agent should do</li><li><strong>Select tools</strong>: Choose which tools the agent can access</li><li><strong>Customize appearance</strong>: Optional background color</li><li><strong>Review and save</strong>: Confirm configuration before saving</li></ol>
+<p><strong>Example agent creation:</strong></p>
+<pre><code>/agents
+# Select &quot;Create new agent&quot;
+# Choose location: Project
+# Method: Generate with Claude
+# Describe: &quot;Expert code reviewer that checks for security vulnerabilities and best practices&quot;
+# Claude generates the configuration
+# Select tools the agent should have access to
+# Choose a background color
+# Save the agent</code></pre>
+    </article>
+    <article class="card" id="bug-fixes-and-cleanup">
+      <div class="card-top">
+        <h3>Bug Fixes and Cleanup <a class="anchor" href="#bug-fixes-and-cleanup">#</a></h3>
+      </div>
+      <ul><li>Removed unused OAuth error classes and related error handling code</li><li>Cleaned up shell snapshot cleanup functionality</li><li>Removed various deprecated functions and imports</li><li>Fixed issue with pasted text display (now shows "[Pasted text #X]" without "+0 lines")</li></ul>
+    </article>
+    <article class="card" id="breaking-changes">
+      <div class="card-top">
+        <h3>Breaking Changes <a class="anchor" href="#breaking-changes">#</a></h3>
+      </div>
+      <ul><li>None identified in this release</li></ul>
+    </article>
+    <article class="card" id="notes-for-users">
+      <div class="card-top">
+        <h3>Notes for Users <a class="anchor" href="#notes-for-users">#</a></h3>
+      </div>
+      <ul><li>Agents provide a powerful way to create specialized assistants for specific tasks</li><li>Background shell management allows better handling of long-running processes</li><li>Output summarization helps maintain context efficiency while preserving important information</li><li>The new agent system is particularly useful for repetitive tasks like code reviews, testing, and documentation</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

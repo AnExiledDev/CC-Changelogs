@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.12 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.12."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.12</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.12</span></h1>
+<p class="sub">Version 2.0.12 is a maintenance release focused on internal code reorganization and plugin system enhancements. The primary changes involve plugin command configuration improvements and minor UI refinements. Most of the 12,384-line increase is due to bundler regeneration with different variable names (~6,898 renames), not new functionality.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.11 → v2.0.12</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="mode-commands-system">
+      <div class="card-top">
+        <h3>Mode Commands System <a class="anchor" href="#mode-commands-system">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Commands can now be designated as "mode commands" for specialized, multi-phase workflows</p>
+<p><strong>How to use:</strong> Add <code>mode: true</code> to command frontmatter in your <code>.claude/commands/*.md</code> files:</p>
+<pre><code>mode: true
+description: Guided workflow for complex refactoring
+
+Your command content here...</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Mode commands receive special priority in Claude's tool selection</li><li>Display distinct permission UI titled "Use guided workflow" instead of "Slash command"</li><li>Show message "Your request appears to match a specialized workflow"</li><li>Intended for complex, multi-step tasks that benefit from structured guidance</li><li><strong>Evidence</strong>: <code>isModeCommand: K</code> at line 440835 in <code>loadCommands()</code> function, mode command filtering in <code>V6Q()</code> function</li></ul>
+    </article>
+    <article class="card" id="inline-plugin-commands">
+      <div class="card-top">
+        <h3>Inline Plugin Commands <a class="anchor" href="#inline-plugin-commands">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Plugin developers can now define commands directly in their manifest with inline markdown content</p>
+<p><strong>How to use:</strong> In your plugin's <code>marketplace-manifest.json</code>:</p>
+<pre><code>{
+  &quot;commands&quot;: {
+    &quot;hello&quot;: {
+      &quot;content&quot;: &quot;---\ndescription: Say hello\n---\n\nGreet the user warmly!&quot;,
+      &quot;description&quot;: &quot;Greet the user&quot;,
+      &quot;argumentHint&quot;: &quot;[name]&quot;
+    },
+    &quot;status&quot;: {
+      &quot;source&quot;: &quot;commands/status.md&quot;
+    }
+  }
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Commands can now use object notation with <code>content</code> (inline) or <code>source</code> (file path) fields</li><li>Cannot use both <code>content</code> and <code>source</code> - validation enforces one or the other</li><li>Supports metadata overrides: <code>description</code>, <code>argumentHint</code>, <code>model</code>, <code>allowedTools</code></li><li>Reduces file clutter for simple commands</li><li>Old array-of-paths format still supported for backward compatibility</li><li><strong>Evidence</strong>: Command schema with <code>content</code> field at lines 42750-42775 in schema definition, inline content processing in plugin loader at lines 48817-48850</li></ul>
+    </article>
+    <article class="card" id="enhanced-plugin-command-validation">
+      <div class="card-top">
+        <h3>Enhanced Plugin Command Validation <a class="anchor" href="#enhanced-plugin-command-validation">#</a></h3>
+      </div>
+      <p>Better error handling when plugin manifests contain invalid command entries. The system now:</p>
+<ul><li>Validates that array-format commands contain only strings</li><li>Logs descriptive errors for malformed entries: <code>"Unexpected command format in marketplace entry for {plugin-name}"</code></li><li>Skips invalid entries instead of crashing</li><li><strong>Evidence</strong>: Type validation in plugin loader at lines 72627-72633 in <code>loadPluginsFromMarketplace()</code> function</li></ul>
+    </article>
+    <article class="card" id="cleaner-slash-command-permission-ui">
+      <div class="card-top">
+        <h3>Cleaner Slash Command Permission UI <a class="anchor" href="#cleaner-slash-command-permission-ui">#</a></h3>
+      </div>
+      <p>The permission confirmation prompt for slash commands now displays more user-friendly information:</p>
+<ul><li>Title changed from generic "Tool use" to specific "Slash command"</li><li>Shows the actual command string instead of <code>SlashCommand(command-name)</code></li><li>Displays command description instead of technical <code>Execute slash command: /command</code></li><li>Includes command metadata for better context-aware routing</li><li><strong>Evidence</strong>: UI component changes at lines 72425-72430 in permission confirmation renderer, metadata addition at line 65680</li></ul>
+    </article>
+    <article class="card" id="internal-code-organization">
+      <div class="card-top">
+        <h3>Internal Code Organization <a class="anchor" href="#internal-code-organization">#</a></h3>
+      </div>
+      <p>Significant internal restructuring for improved maintainability:</p>
+<ul><li>Ripgrep module relocated from line ~335k to line ~3.8k for faster loading in <code>--ripgrep</code> mode</li><li>Entry point handling simplified with better separation of concerns</li><li>Changed from <code>process.exit()</code> to <code>process.exitCode =</code> for more graceful shutdown</li><li>~6,898 variable renames throughout codebase (no functional impact)</li><li><strong>Evidence</strong>: Entry point refactoring at lines 461763-461773 in <code>az8()</code> function, ripgrep module relocation to lines 3856-3869</li></ul>
+    </article>
+    <article class="card" id="bundle-changes">
+      <div class="card-top">
+        <h3>Bundle Changes <a class="anchor" href="#bundle-changes">#</a></h3>
+      </div>
+      <ul><li>File size increased from 449,389 to 461,773 lines (+2.7%)</li><li>Structural similarity: 75.0% (25% appears different due to variable renaming)</li><li>Declaration changes: 1,207 additions, 2,304 deletions, 102 modifications, 6,898 renames</li><li>No dependency version upgrades - all bundled libraries remain at same versions</li><li>Bundler regeneration caused most of the diff (not actual code changes)</li></ul>
+    </article>
+    <article class="card" id="what-this-release-does-not-include">
+      <div class="card-top">
+        <h3>What This Release Does NOT Include <a class="anchor" href="#what-this-release-does-not-include">#</a></h3>
+      </div>
+      <ul><li>No new command-line flags or options</li><li>No changes to debug flags (<code>--debug</code>, <code>-d</code>, <code>--debug-to-stderr</code>, <code>-d2e</code> remain identical)</li><li>No ripgrep configuration changes (system vs builtin selection unchanged)</li><li>No dependency upgrades (Axios, Zod, Fuse.js, LRU-cache, Minimatch, Lodash all unchanged)</li><li>No new error handling or validation for end users</li><li>No changes to core CLI functionality</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes for Plugin Developers</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes-for-plugin-developers">
+      <p>If you maintain Claude Code plugins, you can now:</p>
+<ol><li>Use <code>mode: true</code> frontmatter to designate workflow commands</li><li>Define simple commands inline in your manifest instead of creating separate <code>.md</code> files</li><li>Override command metadata (description, model, allowed tools) at the manifest level</li><li>Expect better validation errors if your manifest format is incorrect</li></ol>
+<p>The old plugin manifest formats remain fully supported - these are additions, not breaking changes.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.173 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.173."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.173</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.173</span></h1>
+<p class="sub">This release improves the clarity of safety-refusal messages by making them context-aware: requests blocked for cybersecurity or biology topics continue to name those topics, while all other blocks now show a calmer, less alarming message. It also adds detection support for a new "Fable" model and explicitly disables sandboxing on Windows.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.172 → v2.1.173</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">2</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="context-aware-safety-refusal-messages">
+      <div class="card-top">
+        <h3>Context-aware safety refusal messages <a class="anchor" href="#context-aware-safety-refusal-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a model declines a request due to safety measures, the error message is now tailored to the actual reason rather than defaulting to a generic cyber/bio warning for every refusal.</p>
+<div class="blabel">Details</div>
+<ul><li>Refusals specifically triggered by cybersecurity or biology content still display the existing message naming those topic areas.</li><li>All other refusals now show: "This model has measures that flagged something in this session. This sometimes happens with safe, normal conversations." followed by a note that these measures help bring Mythos-level capability in other areas.</li><li>The model-switching notification (shown when Claude auto-falls back to a different model) also uses this same category check, so users who triggered a fallback for non-cyber/bio reasons no longer see an unexplained reference to cybersecurity or biology topics.</li><li>Refusal telemetry now records non-cyber/non-bio categories as <code>"other"</code> rather than passing through raw category strings, which normalizes internal analytics.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New generic refusal string (search for <code>"This model has measures that flagged something in this session"</code>); category classifier introduced (search for <code>H === "cyber" || H === "bio"</code>); updated fallback-switch messages reference the same classifier</p>
+    </article>
+    <article class="card" id="fable-model-support">
+      <div class="card-top">
+        <h3>Fable model support <a class="anchor" href="#fable-model-support">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Added detection for a model whose name contains "fable" (case-insensitive), with adjusted response-suffix handling when that model is active.</p>
+<div class="blabel">Details</div>
+<ul><li>A new helper function identifies when the active model is "fable" by checking <code>H.toLowerCase().includes("fable")</code>.</li><li>When a fable model is in use, the <code>[1m]</code> model-suffix token is stripped from responses rather than appended, matching how the model reports itself to the API.</li><li>This is internal plumbing that enables correct behavior for a new model; no user-facing command or flag change is required.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New fable detector (search for <code>"fable"</code>); response-suffix logic updated (the <code>g7</code> model-name formatter gains a new early-return branch for fable+<code>[1m]</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Sandboxing is now correctly reported as unsupported on Windows. The platform support check for the sandbox subsystem returns <code>false</code> immediately when running on Windows, preventing any attempt to initialise or check sandboxing on a platform where it does not work. (search for <code>if (s$() === "windows") return !1</code> inside the sandbox platform check)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.173.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.173.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

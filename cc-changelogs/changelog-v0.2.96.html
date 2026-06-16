@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.96 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.96."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.96</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.96</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.94 → v0.2.96</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">14 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.96 Changelog</p>
+    </article>
+    <article class="card" id="data-sharing-and-development-partner-program">
+      <div class="card-top">
+        <h3>Data Sharing and Development Partner Program <a class="anchor" href="#data-sharing-and-development-partner-program">#</a></h3>
+      </div>
+      <ul><li><strong>Development Partner Program Integration</strong>: Organizations enrolled in the Development Partner Program now have their Claude Code sessions shared with Anthropic for service improvement and model training</li><li>New UI components display enrollment status and information</li><li>First-time users see a detailed message about data sharing</li><li>Subsequent sessions show a condensed enrollment indicator</li><li>Links to support documentation and admin settings included</li></ul>
+    </article>
+    <article class="card" id="cost-discounts-for-partner-organizations">
+      <div class="card-top">
+        <h3>Cost Discounts for Partner Organizations <a class="anchor" href="#cost-discounts-for-partner-organizations">#</a></h3>
+      </div>
+      <ul><li><strong>Discounted API Pricing</strong>: Organizations in the Development Partner Program receive automatic cost reductions:</li><li>90% discount on input tokens</li><li>9% discount on prompt cache read tokens</li><li>Additional 12.5% discount on prompt cache write tokens</li><li>Applies to first-party Anthropic models only</li></ul>
+    </article>
+    <article class="card" id="rule-based-file-access-control">
+      <div class="card-top">
+        <h3>Rule-Based File Access Control <a class="anchor" href="#rule-based-file-access-control">#</a></h3>
+      </div>
+      <ul><li><strong>Granular Permission Rules</strong>: New pattern-based permission system for file operations</li><li>Support for glob patterns to allow/deny file access</li><li>Separate rules for read vs edit operations</li><li>Pattern prefixes:</li><li><code>//</code> - Relative to root directory</li><li><code>~/</code> - Relative to user's home directory</li><li><code>/</code> - Relative to configured scope (project, user settings, etc.)</li></ul>
+<div class="blabel">Example usage</div>
+<pre><code># Deny all access to sensitive files
+claude code --deny-read &quot;//etc/**&quot; --deny-edit &quot;~/.ssh/**&quot;
+
+# Allow specific directories
+claude code --allow-read &quot;/src/**&quot; --allow-edit &quot;/docs/*.md&quot;</code></pre>
+    </article>
+    <article class="card" id="ignore-patterns-integration">
+      <div class="card-top">
+        <h3>Ignore Patterns Integration <a class="anchor" href="#ignore-patterns-integration">#</a></h3>
+      </div>
+      <ul><li>File ignore patterns from project settings now properly integrated with the permission system</li><li>Automatic merging of ignore patterns with permission rules</li></ul>
+    </article>
+    <article class="card" id="database-repair-mechanism">
+      <div class="card-top">
+        <h3>Database Repair Mechanism <a class="anchor" href="#database-repair-mechanism">#</a></h3>
+      </div>
+      <ul><li><strong>Automatic SQLite Recovery</strong>: If the conversation database fails to open, Claude Code now:</li></ul>
+<ol><li>Detects the corruption</li><li>Automatically rebuilds the better-sqlite3 native module</li><li>Retries the connection</li><li>Provides user feedback during the repair process</li></ol>
+    </article>
+    <article class="card" id="oauth-scope-changes">
+      <div class="card-top">
+        <h3>OAuth Scope Changes <a class="anchor" href="#oauth-scope-changes">#</a></h3>
+      </div>
+      <ul><li><strong>Always Request Full Permissions</strong>: The <code>user:inference</code> scope is now always included in OAuth requests, regardless of environment</li><li>Simplified authentication flow with consistent permission requests</li></ul>
+    </article>
+    <article class="card" id="stream-handling">
+      <div class="card-top">
+        <h3>Stream Handling <a class="anchor" href="#stream-handling">#</a></h3>
+      </div>
+      <ul><li>Fixed missing stream import that could cause issues with certain operations</li><li>Added proper PassThrough stream support for improved data handling</li></ul>
+    </article>
+    <article class="card" id="permission-context-management">
+      <div class="card-top">
+        <h3>Permission Context Management <a class="anchor" href="#permission-context-management">#</a></h3>
+      </div>
+      <ul><li>Migrated from React state-based permission context to Recoil atoms for better state management</li><li>Ensures permission context persists correctly across component updates</li></ul>
+    </article>
+    <article class="card" id="file-system-operations">
+      <div class="card-top">
+        <h3>File System Operations <a class="anchor" href="#file-system-operations">#</a></h3>
+      </div>
+      <ul><li>Improved path resolution for permission rules</li><li>Better handling of relative vs absolute paths in permission checks</li></ul>
+    </article>
+    <article class="card" id="domain-whitelist-for-webfetch">
+      <div class="card-top">
+        <h3>Domain Whitelist for WebFetch <a class="anchor" href="#domain-whitelist-for-webfetch">#</a></h3>
+      </div>
+      <ul><li>Removed the hardcoded whitelist of allowed domains for web fetching</li><li>WebFetch tool no longer restricts domains to a predefined list</li><li>Security note removed about domain restrictions</li></ul>
+    </article>
+    <article class="card" id="deprecated-functions">
+      <div class="card-top">
+        <h3>Deprecated Functions <a class="anchor" href="#deprecated-functions">#</a></h3>
+      </div>
+      <ul><li>Removed several internal utility functions related to the old permission system</li><li>Cleaned up unused domain validation logic</li></ul>
+    </article>
+    <article class="card" id="cache-management">
+      <div class="card-top">
+        <h3>Cache Management <a class="anchor" href="#cache-management">#</a></h3>
+      </div>
+      <ul><li>Added comprehensive cache clearing function (<code>k10</code>) that clears all tool caches</li><li>Improves memory management during long sessions</li></ul>
+    </article>
+    <article class="card" id="model-cost-tracking">
+      <div class="card-top">
+        <h3>Model Cost Tracking <a class="anchor" href="#model-cost-tracking">#</a></h3>
+      </div>
+      <ul><li>Enhanced cost calculation to apply partner discounts dynamically</li><li>Added telemetry for discount application</li></ul>
+    </article>
+    <article class="card" id="ui-components">
+      <div class="card-top">
+        <h3>UI Components <a class="anchor" href="#ui-components">#</a></h3>
+      </div>
+      <ul><li>New React components for data sharing notifications</li><li>Improved styling and user messaging for partner program features</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

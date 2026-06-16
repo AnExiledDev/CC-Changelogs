@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.117 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.117."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.117</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.117</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.116 → v0.2.117</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">8</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.117 Changelog</p>
+    </article>
+    <article class="card" id="background-task-management">
+      <div class="card-top">
+        <h3>Background Task Management 🚀 <a class="anchor" href="#background-task-management">#</a></h3>
+      </div>
+      <p>A new <code>tasks</code> command has been added to list and manage background tasks. This allows you to:</p>
+<ul><li>View all running background tasks</li><li>Monitor task status (running, completed, or failed)</li><li>View stdout/stderr output from tasks in real-time</li><li>Kill running tasks</li></ul>
+<p><strong>Usage:</strong></p>
+<pre><code>claude tasks</code></pre>
+<p>The interface shows:</p>
+<ul><li>Task ID, status, runtime, and command</li><li>Live stdout output (last 5 lines)</li><li>Live stderr output (last line)</li><li>Exit codes for completed tasks</li></ul>
+    </article>
+    <article class="card" id="long-running-command-handling">
+      <div class="card-top">
+        <h3>Long-Running Command Handling ⏱️ <a class="anchor" href="#long-running-command-handling">#</a></h3>
+      </div>
+      <p>When executing commands that take a long time, Claude Code now presents three options:</p>
+<ol><li><strong>Continue waiting</strong> - Keep waiting for the command to complete</li><li><strong>Run in the background</strong> - Move the command to a background task</li><li><strong>Kill command</strong> - Terminate the command</li></ol>
+<p>This prevents the CLI from being blocked by long-running processes.</p>
+    </article>
+    <article class="card" id="enhanced-print-mode-print">
+      <div class="card-top">
+        <h3>Enhanced Print Mode (<code>--print</code>) 📄 <a class="anchor" href="#enhanced-print-mode-print">#</a></h3>
+      </div>
+      <p>The print mode has been significantly improved with new options:</p>
+<p><strong>Session Management:</strong></p>
+<ul><li><code>--continue</code> - Continue the most recent conversation</li><li><code>--resume &lt;session-id&gt;</code> - Resume a specific conversation by UUID</li></ul>
+<p><strong>System Prompts:</strong></p>
+<ul><li><code>--system-prompt &lt;prompt&gt;</code> - Replace the default system prompt</li><li><code>--append-system-prompt &lt;prompt&gt;</code> - Append to the existing system prompt</li></ul>
+<p><strong>Examples:</strong></p>
+<pre><code># Continue last conversation
+claude --print --continue &quot;What were we discussing?&quot;
+
+# Resume specific session
+claude --print --resume 550e8400-e29b-41d4-a716-446655440000 &quot;Let&#x27;s continue&quot;
+
+# Custom system prompt
+claude --print --system-prompt &quot;You are a Python expert&quot; &quot;Write a sorting algorithm&quot;</code></pre>
+    </article>
+    <article class="card" id="output-truncation">
+      <div class="card-top">
+        <h3>Output Truncation <a class="anchor" href="#output-truncation">#</a></h3>
+      </div>
+      <p>Large command outputs are now intelligently truncated to prevent overwhelming the display:</p>
+<ul><li>Shows the first and last portions of output</li><li>Displays line count for truncated sections</li><li>Format: <code>[X lines truncated]</code> in the middle</li></ul>
+    </article>
+    <article class="card" id="stream-processing">
+      <div class="card-top">
+        <h3>Stream Processing <a class="anchor" href="#stream-processing">#</a></h3>
+      </div>
+      <p>Added <code>PassThrough</code> stream support for better handling of streaming data in background tasks.</p>
+    </article>
+    <article class="card" id="import-path-corrections">
+      <div class="card-top">
+        <h3>Import Path Corrections <a class="anchor" href="#import-path-corrections">#</a></h3>
+      </div>
+      <ul><li>Fixed Node.js process import to use named imports (<code>import { cwd } from "node:process"</code>)</li><li>Properly scoped crypto imports for UUID generation</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>Removed obsolete functions (<code>A50</code>, <code>FZ6</code>) related to model override handling</li><li>Consolidated message formatting utilities (<code>MR5</code>, <code>$Z6</code>)</li><li>Improved task output management with dedicated truncation logic</li></ul>
+    </article>
+    <article class="card" id="performance">
+      <div class="card-top">
+        <h3>Performance <a class="anchor" href="#performance">#</a></h3>
+      </div>
+      <ul><li>More efficient handling of long-running processes</li><li>Better memory management for large command outputs</li><li>Streamlined background task monitoring</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

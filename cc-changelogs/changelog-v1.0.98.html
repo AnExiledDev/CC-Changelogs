@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.98 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.98."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.98</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.98</span></h1>
+<p class="sub">This release focuses on architectural improvements to session persistence, removes the LS tool in favor of existing alternatives, and enhances UI component organization with better todo list management.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.96 → v1.0.98</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enhanced-session-persistence">
+      <div class="card-top">
+        <h3>Enhanced Session Persistence <a class="anchor" href="#enhanced-session-persistence">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Complete rewrite of session persistence system to support remote server synchronization <strong>How to use:</strong></p>
+<pre><code># Session data now automatically syncs with remote servers when available
+# Uses CLAUDE_CODE_WEBSOCKET_AUTH_FILE_DESCRIPTOR for authentication
+export CLAUDE_CODE_WEBSOCKET_AUTH_FILE_DESCRIPTOR=3
+claude --session-id my-session</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Sessions can now be persisted to and restored from remote servers</li><li>Cross-platform file descriptor support (Darwin/FreeBSD use <code>/dev/fd/</code>, Linux uses <code>/proc/self/fd/</code>)</li><li>Automatic conflict detection and resolution for concurrent session modifications</li><li>Improved error handling with detailed logging for session operations</li><li><strong>Evidence</strong>: <code>VVA() at line 352480</code>, <code>KVA() at line 352534</code>, <code>$VA() at line 352860</code>, <code>MI9() at line 352437</code></li></ul>
+    </article>
+    <article class="card" id="todo-list-ui-improvements">
+      <div class="card-top">
+        <h3>Todo List UI Improvements <a class="anchor" href="#todo-list-ui-improvements">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Dedicated todo rendering component with expanded view capability <strong>How to use:</strong></p>
+<pre><code># Todo lists now have enhanced visual presentation
+# Use Ctrl+T to toggle expanded todo view (when available)
+claude
+/todos &quot;Implement feature X&quot; &quot;Test feature Y&quot;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>New dedicated <code>Pb1</code> component for consistent todo list rendering</li><li>Enhanced checkbox visualization with proper status indicators</li><li>Expandable todo view for better task management</li><li>Improved integration across different UI contexts</li><li><strong>Evidence</strong>: <code>Pb1() at line 399903</code>, expanded todos feature at <code>line 400288</code></li></ul>
+    </article>
+    <article class="card" id="slashcommand-tool-framework-experimental">
+      <div class="card-top">
+        <h3>SlashCommand Tool Framework (Experimental) <a class="anchor" href="#slashcommand-tool-framework-experimental">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New tool that enables executing slash commands from within the conversation context <strong>How to use:</strong></p>
+<pre><code># Note: Currently disabled by default - experimental feature
+# When enabled, allows tools to execute slash commands</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Complete command parsing infrastructure with <code>PS()</code> function</li><li>Permission checking system for cross-execution security</li><li>Designed for future tool-to-command bridging capabilities</li><li>Currently disabled (<code>isEnabled() returns false</code>) pending further development</li><li><strong>Evidence</strong>: <code>ZA1 tool definition at line 414675</code>, <code>VuB() at line 414597</code>, <code>AL5() at line 414466</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-command-execution">
+      <div class="card-top">
+        <h3>Enhanced Command Execution <a class="anchor" href="#enhanced-command-execution">#</a></h3>
+      </div>
+      <p><strong>What:</strong> All slash command executions now include autocheckpoint support <strong>Details:</strong></p>
+<ul><li>Commands automatically create checkpoints when executed</li><li>Improved session state management across command boundaries</li><li>Better integration with conversation flow tracking</li><li><strong>Evidence</strong>: <code>AL5() at line 414466</code> with autocheckpoint parameter</li></ul>
+    </article>
+    <article class="card" id="cross-platform-file-descriptor-support">
+      <div class="card-top">
+        <h3>Cross-Platform File Descriptor Support <a class="anchor" href="#cross-platform-file-descriptor-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> WebSocket authentication now works correctly on Darwin, FreeBSD, and Linux <strong>Details:</strong></p>
+<ul><li>Darwin/FreeBSD systems use <code>/dev/fd/</code> path format</li><li>Linux systems continue using <code>/proc/self/fd/</code> path format</li><li>Improved error messages for invalid file descriptor configurations</li><li><strong>Evidence</strong>: <code>MI9() at line 352437</code> with platform detection</li></ul>
+    </article>
+    <article class="card" id="atomic-file-operations">
+      <div class="card-top">
+        <h3>Atomic File Operations <a class="anchor" href="#atomic-file-operations">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New secure file copying utility for configuration management <strong>Details:</strong></p>
+<ul><li>Temporary file creation with process ID and timestamp</li><li>Atomic rename operations to prevent corruption</li><li>Proper cleanup on failure scenarios</li><li><strong>Evidence</strong>: <code>qvB() at line 407217</code></li></ul>
+    </article>
+    <article class="card" id="ls-tool-removal">
+      <div class="card-top">
+        <h3>LS Tool Removal <a class="anchor" href="#ls-tool-removal">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The LS (directory listing) tool has been completely removed <strong>Migration:</strong></p>
+<pre><code># Old way (no longer available):
+# LS tool for directory listing
+
+# New alternatives:
+# Use Bash tool for directory operations
+Bash(&quot;ls -la /path/to/directory&quot;)
+Bash(&quot;find /path -name &#x27;*.js&#x27;&quot;)
+
+# Use Glob tool for pattern matching
+Glob(&quot;**/*.py&quot;)
+
+# Use Read tool for individual files when paths are known
+Read(&quot;/path/to/specific/file.txt&quot;)</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Removed to streamline tool set and reduce redundancy</li><li>Bash tool provides more flexible directory listing capabilities</li><li>Glob tool offers superior pattern-matching for file discovery</li><li><strong>Evidence</strong>: Removed <code>nU tool definition at line 391316</code>, <code>eb6() at line 391425</code>, related functions</li></ul>
+    </article>
+    <article class="card" id="removed-internal-functions">
+      <div class="card-top">
+        <h3>Removed Internal Functions <a class="anchor" href="#removed-internal-functions">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Various internal functions removed as part of codebase cleanup <strong>Details:</strong></p>
+<ul><li>Removed unused checkpointing UI components</li><li>Cleaned up obsolete session management utilities</li><li>Eliminated redundant path processing functions</li><li><strong>Evidence</strong>: Removed <code>TPB() at line 395476</code>, <code>RY1() at line 395486</code>, <code>gmB() at line 420941</code></li></ul>
+    </article>
+    <article class="card" id="directory-listing-workflow">
+      <div class="card-top">
+        <h3>Directory Listing Workflow <a class="anchor" href="#directory-listing-workflow">#</a></h3>
+      </div>
+      <p><strong>Impact:</strong> Users who relied on the LS tool for directory exploration must adapt their workflow <strong>Solution:</strong> Use Bash tool with standard shell commands (<code>ls</code>, <code>find</code>, <code>tree</code>) or Glob tool for pattern matching</p>
+    </article>
+    <article class="card" id="session-persistence-format">
+      <div class="card-top">
+        <h3>Session Persistence Format <a class="anchor" href="#session-persistence-format">#</a></h3>
+      </div>
+      <p><strong>Impact:</strong> Session data format may have changed due to remote persistence capabilities <strong>Solution:</strong> Existing local sessions should migrate automatically, but backup important session data before upgrading</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.46 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.46."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.46</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.46</span></h1>
+<p class="sub">Version 2.0.46 introduces <strong>effort level configuration</strong> - a new feature that allows users to control Claude's reasoning intensity through CLI flags, environment variables, or settings files. This release also includes internal improvements to image compression reliability and code modernization.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.45 → v2.0.46</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="effort-level-configuration">
+      <div class="card-top">
+        <h3>Effort Level Configuration <a class="anchor" href="#effort-level-configuration">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Control Claude's reasoning effort/intensity for tasks through multiple configuration methods</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Via environment variable
+export CLAUDE_CODE_EFFORT_LEVEL=high
+claude
+
+# Supported values: &quot;low&quot;, &quot;medium&quot;, &quot;high&quot;, or numeric values
+export CLAUDE_CODE_EFFORT_LEVEL=75
+claude
+
+# Disable with &quot;unset&quot;
+export CLAUDE_CODE_EFFORT_LEVEL=unset
+claude</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Configuration priority: CLI flags (highest) → environment variable → settings file (lowest)</li><li>Set via <code>CLAUDE_CODE_EFFORT_LEVEL</code> environment variable</li><li>Configure in settings file with <code>effortLevel</code> field</li><li>Supports string presets: "low", "medium", "high"</li><li>Supports numeric values (integers)</li><li>Use "unset" to explicitly disable effort configuration</li><li>Integrates with Claude API's <code>output_config.effort</code> parameter using beta flag <code>effort-2025-11-24</code></li><li><strong>Evidence</strong>: New function <code>a10() at line 341081</code> retrieves configuration from multiple sources; function <code>nR3() at line 491217</code> sets API parameters; replaces empty stub <code>uR3() at line 491090</code> from v2.0.45</li></ul>
+    </article>
+    <article class="card" id="enhanced-image-compression-format-handling">
+      <div class="card-top">
+        <h3>Enhanced Image Compression Format Handling <a class="anchor" href="#enhanced-image-compression-format-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Image compression now explicitly passes the original file's media type to prevent format detection failures</p>
+<p><strong>Details:</strong></p>
+<ul><li>Caller (<code>Fw5()</code> at line 315499) now extracts file extension and constructs media type string before compression</li><li>Function <code>kiQ() at line 156042</code> (renamed from <code>TiQ</code>) accepts new media type parameter and forwards to compression handler</li><li>Prevents incorrect format handling when Sharp's automatic detection fails (e.g., PNG images incorrectly treated as JPEG)</li><li>No user-facing API changes - internal reliability improvement</li><li><strong>Evidence</strong>: Function signature changed from <code>TiQ(A, Q) at line 156040</code> in v2.0.45 to <code>kiQ(A, Q, B) at line 156042</code> in v2.0.46</li></ul>
+    </article>
+    <article class="card" id="date-format-token-validation">
+      <div class="card-top">
+        <h3>Date Format Token Validation <a class="anchor" href="#date-format-token-validation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Implemented validation for deprecated uppercase date format tokens</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>vB9() at line 458852</code> now validates year tokens (Y, YY, YYYY)</li><li>Warns users when using deprecated uppercase tokens that should be lowercase</li><li>Prevents confusion between ISO week-numbering years (Y) and calendar years (y)</li><li>Previously stubbed in v2.0.45 (<code>vB9 = () =&gt; {} at line 458887</code>), now fully implemented</li><li>Part of date-fns Unicode token validation system</li><li><strong>Evidence</strong>: Implementation added at <code>vB9() at line 458852</code>, used in format validation at line 458914</li></ul>
+    </article>
+    <article class="card" id="import-statement-modernization">
+      <div class="card-top">
+        <h3>Import Statement Modernization <a class="anchor" href="#import-statement-modernization">#</a></h3>
+      </div>
+      <ul><li>Migrated from default imports to named imports in multiple modules for better tree-shaking</li><li>Examples: <code>import { Transform as Xw6 } from "node:stream"</code> at line 225107, <code>import { spawn as WH5, spawnSync as XH5 } from "child_process"</code> at line 303217</li><li>No new module dependencies added - all imports from existing Node.js standard library</li><li>Both import styles coexist during transition period</li></ul>
+    </article>
+    <article class="card" id="code-refactoring">
+      <div class="card-top">
+        <h3>Code Refactoring <a class="anchor" href="#code-refactoring">#</a></h3>
+      </div>
+      <ul><li>Renamed function <code>HG1()</code> to <code>EG1() at line 494207</code> for global hooks configuration getter</li><li>Various internal identifier changes due to minification/obfuscation updates</li><li>No functional behavior changes from refactoring</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

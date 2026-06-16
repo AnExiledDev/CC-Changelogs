@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.109 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.109."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.109</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.109</span></h1>
+<p class="sub">Version 1.0.109 introduces asynchronous hook support, enabling long-running hooks to execute in the background without blocking conversation flow, along with improved API error tracking for better debugging.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.108 → v1.0.109</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="asynchronous-hook-execution">
+      <div class="card-top">
+        <h3>Asynchronous Hook Execution <a class="anchor" href="#asynchronous-hook-execution">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Hooks can now run asynchronously in the background, allowing long-running operations without blocking the main conversation <strong>How to use:</strong></p>
+<pre><code>{
+  &quot;async&quot;: true,
+  &quot;asyncTimeout&quot;: 30000
+}</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Background process management for async hooks</li><li>Configurable timeout settings (default 15 seconds)</li><li>Automatic response collection and delivery</li><li>Process cleanup when hooks complete or timeout</li><li><strong>Evidence</strong>: <code>D$A() at line 362558</code>, <code>s10() at line 362783</code>, <code>U$A() at line 362581</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-api-error-tracking">
+      <div class="card-top">
+        <h3>Enhanced API Error Tracking <a class="anchor" href="#enhanced-api-error-tracking">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved error reporting with gateway and infrastructure tracking for API failures <strong>How to use:</strong> Automatic - enhanced error information appears in debug logs and telemetry <strong>Details:</strong></p>
+<ul><li>Extracts gateway information from API response headers</li><li>Better visibility into which infrastructure components handled requests</li><li>Enhanced debugging capabilities for API failures</li><li><strong>Evidence</strong>: <code>JE0() header extraction function</code>, <code>VE0() at line 393771</code> (renamed from <code>XE0</code>)</li></ul>
+    </article>
+    <article class="card" id="hook-registry-management">
+      <div class="card-top">
+        <h3>Hook Registry Management <a class="anchor" href="#hook-registry-management">#</a></h3>
+      </div>
+      <p>Enhanced hook execution with background process tracking, timeout management, and response collection system for better reliability and performance.</p>
+    </article>
+    <article class="card" id="rewind-feature-ui">
+      <div class="card-top">
+        <h3>Rewind Feature UI <a class="anchor" href="#rewind-feature-ui">#</a></h3>
+      </div>
+      <p>Improved checkpoint and rewind interface with better display of code changes, timestamps, and checkpoint status for enhanced user feedback.</p>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <p>Function renaming and reorganization (<code>XE0</code> → <code>VE0</code>) as part of ongoing code maintenance and improved structure.</p>
+    </article>
+    <article class="card" id="stream-import-cleanup">
+      <div class="card-top">
+        <h3>Stream Import Cleanup <a class="anchor" href="#stream-import-cleanup">#</a></h3>
+      </div>
+      <p>Removed redundant stream import (<code>o7Q</code>) that was no longer needed, reducing bundle size and potential conflicts.</p>
+    </article>
+    <article class="card" id="dead-code-removal">
+      <div class="card-top">
+        <h3>Dead Code Removal <a class="anchor" href="#dead-code-removal">#</a></h3>
+      </div>
+      <p>Removed unused functions (<code>eP5()</code>, <code>e$0()</code>) that served no purpose, improving code cleanliness and maintainability.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

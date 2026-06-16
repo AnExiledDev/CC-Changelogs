@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.70 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.70."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.70</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.70</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.69 → v0.2.70</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Enhanced Conversation Management</h4>
+<ul><li><strong>Conversation ID Tracking</strong>: A new conversation ID system has been introduced that automatically generates and tracks unique identifiers for each conversation branch. This enables better organization of chat history and conversation forks.</li><li>Example: When you start a new conversation or fork an existing one, Claude Code now assigns it a unique ID like <code>a3b2c1d4e5f6</code> that persists throughout the session.</li></ul>
+<h4>Improved Command Permission System</h4>
+<ul><li><strong>Deny Rules for Commands</strong>: The Bash tool now supports explicit deny rules in addition to allow rules. This provides more granular control over which commands Claude can execute.</li><li>You can now specify both allowed and denied command patterns</li><li>Deny rules take precedence over allow rules for enhanced security</li><li>Example: You could allow all <code>git</code> commands except <code>git push</code> by setting appropriate rules</li></ul>
+    </article>
+    <article class="card" id="user-interface-improvements">
+      <div class="card-top">
+        <h3>User Interface Improvements <a class="anchor" href="#user-interface-improvements">#</a></h3>
+      </div>
+      <h4>Settings Display Enhancement</h4>
+<ul><li>The settings display function has been renamed and improved for better clarity. Settings descriptions now show more contextual information about their scope and effect.</li></ul>
+    </article>
+    <article class="card" id="performance-optimizations">
+      <div class="card-top">
+        <h3>Performance Optimizations <a class="anchor" href="#performance-optimizations">#</a></h3>
+      </div>
+      <h4>Reduced Notification Timeout</h4>
+<ul><li>The timeout for "Claude is waiting for your input" notifications has been reduced from 5 minutes to 60 seconds (1 minute), providing more timely feedback when Claude is idle and waiting for user input.</li></ul>
+    </article>
+    <article class="card" id="architecture-changes">
+      <div class="card-top">
+        <h3>Architecture Changes <a class="anchor" href="#architecture-changes">#</a></h3>
+      </div>
+      <h4>Message History Management</h4>
+<ul><li>New <code>setMessageHistory</code> functionality has been added alongside the existing <code>setMessages</code>, allowing for better separation between current conversation state and historical message tracking.</li></ul>
+<h4>Streamlined Dependencies</h4>
+<ul><li>Removed several unused functions and imports related to message file naming and fork number management</li><li>Consolidated stream handling by switching to a single PassThrough stream import</li><li>Removed the hardcoded list of restricted commands from the Bash tool description</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed parameter ordering issues in the escape key handler</li><li>Improved command matching logic to handle both exact matches and prefix-based patterns more reliably</li><li>Enhanced error handling for conversation branching scenarios with better validation of message order</li></ul>
+    </article>
+    <article class="card" id="internal-improvements">
+      <div class="card-top">
+        <h3>Internal Improvements <a class="anchor" href="#internal-improvements">#</a></h3>
+      </div>
+      <ul><li>Simplified the permission checking flow for the Bash tool</li><li>Reduced code duplication in permission rule handling</li><li>Better separation of concerns between allow and deny rule processing</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.85 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.85."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.85</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.85</span></h1>
+<p class="sub">This release introduces a billing and quota system for ultrareviews, adds an upstream proxy for remote sessions, significantly hardens the Bash tool's security validation (especially on Windows/PowerShell), and replaces native Rust/WASM modules with pure JavaScript implementations for file indexing and syntax highlighting. Hooks gain a new <code>if</code> field for conditional filtering, and enterprise administrators can now block plugins by organization policy.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.84 → v2.1.85</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">17</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">17 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="ultrareview-billing-and-quota-management">
+      <div class="card-top">
+        <h3>Ultrareview Billing and Quota Management <a class="anchor" href="#ultrareview-billing-and-quota-management">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Ultrareviews now operate on a freemium model — users get a limited number of free reviews, after which reviews bill as Extra Usage.</p>
+<div class="blabel">Details</div>
+<ul><li>A new <code>/v1/ultrareview/quota</code> API endpoint tracks remaining free reviews</li><li>Each free ultrareview displays its count: "This is free ultrareview X of Y"</li><li>Once free reviews are exhausted, users are prompted with a billing dialog titled "Ultrareview billing"</li><li>Users can choose "Proceed with Extra Usage billing" to continue</li><li>A minimum balance of $10 is required: "Balance too low to launch ultrareview ($X.XX available, $10 minimum)"</li><li>Users without Extra Usage enabled see: "Free ultrareviews used. Enable Extra Usage at https://claude.ai/settings/billing to continue."</li><li>Review time estimates updated from ~5–15 min to ~10–20 min</li></ul>
+<div class="blabel">Evidence</div>
+<p>Ultrareview billing dialog (search for <code>"Ultrareview billing"</code>) and quota API (search for <code>"/v1/ultrareview/quota"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-ultrareview-workflow">
+      <div class="card-top">
+        <h3>Enhanced Ultrareview Workflow <a class="anchor" href="#enhanced-ultrareview-workflow">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Ultrareviews now offer web-based review options, progress tracking, and better validation before launch.</p>
+<div class="blabel">Details</div>
+<ul><li>New option: "Review in Claude Code on the web" for launching reviews in the browser</li><li>New option: "Review the plan in Claude Code on the web" for plan reviews</li><li>Progress tracking link displayed after launch: "Track progress: {URL}"</li><li>"Answer in browser" display for browser-based responses</li><li>Pre-launch validation: "No changes against the {branch} fork point. Make some commits or stage files first."</li><li>Improved large repo handling: "Repo is too large. Push a PR and use <code>/review &lt;PR#&gt;</code> instead."</li><li>Better error for missing merge-base: "Could not find merge-base with {branch}"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Web review option (search for <code>"Review in Claude Code on the web"</code>), progress tracking (search for <code>"Track progress"</code>)</p>
+    </article>
+    <article class="card" id="hook-conditional-filtering-via-if-field">
+      <div class="card-top">
+        <h3>Hook Conditional Filtering via <code>if</code> Field <a class="anchor" href="#hook-conditional-filtering-via-if-field">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Hooks now support an <code>if</code> field that uses permission rule syntax to filter when the hook runs, avoiding unnecessary hook execution for non-matching commands.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;hooks&quot;: {
+    &quot;PreToolUse&quot;: [{
+      &quot;if&quot;: &quot;Bash(git *)&quot;,
+      &quot;command&quot;: &quot;my-git-hook.sh&quot;
+    }]
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The <code>if</code> field accepts permission rule syntax (e.g., <code>"Bash(git *)"</code>)</li><li>Hooks only fire when the tool call matches the pattern</li><li>Non-matching tool calls skip the hook entirely: "Skipping hook due to if condition not matching"</li><li>If the <code>if</code> condition cannot be evaluated for non-tool events, a diagnostic is logged</li><li>When a hook's condition is satisfied, interaction results are tracked (including deny rule overrides and ask rule prompts)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Hook schema description (search for <code>"Permission rule syntax to filter when this hook runs"</code>)</p>
+    </article>
+    <article class="card" id="enterprise-plugin-policy-enforcement">
+      <div class="card-top">
+        <h3>Enterprise Plugin Policy Enforcement <a class="anchor" href="#enterprise-plugin-policy-enforcement">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Organization administrators can now block specific plugins via enterprise policy, preventing installation and enablement.</p>
+<div class="blabel">Details</div>
+<ul><li>Plugins can be blocked directly: "Plugin {name} is blocked by your organization's policy and cannot be installed"</li><li>Plugin dependencies can be blocked: "Cannot install {name}: dependency {dep} is blocked by your organization's policy"</li><li>Enabled plugins can be blocked: "Plugin {name} is blocked by your organization's policy and cannot be enabled"</li><li>MCP server blocking now shows explicit warnings: "Warning: MCP server(s) blocked by enterprise policy: {names}"</li><li>Claude.ai MCP servers also show warnings when blocked: "Warning: claude.ai MCP server(s) blocked by enterprise policy: {names}"</li><li>Terminology standardized from "managed policy" to "enterprise policy"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin blocking messages (search for <code>"blocked by your organization's policy"</code>)</p>
+    </article>
+    <article class="card" id="upstream-proxy-for-remote-sessions">
+      <div class="card-top">
+        <h3>Upstream Proxy for Remote Sessions <a class="anchor" href="#upstream-proxy-for-remote-sessions">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Remote Claude Code sessions can now route traffic through an upstream WebSocket proxy with automatic CA certificate management.</p>
+<div class="blabel">Details</div>
+<ul><li>Activated when <code>CCR_UPSTREAM_PROXY_ENABLED</code> and <code>CLAUDE_CODE_REMOTE</code> environment variables are set</li><li>Reads session tokens from <code>/run/ccr/session_token</code></li><li>Connects to the proxy via <code>/v1/code/upstreamproxy/ws</code> WebSocket endpoint</li><li>Fetches CA certificates from <code>/v1/code/upstreamproxy/ca-cert</code></li><li>Includes <code>Proxy-Authorization</code> header support</li><li>Relay listener starts on <code>127.0.0.1</code> for local proxying</li><li>Comprehensive error handling and logging with <code>[upstreamproxy]</code> prefix</li></ul>
+<div class="blabel">Evidence</div>
+<p>Upstream proxy initialization (search for <code>"[upstreamproxy] enabled on 127.0.0.1"</code>)</p>
+    </article>
+    <article class="card" id="bash-tool-security-hardening">
+      <div class="card-top">
+        <h3>Bash Tool Security Hardening <a class="anchor" href="#bash-tool-security-hardening">#</a></h3>
+      </div>
+      <p>Several new security checks have been added to the Bash tool's command validation, particularly for Windows/PowerShell:</p>
+<ul><li><strong>WMI process spawning detection</strong>: Commands that "can spawn arbitrary processes via WMI/CIM (Win32_Process Create)" are now flagged for manual approval</li><li><strong>Glob pattern symlink validation</strong>: "Glob patterns in paths cannot be statically validated — symlinks inside the glob expansion are not examined"</li><li><strong>Archive + git exploit prevention</strong>: "Compound command extracts an archive and runs git. Archive contents may plant bare-repository indicators (HEAD, hooks/, refs/) that git then treats as the repository root"</li><li><strong>Filesystem link creation blocking</strong>: "Compound command creates a filesystem link (New-Item -ItemType SymbolicLink/Junction/HardLink) — cannot auto-allow because path validation cannot follow just-created links"</li><li><strong>New-PSDrive directory change detection</strong>: Added to the compound command directory-change check alongside Set-Location, Push-Location, and Pop-Location</li><li><strong>Command length validation</strong>: Input length limits now measured in bytes with explicit error message</li><li><strong>Windows archive tools</strong>: <code>bsdtar.exe</code> and <code>gunzip.exe</code> added to the allowed archive tool list</li></ul>
+<div class="blabel">Evidence</div>
+<p>WMI check (search for <code>"can spawn arbitrary processes via WMI/CIM"</code>), glob check (search for <code>"Glob patterns in paths cannot be statically validated"</code>)</p>
+    </article>
+    <article class="card" id="powershell-parser-timeout-handling">
+      <div class="card-top">
+        <h3>PowerShell Parser Timeout Handling <a class="anchor" href="#powershell-parser-timeout-handling">#</a></h3>
+      </div>
+      <p>The PowerShell parser now has a dedicated <code>PwshTimeout</code> error class. When <code>pwsh</code> times out, the error message reports: "pwsh timed out after {N}ms (2 attempts)", indicating that retries are now built into the timeout logic.</p>
+<div class="blabel">Evidence</div>
+<p>Timeout error (search for <code>"PwshTimeout"</code>)</p>
+    </article>
+    <article class="card" id="file-index-migrated-to-pure-javascript">
+      <div class="card-top">
+        <h3>File Index Migrated to Pure JavaScript <a class="anchor" href="#file-index-migrated-to-pure-javascript">#</a></h3>
+      </div>
+      <p>The file indexing system has been completely rewritten from a synchronous native Rust module (<code>file-index.node</code>) to an asynchronous pure JavaScript implementation. The new <code>loadFromFileListAsync()</code> method returns <code>{ queryable: Promise, done: Promise }</code>, allowing the UI to remain responsive during index rebuilds. Log messages now reference generic "index" instead of "Rust index".</p>
+<div class="blabel">Evidence</div>
+<p>Async file index (search for <code>"[FileIndex] rebuilt index with"</code>)</p>
+    </article>
+    <article class="card" id="native-module-and-wasm-removal">
+      <div class="card-top">
+        <h3>Native Module and WASM Removal <a class="anchor" href="#native-module-and-wasm-removal">#</a></h3>
+      </div>
+      <p>Multiple native and WASM dependencies have been removed in favor of pure JavaScript implementations:</p>
+<ul><li><code>color-diff.node</code> native module removed — syntax highlighting diff now uses JS-based approach</li><li><code>resvg.wasm</code> SVG rendering module removed entirely</li><li><code>index_bg.wasm</code> removed</li><li><code>initWasm()</code> initialization infrastructure removed</li><li>Monokai Extended theme added as a new syntax highlighting option</li></ul>
+<div class="blabel">Evidence</div>
+<p>WASM removal (search for <code>"resvg"</code> in v2.1.84 — absent from v2.1.85)</p>
+    </article>
+    <article class="card" id="connection-resilience-for-stale-connections">
+      <div class="card-top">
+        <h3>Connection Resilience for Stale Connections <a class="anchor" href="#connection-resilience-for-stale-connections">#</a></h3>
+      </div>
+      <p>API request retries now detect stale connections (ECONNRESET/EPIPE) and automatically disable HTTP keep-alive for the retry attempt. This is controlled by the <code>tengu_disable_keepalive_on_econnreset</code> feature flag and prevents repeated failures on dead TCP connections.</p>
+<div class="blabel">Evidence</div>
+<p>Stale connection handling (search for <code>"Stale connection (ECONNRESET/EPIPE)"</code>)</p>
+    </article>
+    <article class="card" id="compaction-retry-mechanism">
+      <div class="card-top">
+        <h3>Compaction Retry Mechanism <a class="anchor" href="#compaction-retry-mechanism">#</a></h3>
+      </div>
+      <p>When conversation compaction fails (e.g., due to token limits), the system now retries with a truncated conversation prefixed with "[earlier conversation truncated for compaction retry]". This improves reliability of long conversations that need compaction.</p>
+<div class="blabel">Evidence</div>
+<p>Compaction retry (search for <code>"compaction retry"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-link-supplied-prompt-display">
+      <div class="card-top">
+        <h3>Enhanced Link-Supplied Prompt Display <a class="anchor" href="#enhanced-link-supplied-prompt-display">#</a></h3>
+      </div>
+      <p>When a link supplies a long prompt that exceeds the viewport height, users now see a character count and explicit scroll instruction: "The prompt below ({N} chars) was supplied by the link — scroll to review the entire prompt before pressing Enter."</p>
+<div class="blabel">Evidence</div>
+<p>Long prompt display (search for <code>"scroll to review the entire prompt"</code>)</p>
+    </article>
+    <article class="card" id="worktree-support-for-non-git-vcs">
+      <div class="card-top">
+        <h3>Worktree Support for Non-Git VCS <a class="anchor" href="#worktree-support-for-non-git-vcs">#</a></h3>
+      </div>
+      <p>The <code>--worktree</code> flag now provides a clear error and migration path for non-git repositories: "Configure a WorktreeCreate hook in settings.json to use --worktree with other VCS systems."</p>
+<div class="blabel">Evidence</div>
+<p>Worktree hook suggestion (search for <code>"Configure a WorktreeCreate hook"</code>)</p>
+    </article>
+    <article class="card" id="background-agent-resume-error-handling">
+      <div class="card-top">
+        <h3>Background Agent Resume Error Handling <a class="anchor" href="#background-agent-resume-error-handling">#</a></h3>
+      </div>
+      <p>Background agent resumption now has dedicated error handling and user notifications. When an agent fails to resume, a notification is shown with the error details rather than silently failing.</p>
+<div class="blabel">Evidence</div>
+<p>Resume error handling (search for <code>"resumeAgentBackground failed"</code>)</p>
+    </article>
+    <article class="card" id="ultraplan-phase-status-display">
+      <div class="card-top">
+        <h3>Ultraplan Phase Status Display <a class="anchor" href="#ultraplan-phase-status-display">#</a></h3>
+      </div>
+      <p>The ultraplan status indicator now shows distinct states: "ultraplan ready", "ultraplan needs your input", and a generic "ultraplan" state, giving users better visibility into where their review plan stands.</p>
+<div class="blabel">Evidence</div>
+<p>Ultraplan phases (search for <code>"ultraplan needs your input"</code>)</p>
+    </article>
+    <article class="card" id="background-post-turn-summaries">
+      <div class="card-top">
+        <h3>Background Post-Turn Summaries <a class="anchor" href="#background-post-turn-summaries">#</a></h3>
+      </div>
+      <p>A new internal summarization mechanism emits a background summary after each assistant turn, with a <code>summarizes_uuid</code> field pointing to the message being summarized. This infrastructure supports future conversation intelligence features.</p>
+<div class="blabel">Evidence</div>
+<p>Post-turn summary (search for <code>"Background post-turn summary"</code>)</p>
+    </article>
+    <article class="card" id="mcp-server-policy-documentation">
+      <div class="card-top">
+        <h3>MCP Server Policy Documentation <a class="anchor" href="#mcp-server-policy-documentation">#</a></h3>
+      </div>
+      <p>The <code>allowedMcpServers</code> setting description has been enhanced to clarify that it "applies to all scopes including enterprise servers from managed-mcp.json" and that "denylist takes precedence — if a server is on both lists, it is denied."</p>
+<div class="blabel">Evidence</div>
+<p>Enhanced description (search for <code>"Denylist takes precedence"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed the <code>ConstrainedLanguage</code> allowlist check to cover both <code>New-Object</code> .NET type instantiation and direct command invocations in PowerShell (search for <code>"ConstrainedLanguage allowlist"</code>)</li><li>Improved <code>ensureToolResultPairing</code> to refuse synthetic placeholder injection when repair would corrupt model context: "See inc-4977" (search for <code>"See inc-4977"</code>)</li><li>Enhanced step-up authentication tracking with "Marked step-up pending" logging for better debugging of auth state transitions (search for <code>"Marked step-up pending"</code>)</li><li>Removed the <code>tengu_grey_wool</code> feature flag and associated legacy model remapping logic controlled by <code>CLAUDE_CODE_DISABLE_LEGACY_MODEL_REMAP</code></li></ul>
+    </article>
+    <article class="card" id="built-in-mcp-server-toggle-gradual-rollout">
+      <div class="card-top">
+        <h3>Built-in MCP Server Toggle [Gradual Rollout] <a class="anchor" href="#built-in-mcp-server-toggle-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A mechanism to toggle built-in MCP servers on/off.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged behind <code>tengu_builtin_mcp_toggle</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Tracks the server name and whether it's being enabled or disabled</li><li>Related to managing a <code>disabledMcpServers</code> list in application state</li><li>When enabled, users will be able to selectively disable built-in MCP servers</li></ul>
+<div class="blabel">Evidence</div>
+<p>MCP toggle tracking (gated by <code>tengu_builtin_mcp_toggle</code>, search for <code>"disabledMcpServers"</code>)</p>
+    </article>
+    <article class="card" id="scheduled-task-execution-gradual-rollout">
+      <div class="card-top">
+        <h3>Scheduled Task Execution [Gradual Rollout] <a class="anchor" href="#scheduled-task-execution-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Infrastructure for running scheduled tasks with timestamp logging.</p>
+<div class="blabel">Status</div>
+<p>Present in code with "Running scheduled task" display.</p>
+<div class="blabel">Details</div>
+<ul><li>Displays "Running scheduled task ({timestamp})" when executing</li><li>Suggests a future capability for timed/recurring agent operations</li></ul>
+<div class="blabel">Evidence</div>
+<p>Scheduled task display (search for <code>"Running scheduled task"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

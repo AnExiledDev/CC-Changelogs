@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.118 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.118."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.118</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.118</span></h1>
+<p class="sub">Version 0.2.118 introduces minor refactoring changes focused on code organization and visual presentation. The main changes involve extracting attachment processing logic into a dedicated function and simplifying the thinking indicator UI.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.117 → v0.2.118</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.118 Changelog</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="code-organization-improvements">
+      <div class="card-top">
+        <h3>Code Organization Improvements <a class="anchor" href="#code-organization-improvements">#</a></h3>
+      </div>
+      <h4>New Attachment Processing Function</h4>
+<p>A new function <code>uo2</code> has been introduced to handle all attachment types in a more modular way:</p>
+<pre><code>function uo2(attachment) {
+  switch (attachment.type) {
+    case &quot;directory&quot;:
+      // Returns directory listing tool calls
+    case &quot;file&quot;:
+      // Handles both edited and new files
+    case &quot;selected_lines_in_ide&quot;:
+      // Handles IDE selection events
+    case &quot;opened_file_in_ide&quot;:
+      // Handles IDE file open events
+    case &quot;todo&quot;:
+      // Handles todo list updates
+    case &quot;nested_memory&quot;:
+      // Handles nested memory content
+    case &quot;queued_command&quot;:
+      // Handles queued commands
+    case &quot;ultramemory&quot;:
+      // Handles ultramemory content
+  }
+}</code></pre>
+<p>This refactoring improves code maintainability by:</p>
+<ul><li>Centralizing all attachment processing logic in one place</li><li>Making the main message processing function (<code>Jw</code>) cleaner and more focused</li><li>Returning arrays of messages, allowing for more flexible message composition</li></ul>
+    </article>
+    <article class="card" id="ui-improvements">
+      <div class="card-top">
+        <h3>UI Improvements <a class="anchor" href="#ui-improvements">#</a></h3>
+      </div>
+      <h4>Simplified Thinking Indicator</h4>
+<p>The thinking indicator display has been simplified:</p>
+<p><strong>Before:</strong></p>
+<ul><li>Used a bordered box with single-line border on the left</li><li>Complex padding and margin configuration</li><li>Multiple style properties for the border</li></ul>
+<p><strong>After:</strong></p>
+<ul><li>Simple indentation using <code>paddingLeft: 2</code></li><li>Cleaner, more minimal appearance</li><li>Removed the border styling entirely</li></ul>
+<p>This change makes the thinking indicator less visually intrusive while maintaining clarity.</p>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <h4>System Reminder Formatting</h4>
+<p>Added proper closing tags for system reminders in edited file notifications:</p>
+<pre><code>// Now properly closed with:
+$6({ content: &quot;&lt;/system-reminder&gt;&quot;, isMeta: !0 })</code></pre>
+    </article>
+    <article class="card" id="github-action-update">
+      <div class="card-top">
+        <h3>GitHub Action Update <a class="anchor" href="#github-action-update">#</a></h3>
+      </div>
+      <p>The GitHub Action reference has been updated from:</p>
+<ul><li><code>anthropics/claude-code-pr-action@beta</code></li></ul>
+<p>To:</p>
+<ul><li><code>anthropics/claude-code-action@beta</code></li></ul>
+<p>This suggests a rename or consolidation of the GitHub Action.</p>
+    </article>
+    <article class="card" id="technical-updates">
+      <div class="card-top">
+        <h3>Technical Updates <a class="anchor" href="#technical-updates">#</a></h3>
+      </div>
+      <h4>Import Changes</h4>
+<ul><li>Replaced generic process import with specific <code>cwd</code> import from <code>node:process</code></li><li>Added <code>PassThrough</code> stream import for potential streaming improvements</li><li>Added <code>randomUUID</code> import from <code>node:crypto</code> for unique identifier generation</li></ul>
+<p>These changes suggest preparation for improved streaming capabilities and better unique ID generation.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>User Impact</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="user-impact">
+      <p>For CLI users, these changes are mostly internal improvements that won't affect the command-line interface or interactive experience. However, you may notice:</p>
+<ol><li><strong>Cleaner thinking indicator</strong>: The "✻ Thinking..." indicator now appears with simple indentation rather than a bordered box</li><li><strong>Improved reliability</strong>: The refactored attachment handling should provide more consistent behavior when working with files, directories, and other attachments</li><li><strong>Better GitHub integration</strong>: If using Claude Code with GitHub Actions, you'll need to update to the new action name</li></ol>
+<p>No changes to command-line arguments, flags, or interactive commands were introduced in this version.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

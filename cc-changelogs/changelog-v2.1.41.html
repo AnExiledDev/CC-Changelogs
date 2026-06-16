@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.41 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.41."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.41</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.41</span></h1>
+<p class="sub">This release introduces comprehensive memory guidance (rolling out via feature flag), MCP session recovery with automatic tool retries, and improved device file handling in the Read tool. WebSocket connections now handle permanent close codes and include Bun-specific ping support. The admin eligibility API for extra usage requests was also added.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.40 → v2.1.41</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enhanced-memory-system-guidance-gradual-rollout">
+      <div class="card-top">
+        <h3>Enhanced Memory System Guidance [Gradual Rollout] <a class="anchor" href="#enhanced-memory-system-guidance-gradual-rollout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Detailed instructions for Claude on when and how to use the persistent memory directory.</p>
+<div class="blabel">Details</div>
+<p>The new guidance includes:</p>
+<ul><li><strong>When to access memories</strong>: When memories are relevant, user refers to prior work, or explicitly asks to recall</li><li><strong>When to save memories</strong>: Project context, user preferences, debugging insights, architectural decisions</li><li><strong>What to save</strong>: Patterns, conventions, user workflow preferences, recurring problem solutions</li><li><strong>What NOT to save</strong>: Ephemeral task details, duplicate information contradicting CLAUDE.md</li><li><strong>Memory hygiene</strong>: Remove outdated info, organize by topic not chronologically, use separate topic files</li></ul>
+<div class="blabel">Status</div>
+<p>Controlled by <code>tengu_mulberry_fog</code> feature flag (defaults to disabled)</p>
+<div class="blabel">Evidence</div>
+<p>Memory guidance system (search for <code>"You MUST access memories when"</code>)</p>
+    </article>
+    <article class="card" id="mcp-session-recovery-with-automatic-retry">
+      <div class="card-top">
+        <h3>MCP Session Recovery with Automatic Retry <a class="anchor" href="#mcp-session-recovery-with-automatic-retry">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When an MCP server session expires, Claude Code now automatically reconnects and retries the failed tool call.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects session expiration via 404 status with error code -32001 or connection close</li><li>Clears connection cache and triggers re-initialization</li><li>Automatically retries the tool call that failed due to session expiration</li><li>New <code>McpSessionExpiredError</code> error type for proper error handling</li></ul>
+<div class="blabel">Evidence</div>
+<p>MCP session recovery (search for <code>"MCP session expired during tool call"</code> and <code>"Retrying tool"</code>)</p>
+    </article>
+    <article class="card" id="device-file-read-blocking">
+      <div class="card-top">
+        <h3>Device File Read Blocking <a class="anchor" href="#device-file-read-blocking">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The Read tool now blocks attempts to read device files that would block or produce infinite output.</p>
+<div class="blabel">Details</div>
+<p>Blocked device files include:</p>
+<ul><li><code>/dev/zero</code>, <code>/dev/random</code>, <code>/dev/urandom</code>, <code>/dev/full</code></li><li><code>/dev/stdin</code>, <code>/dev/tty</code>, <code>/dev/console</code></li><li><code>/dev/stdout</code>, <code>/dev/stderr</code>, <code>/dev/fd/0</code>, <code>/dev/fd/1</code>, <code>/dev/fd/2</code></li></ul>
+<p>Error message: "Cannot read '[path]': this device file would block or produce infinite output."</p>
+<div class="blabel">Evidence</div>
+<p>Device file blocklist (search for <code>"device file would block"</code>)</p>
+    </article>
+    <article class="card" id="aws-authentication-permission-type">
+      <div class="card-top">
+        <h3>AWS Authentication Permission Type <a class="anchor" href="#aws-authentication-permission-type">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New permission category for AWS authentication operations displayed in the permission UI.</p>
+<div class="blabel">Evidence</div>
+<p>AWS Auth permission (search for <code>"AWS Authentication"</code>)</p>
+    </article>
+    <article class="card" id="stoptaskerror-for-task-termination">
+      <div class="card-top">
+        <h3>StopTaskError for Task Termination <a class="anchor" href="#stoptaskerror-for-task-termination">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New error type for cleanly stopping running tasks with proper error code handling.</p>
+<div class="blabel">Evidence</div>
+<p>Task stop error (search for <code>"StopTaskError"</code>)</p>
+    </article>
+    <article class="card" id="filetoolargeerror-for-read-tool">
+      <div class="card-top">
+        <h3>FileTooLargeError for Read Tool <a class="anchor" href="#filetoolargeerror-for-read-tool">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New error type thrown when attempting to read files exceeding the maximum size limit.</p>
+<div class="blabel">Evidence</div>
+<p>File size error (search for <code>"FileTooLargeError"</code>)</p>
+    </article>
+    <article class="card" id="admin-eligibility-api-for-extra-usage">
+      <div class="card-top">
+        <h3>Admin Eligibility API for Extra Usage <a class="anchor" href="#admin-eligibility-api-for-extra-usage">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>New API endpoint to check eligibility for extra usage requests in team/enterprise contexts.</p>
+<div class="blabel">Evidence</div>
+<p>Admin eligibility endpoint (search for <code>"admin_requests/eligibility"</code>)</p>
+    </article>
+    <article class="card" id="websocket-connection-handling">
+      <div class="card-top">
+        <h3>WebSocket Connection Handling <a class="anchor" href="#websocket-connection-handling">#</a></h3>
+      </div>
+      <ul><li><strong>Permanent close detection</strong>: WebSocket connections now recognize permanent close codes and avoid unnecessary reconnection attempts</li><li><strong>Bun ping support</strong>: Added specific ping handling for Bun runtime WebSocket connections</li><li><strong>Sessions WebSocket</strong>: Similar permanent close handling for session WebSocket connections</li></ul>
+<div class="blabel">Evidence</div>
+<p>WebSocket improvements (search for <code>"WebSocketTransport: Permanent close code"</code> and <code>"Sent ping (Bun)"</code>)</p>
+    </article>
+    <article class="card" id="image-dimension-error-handling">
+      <div class="card-top">
+        <h3>Image Dimension Error Handling <a class="anchor" href="#image-dimension-error-handling">#</a></h3>
+      </div>
+      <p>Added specific error handling for images exceeding the 2000px dimension limit in many-image requests. The error message now provides actionable guidance:</p>
+<ul><li>In interactive mode: "Run /compact to remove old images from context, or start a new session"</li><li>In non-interactive mode: "Start a new session with fewer images"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Image dimension handling (search for <code>"image dimensions exceed"</code>)</p>
+    </article>
+    <article class="card" id="shell-snapshot-recovery">
+      <div class="card-top">
+        <h3>Shell Snapshot Recovery <a class="anchor" href="#shell-snapshot-recovery">#</a></h3>
+      </div>
+      <p>Added automatic recreation of shell snapshots when the snapshot file goes missing, improving resilience of the shell execution environment.</p>
+<div class="blabel">Evidence</div>
+<p>Shell snapshot recovery (search for <code>"Failed to recreate shell snapshot"</code>)</p>
+    </article>
+    <article class="card" id="pre-flight-check-message-generalization">
+      <div class="card-top">
+        <h3>Pre-flight Check Message Generalization <a class="anchor" href="#pre-flight-check-message-generalization">#</a></h3>
+      </div>
+      <p>The pre-flight check warning now uses a generic tool name placeholder instead of hardcoded "[BashTool]", making it applicable to multiple tool types. The emoji prefix was also removed for cleaner output.</p>
+<div class="blabel">Evidence</div>
+<p>Pre-flight message (search for <code>"Pre-flight check is taking longer"</code>)</p>
+    </article>
+    <article class="card" id="streaming-fallback-error-logging">
+      <div class="card-top">
+        <h3>Streaming Fallback Error Logging <a class="anchor" href="#streaming-fallback-error-logging">#</a></h3>
+      </div>
+      <p>Added explicit error logging when streaming fails and non-streaming fallback is disabled, controlled by <code>tengu_disable_streaming_to_non_streaming_fallback</code> feature flag.</p>
+<div class="blabel">Evidence</div>
+<p>Streaming fallback (search for <code>"non-streaming fallback disabled"</code>)</p>
+    </article>
+    <article class="card" id="error-message-terminology-update">
+      <div class="card-top">
+        <h3>Error Message Terminology Update <a class="anchor" href="#error-message-terminology-update">#</a></h3>
+      </div>
+      <ul><li>Changed "Failed to read bash history" to "Failed to read shell history" (more accurate for multi-shell support)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Removed obsolete <code>ignorePatterns</code> migration code and related error handling (search for <code>"Failed to migrate ignorePatterns"</code> in v2.1.40 - absent in v2.1.41)</li><li>Removed "No editor available" error path - editor handling appears to have been restructured</li><li>Removed task stop status error message (<code>"is not running, so cannot be stopped"</code>) - logic was revised</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes (Not User-Facing)</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes-not-user-facing">
+      <ul><li>Removed "Layout engine: yoga" debug logging</li><li>Code path changes for task stopping don't affect user behavior</li><li>Minor text adjustments in Plan agent phase descriptions</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

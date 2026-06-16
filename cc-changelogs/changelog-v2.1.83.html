@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.83 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.83."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.83</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.83</span></h1>
+<p class="sub">This release introduces the Advisor Tool — a server-side reviewer model you can configure with <code>/advisor</code> — along with <code>claude-cli://</code> deep link support for opening Claude Code from external URLs, two new hook types (<code>CwdChanged</code> and <code>FileChanged</code>) for filesystem-aware automation, and the rebranded Ultrareview cloud code review. Enterprise users gain XAA IdP authentication for MCP servers and a <code>managed-settings.d</code> drop-in directory. Internally, Segment.io analytics has been completely removed.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.81 → v2.1.83</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">28</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">22 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="advisor-tool">
+      <div class="card-top">
+        <h3>Advisor Tool <a class="anchor" href="#advisor-tool">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A server-side tool backed by a stronger reviewer model that automatically sees your entire conversation history. When invoked, the advisor reviews your work and provides feedback before you commit to an approach.</p>
+<div class="blabel">Usage</div>
+<pre><code># Enable the advisor with a model
+/advisor opus
+
+# Check current advisor status
+/advisor
+
+# Disable the advisor
+/advisor unset
+
+# Via CLI flag
+claude --advisor opus</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The advisor tool takes no parameters — it automatically receives the full conversation context</li><li>Designed to be called before substantive work (writing code, committing to an interpretation), when stuck, or when you believe a task is complete</li><li>Can be disabled via the <code>CLAUDE_CODE_DISABLE_ADVISOR_TOOL</code> environment variable</li><li>Only available when the server enables this capability; the <code>/advisor</code> command appears when user configuration is permitted</li><li>Supports Opus 4.6 and Sonnet 4.6 class models as advisor models</li></ul>
+<div class="blabel">Evidence</div>
+<p>Advisor tool feature (search for <code>"advisor-tool-2026-03-01"</code>, <code>"tengu_sage_compass"</code>, <code>"/advisor"</code>)</p>
+    </article>
+    <article class="card" id="deep-link-protocol-handler">
+      <div class="card-top">
+        <h3>Deep Link Protocol Handler <a class="anchor" href="#deep-link-protocol-handler">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now registers as a <code>claude-cli://</code> URI scheme handler, allowing external applications and web pages to open Claude Code with a specific working directory and pre-filled prompt.</p>
+<div class="blabel">Details</div>
+<ul><li>Auto-registers the protocol handler on macOS (via an <code>.app</code> bundle), Linux (via <code>.desktop</code> file and <code>xdg-mime</code>), and Windows (via registry entries)</li><li>Deep links can specify <code>cwd</code> (working directory), <code>repo</code> (GitHub-style <code>owner/repo</code>), and <code>query</code> (pre-filled prompt) parameters</li><li>Input is validated: paths must be absolute, control characters are rejected, and length limits are enforced</li><li>Users see a notification that the session was opened by a deep link and are prompted to review any pre-filled prompt before submitting</li><li>Can be disabled via the <code>disableDeepLinkRegistration</code> setting</li><li>Controlled by the <code>tengu_lodestone_enabled</code> feature flag</li></ul>
+<div class="blabel">Evidence</div>
+<p>Deep link handler (search for <code>"claude-cli://"</code>, <code>"Claude Code URL Handler"</code>, <code>"tengu_lodestone_enabled"</code>)</p>
+    </article>
+    <article class="card" id="cwdchanged-and-filechanged-hooks">
+      <div class="card-top">
+        <h3>CwdChanged and FileChanged Hooks <a class="anchor" href="#cwdchanged-and-filechanged-hooks">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Two new hook event types that trigger automation when the working directory changes or when specific files are modified.</p>
+<p>Usage in <code>.claude/hooks.json</code>:</p>
+<pre><code>{
+  &quot;hooks&quot;: {
+    &quot;CwdChanged&quot;: [{
+      &quot;command&quot;: &quot;my-script.sh&quot;,
+      &quot;timeout&quot;: 10000
+    }],
+    &quot;FileChanged&quot;: [{
+      &quot;command&quot;: &quot;on-file-change.sh&quot;,
+      &quot;matcher&quot;: &quot;src/**/*.ts&quot;,
+      &quot;timeout&quot;: 10000
+    }]
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li><strong>CwdChanged</strong>: Fires after the working directory changes. Input JSON includes <code>old_cwd</code> and <code>new_cwd</code>. Hook output can include <code>watchPaths</code> to dynamically register additional file watchers via <code>hookSpecificOutput</code></li><li><strong>FileChanged</strong>: Fires when a watched file changes, is added, or is removed. Input JSON includes <code>file_path</code> and <code>event</code> (one of <code>change</code>, <code>add</code>, <code>unlink</code>). The <code>matcher</code> field specifies file glob patterns to watch</li><li>Both hook types set <code>CLAUDE_ENV_FILE</code> — write bash exports there to inject environment variables into subsequent BashTool commands</li><li>File watching uses chokidar under the hood for cross-platform filesystem monitoring</li></ul>
+<div class="blabel">Evidence</div>
+<p>New hook types (search for <code>"CwdChanged"</code>, <code>"FileChanged"</code>, <code>"cwdchanged-hook-"</code>, <code>"filechanged-hook-"</code>)</p>
+    </article>
+    <article class="card" id="ultrareview-cloud-code-review">
+      <div class="card-top">
+        <h3>Ultrareview (Cloud Code Review) <a class="anchor" href="#ultrareview-cloud-code-review">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A rebranded and enhanced cloud-based code review feature. A cloud agent analyzes your branch for ~5–15 minutes, finding and verifying bugs, then delivers findings as a task notification.</p>
+<div class="blabel">Details</div>
+<ul><li>Launched in the background — users can continue working while the review runs</li><li>Review output arrives as a task notification when complete; press shift+↓ to view results</li><li>Requires a git repository with a GitHub remote and OAuth login</li><li>Replaces the previous "Remote review" terminology</li></ul>
+<div class="blabel">Evidence</div>
+<p>Cloud review feature (search for <code>"ultrareview"</code>, <code>"~5–15 min"</code>, <code>"Cloud agent finds and verifies bugs"</code>)</p>
+    </article>
+    <article class="card" id="xaa-idp-authentication-for-mcp-servers">
+      <div class="card-top">
+        <h3>XAA IdP Authentication for MCP Servers <a class="anchor" href="#xaa-idp-authentication-for-mcp-servers">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Enterprise-grade OIDC authentication for MCP servers using the SEP-990 standard. Configure once and all XAA-enabled MCP servers authenticate silently using cached identity tokens.</p>
+<div class="blabel">Usage</div>
+<pre><code># One-time setup: configure IdP connection
+claude mcp xaa setup
+
+# Login (opens browser for OIDC flow)
+claude mcp xaa login
+
+# Check current connection
+claude mcp xaa status
+
+# Clear configuration
+claude mcp xaa clear</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Performs full OIDC discovery from the IdP issuer URL</li><li>Browser-based authorization with a local callback server on loopback</li><li>Caches <code>id_token</code> with automatic expiration; use <code>--force</code> to re-login</li><li>Supports <code>--client-id</code>, <code>--issuer</code>, <code>--callback-port</code>, and <code>--id-token</code> flags</li><li>Client secret can be read from the <code>MCP_XAA_IDP_CLIENT_SECRET</code> environment variable</li><li>Settings stored include <code>issuer</code>, <code>clientId</code>, <code>callbackPort</code>, and optionally <code>clientSecret</code> (in secure storage)</li></ul>
+<div class="blabel">Evidence</div>
+<p>XAA authentication system (search for <code>"XAA IdP"</code>, <code>"claude mcp xaa"</code>, <code>"SEP-990"</code>)</p>
+    </article>
+    <article class="card" id="enterprise-managed-settings-drop-in-directory">
+      <div class="card-top">
+        <h3>Enterprise Managed Settings Drop-in Directory <a class="anchor" href="#enterprise-managed-settings-drop-in-directory">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Enterprise administrators can now distribute policy settings via a <code>managed-settings.d/</code> directory alongside the existing <code>managed-settings.json</code> file.</p>
+<div class="blabel">Details</div>
+<ul><li>JSON files placed in the <code>managed-settings.d/</code> directory are merged into the enterprise policy configuration</li><li>Files are sorted alphabetically and merged in order, allowing layered configuration</li><li>Only <code>.json</code> files are loaded; hidden files (starting with <code>.</code>) are ignored</li><li>The health check display now distinguishes between "Enterprise managed settings (file + drop-ins)" when both sources exist</li></ul>
+<div class="blabel">Evidence</div>
+<p>Drop-in settings directory (search for <code>"managed-settings.d"</code>, <code>"Enterprise managed settings (drop-ins)"</code>)</p>
+    </article>
+    <article class="card" id="companion">
+      <div class="card-top">
+        <h3>Companion <a class="anchor" href="#companion">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A small animated ASCII character that sits beside the user's input box and occasionally comments in a speech bubble. Each user gets a unique procedurally-generated companion based on their account.</p>
+<div class="blabel">Details</div>
+<ul><li>Companions are generated from a seeded random number generator keyed to the user's account UUID</li><li>Each companion has a species (from a pool of 18 creatures), rarity tier (common through legendary), eye style, optional hat, stats, and a chance to be shiny</li><li>Activated by server-side configuration (requires the <code>companion</code> config to be set)</li><li>Can be muted via <code>companionMuted</code> state</li></ul>
+<div class="blabel">Evidence</div>
+<p>Companion system (search for <code>"companion_intro"</code>, <code>"friend-2026-401"</code>, <code>"companionMuted"</code>)</p>
+    </article>
+    <article class="card" id="version-command">
+      <div class="card-top">
+        <h3><code>/version</code> Command <a class="anchor" href="#version-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new slash command that prints the version of the currently running session, as distinct from what the auto-updater may have downloaded.</p>
+<div class="blabel">Usage</div>
+<pre><code>/version</code></pre>
+<div class="blabel">Evidence</div>
+<p>Version command (search for <code>"Print the version this session is running (not what autoupdate downloaded)"</code>)</p>
+    </article>
+    <article class="card" id="ultraplan-enhanced-with-web-based-refinement">
+      <div class="card-top">
+        <h3>Ultraplan Enhanced with Web-Based Refinement <a class="anchor" href="#ultraplan-enhanced-with-web-based-refinement">#</a></h3>
+      </div>
+      <p>Ultraplan now supports an interactive refinement workflow where plans can be generated and refined in Claude Code on the web (claude.ai/code), then brought back to the local CLI for execution. Users see a "No, refine with Ultraplan on Claude Code on the web" option during plan approval, and approved plans are automatically applied locally.</p>
+<div class="blabel">Evidence</div>
+<p>Enhanced ultraplan flow (search for <code>"Ultraplan approved in browser"</code>, <code>"Refine local plan"</code>, <code>"No, refine with Ultraplan on Claude Code on the web"</code>)</p>
+    </article>
+    <article class="card" id="mcp-registry-for-official-server-validation">
+      <div class="card-top">
+        <h3>MCP Registry for Official Server Validation <a class="anchor" href="#mcp-registry-for-official-server-validation">#</a></h3>
+      </div>
+      <p>Claude Code now fetches the official Anthropic MCP server registry at startup to validate MCP server URLs. This allows trusted servers to receive enhanced metadata forwarding (server name and tool name in API requests), improving the quality of tool-use responses.</p>
+<div class="blabel">Evidence</div>
+<p>MCP registry validation (search for <code>"mcp-registry"</code>, <code>"https://api.anthropic.com/mcp-registry/v0/servers"</code>)</p>
+    </article>
+    <article class="card" id="plugin-marketplace-gcs-distribution">
+      <div class="card-top">
+        <h3>Plugin Marketplace GCS Distribution <a class="anchor" href="#plugin-marketplace-gcs-distribution">#</a></h3>
+      </div>
+      <p>Official marketplace plugins are now distributed via Google Cloud Storage (<code>downloads.claude.ai</code>) with ZIP-based atomic updates and SHA-based cache validation, providing faster and more reliable plugin installation compared to the previous git-only approach. Falls back to git if GCS is unavailable.</p>
+<div class="blabel">Evidence</div>
+<p>GCS plugin distribution (search for <code>"downloads.claude.ai"</code>, <code>"Official marketplace GCS"</code>)</p>
+    </article>
+    <article class="card" id="useautomodeduringplan-setting">
+      <div class="card-top">
+        <h3><code>useAutoModeDuringPlan</code> Setting <a class="anchor" href="#useautomodeduringplan-setting">#</a></h3>
+      </div>
+      <p>A new boolean setting controls whether plan mode uses auto mode semantics (automatically accepting edits) when auto mode is available. Defaults to <code>true</code>. Can be configured at the user, local, flag, or policy level.</p>
+<div class="blabel">Evidence</div>
+<p>Plan mode setting (search for <code>"useAutoModeDuringPlan"</code>, <code>"Whether plan mode uses auto mode semantics"</code>)</p>
+    </article>
+    <article class="card" id="default-teammate-model-setting">
+      <div class="card-top">
+        <h3>Default Teammate Model Setting <a class="anchor" href="#default-teammate-model-setting">#</a></h3>
+      </div>
+      <p>A new <code>teammateDefaultModel</code> setting allows users to configure the default model used when spawning teammate agents. Accessible through the <code>/config</code> settings UI under "Default teammate model".</p>
+<div class="blabel">Evidence</div>
+<p>Teammate model config (search for <code>"TeammateModel"</code>, <code>"Default teammate model"</code>, <code>"teammateDefaultModel"</code>)</p>
+    </article>
+    <article class="card" id="ctrl-x-ctrl-k-keybinding-for-killing-background-agents">
+      <div class="card-top">
+        <h3><code>ctrl+x ctrl+k</code> Keybinding for Killing Background Agents <a class="anchor" href="#ctrl-x-ctrl-k-keybinding-for-killing-background-agents">#</a></h3>
+      </div>
+      <p>A new chord keybinding <code>ctrl+x ctrl+k</code> kills all running background agents. This supplements the existing <code>ctrl+f</code> toggle (press twice to stop agents).</p>
+<div class="blabel">Evidence</div>
+<p>Kill agents keybinding (search for <code>"ctrl+x ctrl+k"</code>, <code>"chat:killAgents"</code>)</p>
+    </article>
+    <article class="card" id="sandbox-failifunavailable-setting">
+      <div class="card-top">
+        <h3><code>sandbox.failIfUnavailable</code> Setting <a class="anchor" href="#sandbox-failifunavailable-setting">#</a></h3>
+      </div>
+      <p>A new boolean setting that causes Claude Code to exit with an error at startup if <code>sandbox.enabled</code> is true but the sandbox cannot start (missing dependencies, unsupported platform, or platform not in <code>enabledPlatforms</code>). When false (the default), a warning is logged but execution continues.</p>
+<div class="blabel">Evidence</div>
+<p>Strict sandbox setting (search for <code>"failIfUnavailable"</code>, <code>"sandbox required but unavailable"</code>)</p>
+    </article>
+    <article class="card" id="shift-tab-plan-approval-feedback">
+      <div class="card-top">
+        <h3><code>shift+tab</code> Plan Approval Feedback <a class="anchor" href="#shift-tab-plan-approval-feedback">#</a></h3>
+      </div>
+      <p>In plan mode, <code>shift+tab</code> now allows approving a plan while simultaneously providing feedback text. The input placeholder shows "shift+tab to approve with this feedback", streamlining the plan refinement workflow.</p>
+<div class="blabel">Evidence</div>
+<p>Plan feedback approval (search for <code>"shift+tab to approve with this feedback"</code>)</p>
+    </article>
+    <article class="card" id="worktree-name-validation-supports-path-segments">
+      <div class="card-top">
+        <h3>Worktree Name Validation Supports Path Segments <a class="anchor" href="#worktree-name-validation-supports-path-segments">#</a></h3>
+      </div>
+      <p>Worktree names now support <code>/</code>-separated path segments (e.g., <code>feature/my-branch</code>). Each segment is independently validated for allowed characters (letters, digits, dots, underscores, dashes). The 64-character maximum length still applies to the full name.</p>
+<div class="blabel">Evidence</div>
+<p>Path segment validation (search for <code>"each \"/\"-separated segment must be non-empty"</code>)</p>
+    </article>
+    <article class="card" id="improved-windows-terminal-detection">
+      <div class="card-top">
+        <h3>Improved Windows Terminal Detection <a class="anchor" href="#improved-windows-terminal-detection">#</a></h3>
+      </div>
+      <p>Claude Code now detects and supports a broader range of terminal emulators on all platforms for launching new terminal sessions (used by deep links and remote sessions). On Windows, it prioritizes Windows Terminal, then PowerShell 7+, PowerShell 5, and Command Prompt. On macOS and Linux, it detects Ghostty, iTerm2, Alacritty, Kitty, WezTerm, and various others with proper <code>--working-directory</code> flag support.</p>
+<div class="blabel">Evidence</div>
+<p>Terminal detection (search for <code>"Windows Terminal"</code>, <code>"com.mitchellh.ghostty"</code>, <code>"com.googlecode.iterm2"</code>)</p>
+    </article>
+    <article class="card" id="mcp-tool-search-hints-via-anthropic-searchhint">
+      <div class="card-top">
+        <h3>MCP Tool Search Hints via <code>anthropic/searchHint</code> <a class="anchor" href="#mcp-tool-search-hints-via-anthropic-searchhint">#</a></h3>
+      </div>
+      <p>MCP servers can now provide search hints through the <code>anthropic/searchHint</code> metadata field on tool definitions. These hints help Claude find and select the right tools more effectively by providing natural-language descriptions of when to use each tool.</p>
+<div class="blabel">Evidence</div>
+<p>MCP search hints (search for <code>"anthropic/searchHint"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-provider-managed-by-host-environment-variable">
+      <div class="card-top">
+        <h3><code>CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST</code> Environment Variable <a class="anchor" href="#claude-code-provider-managed-by-host-environment-variable">#</a></h3>
+      </div>
+      <p>A new environment variable for SDK hosts (desktop apps, IDE extensions) to signal that the API provider is managed by the host application, preventing users from accidentally overriding the provider configuration.</p>
+<div class="blabel">Evidence</div>
+<p>Host-managed provider (search for <code>"CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST"</code>)</p>
+    </article>
+    <article class="card" id="memory-system-prompt-refinements">
+      <div class="card-top">
+        <h3>Memory System Prompt Refinements <a class="anchor" href="#memory-system-prompt-refinements">#</a></h3>
+      </div>
+      <p>The memory guidance system prompt has been significantly rewritten for clarity:</p>
+<ul><li>MEMORY.md entries are now recommended to be under ~200 characters (up from ~150) with detail moved to topic files</li><li>Byte-size truncation added alongside line-count truncation for oversized MEMORY.md files</li><li>New instruction: "If the user says to <em>ignore</em> or <em>not use</em> memory: proceed as if MEMORY.md were empty"</li><li>HTML comment stripping added when processing MEMORY.md content</li></ul>
+<div class="blabel">Evidence</div>
+<p>Memory prompt updates (search for <code>"Keep index entries to one line under ~200 chars"</code>)</p>
+    </article>
+    <article class="card" id="plugin-sensitive-options-with-secure-storage">
+      <div class="card-top">
+        <h3>Plugin Sensitive Options with Secure Storage <a class="anchor" href="#plugin-sensitive-options-with-secure-storage">#</a></h3>
+      </div>
+      <p>Plugin configuration now distinguishes between non-sensitive values (saved to <code>settings.json</code>) and sensitive values (saved to macOS keychain or <code>.credentials.json</code>). Sensitive fields are scrubbed from <code>settings.json</code> after migration to secure storage.</p>
+<div class="blabel">Evidence</div>
+<p>Plugin secrets handling (search for <code>"sensitive)"</code>, <code>"to secure storage"</code>, <code>"saveMcpServerUserConfig: scrubbed"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed atomic file write cleanup: the temp file is now cleaned up even if it doesn't exist at the expected path (search for <code>"Cleaning up temp file"</code>)</li><li>Improved plugin hooks reload: now tracks plugin-affecting settings changes rather than just <code>enabledPlugins</code> to avoid unnecessary reloads (search for <code>"plugin-affecting settings change"</code>)</li><li>Fixed deep link input validation to reject control characters and enforce length limits, preventing potential injection issues (search for <code>"Deep link cwd contains disallowed control characters"</code>)</li><li>Fixed MCP lazy dedup to properly suppress duplicate servers from plugins that overlap with claude.ai connectors (search for <code>"[MCP] Lazy dedup: suppressing"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li><strong>Segment.io analytics completely removed</strong>: The <code>@segment/analytics-node</code> library and all associated code (event factory, priority queue, emitter, stats tracking, UUID generation) have been removed. Telemetry is now handled through a lighter-weight internal system (search for <code>"Segment.io"</code> in old version)</li><li><strong>Bootstrap API replaces clientData</strong>: The <code>/api/oauth/claude_cli/client_data</code> endpoint has been replaced by <code>/api/claude_cli/bootstrap</code>, which also returns additional model options alongside client data (search for <code>"/api/claude_cli/bootstrap"</code>)</li><li><strong>Improved debug repainting</strong>: New <code>CLAUDE_CODE_DEBUG_REPAINTS</code> environment variable enables detailed React component owner chain tracking for diagnosing UI repaint issues (search for <code>"CLAUDE_CODE_DEBUG_REPAINTS"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The Advisor Tool, Deep Link Protocol, and Companion features are controlled by server-side configuration and feature flags. They may not be immediately available to all users.</li><li>The <code>managed-settings.d</code> directory enables enterprise administrators to manage settings across multiple JSON files. Existing <code>managed-settings.json</code> files continue to work unchanged.</li><li>Ultrareview replaces the "Remote review" terminology from previous versions. The functionality is enhanced with cloud agent-based bug detection.</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.98 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.98."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.98</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.98</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.97 → v0.2.98</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">3</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.98 Changelog</p>
+    </article>
+    <article class="card" id="dynamic-model-configuration">
+      <div class="card-top">
+        <h3>Dynamic Model Configuration <a class="anchor" href="#dynamic-model-configuration">#</a></h3>
+      </div>
+      <p>The CLI now provides enhanced model selection capabilities with runtime configuration support:</p>
+<ul><li><strong>Statsig Integration</strong>: Model configuration now integrates with Statsig for A/B testing and feature flags</li><li><strong>Environment Variable Priority</strong>: The <code>ANTHROPIC_MODEL</code> environment variable takes precedence over other configuration methods</li><li><strong>Fallback Chain</strong>: Implements a robust fallback mechanism for model selection:</li></ul>
+<ol><li>Check environment configuration</li><li>Check process environment variable</li><li>Use Statsig-provided model</li><li>Fall back to default model</li></ol>
+<div class="blabel">Example usage</div>
+<pre><code># Set a specific model via environment variable
+ANTHROPIC_MODEL=claude-3-opus-20240229 claude
+
+# The model will persist across sessions if set in config</code></pre>
+    </article>
+    <article class="card" id="settings-ui-enhancements">
+      <div class="card-top">
+        <h3>Settings UI Enhancements <a class="anchor" href="#settings-ui-enhancements">#</a></h3>
+      </div>
+      <p>The settings panel now tracks configuration changes more comprehensively:</p>
+<ul><li><strong>Change Tracking</strong>: All setting modifications are now logged with telemetry events</li><li><strong>Model Configuration</strong>: Removed the separate model configuration UI in favor of environment-based settings</li><li><strong>Verbose Output</strong>: The verbose setting is now properly persisted and tracked</li></ul>
+    </article>
+    <article class="card" id="mcp-configuration-file">
+      <div class="card-top">
+        <h3>MCP Configuration File <a class="anchor" href="#mcp-configuration-file">#</a></h3>
+      </div>
+      <p>New support for <code>.mcp.json</code> configuration files in your project directory:</p>
+<pre><code>function saveMcpConfig(config) {
+  let mcpPath = path.join(cwd(), &quot;.mcp.json&quot;);
+  writeFileSync(mcpPath, JSON.stringify(config, null, 2), { encoding: &quot;utf8&quot; });
+}</code></pre>
+<p>This allows you to configure MCP servers and tools on a per-project basis.</p>
+    </article>
+    <article class="card" id="parent-process-detection">
+      <div class="card-top">
+        <h3>Parent Process Detection <a class="anchor" href="#parent-process-detection">#</a></h3>
+      </div>
+      <p>New utilities for detecting if Claude Code is running as a child of a specific process:</p>
+<pre><code>function isChildOfProcess(pid) {
+  if (!isProcessAlive(pid)) return false;
+  // Walks up the process tree to check ancestry
+  // Useful for IDE integration detection
+}</code></pre>
+    </article>
+    <article class="card" id="ide-name-resolution">
+      <div class="card-top">
+        <h3>IDE Name Resolution <a class="anchor" href="#ide-name-resolution">#</a></h3>
+      </div>
+      <p>Enhanced IDE detection with friendly name mapping:</p>
+<pre><code>function getIDEDisplayName(ideId) {
+  switch (ideId) {
+    case &quot;vscode&quot;: return &quot;VS Code&quot;;
+    case &quot;cursor&quot;: return &quot;Cursor&quot;;
+    case &quot;windsurf&quot;: return &quot;Windsurf&quot;;
+    case &quot;pycharm&quot;: return &quot;PyCharm&quot;;
+    case &quot;intellij&quot;: return &quot;IntelliJ IDEA&quot;;
+    case &quot;webstorm&quot;: return &quot;WebStorm&quot;;
+    // ... and many more IDEs
+  }
+}</code></pre>
+<p>Supports detection of 20+ different IDEs including JetBrains suite, VS Code variants, and Android Studio.</p>
+    </article>
+    <article class="card" id="enhanced-limit-status-tracking">
+      <div class="card-top">
+        <h3>Enhanced Limit Status Tracking <a class="anchor" href="#enhanced-limit-status-tracking">#</a></h3>
+      </div>
+      <p>The rate limit status now includes time-based information:</p>
+<pre><code>// Previous version
+{ status: &quot;limited&quot; }
+
+// New version
+{ 
+  status: &quot;limited&quot;,
+  hoursTillReset: 3  // Hours until rate limit resets
+}</code></pre>
+<p>This provides users with better visibility into when they can resume using the service.</p>
+    </article>
+    <article class="card" id="conversation-path-resolution">
+      <div class="card-top">
+        <h3>Conversation Path Resolution <a class="anchor" href="#conversation-path-resolution">#</a></h3>
+      </div>
+      <p>New functionality to resolve and track conversation paths across sessions:</p>
+<pre><code>async function resolveConversationPaths() {
+  // Automatically resolves parent-child relationships
+  // between conversations for better context tracking
+}</code></pre>
+<p>This helps maintain conversation context when switching between related discussions.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Technical Improvements</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="technical-improvements">
+      <ul><li><strong>Stream Handling</strong>: Added <code>PassThrough</code> stream support for better data pipeline management</li><li><strong>Removed Dependencies</strong>: Cleaned up unused imports and variables for a leaner codebase</li><li><strong>State Management</strong>: Introduced new Recoil atoms for slow/capable model configuration with proper state persistence</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed model configuration not persisting across restarts</li><li>Improved error handling in process detection utilities</li><li>Enhanced telemetry event tracking for configuration changes</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

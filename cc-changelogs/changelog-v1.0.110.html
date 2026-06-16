@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.110 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.110."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.110</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.110</span></h1>
+<p class="sub">Version 1.0.110 introduces enterprise MCP server management, WezTerm terminal configuration support, and OAuth token refresh capabilities. The release also includes significant improvements to command queue management, WebSocket reliability, and pipe command handling.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.109 → v1.0.110</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enterprise-mcp-server-management">
+      <div class="card-top">
+        <h3>Enterprise MCP Server Management <a class="anchor" href="#enterprise-mcp-server-management">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Centralized MCP server configuration for enterprise deployments <strong>How to use:</strong></p>
+<pre><code># Enterprise administrators can now provide managed-mcp.json
+# This file takes precedence over user/project configurations
+# Located at ~/.config/claude-code/managed-mcp.json</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Enterprise MCP servers have highest priority in resolution order</li><li>Supports centralized configuration management for organizations</li><li>Enterprise scope integrated into existing MCP server loading system</li><li><strong>Evidence</strong>: <code>zC1() at line 352611</code>, <code>Ie1() at line 352953</code>, enterprise scope handling at <code>line 352598</code></li></ul>
+    </article>
+    <article class="card" id="wezterm-terminal-configuration">
+      <div class="card-top">
+        <h3>WezTerm Terminal Configuration <a class="anchor" href="#wezterm-terminal-configuration">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Automatic setup of WezTerm terminal with Shift+Enter key binding <strong>How to use:</strong></p>
+<pre><code># Run setup when WezTerm is detected as your terminal
+claude setup</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Automatically configures <code>.wezterm.lua</code> with Shift+Enter → newline binding</li><li>Creates backup of existing configuration before modifying</li><li>Handles both new configs and existing configs with proper merging</li><li>Validates existing bindings to prevent conflicts</li><li><strong>Evidence</strong>: <code>WN9() at line 364690</code>, WezTerm case added at <code>line 364656</code></li></ul>
+    </article>
+    <article class="card" id="oauth-token-refresh-support">
+      <div class="card-top">
+        <h3>OAuth Token Refresh Support <a class="anchor" href="#oauth-token-refresh-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Proactive and on-demand refresh of OAuth tokens for MCP servers <strong>How to use:</strong></p>
+<pre><code># Tokens are automatically refreshed when they expire soon
+# Manual refresh available through MCP server reconnection</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Proactive refresh when tokens expire within 5 minutes (300 seconds)</li><li>Automatic retry mechanism with proper error handling</li><li>Maintains existing tokens if refresh fails</li><li>Supports both refresh_token and authorization_code flows</li><li><strong>Evidence</strong>: <code>refreshAuthorization() at line 391499</code>, proactive refresh logic at <code>line 391410</code></li></ul>
+    </article>
+    <article class="card" id="command-queue-management-system">
+      <div class="card-top">
+        <h3>Command Queue Management System <a class="anchor" href="#command-queue-management-system">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Dedicated queue manager for better command handling and editing integration <strong>How to use:</strong></p>
+<pre><code># Queue multiple commands and edit them as a batch
+# Commands can be queued while others are running
+# Seamless transition from queue to editing mode</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>New centralized queue manager with structured operations</li><li><code>popAllForEditing</code> method combines queued commands with current input</li><li>Reactive updates with callback system for UI synchronization</li><li>Atomic operations ensure consistent queue state</li><li><strong>Evidence</strong>: <code>yD() at line 421598</code>, <code>nrB() at line 436658</code>, <code>popAllForEditing() at line 421622</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-websocket-reliability">
+      <div class="card-top">
+        <h3>Enhanced WebSocket Reliability <a class="anchor" href="#enhanced-websocket-reliability">#</a></h3>
+      </div>
+      <ul><li>Added ping/keepalive functionality with 10-second intervals</li><li>New close callback support for better connection lifecycle management</li><li>Improved reconnection behavior with faster failure detection (3 attempts vs 5)</li><li><strong>Evidence</strong>: <code>startPingInterval() at line 440256</code>, <code>setOnClose() at line 440243</code></li></ul>
+    </article>
+    <article class="card" id="improved-pipe-command-handling">
+      <div class="card-top">
+        <h3>Improved Pipe Command Handling <a class="anchor" href="#improved-pipe-command-handling">#</a></h3>
+      </div>
+      <ul><li>Complete rewrite of pipe parsing algorithm for multiple pipe support</li><li>New safety check for multiple directory changes in piped commands</li><li>Better command segment reconstruction with proper tokenization</li><li>Enhanced error messages for complex command sequences</li><li><strong>Evidence</strong>: <code>uv6() at line 382406</code>, multiple cd detection at <code>line 382407</code></li></ul>
+    </article>
+    <article class="card" id="text-styling-architecture-improvements">
+      <div class="card-top">
+        <h3>Text Styling Architecture Improvements <a class="anchor" href="#text-styling-architecture-improvements">#</a></h3>
+      </div>
+      <ul><li>Refactored from callback-based to property-based styling system</li><li>New dedicated style application function for consistent rendering</li><li>Better separation of style definition from application</li><li>Improved text processing pipeline with integrated style support</li><li><strong>Evidence</strong>: <code>UU1() at line 360092</code>, <code>internal_styles</code> property usage at <code>line 361236</code></li></ul>
+    </article>
+    <article class="card" id="box-component-color-support">
+      <div class="card-top">
+        <h3>Box Component Color Support <a class="anchor" href="#box-component-color-support">#</a></h3>
+      </div>
+      <p>Enhanced box component with theme-aware border colors using the new styling system</p>
+    </article>
+    <article class="card" id="goodbye-messages">
+      <div class="card-top">
+        <h3>Goodbye Messages <a class="anchor" href="#goodbye-messages">#</a></h3>
+      </div>
+      <p>Added variety to exit messages with randomized farewell phrases</p>
+    </article>
+    <article class="card" id="date-formatting-utility">
+      <div class="card-top">
+        <h3>Date Formatting Utility <a class="anchor" href="#date-formatting-utility">#</a></h3>
+      </div>
+      <p>New date formatting function for consistent timestamp display across the application</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.64 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.64."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.64</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.64</span></h1>
+<p class="sub">This release contains two minor changes: the official plugins repository URL was updated to match its marketplace name, and screenshot copying now provides a clearer error message when running in builds without embedded font assets.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.63 → v2.0.64</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">2</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <p><em>No new features in this release.</em></p>
+    </article>
+    <article class="card" id="official-plugins-repository-renamed">
+      <div class="card-top">
+        <h3>Official Plugins Repository Renamed <a class="anchor" href="#official-plugins-repository-renamed">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p><strong>What:</strong> The GitHub repository URL for the official plugins marketplace was updated from <code>anthropics/claude-code-plugins</code> to <code>anthropics/claude-plugins-official</code>.</p>
+<p><strong>Details:</strong></p>
+<ul><li>This aligns the repository name with the existing marketplace identifier <code>claude-plugins-official</code></li><li>Existing plugin references using the old repository name in documentation may need updating</li><li><strong>Evidence</strong>: Variable <code>r70</code> at line 496527 in v2.0.63 → Variable <code>e70</code> at line 496571 in v2.0.64</li></ul>
+    </article>
+    <article class="card" id="screenshot-copying-build-check">
+      <div class="card-top">
+        <h3>Screenshot Copying Build Check <a class="anchor" href="#screenshot-copying-build-check">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p><strong>What:</strong> Screenshot copying now verifies build capabilities before attempting to generate screenshots, providing a clearer error message when the feature is unavailable.</p>
+<p><strong>Details:</strong></p>
+<ul><li>In builds without embedded font files (non-Bun builds or Bun builds without embedded assets), users will now see: "Screenshot copying is not available in this build"</li><li>Previously, the feature would attempt to run and potentially fail with a less helpful error message</li><li>The core screenshot functionality remains unchanged for supported builds</li><li><strong>Evidence</strong>: New guard clause in <code>Ib2()</code> at lines 483446-483450 in v2.0.64, calling <code>e5()</code> build check function at lines 17067-17074</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <p>This release includes 9,263 internal variable renames due to bundler regeneration. These do not affect functionality and are not user-visible.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

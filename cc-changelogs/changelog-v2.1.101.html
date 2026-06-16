@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.101 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.101."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.101</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.101</span></h1>
+<p class="sub">This release introduces a significantly overhauled <code>/loop</code> command with a new dynamic self-pacing mode and autonomous loop instructions, adds MCP OAuth completion tooling, enables keybinding customization by default, and includes a new <code>CLAUDE_CODE_CERT_STORE</code> environment variable for configuring SSL certificate sources. Session resume now supports fuzzy matching by title, and a new vim-style kill ring improves terminal text editing.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.100 → v2.1.101</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">23</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">6</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">6</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="mcp-oauth-completion-tool">
+      <div class="card-top">
+        <h3>MCP OAuth Completion Tool <a class="anchor" href="#mcp-oauth-completion-tool">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>complete_authentication</code> tool for MCP servers that enables completing OAuth authorization flows directly within Claude Code, particularly useful in remote/SSH sessions where browser redirects don't work.</p>
+<div class="blabel">Usage</div>
+<p>When an MCP server requires OAuth authentication, Claude can now call the <code>authenticate</code> tool to start the flow, then use <code>complete_authentication</code> with the callback URL the user pastes from their browser's address bar.</p>
+<div class="blabel">Details</div>
+<ul><li>Handles the full OAuth callback flow: validates the URL contains an authorization code, resolves the pending auth promise, and reports success or failure</li><li>Provides clear error messages when no OAuth flow is in progress, the callback URL is malformed, or authentication fails</li><li>Specifically designed for remote sessions where <code>http://localhost:&lt;port&gt;/callback</code> pages fail to load but the URL in the address bar is still valid</li></ul>
+<div class="blabel">Evidence</div>
+<p>MCP OAuth completion handler (search for <code>"Complete an in-progress OAuth flow for the"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-cert-store-environment-variable">
+      <div class="card-top">
+        <h3>CLAUDE_CODE_CERT_STORE Environment Variable <a class="anchor" href="#claude-code-cert-store-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new environment variable that gives users explicit control over which SSL/TLS certificate stores Claude Code uses, replacing the less flexible <code>--use-system-ca</code> flag approach.</p>
+<div class="blabel">Usage</div>
+<pre><code># Use both bundled and system certificates (default)
+export CLAUDE_CODE_CERT_STORE=bundled,system
+
+# Use only system certificates
+export CLAUDE_CODE_CERT_STORE=system
+
+# Use only bundled certificates
+export CLAUDE_CODE_CERT_STORE=bundled</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Accepts comma-separated values: <code>bundled</code> and/or <code>system</code></li><li>Defaults to <code>["bundled", "system"]</code> when not set</li><li>Falls back to the <code>--use-system-ca</code> / <code>--use-openssl-ca</code> flags if the env var is not present</li><li>Unrecognized sources are logged as warnings and ignored</li><li>The old <code>--use-system-ca</code> flag still works as a fallback</li></ul>
+<div class="blabel">Evidence</div>
+<p>Certificate store configuration (search for <code>"CLAUDE_CODE_CERT_STORE"</code>)</p>
+    </article>
+    <article class="card" id="resume-sessions-by-title">
+      <div class="card-top">
+        <h3>Resume Sessions by Title <a class="anchor" href="#resume-sessions-by-title">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>--resume</code> flag now accepts session titles in addition to UUIDs, with fuzzy matching support.</p>
+<div class="blabel">Usage</div>
+<pre><code># Resume by UUID (existing behavior)
+claude --resume 550e8400-e29b-41d4-a716-446655440000
+
+# Resume by session title (new)
+claude --resume &quot;my refactoring session&quot;
+
+# Also works with --print mode
+claude -p --resume &quot;my session title&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When the provided value is not a valid UUID, Claude Code now searches for matching session titles</li><li>If multiple sessions match, the user is prompted to disambiguate with a list of matching session IDs</li><li>Error messages have been updated: <code>"Error: --resume requires a valid session ID or session title when used with --print"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Session title matching (search for <code>"is not a UUID and does not match any session title"</code>)</p>
+    </article>
+    <article class="card" id="vim-kill-ring-and-yank-support">
+      <div class="card-top">
+        <h3>Vim Kill Ring and Yank Support <a class="anchor" href="#vim-kill-ring-and-yank-support">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Full vim-style kill ring (yank ring) implementation for the terminal text editor, supporting kill accumulation, yank, and yank-pop cycling.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>killRing</code> data structure with <code>push()</code>, <code>getLastKill()</code>, <code>yankPop()</code>, <code>recordYank()</code>, and <code>canYankPop()</code> operations</li><li>Kill accumulation: consecutive kills are merged into a single ring entry</li><li>Yank-pop (<code>Ctrl+Y</code> then <code>Alt+Y</code> in emacs-style) cycles through the kill ring history</li><li>Ring size is bounded to prevent unbounded memory growth</li></ul>
+<div class="blabel">Evidence</div>
+<p>Kill ring implementation (search for <code>"getLastKill"</code> and <code>"yankPop"</code>)</p>
+    </article>
+    <article class="card" id="hook-event-validation">
+      <div class="card-top">
+        <h3>Hook Event Validation <a class="anchor" href="#hook-event-validation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Settings files now validate hook event names and produce clear warnings for unrecognized events, helping users catch typos in their configuration.</p>
+<div class="blabel">Details</div>
+<ul><li>Unknown hook events are removed from the parsed configuration and a warning is emitted</li><li>Warning messages include the invalid event name, valid events list, and a link to documentation</li><li>Applies to all settings sources: local, project, remote managed, and SDK inline settings</li><li>Example warning: <code>Unknown hook event "PreTooluse" was ignored. Valid events: PreToolUse, PostToolUse, UserPromptSubmit, SessionStart, SessionEnd, Stop</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Hook validation (search for <code>"Unknown hook event"</code> and <code>"Not a recognized hook event"</code>)</p>
+    </article>
+    <article class="card" id="file-attribution-tracking">
+      <div class="card-top">
+        <h3>File Attribution Tracking <a class="anchor" href="#file-attribution-tracking">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now tracks per-file edit contributions by computing the magnitude of changes, enabling better understanding of how much Claude contributed to each file.</p>
+<div class="blabel">Details</div>
+<ul><li>Computes <code>claudeContribution</code> based on the diff between old and new content for each edit</li><li>Tracks both regular edits and file deletions</li><li>Logs attribution events: <code>"Attribution: Tracked N chars for path/to/file"</code></li><li>Uses content hashing to detect unchanged files</li><li>Supports bulk edit tracking for batch operations</li></ul>
+<div class="blabel">Evidence</div>
+<p>File attribution system (search for <code>"Attribution: Tracked"</code>)</p>
+    </article>
+    <article class="card" id="worktree-aware-session-resume">
+      <div class="card-top">
+        <h3>Worktree-Aware Session Resume <a class="anchor" href="#worktree-aware-session-resume">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When resuming a session that was running in a git worktree, the resume instructions now automatically include the <code>--worktree</code> flag.</p>
+<div class="blabel">Details</div>
+<ul><li>The "Resume this session with:" message now dynamically includes <code>--worktree &lt;name&gt;</code> when the session was created in a worktree</li><li>Preserves worktree context across session restarts</li></ul>
+<div class="blabel">Evidence</div>
+<p>Worktree resume instructions (search for <code>"Resume this session with: claude"</code>)</p>
+    </article>
+    <article class="card" id="worktree-orphan-self-healing">
+      <div class="card-top">
+        <h3>Worktree Orphan Self-Healing <a class="anchor" href="#worktree-orphan-self-healing">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Automatic detection and cleanup of orphaned worktree directories that can accumulate when sessions crash or are interrupted.</p>
+<div class="blabel">Details</div>
+<ul><li>Detects orphaned worktree directories (directories that exist but have no corresponding git worktree entry)</li><li>Checks that the worktree has no unpushed commits before self-healing to prevent data loss</li><li>Falls back to recursive directory cleanup if <code>git worktree remove</code> fails</li><li>Logs cleanup actions: <code>"[worktree] removed orphaned worktree directory at ..."</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Orphan worktree cleanup (search for <code>"Cannot self-heal orphaned worktree"</code>)</p>
+    </article>
+    <article class="card" id="sdk-protocol-request-user-dialog">
+      <div class="card-top">
+        <h3>SDK Protocol: request_user_dialog <a class="anchor" href="#sdk-protocol-request-user-dialog">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new SDK protocol message type <code>request_user_dialog</code> that enables tool-driven blocking dialogs, replacing the previous Ink JSX-based approach.</p>
+<div class="blabel">Details</div>
+<ul><li>New message types: <code>request_user_dialog</code> (request) and <code>user_dialog_response</code> (response)</li><li>Uses <code>dialog_kind</code> as an open string union to identify which dialog to render (known kinds: <code>"it2_setup"</code>, <code>"computer_use_approval"</code>)</li><li>Enables SDK consumers to render custom dialogs and return structured results</li><li>Description: "Requests the SDK consumer to render a tool-driven blocking dialog and return the user choice"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Dialog protocol (search for <code>"request_user_dialog"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">14 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="keybinding-customization-now-enabled-by-default">
+      <div class="card-top">
+        <h3>Keybinding Customization Now Enabled by Default <a class="anchor" href="#keybinding-customization-now-enabled-by-default">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The keybinding customization feature, which was previously gated behind a feature flag defaulting to false, now defaults to enabled. Users can customize their keyboard shortcuts via <code>~/.claude/keybindings.json</code> without needing to wait for a server-side flag rollout. The error message has been updated from "This feature is currently in preview" to "Keybinding customization is disabled in this environment" for cases where it is explicitly disabled.</p>
+<div class="blabel">Evidence</div>
+<p>Keybinding flag default change (search for <code>"tengu_keybinding_customization_release"</code> — default changed from <code>!1</code> to <code>!0</code>)</p>
+    </article>
+    <article class="card" id="improved-refusal-error-messages">
+      <div class="card-top">
+        <h3>Improved Refusal Error Messages <a class="anchor" href="#improved-refusal-error-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>API refusal responses now include the model's explanation when available, providing more context about why a request was declined. The explanation text is truncated to 400 characters and appended to the standard policy violation message.</p>
+<div class="blabel">Evidence</div>
+<p>Refusal message enhancement (search for <code>"has_explanation"</code>)</p>
+    </article>
+    <article class="card" id="enhanced-rate-limit-display">
+      <div class="card-top">
+        <h3>Enhanced Rate Limit Display <a class="anchor" href="#enhanced-rate-limit-display">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Rate limit errors now display human-readable descriptions (e.g., "session limit", "weekly limit", "extra usage limit") instead of internal identifiers, and show countdown timers to when limits reset.</p>
+<div class="blabel">Evidence</div>
+<p>Rate limit descriptions (search for <code>"session limit"</code> and <code>"weekly limit"</code>)</p>
+    </article>
+    <article class="card" id="improved-ultraplan-cloud-dialog">
+      <div class="card-top">
+        <h3>Improved Ultraplan Cloud Dialog <a class="anchor" href="#improved-ultraplan-cloud-dialog">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The ultraplan launch dialog now shows context-aware messaging based on whether the git remote can be cloned:</p>
+<ul><li>If cloning is viable: "This will try to clone your git remote and fall back to uploading this repository."</li><li>Otherwise: "This will upload your repository to Claude Code on the web."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Ultraplan dialog text (search for <code>"This will try to clone your git remote"</code>)</p>
+    </article>
+    <article class="card" id="plugin-dependency-version-checking">
+      <div class="card-top">
+        <h3>Plugin Dependency Version Checking <a class="anchor" href="#plugin-dependency-version-checking">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Plugin dependency validation now includes version constraint checking. When a plugin requires a specific version of a dependency, Claude Code validates the installed version matches the constraint and provides a clear error message when it doesn't.</p>
+<div class="blabel">Evidence</div>
+<p>Dependency version validation (search for <code>"dependency-version-unsatisfied"</code>)</p>
+    </article>
+    <article class="card" id="improved-error-coloring-in-cli-output">
+      <div class="card-top">
+        <h3>Improved Error Coloring in CLI Output <a class="anchor" href="#improved-error-coloring-in-cli-output">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Error messages printed to the console now use red color formatting for improved visibility.</p>
+<div class="blabel">Evidence</div>
+<p>Red error output (search for <code>"red"</code> near <code>console.error</code>)</p>
+    </article>
+    <article class="card" id="mouse-wheel-event-support">
+      <div class="card-top">
+        <h3>Mouse Wheel Event Support <a class="anchor" href="#mouse-wheel-event-support">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Terminal mouse wheel events now properly dispatch as <code>wheel</code> DOM events with <code>deltaY</code>, <code>deltaX</code>, and modifier key tracking (<code>ctrl</code>, <code>shift</code>, <code>meta</code>), enabling scroll-based interactions in the UI.</p>
+<div class="blabel">Evidence</div>
+<p>Wheel event class (search for <code>"wheelup"</code> and <code>"wheeldown"</code>)</p>
+    </article>
+    <article class="card" id="improved-plugin-status-messages">
+      <div class="card-top">
+        <h3>Improved Plugin Status Messages <a class="anchor" href="#improved-plugin-status-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new <code>all-plugins-project-installed</code> status message informs users when all available plugins are already installed for their project, providing clearer feedback during plugin management.</p>
+<div class="blabel">Evidence</div>
+<p>Plugin status (search for <code>"All available plugins are installed for this project"</code>)</p>
+    </article>
+    <article class="card" id="oauth-401-recovery-via-sdk-callback">
+      <div class="card-top">
+        <h3>OAuth 401 Recovery via SDK Callback <a class="anchor" href="#oauth-401-recovery-via-sdk-callback">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>OAuth token refresh now attempts an SDK callback-based recovery when no local refresh token is available. This provides a fallback path for SDK consumers that manage their own token lifecycle.</p>
+<div class="blabel">Evidence</div>
+<p>SDK OAuth recovery (search for <code>"SDK getOAuthToken callback"</code>)</p>
+    </article>
+    <article class="card" id="settings-validation-warnings-with-suggestions">
+      <div class="card-top">
+        <h3>Settings Validation Warnings with Suggestions <a class="anchor" href="#settings-validation-warnings-with-suggestions">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Settings validation errors now include suggestion text when available, helping users understand how to fix configuration issues.</p>
+<div class="blabel">Evidence</div>
+<p>Settings suggestions (search for <code>".suggestion"</code>)</p>
+    </article>
+    <article class="card" id="improved-signal-listener-error-handling">
+      <div class="card-top">
+        <h3>Improved Signal Listener Error Handling <a class="anchor" href="#improved-signal-listener-error-handling">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The internal event emitter now catches errors from individual listeners and aggregates them using <code>AggregateError</code>, preventing a single failing listener from blocking other listeners.</p>
+<div class="blabel">Evidence</div>
+<p>Signal error handling (search for <code>"Signal listener(s) threw"</code>)</p>
+    </article>
+    <article class="card" id="context-window-cache-token-tracking">
+      <div class="card-top">
+        <h3>Context Window Cache Token Tracking <a class="anchor" href="#context-window-cache-token-tracking">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The context window visualization now tracks cache token usage (both creation and read tokens) alongside standard input/output tokens, giving users better visibility into prompt caching behavior.</p>
+<div class="blabel">Evidence</div>
+<p>Cache token tracking (search for <code>"cache_creation_input_tokens"</code>)</p>
+    </article>
+    <article class="card" id="mcp-registry-pagination">
+      <div class="card-top">
+        <h3>MCP Registry Pagination <a class="anchor" href="#mcp-registry-pagination">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The MCP server registry fetch now supports pagination, fetching up to 100 servers per page and following cursor-based pagination. It also supports a new BFF (Backend for Frontend) registry endpoint alongside the legacy one.</p>
+<div class="blabel">Evidence</div>
+<p>MCP registry pagination (search for <code>"api/directory/servers"</code>)</p>
+    </article>
+    <article class="card" id="version-check-in-essential-traffic-only-mode">
+      <div class="card-top">
+        <h3>Version Check in Essential-Traffic-Only Mode <a class="anchor" href="#version-check-in-essential-traffic-only-mode">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When running in essential-traffic-only mode (e.g., <code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code>), the version display now shows a specific message instead of a generic failure: "Version check skipped (essential-traffic-only mode)".</p>
+<div class="blabel">Evidence</div>
+<p>Version check message (search for <code>"essential-traffic-only mode"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed worktree removal to include fallback directory cleanup when <code>git worktree remove</code> fails, preventing orphaned directories from accumulating (search for <code>"git worktree remove failed"</code>)</li><li>Fixed settings mutation bug where remote managed settings could be modified in-place; now uses <code>structuredClone</code> before validation (search for <code>"structuredClone"</code>)</li><li>Fixed null safety issue in file path handling that could cause crashes when <code>filePath</code> is undefined (search for <code>"filePath: q = ''"</code>)</li><li>Fixed OAuth callback abort handling to use proper <code>AbortController</code>-based cleanup, preventing resource leaks (search for <code>"AbortController"</code>)</li><li>Fixed retention cleanup to skip when userSettings source is disabled via <code>--setting-sources</code>, preventing unintended data deletion (search for <code>"Skipping retention cleanup"</code>)</li><li>Fixed terminal output sanitization to filter ANSI escape sequences more aggressively, preventing garbled output (search for <code>"charCodeAt(0) === 27"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
+    </article>
+    <article class="card" id="loop-dynamic-self-pacing-mode-in-development">
+      <div class="card-top">
+        <h3>/loop Dynamic Self-Pacing Mode [In Development] <a class="anchor" href="#loop-dynamic-self-pacing-mode-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A major enhancement to the <code>/loop</code> command that allows the model to dynamically choose its own iteration timing instead of requiring a fixed interval.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_kairos_loop_dynamic</code> (defaults to false) and <code>tengu_kairos_loop_prompt</code> (defaults to false)</p>
+<div class="blabel">Details</div>
+<ul><li>When enabled, <code>/loop</code> can be invoked without an interval, and the model decides how long to wait between iterations based on the task context</li><li>Uses a new <code>ScheduleWakeup</code> tool for the model to request its next wake-up with a specific delay (clamped to 60–3600 seconds)</li><li>Includes sophisticated cache-aware delay selection: delays under 270s keep the prompt cache warm, delays over 300s incur a cache miss</li><li>Supports <code>loop.md</code> task files in <code>.claude/loop.md</code> or <code>~/loop.md</code> that define recurring task instructions</li><li>Introduces sentinel values <code>&lt;&lt;autonomous-loop-dynamic&gt;&gt;</code> and <code>&lt;&lt;loop.md-dynamic&gt;&gt;</code> for the dynamic pacing variants</li><li>Includes a detailed autonomous loop system prompt that instructs the model on how to behave during timer-based autonomous operation, including PR maintenance, CI monitoring, and scope management</li><li>The system prompt emphasizes maintaining user trust: "Acting on what the conversation already established is safe and valuable. Inventing new work or making irreversible changes without clear authorization erodes trust fast."</li><li>Loops have a maximum age limit, after which they automatically age out</li></ul>
+<div class="blabel">Evidence</div>
+<p>Dynamic loop system (gated by <code>tengu_kairos_loop_dynamic</code> and <code>tengu_kairos_loop_prompt</code>, search for <code>"Autonomous-loop instructions"</code>)</p>
+    </article>
+    <article class="card" id="loops-management-command-in-development">
+      <div class="card-top">
+        <h3>/loops Management Command [In Development] <a class="anchor" href="#loops-management-command-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A dedicated command to list, create, and delete recurring loops and stop-hooks.</p>
+<div class="blabel">Status</div>
+<p>Disabled (<code>isEnabled: () =&gt; !1</code>)</p>
+<div class="blabel">Details</div>
+<ul><li>Full React-based UI for managing loops with keyboard navigation</li><li>Supports creating two types: cron-based recurring loops ("every N") and stop-hooks ("until condition")</li><li>Shows existing loops with their schedule, prompt, and ID</li><li>Keyboard shortcuts: <code>n</code> to create new, <code>d</code> to delete, <code>up</code>/<code>down</code> to navigate, <code>escape</code> to close</li><li>Includes tab-switching between "every" (cron) and "until" (stop-hook) creation modes</li></ul>
+<div class="blabel">Evidence</div>
+<p>Loops management UI (search for <code>"List, create, and delete recurring loops and stop-hooks"</code>)</p>
+    </article>
+    <article class="card" id="update-command-in-development">
+      <div class="card-top">
+        <h3>/update Command [In Development] <a class="anchor" href="#update-command-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>An in-session command to switch to the latest Claude Code version while preserving the current conversation.</p>
+<div class="blabel">Status</div>
+<p>Disabled (<code>isEnabled: () =&gt; !1</code>) and hidden (<code>isHidden: !0</code>)</p>
+<div class="blabel">Details</div>
+<ul><li>Description: "Switch to the latest version (conversation continues)"</li><li>Does not support non-interactive mode</li><li>When enabled, would allow users to upgrade without losing their session context</li></ul>
+<div class="blabel">Evidence</div>
+<p>Update command (search for <code>"Switch to the latest version (conversation continues)"</code>)</p>
+    </article>
+    <article class="card" id="away-summary-in-development">
+      <div class="card-top">
+        <h3>Away Summary [In Development] <a class="anchor" href="#away-summary-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Automatically generates a brief task summary when the user steps away (window blur detected), so they can quickly re-orient when returning.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_sedge_lantern</code> (defaults to false)</p>
+<div class="blabel">Details</div>
+<ul><li>Triggered by terminal focus/blur events tracked via the presence system</li><li>Generates summaries under 40 words in 1-2 plain sentences, naming the task and next action</li><li>Summary is added as a system message of subtype <code>away_summary</code></li><li>Uses cached parameters to avoid expensive re-computation</li><li>Cannot use tools (text-only generation)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Away summary generation (search for <code>"The user stepped away and is coming back"</code>)</p>
+    </article>
+    <article class="card" id="cloud-based-loop-scheduling-offer-in-development">
+      <div class="card-top">
+        <h3>Cloud-Based Loop Scheduling Offer [In Development] <a class="anchor" href="#cloud-based-loop-scheduling-offer-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a user sets up a long-interval loop (≥60 minutes or daily cadence), Claude would offer to run it as a cloud-based scheduled task instead of a local session loop.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_surreal_dali</code> (defaults to false)</p>
+<div class="blabel">Details</div>
+<ul><li>Generates a conditional prompt offering cloud-based scheduling as an alternative to local loops</li><li>Explains that daily-cadence loops won't fire before the session closes</li><li>Provides guidance on using the <code>/schedule</code> command for cloud execution</li><li>Includes differentiation text: "Runs until you close this session · For durable cloud-based loops, use /schedule"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Cloud scheduling offer (gated by <code>tengu_surreal_dali</code>, search for <code>"Offer cloud first"</code>)</p>
+    </article>
+    <article class="card" id="mcp-directory-bff-in-development">
+      <div class="card-top">
+        <h3>MCP Directory BFF [In Development] <a class="anchor" href="#mcp-directory-bff-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new Backend-for-Frontend endpoint for the MCP server directory, with configurable visibility filters.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_mcp_directory_bff</code> (defaults to false)</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>https://api.anthropic.com/api/directory/servers</code> endpoint alongside the legacy <code>mcp-registry/v0/servers</code> endpoint</li><li>Supports configurable visibility categories: <code>commercial</code>, <code>gsuite</code>, <code>enterprise</code>, <code>health</code></li><li>Uses cursor-based pagination with up to 500 results per page</li><li>Controlled by <code>tengu_mcp_directory_visibility</code> flag for the visibility filter list</li></ul>
+<div class="blabel">Evidence</div>
+<p>MCP directory BFF (gated by <code>tengu_mcp_directory_bff</code>, search for <code>"api/directory/servers"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The <code>/loop</code> command continues to work in its existing fixed-interval mode (e.g., <code>/loop 5m /babysit-prs</code>). The new dynamic self-pacing mode is behind feature flags and will be gradually rolled out. When enabled, running <code>/loop</code> without an interval will activate dynamic mode where the model picks its own delay between iterations.</p>
+<p>The <code>CLAUDE_CODE_CERT_STORE</code> environment variable supersedes the <code>--use-system-ca</code> CLI flag for controlling certificate store behavior. Users on enterprise networks with custom CA certificates should consider switching to this env var for more explicit control.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

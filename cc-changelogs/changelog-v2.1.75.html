@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.75 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.75."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.75</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.75</span></h1>
+<p class="sub">This release introduces Opus 1M context as the default for first-party Opus users, adds a memory staleness system that warns when recalled memories may be outdated, redesigns the SendMessage tool for more intuitive agent-to-agent communication, and introduces plugin configurable options. Several quality-of-life improvements include concurrent session detection, an auto mode circuit breaker, and a new SSH <code>startDirectory</code> setting.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.74 → v2.1.75</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">19</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">6</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">3</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">19 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="opus-1m-context-window-default">
+      <div class="card-top">
+        <h3>Opus 1M Context Window Default <a class="anchor" href="#opus-1m-context-window-default">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>First-party Opus users now default to a 1M token context window (5x larger), with automatic migration from the standard Opus setting.</p>
+<div class="blabel">Details</div>
+<ul><li>Controlled by the <code>tengu_cobalt_compass</code> feature flag (gradual rollout)</li><li>Users who had "opus" selected are automatically migrated to "opus[1m]"</li><li>A merge notice is shown up to 6 times: "Opus now defaults to 1M context · 5x more room, same pricing"</li><li>When Opus 1M is active, Opus no longer triggers "Billed as extra usage" — same pricing as before</li><li>The model picker now offers an explicit "Opus (1M context)" entry labeled <code>[NEW]</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Opus 1M migration and display (search for <code>"tengu_cobalt_compass"</code>, <code>"Opus now defaults to 1M context"</code>, <code>"tengu_opus_to_opus1m_migration"</code>)</p>
+    </article>
+    <article class="card" id="plugin-configurable-options">
+      <div class="card-top">
+        <h3>Plugin Configurable Options <a class="anchor" href="#plugin-configurable-options">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Plugins can now declare user-configurable options in their manifest via a <code>userConfig</code> schema, with typed fields, defaults, and secure storage for sensitive values.</p>
+<div class="blabel">Details</div>
+<ul><li>Plugin manifests can include a <code>userConfig</code> block with named options of type <code>string</code>, <code>number</code>, <code>boolean</code>, <code>directory</code>, or <code>file</code></li><li>Each option supports <code>title</code>, <code>description</code>, <code>required</code>, <code>default</code>, <code>sensitive</code>, <code>min</code>/<code>max</code>, and <code>multiple</code> fields</li><li>Option keys must be valid identifiers — they become <code>CLAUDE_PLUGIN_OPTION_&lt;KEY&gt;</code> environment variables in hooks</li><li>Sensitive values are stored in secure storage (macOS keychain or <code>.credentials.json</code>), non-sensitive values in <code>settings.json</code></li><li>Available as <code>${user_config.KEY}</code> in MCP/LSP server config, hook commands, and (non-sensitive only) skill/agent content</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin options schema and env var injection (search for <code>"CLAUDE_PLUGIN_OPTION_"</code>, <code>"User-configurable values this plugin needs"</code>)</p>
+    </article>
+    <article class="card" id="ssh-start-directory-setting">
+      <div class="card-top">
+        <h3>SSH Start Directory Setting <a class="anchor" href="#ssh-start-directory-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>SSH remote configurations now support a <code>startDirectory</code> field to set the default working directory on the remote host.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;sshRemotes&quot;: {
+    &quot;my-server&quot;: {
+      &quot;host&quot;: &quot;example.com&quot;,
+      &quot;startDirectory&quot;: &quot;~/projects&quot;
+    }
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Supports tilde expansion (e.g., <code>~/projects</code>)</li><li>If not specified, defaults to the remote user's home directory</li><li>Can be overridden by the <code>[dir]</code> positional argument in <code>claude ssh &lt;config&gt; [dir]</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>SSH start directory setting (search for <code>"startDirectory"</code>, <code>"Default working directory on the remote host"</code>)</p>
+    </article>
+    <article class="card" id="memory-staleness-warnings">
+      <div class="card-top">
+        <h3>Memory Staleness Warnings <a class="anchor" href="#memory-staleness-warnings">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Memories recalled from CLAUDE.md and project memory files are now annotated with their age, warning Claude when recalled information may be outdated.</p>
+<div class="blabel">Details</div>
+<ul><li>Memories older than 1 day display their age (e.g., "Memory (saved yesterday)" or "Memory (saved 5 days ago)")</li><li>Memories older than 1 day include a system reminder: "Memories are point-in-time observations, not live state — claims about code behavior or file:line citations may be outdated. Verify against current code before asserting as fact."</li><li>This helps prevent Claude from asserting stale file:line references or code behavior as current fact</li></ul>
+<div class="blabel">Evidence</div>
+<p>Memory age formatting and staleness warnings (search for <code>"Memories are point-in-time observations"</code>, <code>"claims about code behavior"</code>)</p>
+    </article>
+    <article class="card" id="agent-message-queuing-to-running-agents">
+      <div class="card-top">
+        <h3>Agent Message Queuing to Running Agents <a class="anchor" href="#agent-message-queuing-to-running-agents">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When resuming a running agent via <code>Agent({resume: id})</code>, the prompt is now queued for delivery instead of throwing an error. Coordinators can also send messages to running agents via <code>SendMessage</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>If an agent is already running, calling <code>Agent({resume: id})</code> queues the prompt and returns a <code>queued_to_running</code> status</li><li>The agent receives the queued message at its next tool-round boundary</li><li><code>SendMessage({to: "&lt;name&gt;", message: "..."})</code> can also queue messages to running local agents</li><li>A coordinator message is rendered with: "The coordinator sent a message while you were working: [...] Address this before completing your current task."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Agent message queue system (search for <code>"queued_to_running"</code>, <code>"Message queued for delivery"</code>, <code>"pendingMessages"</code>)</p>
+    </article>
+    <article class="card" id="concurrent-session-detection">
+      <div class="card-top">
+        <h3>Concurrent Session Detection <a class="anchor" href="#concurrent-session-detection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now detects when multiple sessions are running simultaneously and offers a relevant tip.</p>
+<div class="blabel">Details</div>
+<ul><li>Sessions register PID files in the Claude Code data directory</li><li>When 2+ sessions are detected, a tip suggests: "Running multiple Claude sessions? Use /color and /rename to tell them apart at a glance."</li><li>Session count is also reported via telemetry (<code>tengu_concurrent_sessions</code>)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Concurrent session tracking (search for <code>"concurrentSessions"</code>, <code>"color-when-multi-clauding"</code>)</p>
+    </article>
+    <article class="card" id="sendmessage-tool-redesigned">
+      <div class="card-top">
+        <h3>SendMessage Tool Redesigned <a class="anchor" href="#sendmessage-tool-redesigned">#</a></h3>
+      </div>
+      <p>The <code>SendMessage</code> tool schema has been simplified from a discriminated union with <code>type</code>/<code>recipient</code>/<code>content</code> fields to a more intuitive <code>to</code>/<code>message</code>/<code>summary</code> format. Agents now use <code>to: "&lt;name&gt;"</code> for direct messages and <code>to: "*"</code> for broadcasts. Structured protocol messages (shutdown requests, plan approvals) are sent as objects in the <code>message</code> field. A backward-compatibility shim (<code>backfillObservableInput</code>) translates old-format calls.</p>
+<div class="blabel">Evidence</div>
+<p>Simplified SendMessage schema (search for <code>"Recipient: teammate name"</code>, <code>'to must be a bare teammate name or "*"'</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-circuit-breaker">
+      <div class="card-top">
+        <h3>Auto Mode Circuit Breaker <a class="anchor" href="#auto-mode-circuit-breaker">#</a></h3>
+      </div>
+      <p>Auto mode can now be remotely disabled via a server-side gate. When the circuit breaker is active, auto mode requests silently fall back to the default permission mode with a warning logged. The <code>claude auto-mode</code> subcommand is also hidden when auto mode is disabled.</p>
+<div class="blabel">Evidence</div>
+<p>Auto mode circuit breaker (search for <code>"auto mode circuit breaker active (cached)"</code>, <code>"Cannot transition to auto mode"</code>)</p>
+    </article>
+    <article class="card" id="file-read-size-controlled-by-feature-flag">
+      <div class="card-top">
+        <h3>File Read Size Controlled by Feature Flag <a class="anchor" href="#file-read-size-controlled-by-feature-flag">#</a></h3>
+      </div>
+      <p>File read limits (<code>maxSizeBytes</code> and <code>maxTokens</code>) are now configurable via the <code>tengu_amber_wren</code> feature flag, allowing server-side tuning of read limits without client updates. A new <code>CLAUDE_CODE_AUTO_COMPACT_WINDOW</code> environment variable also allows users to override the auto-compaction window size.</p>
+<div class="blabel">Evidence</div>
+<p>Feature-flag-controlled read limits (search for <code>"tengu_amber_wren"</code>, <code>"CLAUDE_CODE_AUTO_COMPACT_WINDOW"</code>)</p>
+    </article>
+    <article class="card" id="background-task-monitor-distinction">
+      <div class="card-top">
+        <h3>Background Task Monitor Distinction <a class="anchor" href="#background-task-monitor-distinction">#</a></h3>
+      </div>
+      <p>The status bar now distinguishes between regular background tasks and monitors, showing counts like "2 background tasks, 1 monitor" instead of a single combined count.</p>
+<div class="blabel">Evidence</div>
+<p>Monitor/task distinction in status line (search for <code>"Monitor details"</code>, <code>kind === "monitor"</code>)</p>
+    </article>
+    <article class="card" id="shift-arrow-navigation-for-teammates">
+      <div class="card-top">
+        <h3>Shift+Arrow Navigation for Teammates <a class="anchor" href="#shift-arrow-navigation-for-teammates">#</a></h3>
+      </div>
+      <p>The keyboard shortcut to expand teammate views has changed from <code>↓</code> to <code>shift + ↓</code>. A new <code>shift + ↑</code> shortcut navigates upward through the teammate list.</p>
+<div class="blabel">Evidence</div>
+<p>Updated keybindings (search for <code>"shift + ↓"</code>)</p>
+    </article>
+    <article class="card" id="leader-idle-state-display">
+      <div class="card-top">
+        <h3>Leader Idle State Display <a class="anchor" href="#leader-idle-state-display">#</a></h3>
+      </div>
+      <p>When the team leader is idle but teammates are still working, the spinner now shows a distinct "Idle · teammates running" state instead of the generic working indicator.</p>
+<div class="blabel">Evidence</div>
+<p>Leader idle state in spinner (search for <code>"· teammates running"</code>, <code>leaderIsIdle</code>)</p>
+    </article>
+    <article class="card" id="session-metadata-enrichment">
+      <div class="card-top">
+        <h3>Session Metadata Enrichment <a class="anchor" href="#session-metadata-enrichment">#</a></h3>
+      </div>
+      <p>Session metadata returned by <code>listSessions</code> and <code>getSessionInfo</code> now includes <code>tag</code> (user-set session tag) and <code>createdAt</code> (creation timestamp). The <code>fileSize</code> field is now optional and only populated for local JSONL storage.</p>
+<div class="blabel">Evidence</div>
+<p>Expanded session metadata schema (search for <code>"User-set session tag"</code>, <code>"Creation time in milliseconds since epoch"</code>)</p>
+    </article>
+    <article class="card" id="marketplace-name-security-validation">
+      <div class="card-top">
+        <h3>Marketplace Name Security Validation <a class="anchor" href="#marketplace-name-security-validation">#</a></h3>
+      </div>
+      <p>Marketplace names now reject path traversal patterns — names containing <code>/</code>, <code>\</code>, <code>..</code> sequences, or consisting of just <code>.</code> are rejected with a clear error message.</p>
+<div class="blabel">Evidence</div>
+<p>Path traversal validation (search for <code>'Marketplace name cannot contain path separators'</code>)</p>
+    </article>
+    <article class="card" id="credential-redaction-in-git-clone-logs">
+      <div class="card-top">
+        <h3>Credential Redaction in Git Clone Logs <a class="anchor" href="#credential-redaction-in-git-clone-logs">#</a></h3>
+      </div>
+      <p>URLs containing embedded usernames or passwords are now redacted when logged during git clone operations, preventing accidental credential exposure in logs.</p>
+<div class="blabel">Evidence</div>
+<p>URL credential redaction function <code>A96()</code> (search for <code>q.username = "***"</code>)</p>
+    </article>
+    <article class="card" id="permission-mode-change-events">
+      <div class="card-top">
+        <h3>Permission Mode Change Events <a class="anchor" href="#permission-mode-change-events">#</a></h3>
+      </div>
+      <p>Permission mode changes (default, acceptEdits, bypassPermissions, auto, etc.) are now emitted as system status events on the outbound stream, enabling external integrations to track permission state.</p>
+<div class="blabel">Evidence</div>
+<p>Permission mode event emission (search for <code>"permissionMode"</code>, <code>Tkq</code>)</p>
+    </article>
+    <article class="card" id="skill-prompt-aliases">
+      <div class="card-top">
+        <h3>Skill/Prompt Aliases <a class="anchor" href="#skill-prompt-aliases">#</a></h3>
+      </div>
+      <p>Skills and prompts now support an <code>aliases</code> field, enabling multiple names for the same slash command.</p>
+<div class="blabel">Evidence</div>
+<p>Aliases support in prompt definitions (search for <code>aliases: A.aliases</code>)</p>
+    </article>
+    <article class="card" id="hook-source-tracking">
+      <div class="card-top">
+        <h3>Hook Source Tracking <a class="anchor" href="#hook-source-tracking">#</a></h3>
+      </div>
+      <p>Hooks now carry <code>hookSource</code> metadata indicating their origin (e.g., <code>plugin:name</code>, <code>skill:name</code>, or <code>settings</code>), improving debuggability.</p>
+<div class="blabel">Evidence</div>
+<p>Hook source annotation (search for <code>"hookSource"</code>)</p>
+    </article>
+    <article class="card" id="error-details-on-prompt-too-long">
+      <div class="card-top">
+        <h3>Error Details on Prompt Too Long <a class="anchor" href="#error-details-on-prompt-too-long">#</a></h3>
+      </div>
+      <p>When an API request fails with "prompt is too long", the error response now includes <code>errorDetails</code> with the full exception message, providing more diagnostic context.</p>
+<div class="blabel">Evidence</div>
+<p>Error details propagation (search for <code>"errorDetails"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed <code>readFileState</code> being recomputed from messages on every turn — the main session class now caches and reuses it, improving performance (search for <code>"readFileState"</code>)</li><li>Removed redundant <code>existsSync</code> checks before <code>readFileSync</code> and <code>unlinkSync</code> calls, fixing potential race conditions (search for <code>unlinkSync</code>)</li><li>Fixed the tag-clearing behavior: setting an empty tag now correctly clears it (<code>tag || void 0</code>) instead of keeping the empty string (search for <code>"currentSessionTag"</code>)</li><li>Voice-enabled checks now additionally gate on <code>$I()</code>, preventing voice features from activating when conditions aren't fully met (search for <code>voiceEnabled</code>)</li><li>The <code>user:file_upload</code> OAuth scope is now requested for first-party authenticated sessions (search for <code>"user:file_upload"</code>)</li><li>Fixed async hook response rendering: previously only showed for PreToolUse/PostToolUse when tool hooks were enabled; now also shows for SessionStart and other hook types when session hooks are enabled (search for <code>"async_hook_response"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Removed</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="removed">
+      <ul><li><strong>Nested session restriction removed</strong>: The check that prevented launching Claude Code inside another Claude Code session (via the <code>CLAUDECODE=1</code> environment variable) has been removed. Users can now nest sessions freely. (search for <code>"Nested sessions share runtime resources"</code> — present in v2.1.74, absent in v2.1.75)</li></ul>
+<ul><li><strong>Windows ProgramData deprecation warning removed</strong>: The notification warning about migrating <code>C:\ProgramData\ClaudeCode\managed-settings.json</code> to <code>C:\Program Files\ClaudeCode\</code> has been removed, along with the associated detection logic. (search for <code>"programdata-deprecation-warning"</code> — present in v2.1.74, absent in v2.1.75)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled or partially gated.</p>
+    </article>
+    <article class="card" id="opus-1m-context-gradual-rollout">
+      <div class="card-top">
+        <h3>Opus 1M Context [Gradual Rollout] <a class="anchor" href="#opus-1m-context-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The Opus 1M context window default is controlled by the <code>tengu_cobalt_compass</code> feature flag with a default of <code>false</code>.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged, rolling out gradually.</p>
+<div class="blabel">Details</div>
+<ul><li>The function <code>UH()</code> checks <code>tengu_cobalt_compass</code> — returns <code>false</code> by default</li><li>Only applies to first-party users (not API key users or third-party)</li><li>Excluded when <code>je()</code> (demo mode) or <code>ZC()</code> (certain restricted contexts) is active</li><li>Once enabled server-side, migration is automatic</li></ul>
+<div class="blabel">Evidence</div>
+<p>Feature gate check (search for <code>"tengu_cobalt_compass"</code>) — <code>UH()</code> at line ~532570</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

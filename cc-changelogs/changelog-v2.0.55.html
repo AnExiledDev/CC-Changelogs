@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.55 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.55."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.55</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.55</span></h1>
+<p class="sub">This release introduces enterprise policy controls for marketplace management, improved terminal compatibility with version-aware detection for Ghostty and iTerm, enhanced async agent monitoring with real-time progress tracking, and new telemetry for repository identification. Error handling is improved with specific detection for oversized images.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.54 → v2.0.55</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">13</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="enterprise-marketplace-policy-controls">
+      <div class="card-top">
+        <h3>Enterprise Marketplace Policy Controls <a class="anchor" href="#enterprise-marketplace-policy-controls">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Organizations can now restrict which external marketplaces users can install via the <code>strictKnownMarketplaces</code> policy setting.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>Administrators set allowed marketplace sources in enterprise policy settings</li><li>When users attempt to install a marketplace, the source is validated against the allowlist</li><li>Blocked sources show clear error messages indicating the policy restriction</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Supports multiple source types: GitHub repos, URLs, git repos, npm packages, file paths, and directories</li><li>Clear error messaging: <code>"Marketplace source 'X' is blocked by enterprise policy. Allowed sources: ..."</code></li><li><strong>Evidence:</strong> <code>pEA()</code> at line ~164954, <code>apA()</code> at line ~164985, <code>So()</code> at line ~165393 in v2.0.55</li></ul>
+    </article>
+    <article class="card" id="configurable-sandbox-search-depth">
+      <div class="card-top">
+        <h3>Configurable Sandbox Search Depth <a class="anchor" href="#configurable-sandbox-search-depth">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New <code>mandatoryDenySearchDepth</code> setting controls how deep the sandbox scans for dangerous files and directories.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Default value: 3 levels deep</li><li>Configurable via policy settings</li><li>Improves performance in large repositories by limiting recursive scanning</li><li><strong>Evidence:</strong> <code>Ye8()</code> at line ~188483, with default value of 3</li></ul>
+    </article>
+    <article class="card" id="repository-hash-telemetry">
+      <div class="card-top">
+        <h3>Repository Hash Telemetry <a class="anchor" href="#repository-hash-telemetry">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Claude Code now generates an anonymized hash identifier for repositories to improve telemetry without exposing actual repository URLs.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>Parses git remote URLs (supports both SSH and HTTPS formats)</li><li>Normalizes the URL to <code>host/path</code> format</li><li>Generates a SHA-256 hash and uses the first 16 characters</li><li>Included in telemetry events as <code>rh</code> property</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Supports formats like <code>git@github.com:org/repo.git</code> and <code>https://github.com/org/repo</code></li><li><strong>Evidence:</strong> <code>pA6()</code> at line ~192113, <code>V7B()</code> at line ~192122</li></ul>
+    </article>
+    <article class="card" id="prompt-suggestion-system-experimental">
+      <div class="card-top">
+        <h3>Prompt Suggestion System (Experimental) <a class="anchor" href="#prompt-suggestion-system-experimental">#</a></h3>
+      </div>
+      <p><strong>What:</strong> A new system that predicts and suggests the user's next prompt based on conversation context.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Generates 3-8 word suggestions for natural follow-ups (e.g., "run the tests", "now fix the linting errors")</li><li>Only triggers for main REPL thread queries</li><li>Includes telemetry for suggestion display and acceptance tracking</li><li><strong>Evidence:</strong> Functions at lines ~409868-409929, telemetry event <code>tengu_prompt_suggestion_shown</code></li></ul>
+    </article>
+    <article class="card" id="image-too-large-error-handling">
+      <div class="card-top">
+        <h3>Image Too Large Error Handling <a class="anchor" href="#image-too-large-error-handling">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Specific error detection and messaging when uploaded images exceed API size limits.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Detects API 400 errors containing "image exceeds" and "maximum"</li><li>Returns dedicated <code>image_too_large</code> error type</li><li>User-friendly message: "Image was too large. Double press esc to go back and try again with a smaller image."</li><li><strong>Evidence:</strong> Error detection at line ~345176, message constant <code>FF5</code> at line ~345069</li></ul>
+    </article>
+    <article class="card" id="enhanced-terminal-version-detection">
+      <div class="card-top">
+        <h3>Enhanced Terminal Version Detection <a class="anchor" href="#enhanced-terminal-version-detection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved compatibility checking for Ghostty and iTerm terminals using semantic versioning.</p>
+<p><strong>Before:</strong> Simple environment variable check (<code>TERM === "xterm-ghostty"</code>)</p>
+<p><strong>After:</strong></p>
+<ul><li>Uses proper semver comparison via <code>TERM_PROGRAM</code> and <code>TERM_PROGRAM_VERSION</code></li><li>Ghostty: requires version &gt;= 1.2.0</li><li>iTerm.app: requires version &gt;= 3.6.6</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li><strong>Evidence:</strong> New function <code>e46()</code> at line ~222505 with semver checking via <code>mUA.gte()</code></li></ul>
+    </article>
+    <article class="card" id="enhanced-async-agent-details-panel">
+      <div class="card-top">
+        <h3>Enhanced Async Agent Details Panel <a class="anchor" href="#enhanced-async-agent-details-panel">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The async agent monitoring panel now shows significantly more information about running agents.</p>
+<p><strong>New features:</strong></p>
+<ul><li>Real-time task progress tracking with completion counters</li><li>Token usage display (total tokens consumed)</li><li>Tool use count tracking</li><li>Recent activity feed showing current agent operations</li><li>Increased prompt preview from 200 to 300 characters</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Integrates with todo state for task tracking</li><li>Shows "Tasks (X/Y)" with completion progress</li><li>Displays token and tool counts in status line</li><li><strong>Evidence:</strong> <code>O29()</code> at line ~468985 replaces older <code>PQ9()</code> function</li></ul>
+    </article>
+    <article class="card" id="enhanced-sed-command-validation">
+      <div class="card-top">
+        <h3>Enhanced sed Command Validation <a class="anchor" href="#enhanced-sed-command-validation">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The <code>sed</code> command validator now supports explicit file write permission control.</p>
+<p><strong>How it works:</strong></p>
+<ul><li>New <code>allowFileWrites</code> parameter controls whether in-place editing is permitted</li><li>When in "acceptEdits" mode, <code>-i</code> and <code>--in-place</code> flags are allowed</li><li>Otherwise, sed write operations require explicit approval</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Function signature changed to accept options object with <code>allowFileWrites</code></li><li><strong>Evidence:</strong> <code>h92()</code> at line ~314399 with parameter <code>G?.allowFileWrites</code></li></ul>
+    </article>
+    <article class="card" id="improved-pipe-command-parsing">
+      <div class="card-top">
+        <h3>Improved Pipe Command Parsing <a class="anchor" href="#improved-pipe-command-parsing">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Pipe segmentation for bash commands now uses tree-sitter parsing for more accurate command analysis.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Uses <code>getPipeSegments()</code> method for reliable pipe detection</li><li>Better handles complex shell syntax</li><li>Falls back to basic parsing if tree-sitter unavailable</li><li><strong>Evidence:</strong> <code>R92()</code> at line ~313655 with <code>u01.parse()</code> integration</li></ul>
+    </article>
+    <article class="card" id="new-telemetry-fields">
+      <div class="card-top">
+        <h3>New Telemetry Fields <a class="anchor" href="#new-telemetry-fields">#</a></h3>
+      </div>
+      <ul><li><code>repository_id</code> and <code>repository_owner_id</code> for GitHub Actions metadata</li><li><code>wsl_version</code> for Windows Subsystem for Linux environments</li><li><code>is_claubbit</code> flag for internal tooling detection</li><li><code>swe_bench_run_id</code>, <code>swe_bench_instance_id</code>, <code>swe_bench_task_id</code> for benchmark tracking</li><li><code>queryChainId</code> and <code>queryDepth</code> for fork agent query tracking</li><li>Cache hit rate metrics for forked agent queries</li></ul>
+    </article>
+    <article class="card" id="new-telemetry-events">
+      <div class="card-top">
+        <h3>New Telemetry Events <a class="anchor" href="#new-telemetry-events">#</a></h3>
+      </div>
+      <ul><li><code>tengu_fork_agent_query</code>: Tracks forked agent query performance and token usage</li><li><code>tengu_prompt_suggestion_shown</code>: When prompt suggestions are displayed</li><li><code>tengu_prompt_suggestion_accepted</code>: When users accept suggested prompts</li></ul>
+    </article>
+    <article class="card" id="bash-permission-check-reordering">
+      <div class="card-top">
+        <h3>Bash Permission Check Reordering <a class="anchor" href="#bash-permission-check-reordering">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Fixed the order of permission checks for bash commands to ensure dangerous file checks happen before subcommand evaluation.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Dangerous file check (<code>ct1</code>) now runs after subcommand parsing</li><li>Returns early if dangerous patterns detected, before proceeding to subcommand analysis</li><li><strong>Evidence:</strong> Function <code>et1()</code> at line ~314794 with reordered checks</li></ul>
+    </article>
+    <article class="card" id="session-memory-agent-removal">
+      <div class="card-top">
+        <h3>Session Memory Agent Removal <a class="anchor" href="#session-memory-agent-removal">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Removed the standalone <code>session-memory</code> agent type that was unused.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Function <code>SS3()</code> removed from v2.0.54</li><li>Memory extraction handled through other mechanisms</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

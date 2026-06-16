@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.55 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.55."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.55</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.55</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.54 → v0.2.55</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">13</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p># Claude Code v0.2.55 Changelog</p>
+    </article>
+    <article class="card" id="enhanced-tool-permission-system">
+      <div class="card-top">
+        <h3>Enhanced Tool Permission System <a class="anchor" href="#enhanced-tool-permission-system">#</a></h3>
+      </div>
+      <ul><li><strong>New permission checking functions</strong> for file operations:</li><li><code>d_()</code> - Validates read permissions before file access, providing clear error messages when permissions haven't been granted</li><li><code>Vg()</code> - Validates write permissions before file modifications, ensuring proper access control</li></ul>
+<p>These functions improve security by checking if Claude has been granted the necessary permissions before attempting file operations. Users will see messages like:</p>
+<ul><li>"Claude requested permissions to read from [path], but you haven't granted it yet."</li><li>"Claude requested permissions to write to [path], but you haven't granted it yet."</li></ul>
+    </article>
+    <article class="card" id="improved-memory-update-notifications">
+      <div class="card-top">
+        <h3>Improved Memory Update Notifications <a class="anchor" href="#improved-memory-update-notifications">#</a></h3>
+      </div>
+      <ul><li><strong>Simplified memory update display</strong> with the new <code>Xk2()</code> component</li><li>Shows concise memory update notifications without diff details</li><li>Displays: "[MemoryType] updated in [path] · /memory to edit"</li><li>Cleaner UI that reduces visual clutter while maintaining essential information</li></ul>
+    </article>
+    <article class="card" id="better-error-handling-for-context-limits">
+      <div class="card-top">
+        <h3>Better Error Handling for Context Limits <a class="anchor" href="#better-error-handling-for-context-limits">#</a></h3>
+      </div>
+      <ul><li><strong>New <code>Tl2()</code> function</strong> parses context limit errors to extract token information</li><li>Automatically detects when input length + max_tokens exceed the context limit</li><li>Extracts and returns structured data: <code>{ inputTokens, maxTokens, contextLimit }</code></li><li>Helps users understand token usage and adjust their requests accordingly</li></ul>
+    </article>
+    <article class="card" id="mcp-tool-timeout">
+      <div class="card-top">
+        <h3>MCP Tool Timeout <a class="anchor" href="#mcp-tool-timeout">#</a></h3>
+      </div>
+      <ul><li><strong>New environment variable</strong>: <code>MCP_TOOL_TIMEOUT</code></li><li>Default: 100,000,000ms (increased from standard timeout)</li><li>Allows longer-running MCP tool operations</li><li>Set via: <code>export MCP_TOOL_TIMEOUT=100000000</code></li></ul>
+    </article>
+    <article class="card" id="mcp-connection-timeout">
+      <div class="card-top">
+        <h3>MCP Connection Timeout <a class="anchor" href="#mcp-connection-timeout">#</a></h3>
+      </div>
+      <ul><li><strong>Modified environment variable handling</strong>: <code>MCP_TIMEOUT</code></li><li>Default: 30,000ms (30 seconds)</li><li>Now properly handles empty string values with fallback</li></ul>
+    </article>
+    <article class="card" id="refactored-status-indicator-system">
+      <div class="card-top">
+        <h3>Refactored Status Indicator System <a class="anchor" href="#refactored-status-indicator-system">#</a></h3>
+      </div>
+      <ul><li><strong>Centralized status theme logic</strong> with <code>EL1()</code> function</li><li>Cleaner code for determining UI themes based on operation status</li><li>Supports states: "tool-use", "responding", "thinking", and "normal"</li></ul>
+<ul><li><strong>New helper functions</strong> for consistent UI rendering:</li><li><code>im5()</code> - Returns appropriate spinner style for current status</li><li><code>nm5()</code> - Returns color theme for current status</li><li><code>am5()</code> - Returns message style for current status</li></ul>
+    </article>
+    <article class="card" id="stream-handling">
+      <div class="card-top">
+        <h3>Stream Handling <a class="anchor" href="#stream-handling">#</a></h3>
+      </div>
+      <ul><li>Changed from default import to named import for Node.js streams</li><li>Before: <code>import pg4 from "stream"</code></li><li>After: <code>import { Readable as ug4 } from "stream"</code></li></ul>
+    </article>
+    <article class="card" id="process-management">
+      <div class="card-top">
+        <h3>Process Management <a class="anchor" href="#process-management">#</a></h3>
+      </div>
+      <ul><li>Relocated process.cwd import for better module organization</li><li>Now imported as: <code>import { cwd as NX0 } from "node:process"</code></li></ul>
+    </article>
+    <article class="card" id="error-retry-logic">
+      <div class="card-top">
+        <h3>Error Retry Logic <a class="anchor" href="#error-retry-logic">#</a></h3>
+      </div>
+      <ul><li>Enhanced <code>Ak5()</code> function (formerly <code>Bb5()</code>) now checks for context limit errors</li><li>Automatically retries requests that fail due to context limits</li><li>Provides better handling of token-related errors</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed memory update notification display to be more concise and user-friendly</li><li>Improved error message clarity for permission-related failures</li><li>Better handling of empty MCP timeout environment variables</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="internal-changes">
+      <ul><li>Removed unused variables: <code>RG9</code>, <code>zi2</code>, <code>xZ</code></li><li>Removed redundant import: <code>Rn2</code> from "node:process"</li><li>Added new utility function <code>Yf()</code> for internal operations</li><li>Significant code refactoring with ~4254 function renames for better code organization</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

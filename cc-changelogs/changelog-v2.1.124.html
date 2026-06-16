@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.124 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.124."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.124</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.124</span></h1>
+<p class="sub">This release adds a new <code>claude project purge</code> CLI command for cleaning up per-project state, ships a scoped history-search picker (session/project/everywhere) bound to Ctrl+S, and renames the internal "upstreamproxy" relay to "egress-gateway" with a new <code>/v1/code/egress/gateway</code> endpoint. It also adds gateway-model discovery for <code>ANTHROPIC_BASE_URL</code> deployments, oversized-image auto-removal-and-retry, an <code>isolatePeerMachines</code> Remote Control safety setting, a new <code>oauth_org_not_allowed</code> error class, and the <code>doneMeansMerged</code> "keep going until PR is merged" mode (currently <code>@internal</code>).</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.123 → v2.1.124</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">36</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">33 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="claude-project-purge-command">
+      <div class="card-top">
+        <h3><code>claude project purge</code> command <a class="anchor" href="#claude-project-purge-command">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new CLI subcommand that deletes every piece of Claude Code state belonging to a project — transcripts, task lists, debug logs, file edit history, the project entry in <code>~/.claude.json</code>, and the matching prompt-history lines.</p>
+<div class="blabel">Usage</div>
+<pre><code># Purge state for the current directory (interactive picker if no path given)
+claude project purge
+
+# Purge for a specific project path
+claude project purge /path/to/repo
+
+# Show what would be deleted without deleting
+claude project purge --dry-run
+
+# Skip the confirmation prompt
+claude project purge --yes
+
+# Step through each item with delete/skip/all/abort prompts
+claude project purge -i
+claude project purge --interactive
+
+# Purge state for ALL projects on this machine
+claude project purge --all</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The interactive picker lists every project that has state on disk (current cwd plus anything found under <code>~/.claude/projects/</code>) so you can pick one to purge.</li><li>A "purge plan" is printed before any deletion runs, e.g. <code>dir: &lt;path&gt;  project transcripts (.jsonl) and memory/</code>, <code>config: projects["&lt;path&gt;"]  project entry in ~/.claude.json (trust, history, MCP servers)</code>, <code>filter: &lt;path&gt;/history.jsonl  N prompt(s) typed in this project</code>.</li><li><code>--all</code> is mutually exclusive with both a path argument and <code>--interactive</code>; the CLI errors with <code>Cannot specify both a path and --all.</code> / <code>Cannot use -i/--interactive with --all.</code> if you mix them.</li><li>Warnings are printed (not deleted): <code>shell-snapshots/ are not project-scoped and will not be touched</code>, and <code>backups/ may still contain this project entry in old .claude.json snapshots (...); at most 5 are kept and they rotate out automatically</code>.</li><li>A safety check refuses to overwrite the config if an in-process re-read is missing auth that the cache has — preventing accidental credential loss (GH #3117).</li></ul>
+<div class="blabel">Evidence</div>
+<p>Project purge command (search for <code>"Manage Claude Code project state"</code> and <code>"Delete all Claude Code state for a project (transcripts, tasks, file history, config entry)"</code>).</p>
+    </article>
+    <article class="card" id="scoped-history-search-ctrl-s-to-cycle">
+      <div class="card-top">
+        <h3>Scoped history search (Ctrl+S to cycle) <a class="anchor" href="#scoped-history-search-ctrl-s-to-cycle">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>↑</code> / history picker now shows a dedicated "Search prompts" view that can be scoped to the current session, the current project, or everywhere. Press Ctrl+S to cycle between scopes.</p>
+<div class="blabel">Usage</div>
+<ul><li>Open the history picker, type to filter, press <code>Ctrl+S</code> to switch between <code>session</code> → <code>project</code> → <code>everywhere</code>.</li><li>Filter input shows <code>Filter history…</code> placeholder; the title displays the active scope (e.g. <code>Search prompts · project</code>).</li><li>Empty states are now <code>Loading…</code>, <code>No matching prompts</code>, or <code>No history yet</code> depending on the picker state.</li></ul>
+<div class="blabel">Details</div>
+<ul><li>The picker uses fuzzy-subsequence matching as a fallback when the literal substring isn't found.</li><li>Layouts adapt to terminal width: ≥ 100 columns shows a side-by-side preview; narrower terminals stack the preview below.</li><li>A new keybinding action <code>historySearch:cycleScope</code> is registered globally and emits the <code>tengu_history_picker_scope</code> telemetry event when used.</li><li>In remote sessions, history search is unavailable and the user sees: <code>History search isn't available in remote sessions yet</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>History search picker (search for <code>"Search prompts"</code>, <code>"Filter history…"</code>, and the new keybinding <code>"historySearch:cycleScope"</code>); scope list <code>Sc$ = ["session", "project", "everywhere"]</code>.</p>
+    </article>
+    <article class="card" id="oversized-image-auto-removal-with-retry">
+      <div class="card-top">
+        <h3>Oversized-image auto-removal with retry <a class="anchor" href="#oversized-image-auto-removal-with-retry">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When a request to the model fails because an image's dimensions exceed the per-request many-image pixel limit, Claude Code now identifies the offending image, replaces it with a placeholder, and retries automatically.</p>
+<div class="blabel">Details</div>
+<ul><li>A new pure-JS image dimension reader recognizes PNG, GIF, JPEG, and WebP (VP8/VP8L/VP8X) headers — no shelling out.</li><li>On a 400 from the API matching <code>dimensions exceed max allowed size … N pixels</code>, the offending content block is rewritten to text: <code>[Image removed: dimensions exceeded the 2000px limit for requests with many images]</code> and the request retries with a log line <code>(exceeded 2000px many-image limit); retrying.</code></li><li>Retry is gated by the existing image-pre-resize logic so requests that wouldn't fit even after rescaling fail fast.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Image dimension parser and retry path (search for <code>"[Image removed: dimensions exceeded the 2000px limit for requests with many images]"</code> and <code>"retry:image-dimension:"</code>).</p>
+    </article>
+    <article class="card" id="gateway-model-discovery-for-anthropic-base-url">
+      <div class="card-top">
+        <h3>Gateway model discovery for <code>ANTHROPIC_BASE_URL</code> <a class="anchor" href="#gateway-model-discovery-for-anthropic-base-url">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When <code>ANTHROPIC_BASE_URL</code> is set against a first-party gateway, Claude Code now discovers the gateway's available Claude/Anthropic models on startup and lists them in the model picker labelled <code>From gateway</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>On startup it issues <code>GET &lt;baseUrl&gt;/v1/models?limit=1000</code> (using whichever of <code>ANTHROPIC_AUTH_TOKEN</code> / API key is configured plus any <code>ANTHROPIC_CUSTOM_HEADERS</code>), filters to entries whose <code>id</code> starts with <code>claude</code> or <code>anthropic</code>, and caches them in <code>&lt;config-dir&gt;/cache/gateway-models.json</code> keyed by base URL.</li><li>Empty / non-OK responses are dropped with debug logs: <code>[gatewayDiscovery] non-OK status …</code>, <code>[gatewayDiscovery] response body failed validation</code>, <code>[gatewayDiscovery] 0 usable models after filter</code>, <code>[gatewayDiscovery] cached N models</code>.</li><li>Discovery is skipped when the host manages the provider (<code>CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST</code>) or when not in first-party mode.</li><li>The <code>/model</code> picker merges these into the available list so Bedrock/Vertex-only models get inline labels and descriptions instead of being hidden.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Gateway discovery (search for <code>"gateway-models.json"</code>, <code>"/v1/models?limit=1000"</code>, and <code>"From gateway"</code>).</p>
+    </article>
+    <article class="card" id="isolatepeermachines-setting-remote-control-safety">
+      <div class="card-top">
+        <h3><code>isolatePeerMachines</code> setting (Remote Control safety) <a class="anchor" href="#isolatepeermachines-setting-remote-control-safety">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new boolean setting that requires explicit user approval before <code>SendMessage</code> can reach a peer Claude Code session running on a different machine via Remote Control.</p>
+<p>Usage (in settings.json):</p>
+<pre><code>{
+  &quot;isolatePeerMachines&quot;: true
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When the latch is engaged for a session it is persisted to the JSONL session log as <code>isolation-latch</code> events (sticky type) so resumed sessions inherit the side they were locked to.</li><li>Setting description: <code>Require explicit approval before SendMessage can reach a peer session on another machine via Remote Control</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Setting schema and runtime check (search for <code>"isolatePeerMachines"</code> and <code>"isolation-latch"</code>).</p>
+    </article>
+    <article class="card" id="donemeansmerged-mode-internal-gradual-rollout">
+      <div class="card-top">
+        <h3><code>doneMeansMerged</code> mode (<code>@internal</code>, gradual rollout) <a class="anchor" href="#donemeansmerged-mode-internal-gradual-rollout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new internal setting that changes Claude's stop condition: instead of stopping when its response is "done", Claude keeps working until the PR is ready to merge, a cron/Monitor is armed to resume later, or it hands you a concrete next step.</p>
+<p>Usage (in settings.json, internal builds only):</p>
+<pre><code>{
+  &quot;doneMeansMerged&quot;: true
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Schema description: <code>@internal When true, Claude keeps working until the PR is ready for you to merge, a cron/Monitor is armed to resume later, or it hands you a self-contained next step.</code></li><li>A companion meta-system message is injected when the setting is on: <code>The user has asked you to work without stopping for clarifying questions. When you'd normally pause to check, make the reasonable call and continue; they'll redirect if needed.</code> Internal text describing how the harness signals itself: <code>You ended the turn without calling SendUserMessage.</code></li><li>A new "session PR resolved" tracker (<code>sessionPrResolved</code>) and the kairos brief stop-hook text are wired into this mode; a flag-controlled hint (<code>tengu_kairos_brief_stop_hook_text</code>) lets the server adjust the in-prompt language without a release.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema setting and behavioral hint (search for <code>"doneMeansMerged"</code> and <code>"You ended the turn without calling SendUserMessage."</code>).</p>
+    </article>
+    <article class="card" id="better-oauth-disabled-by-org-error">
+      <div class="card-top">
+        <h3>Better OAuth-disabled-by-org error <a class="anchor" href="#better-oauth-disabled-by-org-error">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When OAuth login is disallowed at the organization level, Claude now produces a dedicated error (<code>oauth_org_not_allowed</code>) and a clearer user-facing message instead of treating it as a generic auth failure.</p>
+<div class="blabel">Details</div>
+<ul><li>Long form (login screens, Web UI): <code>Your organization has disabled Claude subscription access for Claude Code · Use an Anthropic API key instead, or ask your admin to enable access</code>.</li><li>Short form (status indicators / logs): <code>org disabled OAuth — use API key or ask admin</code>.</li><li>The error is plumbed through both the autonomous-progress state machine and the <code>terminate_reason</code> enum.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New error code (search for <code>"oauth_org_not_allowed"</code> and <code>"Your organization has disabled Claude subscription access for Claude Code"</code>).</p>
+    </article>
+    <article class="card" id="trusted-device-gate-for-remote-control">
+      <div class="card-top">
+        <h3>Trusted-Device gate for Remote Control <a class="anchor" href="#trusted-device-gate-for-remote-control">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Organizations that mandate Trusted Devices now block Remote Control startup with an actionable message until the device is enrolled.</p>
+<div class="blabel">Details</div>
+<ul><li>New gate function returns: <code>Your organization requires Trusted Devices for Remote Control, but this device is not enrolled. Please run \</code>/login\<code> in Claude Code to enroll this device.</code></li><li>Both <code>RA6</code> (Remote Control eligibility) and the <code>claude bridge</code> startup check honor the new gate.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Trusted-device check (search for <code>"Your organization requires Trusted Devices for Remote Control"</code>).</p>
+    </article>
+    <article class="card" id="disable-growthbook-environment-variable">
+      <div class="card-top">
+        <h3><code>DISABLE_GROWTHBOOK</code> environment variable <a class="anchor" href="#disable-growthbook-environment-variable">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new environment variable that disables GrowthBook-driven server-side feature flagging.</p>
+<div class="blabel">Usage</div>
+<pre><code>DISABLE_GROWTHBOOK=1 claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Listed alongside the other <code>DISABLE_*</code> opt-outs (<code>DISABLE_TELEMETRY</code>, <code>DISABLE_INSTALLATION_CHECKS</code>, <code>DISABLE_COST_WARNINGS</code>, etc.) and is automatically forwarded to subprocesses.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Environment passthrough lists (search for <code>"DISABLE_GROWTHBOOK"</code>).</p>
+    </article>
+    <article class="card" id="claude-install-deprecation-banner">
+      <div class="card-top">
+        <h3><code>claude install</code> deprecation banner <a class="anchor" href="#claude-install-deprecation-banner">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The "switch from npm to native installer" notification has been refreshed and is now a registered startup notification with priority <code>high</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Message: <code>Claude Code has switched from npm to native installer. Run \</code>claude install\<code> or see https://docs.anthropic.com/en/docs/claude-code/getting-started for more options.</code></li><li>Suppressed in development builds and when <code>DISABLE_INSTALLATION_CHECKS</code> is set.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Startup notification (search for <code>"npm-deprecation-warning"</code> and <code>"Claude Code has switched from npm to native installer"</code>).</p>
+    </article>
+    <article class="card" id="bash-tool-printf-safety-hardening">
+      <div class="card-top">
+        <h3>Bash-tool / printf safety hardening <a class="anchor" href="#bash-tool-printf-safety-hardening">#</a></h3>
+      </div>
+      <p>The Bash command analyzer now rejects <code>printf</code> invocations that could execute arbitrary code via format-string substitution: <code>printf</code> arguments containing <code>$</code>, <code>\u/\U</code> escapes, format specifiers paired with non-numeric runtime values, or any flag other than the literal <code>--</code> are no longer auto-allowed.</p>
+<p>For double-bracket arithmetic, the diagnostic now points out that <code>bash</code> may run <code>$(cmd)</code> while reusing <code>[[</code>'s semantics: <code>' contains array subscript or runtime-determined value — bash evaluates $(cmd) in subscripts</code> and <code>...' operand is non-numeric — \</code>[[\<code> arithmetically evaluates identifiers/subscripts (may run $(cmd))</code>.</p>
+<p>A new escape-line-continuation rule replaces the older one to handle even-vs-odd backslashes correctly when deciding whether a backslash-newline pair is a real line continuation.</p>
+<div class="blabel">Evidence</div>
+<p>Bash analyzer (search for <code>"contains array subscript or runtime-determined value"</code> and <code>"Delimiters-only string node contains unparsed command substitution"</code>).</p>
+    </article>
+    <article class="card" id="egress-gateway-rename-was-upstream-proxy">
+      <div class="card-top">
+        <h3>Egress gateway rename (was "upstream proxy") <a class="anchor" href="#egress-gateway-rename-was-upstream-proxy">#</a></h3>
+      </div>
+      <p>The internal MCP-proxy infrastructure was renamed end-to-end:</p>
+<ul><li>New endpoints: <code>/v1/code/egress/gateway</code> (was <code>/v1/code/upstreamproxy/...</code>) and <code>/v2/session_ingress/mcp/ws/</code>.</li><li>All log lines moved from <code>[upstreamproxy] ...</code> to <code>[egress-gateway] ...</code> (e.g. <code>[egress-gateway] enabled on 127.0.0.1:</code>, <code>[egress-gateway] relay listening on 127.0.0.1:</code>, <code>[egress-gateway] aws config write failed: ...</code>, <code>[egress-gateway] prctl unavailable: ...</code>, <code>[egress-gateway] no session token; proxy disabled</code>, <code>[egress-gateway] ws error: ...</code>).</li><li>The internal <code>initEgressGateway</code> / <code>getEgressGatewayEnv</code> / <code>registerEgressGatewayEnvFn</code> exports replace the <code><em>UpstreamProxy</em></code> names.</li><li>Init failures now log <code>[init] egress gateway init failed: ...; continuing without proxy</code>.</li></ul>
+<p>If you scrape Claude Code logs for the old <code>upstreamproxy</code> prefix, update your queries.</p>
+<div class="blabel">Evidence</div>
+<p>Renamed prefixes (search for <code>"[egress-gateway]"</code> and <code>"/v1/code/egress/gateway"</code>).</p>
+    </article>
+    <article class="card" id="windows-clipboard-copy-via-stdin-pipe">
+      <div class="card-top">
+        <h3>Windows clipboard copy via stdin pipe <a class="anchor" href="#windows-clipboard-copy-via-stdin-pipe">#</a></h3>
+      </div>
+      <p>Pasting large content into the clipboard on Windows no longer base64-encodes the payload onto the PowerShell command line. Instead, Claude pipes UTF-8 bytes to a fixed PowerShell snippet (<code>[Console]::InputEncoding = [Text.Encoding]::UTF8; Set-Clipboard -Value ([Console]::In.ReadToEnd())</code>), removing the previous payload-length cap.</p>
+<div class="blabel">Evidence</div>
+<p>New clipboard copy command (search for <code>"Set-Clipboard -Value ([Console]::In.ReadToEnd())"</code>).</p>
+    </article>
+    <article class="card" id="powershell-shell-description-on-windows">
+      <div class="card-top">
+        <h3>PowerShell shell description on Windows <a class="anchor" href="#powershell-shell-description-on-windows">#</a></h3>
+      </div>
+      <p>When git-bash is the active shell but PowerShell is also detected on Windows, the system prompt now reads: <code>Shell: PowerShell (use PowerShell syntax — e.g., $null not /dev/null, $env:VAR not $VAR, backtick for line continuation). Bash is also available via the Bash tool for POSIX scripts.</code></p>
+<p>Previously the wording was bash-first with a "PowerShell is also available via the PowerShell tool" suffix; the new copy emphasizes PowerShell as primary and points at Bash as a fallback.</p>
+<div class="blabel">Evidence</div>
+<p>Windows shell description (search for <code>"Bash is also available via the Bash tool for POSIX scripts"</code>).</p>
+    </article>
+    <article class="card" id="cursor-ide-detection-accommodates-vscode-1-92-1-105">
+      <div class="card-top">
+        <h3>Cursor-IDE detection accommodates VSCode 1.92–1.105 <a class="anchor" href="#cursor-ide-detection-accommodates-vscode-1-92-1-105">#</a></h3>
+      </div>
+      <p>Detection of Cursor as the host editor now also fires when <code>TERM_PROGRAM === "vscode"</code> and the reported VSCode version falls in the <code>1.92.0</code>–<code>1.105.0</code> range, since a Cursor-bundled VSCode in that window mis-reports as plain VSCode. A small parser (<code>major.minor.patch</code> → <code>M<em>1e6 + m</em>1e3 + p</code>) makes the comparison explicit.</p>
+<div class="blabel">Evidence</div>
+<p>Cursor host detection (search for <code>"VSCODE_GIT_ASKPASS_MAIN"</code> and <code>"TERM_PROGRAM_VERSION"</code>).</p>
+    </article>
+    <article class="card" id="background-job-working-directory-error-is-now-actionable">
+      <div class="card-top">
+        <h3>Background-job working-directory error is now actionable <a class="anchor" href="#background-job-working-directory-error-is-now-actionable">#</a></h3>
+      </div>
+      <p>When a background worker can't spawn because its <code>cwd</code> no longer exists, the job is marked permanently <code>crashed</code> instead of looping respawn attempts:</p>
+<pre><code>working directory no longer exists: &lt;cwd&gt;
+[&lt;reason&gt; — this job cannot be respawned]</code></pre>
+<p>The same path also fires the new <code>tengu_bg_spawn_cwd_gone</code> telemetry event.</p>
+<div class="blabel">Evidence</div>
+<p>Background spawn cwd-gone (search for <code>"working directory no longer exists:"</code> and <code>"this job cannot be respawned"</code>).</p>
+    </article>
+    <article class="card" id="stream-watchdog-re-arms-after-suspend">
+      <div class="card-top">
+        <h3>Stream watchdog re-arms after suspend <a class="anchor" href="#stream-watchdog-re-arms-after-suspend">#</a></h3>
+      </div>
+      <p>The byte-stream watchdog in remote sessions now distinguishes "the network really went idle" from "your laptop went to sleep". When the wall-clock idle exceeds the expected interval by enough to look like a system suspend, it logs <code>Stream watchdog fired after suspend (actual idle &lt;ms&gt; ms (sleep/suspend), re-arming</code> and re-arms instead of declaring the stream dead. Late watchdog suppressions are also logged as <code>[byte-watchdog] suppressed: late=</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Watchdog re-arm (search for <code>"Stream watchdog fired after suspend"</code> and <code>"[byte-watchdog] suppressed:"</code>).</p>
+    </article>
+    <article class="card" id="memory-feedback-prompt-copy">
+      <div class="card-top">
+        <h3>Memory-feedback prompt copy <a class="anchor" href="#memory-feedback-prompt-copy">#</a></h3>
+      </div>
+      <p>The optional-feedback prompt after a memory recall is now phrased <code>Did this memory help? (optional)</code> (was <code>Did this help? (optional)</code>), making it clearer what the user is rating.</p>
+<div class="blabel">Evidence</div>
+<p>Memory feedback prompt (search for <code>"Did this memory help? (optional)"</code>).</p>
+    </article>
+    <article class="card" id="file-edit-history-snippet-budgeting">
+      <div class="card-top">
+        <h3>File edit history snippet budgeting <a class="anchor" href="#file-edit-history-snippet-budgeting">#</a></h3>
+      </div>
+      <p>When several files are edited in a single turn and their accumulated diff snippets would blow past the per-turn budget (<code>16384</code> chars), later files are now omitted from the in-prompt diff. The model sees:</p>
+<p>&gt; Note: <code>&lt;filename&gt;</code> was modified, either by the user or by a linter. ... The diff was omitted because other modified files in this turn already exceeded the snippet budget; use the Read tool if you need the current content.</p>
+<p>This trades extra <code>Read</code> calls for predictable context usage.</p>
+<div class="blabel">Evidence</div>
+<p>Snippet budget (search for <code>"The diff was omitted because other modified files in this turn already exceeded the snippet budget"</code>).</p>
+    </article>
+    <article class="card" id="auto-mode-classifier-timeout-cleanup">
+      <div class="card-top">
+        <h3>Auto-mode classifier timeout cleanup <a class="anchor" href="#auto-mode-classifier-timeout-cleanup">#</a></h3>
+      </div>
+      <p>The two-stage auto-mode tool classifier now runs each call inside a single <code>Dj6(timeout, ...)</code> wrapper that tears down the abort signal and timer in <code>finally</code>, replacing the previous ad-hoc <code>signal:</code> plumbing. The user impact is shorter hangs when an auto-classifier call stalls.</p>
+<div class="blabel">Evidence</div>
+<p>Auto-mode wrapper (search for <code>"classifierStage"</code> near the new helper).</p>
+    </article>
+    <article class="card" id="token-efficient-tools-beta-header">
+      <div class="card-top">
+        <h3><code>token-efficient-tools</code> beta header <a class="anchor" href="#token-efficient-tools-beta-header">#</a></h3>
+      </div>
+      <p>A new beta header is added to the centralized header registry: <code>token_efficient_tools</code> → <code>token-efficient-tools-2026-03-28</code>. The whole registry was reorganized to use <code>Object.freeze({ name, header })</code> records, making it easier to enable/disable individual betas server-side via <code>stickyBetas</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Beta header registry (search for <code>"token-efficient-tools-2026-03-28"</code>).</p>
+    </article>
+    <article class="card" id="bedrock-auth-header-normalization">
+      <div class="card-top">
+        <h3>Bedrock auth header normalization <a class="anchor" href="#bedrock-auth-header-normalization">#</a></h3>
+      </div>
+      <p>The Bedrock client now always sets <code>Authorization: null</code> in <code>defaultHeaders</code> and re-injects the bearer or service-tier headers explicitly. This stops a leaked Authorization header from a parent fetch leaking into Bedrock requests.</p>
+<div class="blabel">Evidence</div>
+<p>Bedrock client builder (search for <code>Authorization: null</code>).</p>
+    </article>
+    <article class="card" id="mcp-file-suggestions-sdk-request">
+      <div class="card-top">
+        <h3>MCP <code>file_suggestions</code> SDK request <a class="anchor" href="#mcp-file-suggestions-sdk-request">#</a></h3>
+      </div>
+      <p>The SDK control protocol gains a new <code>file_suggestions</code> request kind: callers can ask Claude Code's index for matching file paths and receive a list of <code>{ path }</code> entries. This enables external tools (e.g. <code>claude-code-vscode</code>) to power the <code>@</code> mention autocomplete from the host process.</p>
+<div class="blabel">Evidence</div>
+<p>New SDK request branch (search for <code>"file_suggestions"</code> and <code>"generateFileSuggestions"</code>).</p>
+    </article>
+    <article class="card" id="ccshare-url-in-feedback-responses-internal-builds">
+      <div class="card-top">
+        <h3><code>ccshare_url</code> in feedback responses (internal builds) <a class="anchor" href="#ccshare-url-in-feedback-responses-internal-builds">#</a></h3>
+      </div>
+      <p>Submit-feedback responses now include an optional <code>ccshare_url</code> field on success. Schema: <code>Internal share URL for the conversation. Only set in internal builds when the upload succeeded; absent otherwise.</code></p>
+<div class="blabel">Evidence</div>
+<p>Feedback response schema (search for <code>"ccshare_url"</code> and <code>"Internal share URL for the conversation"</code>).</p>
+    </article>
+    <article class="card" id="pickers-reset-on-filter-change">
+      <div class="card-top">
+        <h3>Pickers reset on filter change <a class="anchor" href="#pickers-reset-on-filter-change">#</a></h3>
+      </div>
+      <p>The reusable list-picker now exposes a <code>resetKey</code> prop; when it changes, focus resets to the top and any input is cleared. The history picker uses this when you cycle scopes so you don't end up with a stale focused row from the previous scope.</p>
+<div class="blabel">Evidence</div>
+<p>Picker <code>resetKey</code> (search for <code>resetKey:</code> in the picker call site).</p>
+    </article>
+    <article class="card" id="settings-errors-prompt-has-a-fix-with-claude-path">
+      <div class="card-top">
+        <h3>"Settings errors" prompt has a "Fix with Claude" path <a class="anchor" href="#settings-errors-prompt-has-a-fix-with-claude-path">#</a></h3>
+      </div>
+      <p>When startup detects malformed <code>settings.json</code> (or similar), the error dialog now offers <code>Fix with Claude</code> instead of just exiting. Choosing it boots Claude with an auto-generated prompt asking it to repair the file and any in-flight prompt is appended after the fix prompt.</p>
+<div class="blabel">Evidence</div>
+<p>Settings repair flow (search for <code>"Fix with Claude"</code>).</p>
+    </article>
+    <article class="card" id="update-config-skill-prompt-rewritten">
+      <div class="card-top">
+        <h3><code>update-config</code> skill prompt rewritten <a class="anchor" href="#update-config-skill-prompt-rewritten">#</a></h3>
+      </div>
+      <p>The bundled <code>update-config</code> skill (the one Claude uses to edit <code>settings.json</code>) was rewritten with explicit guidance on:</p>
+<ul><li>When hooks are required vs preferences (<code>PreToolUse</code>, <code>PostToolUse</code>, <code>PreCompact</code>, <code>PostCompact</code>, <code>Stop</code>, <code>Notification</code>, <code>SessionStart</code>).</li><li>"CRITICAL: Read Before Write" — always read the existing settings file before editing.</li><li>Using <code>AskUserQuestion</code> to disambiguate user/project/local scope.</li><li>Right-vs-wrong array merging examples for <code>permissions.allow</code> and hook arrays.</li><li>Troubleshooting hook execution (debug flags, matcher checking, etc.).</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill prompt (search for <code>"# Update Config Skill"</code> and <code>"## CRITICAL: Read Before Write"</code>).</p>
+    </article>
+    <article class="card" id="remote-control-entrypoint-detection-tightened">
+      <div class="card-top">
+        <h3>Remote Control entrypoint detection tightened <a class="anchor" href="#remote-control-entrypoint-detection-tightened">#</a></h3>
+      </div>
+      <p>The set of entrypoints that count as "remote" (and therefore skip terminal-only features) is now more conservative — only known entrypoints, and never when <code>BUGHUNTER_FLEET_SIZE</code> is set.</p>
+<div class="blabel">Evidence</div>
+<p>Remote-mode classification (search for the entrypoint set check that gates <code>H.add("ccr")</code>).</p>
+    </article>
+    <article class="card" id="plugins-cache-cleared-on-plugin-refresh">
+      <div class="card-top">
+        <h3>Plugins cache cleared on plugin refresh <a class="anchor" href="#plugins-cache-cleared-on-plugin-refresh">#</a></h3>
+      </div>
+      <p><code>refreshActivePlugins</code> now also calls a new <code>clearedInstalledPluginsCache</code> log — <code>Cleared installed plugins cache</code> — alongside the existing per-component clears, ensuring stale plugin metadata never bleeds across switches.</p>
+<div class="blabel">Evidence</div>
+<p>Plugin refresh (search for <code>"Cleared installed plugins cache"</code>).</p>
+    </article>
+    <article class="card" id="effort-command-no-longer-error-spams">
+      <div class="card-top">
+        <h3>Effort command no longer error-spams <a class="anchor" href="#effort-command-no-longer-error-spams">#</a></h3>
+      </div>
+      <p><code>/effort</code> no longer surfaces a "Failed to set effort level: …" toast when the underlying user-settings write returns an error; the value is still applied via the in-memory app state.</p>
+<div class="blabel">Evidence</div>
+<p>Effort command simplification (search for the removed <code>"Failed to set effort level:"</code> string).</p>
+    </article>
+    <article class="card" id="read-tool-description-simplified">
+      <div class="card-top">
+        <h3>Read tool description simplified <a class="anchor" href="#read-tool-description-simplified">#</a></h3>
+      </div>
+      <p>The <code>Read</code> tool's <code>offset</code> and <code>limit</code> parameter descriptions reverted to the original short form. The longer "harness truncates oversized files automatically" copy gated by <code>tengu_slate_reef</code> was removed.</p>
+<div class="blabel">Evidence</div>
+<p>Read tool schema (search for <code>"The line number to start reading from. Only provide if the file is too large to read at once"</code> — single description now).</p>
+    </article>
+    <article class="card" id="session-resume-tracks-isolation-latch">
+      <div class="card-top">
+        <h3>Session resume tracks isolation latch <a class="anchor" href="#session-resume-tracks-isolation-latch">#</a></h3>
+      </div>
+      <p>Session JSONL files now include <code>isolation-latch</code> records (sticky), and resuming a session restores the previous <code>currentSessionIsolationLatch</code>. This complements the new <code>isolatePeerMachines</code> setting so Remote-Control approvals don't reset on resume.</p>
+<div class="blabel">Evidence</div>
+<p>JSONL session log type (search for <code>"isolation-latch"</code> and <code>currentSessionIsolationLatch</code>).</p>
+    </article>
+    <article class="card" id="mention-attribution-metadata">
+      <div class="card-top">
+        <h3><code>@</code>-mention attribution metadata <a class="anchor" href="#mention-attribution-metadata">#</a></h3>
+      </div>
+      <p>Tagged-input attributions now serialize <code>from</code> and <code>from-name</code> attributes (with quote-stripping on the display name) into the system-reminder block, so multi-user sessions can show who supplied each piece of context.</p>
+<div class="blabel">Evidence</div>
+<p>Attribution serialization (search for <code>"from-name=\""</code>).</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fix a race in OAuth token refresh that could write a stale token after a parallel refresh succeeded; the lock now compares <code>accessToken</code> against the value held at lock acquisition time.</li><li>Token-refresh HTTP timeout raised from 15s to 30s — long-tail refreshes no longer fail when the IDP is slow.</li><li>The <code>enter</code> chord is no longer suggested in the task-picker hint row for <code>mcp_task</code> items, where viewing isn't supported.</li><li>Fixed a sort instability in the prompt-completion suggester — scores are now bucketed by tenths before falling back to recent-usage tiebreak, removing a flicker on every keystroke.</li><li>Background spare-claim failures now propagate the inner error to the caller (previously only the outer "Background service unreachable" message survived).</li><li>The history-picker's last-match search now case-folds the query before scanning entries.</li><li>The <code>prompt-caching-scope-2026-01-05</code> plus other betas dropped only the <code>tengu_slate_reef</code> gating; no functional change.</li><li>Web search results no longer enable prompt caching (caching was forced off for that path), avoiding wasted cache reads on per-call ephemeral tool schemas.</li></ul>
+<p>(Search for <code>"tengu_oauth_token_refresh_race_resolved"</code>, <code>"tengu_oauth_token_refresh_starting"</code>, <code>"\"mcp_task\""</code>, and <code>"enablePromptCaching: !1"</code> to verify each.)</p>
+    </article>
+    <article class="card" id="donemeansmerged-keep-working-mode-in-development">
+      <div class="card-top">
+        <h3><code>doneMeansMerged</code> "keep working" mode [In Development] <a class="anchor" href="#donemeansmerged-keep-working-mode-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>Covered above under New Features; the schema, hint, telemetry, and PR-resolved tracker all ship in this version, but the field is annotated <code>@internal</code> and only exposed in internal builds. External users can't toggle it yet.</p>
+<div class="blabel">Status</div>
+<p><code>@internal</code> schema field; runtime support is wired up.</p>
+<p>Orphaned tip: ⚠️ None visible to users.</p>
+<div class="blabel">Evidence</div>
+<p>Schema description (search for <code>"@internal When true, Claude keeps working until the PR is ready for you to merge"</code>).</p>
+    </article>
+    <article class="card" id="purge-by-glob-and-wheelflood-keybinding-in-development">
+      <div class="card-top">
+        <h3><code>purge-by-glob</code> and <code>wheelFlood</code> keybinding [In Development] <a class="anchor" href="#purge-by-glob-and-wheelflood-keybinding-in-development">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>A new <code>wheelFlood</code> keybinding action is registered alongside <code>historySearch:cycleScope</code> but no UI binding currently routes a keystroke to it; it appears only in telemetry/debug logs (<code>· wheelFlood</code>).</p>
+<div class="blabel">Status</div>
+<p>Action declared but not bound to a key; no user-facing effect yet.</p>
+<div class="blabel">Evidence</div>
+<p>Keybinding action registry (search for <code>"· wheelFlood"</code>).</p>
+    </article>
+    <article class="card" id="oauth-org-not-allowed-plumbing-for-the-autonomous-progress-s">
+      <div class="card-top">
+        <h3><code>oauth_org_not_allowed</code> plumbing for the autonomous-progress state [In Development] <a class="anchor" href="#oauth-org-not-allowed-plumbing-for-the-autonomous-progress-s">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The new error code is fully wired through the request/response and terminate-reason enums, but at present it surfaces only on initial-request failures. Mid-session token rotations that hit the org-disabled response still get classified as a generic <code>authentication_failed</code>. Expect mid-session detection to follow.</p>
+<div class="blabel">Evidence</div>
+<p>Enum expansion only (search for <code>"oauth_org_not_allowed"</code> in the enum but not in the in-flight refresh paths).</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>If you have any tooling or log-analysis scripts that match <code>[upstreamproxy]</code> log lines or <code>/v1/code/upstreamproxy/...</code> URLs, update them to <code>[egress-gateway]</code> / <code>/v1/code/egress/gateway</code>.</li><li>The <code>isolatePeerMachines</code> setting is opt-in and defaults to off, so existing Remote Control workflows are unchanged unless you set it.</li><li>Per-project state purges via <code>claude project purge</code> are irreversible (<code>This cannot be undone.</code>); always preview with <code>--dry-run</code> first.</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

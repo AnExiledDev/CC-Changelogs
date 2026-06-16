@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.84 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.84."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.84</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.84</span></h1>
+<p class="sub">This is a major release that introduces an in-process Computer Use MCP server for macOS (with tiered application permissions and guided teach mode), a full PowerShell tool for Windows, a new <code>--task-budget</code> CLI flag for controlling API output tokens, and a "You've been away" idle re-engagement prompt. The release also renames "remote sessions" to "cloud sessions" throughout the UI, adds the <code>TaskCreated</code> hook event, and includes numerous improvements to permission dialogs, MCP connector deduplication, and theme detection.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.83 → v2.1.84</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">27</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">27 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="computer-use-mcp-server-macos">
+      <div class="card-top">
+        <h3>Computer Use MCP Server (macOS) <a class="anchor" href="#computer-use-mcp-server-macos">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A comprehensive, in-process MCP server that allows Claude to control macOS desktop applications — clicking, typing, scrolling, dragging, and taking screenshots — with a tiered permission system.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --computer-use-mcp</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Applications must be explicitly approved by the user via <code>request_access</code> before any interaction</li><li>Three permission tiers: <strong>read</strong> (screenshots only, no interaction), <strong>click</strong> (visible + plain left-click), and <strong>full</strong> (typing, key presses, modifier-clicks, drag-drop)</li><li>Browsers and trading apps default to "read" tier; terminals/IDEs default to "click" tier; other apps get "full"</li><li>Tool set includes: <code>screenshot</code>, <code>left_click</code>, <code>right_click</code>, <code>middle_click</code>, <code>double_click</code>, <code>triple_click</code>, <code>type</code>, <code>key</code>, <code>hold_key</code>, <code>scroll</code>, <code>mouse_move</code>, <code>left_mouse_down</code>, <code>left_mouse_up</code>, <code>left_click_drag</code>, <code>mouse_position</code>, <code>computer_batch</code>, <code>activate_app</code>, <code>switch_display</code>, <code>read_clipboard</code>, <code>write_clipboard</code>, <code>zoom</code>, <code>wait</code>, <code>list_granted_applications</code></li><li><code>computer_batch</code> executes a sequence of actions in ONE tool call, avoiding round-trip latency between steps</li><li>Multi-monitor support with <code>switch_display</code> to capture different monitors</li><li>Clipboard read/write requires separate grant flags (<code>clipboardRead</code>, <code>clipboardWrite</code>)</li><li>System-level key combos (e.g. Cmd+Q, Ctrl+Alt+Delete) require the <code>systemKeyCombos</code> grant</li><li>Pixel comparison validation detects when screen content changed since last screenshot</li><li>Includes a comprehensive deny-list for sensitive apps (financial, crypto wallets, etc.) that cannot be controlled</li><li>macOS Accessibility and Screen Recording permissions required</li><li>Esc hotkey registered for user to abort computer control at any time</li></ul>
+<div class="blabel">Evidence</div>
+<p>In-process Computer Use MCP server (search for <code>"In-process Computer Use MCP server started"</code>, <code>"--computer-use-mcp"</code>, <code>"request_access"</code>)</p>
+    </article>
+    <article class="card" id="computer-use-teach-mode">
+      <div class="card-top">
+        <h3>Computer Use Teach Mode <a class="anchor" href="#computer-use-teach-mode">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A guided-tour teaching system built on top of Computer Use that allows Claude to walk users through UI workflows step-by-step with interactive tooltips.</p>
+<div class="blabel">Details</div>
+<ul><li><code>request_teach_access</code> initializes teach mode with app permissions and a stated reason (shown in approval dialog)</li><li><code>teach_step</code> shows a tooltip with explanation text, optional anchor coordinates (pointing arrow), and actions to execute when user clicks "Next"</li><li><code>teach_batch</code> batches multiple steps into one round-trip for predictable sequences on the same page</li><li>User can click "Exit" at any point to end the tour</li><li>Text emitted outside teach_step calls is NOT visible until teach mode ends</li><li>During teach mode, <code>request_access</code> cannot add new permissions (would hide the tooltip UI)</li><li>Returns screenshots after each step so Claude can anchor the next step's coordinates</li></ul>
+<div class="blabel">Evidence</div>
+<p>Teach mode tools (search for <code>"teach_step"</code>, <code>"teach_batch"</code>, <code>"request_teach_access"</code>)</p>
+    </article>
+    <article class="card" id="powershell-tool-windows">
+      <div class="card-top">
+        <h3>PowerShell Tool (Windows) <a class="anchor" href="#powershell-tool-windows">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A dedicated PowerShell command execution tool for Windows users, providing native PowerShell syntax support with comprehensive security analysis.</p>
+<div class="blabel">Details</div>
+<ul><li>Enabled via the <code>CLAUDE_CODE_USE_POWERSHELL_TOOL</code> environment variable on Windows</li><li>Uses <code>pwsh</code> (PowerShell 7+) for command parsing and execution</li><li>Full AST-based security analysis of PowerShell commands before execution</li><li>Validates PowerShell-specific patterns: cmdlet names, parameter types, pipeline chains, <code>.NET</code> type usage, script blocks</li><li>Recognizes dangerous patterns: <code>Invoke-Expression</code>, encoded commands, COM object creation, module loading, splatting, UNC paths</li><li>Read-only cmdlets (e.g. <code>Get-ChildItem</code>, <code>Get-Content</code>, <code>Select-String</code>, <code>Get-Process</code>) are auto-allowed</li><li>Handles PowerShell-specific security concerns: <code>-FilePath</code> execution, <code>-Command</code> re-invocation, <code>Start-Process</code> nesting</li><li>Provides PowerShell syntax guidance in tool description (variable syntax, pipe objects, here-strings, cmdlet naming)</li><li>Falls back gracefully if PowerShell is not installed</li><li>Enterprise policy enforcement: sandboxing policy blocks shell execution on native Windows when sandbox is unavailable</li></ul>
+<div class="blabel">Evidence</div>
+<p>PowerShell tool implementation (search for <code>"PowerShell command"</code>, <code>"CLAUDE_CODE_USE_POWERSHELL_TOOL"</code>, <code>"Run PowerShell command"</code>)</p>
+    </article>
+    <article class="card" id="task-budget-cli-flag">
+      <div class="card-top">
+        <h3><code>--task-budget</code> CLI Flag <a class="anchor" href="#task-budget-cli-flag">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new hidden CLI flag that sets an API-side task budget in output tokens via <code>output_config.task_budget</code>.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --task-budget 50000</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Value must be a positive integer (number of tokens)</li><li>Controls the API's output token budget for the task</li><li>Hidden from <code>--help</code> output (intended for programmatic/advanced use)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Task budget flag (search for <code>"--task-budget"</code>, <code>"task-budgets-2026-03-13"</code>)</p>
+    </article>
+    <article class="card" id="you-ve-been-away-re-engagement-prompt">
+      <div class="card-top">
+        <h3>"You've Been Away" Re-engagement Prompt <a class="anchor" href="#you-ve-been-away-re-engagement-prompt">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When returning to a conversation after being idle, Claude Code now shows an interactive prompt suggesting you may want to start fresh.</p>
+<div class="blabel">Details</div>
+<ul><li>Displays idle time (e.g., "You've been away 2h 15m") and conversation token count</li><li>Three options: "Continue this conversation", "Send message as a new conversation" (clears context), or "Don't ask me again"</li><li>Helps save usage on stale conversations where starting fresh would be more efficient</li></ul>
+<div class="blabel">Evidence</div>
+<p>Re-engagement UI component (search for <code>"You've been away"</code>, <code>"Continue this conversation"</code>, <code>"Send message as a new conversation"</code>)</p>
+    </article>
+    <article class="card" id="taskcreated-hook-event">
+      <div class="card-top">
+        <h3>TaskCreated Hook Event <a class="anchor" href="#taskcreated-hook-event">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new hook event type that fires when a task (e.g., from <code>/loop</code> or teammate creation) is being created.</p>
+<div class="blabel">Details</div>
+<ul><li>Hook receives JSON input with <code>task_id</code>, <code>task_subject</code>, <code>task_description</code>, <code>teammate_name</code>, and <code>team_name</code></li><li>Exit code 0: stdout/stderr not shown</li><li>Exit code 2: show stderr to model and prevent task creation</li><li>Other exit codes: show stderr to user but proceed</li><li>Allows organizations to gate or customize task creation behavior</li></ul>
+<div class="blabel">Evidence</div>
+<p>TaskCreated hook (search for <code>"TaskCreated"</code>, <code>"When a task is being created"</code>)</p>
+    </article>
+    <article class="card" id="open-in-claude-code-on-the-web-action">
+      <div class="card-top">
+        <h3>"Open in Claude Code on the Web" Action <a class="anchor" href="#open-in-claude-code-on-the-web-action">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Ultraplan and ultrareview sessions now offer an "Open in Claude Code on the web" action, allowing users to view and interact with cloud sessions directly in the browser.</p>
+<div class="blabel">Details</div>
+<ul><li>Available in the ultraplan and ultrareview status bar menus</li><li>Links to the cloud session URL at <code>code.claude.com</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Web open action (search for <code>"Open in Claude Code on the web"</code>)</p>
+    </article>
+    <article class="card" id="worktreecreate-hook-output">
+      <div class="card-top">
+        <h3>WorktreeCreate Hook Output <a class="anchor" href="#worktreecreate-hook-output">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>WorktreeCreate</code> hook event now supports hook-specific output providing the absolute path to the created worktree directory.</p>
+<div class="blabel">Details</div>
+<ul><li>JavaScript hooks return <code>{ hookEventName: "WorktreeCreate", worktreePath: "&lt;path&gt;" }</code></li><li>Command hooks print the path on stdout instead</li><li>Enables custom worktree workflows via hooks</li></ul>
+<div class="blabel">Evidence</div>
+<p>WorktreeCreate hook output (search for <code>"Hook-specific output for the WorktreeCreate event"</code>)</p>
+    </article>
+    <article class="card" id="remote-sessions-renamed-to-cloud-sessions">
+      <div class="card-top">
+        <h3>"Remote Sessions" Renamed to "Cloud Sessions" <a class="anchor" href="#remote-sessions-renamed-to-cloud-sessions">#</a></h3>
+      </div>
+      <p>The UI now uses "cloud session" / "cloud sessions" terminology instead of "remote session" / "remote sessions" throughout the ultraplan and session management interfaces.</p>
+<div class="blabel">Evidence</div>
+<p>Terminology change (search for <code>"cloud session"</code>, <code>"cloud sessions"</code>)</p>
+    </article>
+    <article class="card" id="improved-permission-denial-dialog">
+      <div class="card-top">
+        <h3>Improved Permission Denial Dialog <a class="anchor" href="#improved-permission-denial-dialog">#</a></h3>
+      </div>
+      <p>The permission prompt now offers a "Deny, and tell Claude what to do differently" option (with Esc shortcut), giving users a clear way to deny a tool call and redirect Claude's approach instead of just blocking.</p>
+<div class="blabel">Evidence</div>
+<p>Deny option (search for <code>"Deny, and tell Claude what to do differently"</code>)</p>
+    </article>
+    <article class="card" id="theme-detection-auto-match-terminal-replaces-auto-follow-sys">
+      <div class="card-top">
+        <h3>Theme Detection: "Auto (match terminal)" Replaces "Auto (follow system)" <a class="anchor" href="#theme-detection-auto-match-terminal-replaces-auto-follow-sys">#</a></h3>
+      </div>
+      <p>The automatic theme setting now reads the <code>COLORFGBG</code> environment variable (set by many terminals) to detect whether the terminal uses a light or dark background, rather than querying macOS system settings. The label changed from "Auto (follow system)" to "Auto (match terminal)" to reflect this behavior.</p>
+<div class="blabel">Evidence</div>
+<p>Theme detection (search for <code>"Auto (match terminal)"</code>, <code>"COLORFGBG"</code>)</p>
+    </article>
+    <article class="card" id="mcp-connector-deduplication">
+      <div class="card-top">
+        <h3>MCP Connector Deduplication <a class="anchor" href="#mcp-connector-deduplication">#</a></h3>
+      </div>
+      <p>When claude.ai provides built-in MCP connectors that duplicate manually-configured servers (matching by server URL), the built-in connector is automatically suppressed to avoid conflicts. A debug log message is emitted.</p>
+<div class="blabel">Evidence</div>
+<p>Connector dedup (search for <code>"Suppressing claude.ai connector"</code>)</p>
+    </article>
+    <article class="card" id="server-instructions-truncation">
+      <div class="card-top">
+        <h3>Server Instructions Truncation <a class="anchor" href="#server-instructions-truncation">#</a></h3>
+      </div>
+      <p>MCP server instructions that exceed the maximum allowed length are now truncated with a logged warning, rather than potentially causing errors.</p>
+<div class="blabel">Evidence</div>
+<p>Truncation handling (search for <code>"Server instructions truncated"</code>)</p>
+    </article>
+    <article class="card" id="skill-content-truncation-during-compaction">
+      <div class="card-top">
+        <h3>Skill Content Truncation During Compaction <a class="anchor" href="#skill-content-truncation-during-compaction">#</a></h3>
+      </div>
+      <p>During conversation compaction, large skill/prompt content is now truncated with a helpful message: "[... skill content truncated for compaction; use Read on the skill path if you need the full text]". This reduces token usage during compaction while preserving the ability to re-read full content.</p>
+<div class="blabel">Evidence</div>
+<p>Skill truncation (search for <code>"skill content truncated for compaction"</code>)</p>
+    </article>
+    <article class="card" id="dynamic-agent-type-notifications">
+      <div class="card-top">
+        <h3>Dynamic Agent Type Notifications <a class="anchor" href="#dynamic-agent-type-notifications">#</a></h3>
+      </div>
+      <p>When agent types change mid-conversation (e.g., from plugin/MCP server updates), Claude now receives explicit notifications: "New agent types are now available for the Agent tool" and "The following agent types are no longer available" — helping it stay aware of available capabilities.</p>
+<div class="blabel">Evidence</div>
+<p>Agent notifications (search for <code>"New agent types are now available"</code>, <code>"The following agent types are no longer available"</code>)</p>
+    </article>
+    <article class="card" id="api-request-id-tracking-x-client-request-id">
+      <div class="card-top">
+        <h3>API Request ID Tracking (<code>x-client-request-id</code>) <a class="anchor" href="#api-request-id-tracking-x-client-request-id">#</a></h3>
+      </div>
+      <p>All API requests to Anthropic's first-party service now include an <code>x-client-request-id</code> header. When API errors occur, the request ID is surfaced in the error message ("give this to the API team for server-log lookup"), making it easier to debug issues with Anthropic support.</p>
+<div class="blabel">Evidence</div>
+<p>Request ID tracking (search for <code>"x-client-request-id"</code>, <code>"API error x-client-request-id="</code>)</p>
+    </article>
+    <article class="card" id="consecutive-auth-failure-detection">
+      <div class="card-top">
+        <h3>Consecutive Auth Failure Detection <a class="anchor" href="#consecutive-auth-failure-detection">#</a></h3>
+      </div>
+      <p>The CCR (Claude Code Remote) client now tracks consecutive authentication failures. If multiple auth failures occur with a valid-looking token, the client exits cleanly instead of retrying indefinitely, preventing hung sessions.</p>
+<div class="blabel">Evidence</div>
+<p>Auth failure handling (search for <code>"consecutive auth failures with a valid-looking token"</code>)</p>
+    </article>
+    <article class="card" id="ultraplan-stop-confirmation">
+      <div class="card-top">
+        <h3>Ultraplan Stop Confirmation <a class="anchor" href="#ultraplan-stop-confirmation">#</a></h3>
+      </div>
+      <p>Stopping an ultraplan session now shows a confirmation dialog ("Stop ultraplan?") with "Terminate session" and "Back" options, preventing accidental cancellation.</p>
+<div class="blabel">Evidence</div>
+<p>Stop confirmation (search for <code>"Stop ultraplan?"</code>, <code>"Terminate session"</code>)</p>
+    </article>
+    <article class="card" id="improved-remote-control-error-messages">
+      <div class="card-top">
+        <h3>Improved Remote Control Error Messages <a class="anchor" href="#improved-remote-control-error-messages">#</a></h3>
+      </div>
+      <p>Remote Control error messages are now more specific and actionable:</p>
+<ul><li>Requires a claude.ai subscription (not just login)</li><li>Explains that long-lived tokens from <code>setup-token</code> or <code>CLAUDE_CODE_OAUTH_TOKEN</code> are limited to inference-only</li><li>Provides clear guidance to run <code>claude login</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>RC error messages (search for <code>"Remote Control requires a claude.ai subscription"</code>, <code>"Remote Control requires a full-scope login token"</code>)</p>
+    </article>
+    <article class="card" id="oauth-url-migration">
+      <div class="card-top">
+        <h3>OAuth URL Migration <a class="anchor" href="#oauth-url-migration">#</a></h3>
+      </div>
+      <p>The claude.ai OAuth authorization endpoint has been updated from <code>claude.ai/oauth/authorize</code> to <code>claude.com/cai/oauth/authorize</code>.</p>
+<div class="blabel">Evidence</div>
+<p>URL change (search for <code>"claude.com/cai/oauth/authorize"</code>)</p>
+    </article>
+    <article class="card" id="configurable-mcp-tool-output-token-limits">
+      <div class="card-top">
+        <h3>Configurable MCP Tool Output Token Limits <a class="anchor" href="#configurable-mcp-tool-output-token-limits">#</a></h3>
+      </div>
+      <p>The maximum MCP tool output size is now configurable via both the <code>MAX_MCP_OUTPUT_TOKENS</code> environment variable and the <code>tengu_satin_quoll</code> feature flag, instead of being hardcoded at 25,000 tokens.</p>
+<div class="blabel">Evidence</div>
+<p>Configurable limits (search for <code>"MAX_MCP_OUTPUT_TOKENS"</code>) — function <code>PV8</code> at line ~319854</p>
+    </article>
+    <article class="card" id="plugin-source-tracking">
+      <div class="card-top">
+        <h3>Plugin Source Tracking <a class="anchor" href="#plugin-source-tracking">#</a></h3>
+      </div>
+      <p>Plugin entries now include a <code>source</code> field in <code>"name@marketplace"</code> format, with sentinels <code>"name@inline"</code> for <code>--plugin-dir</code> session plugins and <code>"name@builtin"</code> for built-in plugins. This enables better identification and management of plugin origins.</p>
+<div class="blabel">Evidence</div>
+<p>Plugin source field (search for <code>'@internal Plugin source identifier in "name\\@marketplace" format'</code>)</p>
+    </article>
+    <article class="card" id="channel-plugin-allowlists">
+      <div class="card-top">
+        <h3>Channel Plugin Allowlists <a class="anchor" href="#channel-plugin-allowlists">#</a></h3>
+      </div>
+      <p>A new <code>allowedChannelPlugins</code> managed setting allows Teams/Enterprise admins to restrict which channel plugins can be enabled. When set, it replaces the default Anthropic allowlist — admins decide which plugins their organization can use.</p>
+<div class="blabel">Evidence</div>
+<p>Channel allowlist (search for <code>"allowedChannelPlugins"</code>, <code>"Teams/Enterprise allowlist of channel plugins"</code>)</p>
+    </article>
+    <article class="card" id="custom-model-capability-overrides">
+      <div class="card-top">
+        <h3>Custom Model Capability Overrides <a class="anchor" href="#custom-model-capability-overrides">#</a></h3>
+      </div>
+      <p>Third-party API users can now declare model capabilities via environment variables: <code>ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES</code>, <code>ANTHROPIC_DEFAULT_SONNET_MODEL_SUPPORTED_CAPABILITIES</code>, and <code>ANTHROPIC_DEFAULT_HAIKU_MODEL_SUPPORTED_CAPABILITIES</code>. These are comma-separated capability strings that Claude Code checks when deciding which features to enable for custom models.</p>
+<div class="blabel">Evidence</div>
+<p>Capability env vars (search for <code>"ANTHROPIC_DEFAULT_OPUS_MODEL_SUPPORTED_CAPABILITIES"</code>)</p>
+    </article>
+    <article class="card" id="powershell-output-persistence">
+      <div class="card-top">
+        <h3>PowerShell Output Persistence <a class="anchor" href="#powershell-output-persistence">#</a></h3>
+      </div>
+      <p>Long command outputs that exceed the inline display limit are now persisted to disk, with the tool result including the file path and total output size. This prevents loss of large command outputs.</p>
+<div class="blabel">Evidence</div>
+<p>Output persistence (search for <code>"Path to persisted full output when too large for inline"</code>, <code>"Total output size in bytes when persisted"</code>)</p>
+    </article>
+    <article class="card" id="ultraplan-status-bar-improvements">
+      <div class="card-top">
+        <h3>Ultraplan Status Bar Improvements <a class="anchor" href="#ultraplan-status-bar-improvements">#</a></h3>
+      </div>
+      <p>The ultraplan footer now shows a "ready · shift+↓ to view" hint and supports a <code>footer:down</code> keybinding to quickly scroll to the ultraplan status. Cloud session status is displayed inline with "ultraplan · cloud session · No need to wait — Claude will notify you when done."</p>
+<div class="blabel">Evidence</div>
+<p>Status bar updates (search for <code>"ready · shift+↓ to view"</code>, <code>"footer:down"</code>)</p>
+    </article>
+    <article class="card" id="slack-message-link-parsing">
+      <div class="card-top">
+        <h3>Slack Message Link Parsing <a class="anchor" href="#slack-message-link-parsing">#</a></h3>
+      </div>
+      <p>When a user's message contains a <code>message_link</code> field pointing to a Slack archive URL, Claude Code now parses the channel information from the link. This enables richer context when conversations originate from Slack integrations.</p>
+<div class="blabel">Evidence</div>
+<p>Slack link parsing (search for <code>"message_link"</code>, regex <code>slack\.com\/archives</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed interactive prompt detection: commands that appear to be waiting for interactive input now get a more helpful error message suggesting piped input or non-interactive flags (search for <code>"appears to be waiting for interactive input"</code>)</li></ul>
+<ul><li>Fixed GitHub issue link rendering to use <code>owner/repo#123</code> format instead of just <code>#123</code>, producing proper cross-repository links (search for <code>"owner/repo#123"</code>)</li></ul>
+<ul><li>Fixed table cell rendering by tracking blank cells (<code>cellIsBlank</code> property), improving display of sparse tabular data</li></ul>
+<ul><li>Fixed auto-backgrounded task tracking: the tool result now includes a <code>was_auto_backgrounded</code> field when a command was auto-backgrounded by the assistant-mode blocking budget (search for <code>"auto-backgrounded by the assistant-mode blocking budget"</code>)</li></ul>
+    </article>
+    <article class="card" id="agent-list-in-system-messages-gradual-rollout">
+      <div class="card-top">
+        <h3>Agent List in System Messages [Gradual Rollout] <a class="anchor" href="#agent-list-in-system-messages-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Agent type descriptions can be injected directly into system-reminder messages instead of only in the Task tool description.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_agent_list_attach</code> (default: false). Can be overridden with <code>CLAUDE_CODE_AGENT_LIST_IN_MESSAGES</code> environment variable.</p>
+<div class="blabel">Details</div>
+<ul><li>When enabled, available agent types are listed in <code>&lt;system-reminder&gt;</code> messages in the conversation</li><li>Agent type descriptions use the format: <code>- agentType: whenToUse (Tools: toolList)</code></li><li>This helps models discover available agent types more reliably</li></ul>
+<div class="blabel">Evidence</div>
+<p>Agent list feature (gated by <code>tengu_agent_list_attach</code>, search for <code>"CLAUDE_CODE_AGENT_LIST_IN_MESSAGES"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

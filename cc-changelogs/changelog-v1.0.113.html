@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.113 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.113."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.113</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.113</span></h1>
+<p class="sub">Version 1.0.113 enhances security with workspace trust validation for OpenTelemetry helpers, improves prompt caching with per-model control via new environment variables, and refines user experience by filtering out error sessions and improving alias detection to preserve custom configurations.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.112 → v1.0.113</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">14 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="per-model-prompt-caching-control">
+      <div class="card-top">
+        <h3>Per-Model Prompt Caching Control <a class="anchor" href="#per-model-prompt-caching-control">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Fine-grained control over prompt caching for individual model families <strong>How to use:</strong></p>
+<pre><code># Disable caching for Haiku models only
+export DISABLE_PROMPT_CACHING_HAIKU=true
+
+# Disable caching for Sonnet models only
+export DISABLE_PROMPT_CACHING_SONNET=true
+
+# Disable caching for Opus models only
+export DISABLE_PROMPT_CACHING_OPUS=true
+
+# Or disable globally for all models (existing behavior)
+export DISABLE_PROMPT_CACHING=true</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Allows optimization strategies per model tier (e.g., disable for cheaper Haiku, enable for expensive Opus)</li><li>The global <code>DISABLE_PROMPT_CACHING</code> variable still works as before</li><li>Enables cost and performance tuning based on your specific use cases</li><li><strong>Evidence</strong>: <code>Sd(A)</code> function at line 395280 replaces <code>Pd()</code> at line 394932 in v1.0.112</li></ul>
+    </article>
+    <article class="card" id="sessions-api-support-feature-flagged">
+      <div class="card-top">
+        <h3>Sessions API Support (Feature-Flagged) <a class="anchor" href="#sessions-api-support-feature-flagged">#</a></h3>
+      </div>
+      <p><strong>What:</strong> New v1 Sessions API endpoint alongside existing OAuth API <strong>Details:</strong></p>
+<ul><li>New endpoint: <code>/v1/sessions/organizations/${orgUUID}/sessions</code> via <code>mzB()</code> at line 412649</li><li>Legacy endpoint: <code>/api/oauth/organizations/${orgUUID}/code/sessions</code> via <code>dzB()</code> at line 412690</li><li>Currently defaults to legacy API (feature flag <code>o45()</code> at line 412718 returns false)</li><li>Provides foundation for future migration to new API</li><li><strong>Evidence</strong>: Split from single function <code>TzB()</code> at line 412258 in v1.0.112</li></ul>
+    </article>
+    <article class="card" id="cache-warming-infrastructure-disabled-by-default">
+      <div class="card-top">
+        <h3>Cache Warming Infrastructure (Disabled by Default) <a class="anchor" href="#cache-warming-infrastructure-disabled-by-default">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Background cache warming to maintain cache freshness during idle periods <strong>Details:</strong></p>
+<ul><li>Replays previous API requests after 4 minutes of idle time</li><li>Sends minimal requests (max 10 tokens) to keep cache warm</li><li>Reports telemetry via <code>tengu_cache_warming_request</code> event</li><li>Currently disabled (<code>enabled: false</code> in <code>ql5()</code> configuration at line 437674)</li><li>Configuration includes idle threshold (240s) and warmup intervals (300s)</li><li><strong>Evidence</strong>: Functions <code>ql5()</code> and <code>Z0Q()</code> at lines 437674 and 437683, not present in v1.0.112</li></ul>
+    </article>
+    <article class="card" id="automatic-trailing-whitespace-removal">
+      <div class="card-top">
+        <h3>Automatic Trailing Whitespace Removal <a class="anchor" href="#automatic-trailing-whitespace-removal">#</a></h3>
+      </div>
+      <p><strong>What:</strong> All file writes and edits now automatically remove trailing whitespace from each line <strong>Details:</strong></p>
+<ul><li>Applies to Write tool operations (line 394194)</li><li>Applies to Edit tool operations (line 386716)</li><li>Preserves line endings while cleaning trailing spaces</li><li>Ensures cleaner, more consistent code formatting</li><li><strong>Evidence</strong>: <code>hC0()</code> function at line 386524, not present in v1.0.112</li></ul>
+    </article>
+    <article class="card" id="enhanced-usage-statistics-merging">
+      <div class="card-top">
+        <h3>Enhanced Usage Statistics Merging <a class="anchor" href="#enhanced-usage-statistics-merging">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved usage tracking with support for ephemeral cache tiers <strong>Details:</strong></p>
+<ul><li>Tracks <code>ephemeral_1h_input_tokens</code> and <code>ephemeral_5m_input_tokens</code> separately</li><li>Properly merges cache creation statistics across streaming events</li><li>Used when combining usage stats from multiple API responses</li><li><strong>Evidence</strong>: <code>hYB()</code> function at line 395825 with <code>cache_creation</code> object structure</li></ul>
+    </article>
+    <article class="card" id="workspace-trust-validation-for-opentelemetry-helpers">
+      <div class="card-top">
+        <h3>Workspace Trust Validation for OpenTelemetry Helpers <a class="anchor" href="#workspace-trust-validation-for-opentelemetry-helpers">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> OpenTelemetry headers from project/local settings now require workspace trust <strong>Why it matters:</strong> Prevents arbitrary code execution from untrusted project configurations <strong>Details:</strong></p>
+<ul><li>New function <code>CZ1()</code> at line 371858 detects if otelHeadersHelper comes from project/local settings</li><li>Function <code>ph2()</code> at line 371865 checks workspace trust via <code>mx(!0)</code> before executing helpers</li><li>Returns empty headers instead of executing untrusted code</li><li>Part of broader security hardening effort</li><li><strong>Evidence</strong>: Replaces simpler <code>bh2()</code> at line 371852 in v1.0.112</li></ul>
+    </article>
+    <article class="card" id="improved-alias-detection-logic">
+      <div class="card-top">
+        <h3>Improved Alias Detection Logic <a class="anchor" href="#improved-alias-detection-logic">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Shell alias detection now preserves custom user configurations <strong>How it works:</strong></p>
+<ul><li>Only removes/replaces aliases pointing to the default Claude installation path</li><li>Preserves custom aliases pointing to other locations</li><li>Shows "Custom claude alias found" message when detected</li><li>Displays "Keeping your existing alias configuration" to inform users</li></ul>
+<p><strong>Details:</strong></p>
+<ul><li>Enhanced regex pattern allows flexible whitespace: <code>/^\s<em>alias\s+claude\s</em>=/</code> (line 377702)</li><li>Function <code>jk1()</code> at line 377711 parses alias values and compares against default path</li><li>Previous version <code>V11()</code> at line 377695 in v1.0.112 removed all claude aliases indiscriminately</li><li><strong>Evidence</strong>: Compares alias target against <code>zv</code> (default path) at line 377718</li></ul>
+    </article>
+    <article class="card" id="error-session-filtering">
+      <div class="card-top">
+        <h3>Error Session Filtering <a class="anchor" href="#error-session-filtering">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Session list now excludes sessions that start with API errors <strong>Details:</strong></p>
+<ul><li>Filters out sessions where <code>firstPrompt</code> starts with "API Error"</li><li>Filters out sessions where <code>summary</code> starts with "API Error"</li><li>Improves UI cleanliness by hiding failed/error sessions</li><li><strong>Evidence</strong>: <code>YA1()</code> function at lines 428269-428270, enhanced from <code>QA1()</code> at line 428139 in v1.0.112</li></ul>
+    </article>
+    <article class="card" id="improved-slash-command-validation">
+      <div class="card-top">
+        <h3>Improved Slash Command Validation <a class="anchor" href="#improved-slash-command-validation">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Character-level validation replaced path-prefix checking <strong>Details:</strong></p>
+<ul><li>New <code>NZ5()</code> function at line 421329 validates command names contain only alphanumeric characters, colons, hyphens, and underscores</li><li>Replaces previous logic that checked for <code>/var</code>, <code>/tmp</code>, <code>/private</code> path prefixes</li><li>Provides more precise security validation</li><li><strong>Evidence</strong>: Used at line 421356 instead of path checks at line 421220 in v1.0.112</li></ul>
+    </article>
+    <article class="card" id="conditional-telemetry-initialization">
+      <div class="card-top">
+        <h3>Conditional Telemetry Initialization <a class="anchor" href="#conditional-telemetry-initialization">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Telemetry initialization can be deferred based on workspace trust <strong>Details:</strong></p>
+<ul><li>New flag <code>Fy0</code> at line 429230 tracks initialization state</li><li>Initialization deferred when otelHeadersHelper is configured but trust not established</li><li>Function <code>NtB()</code> at line 429241 allows manual initialization when conditions are met</li><li>Prevents sensitive telemetry from initializing in untrusted workspaces</li><li><strong>Evidence</strong>: <code>EtB</code> variable at line 429231 with conditional logic, replacing direct initialization in <code>VtB</code> at line 429100 in v1.0.112</li></ul>
+    </article>
+    <article class="card" id="hotkey-change-for-expand-collapse">
+      <div class="card-top">
+        <h3>Hotkey Change for Expand/Collapse <a class="anchor" href="#hotkey-change-for-expand-collapse">#</a></h3>
+      </div>
+      <p><strong>What changed:</strong> Expand/collapse hotkey changed from Ctrl+R to Ctrl+O <strong>Details:</strong></p>
+<ul><li>Affects transcript/prompt view toggle in interactive mode</li><li>Shows in UI hints as "(ctrl+o to expand)" instead of "(ctrl+r to expand)"</li><li>Note: Ctrl+R still used for error retry functionality (separate feature)</li><li><strong>Evidence</strong>: Variable <code>F2B</code> at line 372920 replaces <code>B2B</code> at line 372904 in v1.0.112</li></ul>
+    </article>
+    <article class="card" id="refactored-authentication-helper">
+      <div class="card-top">
+        <h3>Refactored Authentication Helper <a class="anchor" href="#refactored-authentication-helper">#</a></h3>
+      </div>
+      <ul><li>New <code>uzB()</code> function at line 412641 extracts common authentication logic</li><li>Consolidates access token and organization UUID retrieval</li><li>Used by both <code>dzB()</code> and <code>mzB()</code> session fetching functions</li><li>Improves code reusability and maintainability</li></ul>
+    </article>
+    <article class="card" id="enhanced-prompt-caching-function-signatures">
+      <div class="card-top">
+        <h3>Enhanced Prompt Caching Function Signatures <a class="anchor" href="#enhanced-prompt-caching-function-signatures">#</a></h3>
+      </div>
+      <ul><li>Functions now accept model parameter for per-model cache control</li><li><code>gYB()</code> at line 395982, <code>dt6()</code> at line 395373, <code>ct6()</code> at line 395400, <code>lt6()</code> at line 395849</li><li>All call <code>Sd(model)</code> instead of <code>Pd()</code> for cache control decisions</li><li>Enables the per-model caching feature described above</li></ul>
+    </article>
+    <article class="card" id="import-optimization">
+      <div class="card-top">
+        <h3>Import Optimization <a class="anchor" href="#import-optimization">#</a></h3>
+      </div>
+      <ul><li>Removed unused <code>stream</code> import (line 337903 in v1.0.112)</li><li>Added <code>PassThrough</code> stream import as <code>ip5</code> (line 441307)</li><li>Added <code>cwd</code> import from <code>node:process</code> as <code>ZNA</code> (line 361192)</li><li>Streamlines dependencies and improves code clarity</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

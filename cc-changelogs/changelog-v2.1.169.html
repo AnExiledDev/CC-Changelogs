@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.169 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.169."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.169</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.169</span></h1>
+<p class="sub">This release introduces a <code>--safe-mode</code> flag for troubleshooting with all customizations disabled, a new bundled <code>/design-sync</code> skill for syncing React design systems to <code>claude.ai/design</code>, and a <code>disableBundledSkills</code> setting to strip out Claude Code's built-in skills/workflows. The whole UI also completes a terminology shift from "remote session" to "cloud session". Windows sandbox networking gets a significant upgrade with WFP filter management via <code>srt-win</code>. Several UX fixes land as well, including more reliable up/down arrow key behavior in text input and clearer error messages from the SendFile tool.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.168 → v2.1.169</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">15</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">2</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">15 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="safe-mode-safe-mode-claude-code-safe-mode">
+      <div class="card-top">
+        <h3>Safe Mode (<code>--safe-mode</code> / <code>CLAUDE_CODE_SAFE_MODE</code>) <a class="anchor" href="#safe-mode-safe-mode-claude-code-safe-mode">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new opt-in mode that disables all per-user and per-project customizations for a session. Designed for troubleshooting when Claude Code behaves unexpectedly and you want to isolate whether a plugin, hook, or CLAUDE.md is the cause.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --safe-mode
+# or
+CLAUDE_CODE_SAFE_MODE=1 claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Disables: CLAUDE.md, skills, plugins, plugin hooks, MCP servers (auto-discovered and claude.ai), custom agents, output styles, workflows, custom themes, and custom keybindings</li><li>Managed policy settings and hooks (from your organization's policy) still apply</li><li>The UI surfaces a warning banner so you know safe mode is active</li><li>Settings dialogs show "disabled in safe mode" labels next to affected options</li><li>To exit safe mode: remove the flag or unset the env var and restart (<code>claude</code> will tell you which applies)</li><li>The <code>--agents</code> flag is silently ignored in safe mode (user-supplied agents are disabled)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Safe mode toggle (search for <code>"CLAUDE_CODE_SAFE_MODE"</code> and <code>"--safe-mode"</code>) — <code>C9()</code> function at line ~3884</p>
+    </article>
+    <article class="card" id="design-sync-skill-sync-react-design-systems-to-claude-design">
+      <div class="card-top">
+        <h3><code>/design-sync</code> Skill — Sync React Design Systems to Claude Design <a class="anchor" href="#design-sync-skill-sync-react-design-systems-to-claude-design">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new bundled skill that bundles your React component library (from Storybook or a bare package) and uploads it to <code>claude.ai/design</code> so the Design agent can generate accurate mocks using your real components.</p>
+<div class="blabel">Usage</div>
+<pre><code># In Claude Code:
+/design-sync
+# or say: &quot;sync my design system to Claude Design&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Requires claude.ai authentication (not available via Bedrock, Vertex, or third-party providers)</li><li>Not available when <code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code> is set</li><li>Upgrades your claude.ai login scope on first use to include <code>user:design:read</code> and <code>user:design:write</code></li><li>Uses a <code>DesignSync</code> tool that reads and writes your org's design-system projects on <code>claude.ai/design</code></li><li>Creates a <code>design-sync.config.json</code> in your project to track configuration across re-syncs</li><li>Bundles <code>_ds_bundle.js</code> (component code) and <code>_ds_bundle.css</code> (styles)</li><li>Includes comparison screenshots to verify visual fidelity before upload</li><li>A <code>design-sync.config.json</code> cache enables incremental re-syncs that carry forward unchanged components</li></ul>
+<div class="blabel">Evidence</div>
+<p>Bundled skill (search for <code>"design-sync"</code> or <code>"Push a React design system to claude.ai/design"</code>) — <code>pE9</code> skill definition at line ~733477</p>
+    </article>
+    <article class="card" id="disablebundledskills-setting">
+      <div class="card-top">
+        <h3><code>disableBundledSkills</code> Setting <a class="anchor" href="#disablebundledskills-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new settings option that removes all skills and workflows that ship bundled with Claude Code. Built-in slash commands remain typable but are hidden from the model. Your own plugins, <code>.claude/skills/</code>, and <code>.claude/commands/</code> are unaffected.</p>
+<div class="blabel">Usage</div>
+<pre><code>// In settings.json or settings.local.json:
+{
+  &quot;disableBundledSkills&quot;: true
+}</code></pre>
+<p>Or via environment variable:</p>
+<pre><code>CLAUDE_CODE_DISABLE_BUNDLED_SKILLS=1 claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Equivalent to setting <code>CLAUDE_CODE_DISABLE_BUNDLED_SKILLS=1</code></li><li>Affects skills like <code>/review</code>, <code>/init</code>, <code>/deep-research</code>, and now <code>/design-sync</code>, but NOT user-created commands in <code>.claude/</code></li><li>The setting is documented inline: "Disable the skills and workflows that ship with Claude Code: bundled skills and workflows are removed entirely; built-in slash commands stay typable but are hidden from the model."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Settings schema addition (search for <code>"disableBundledSkills"</code>) — added to settings schema at line ~11677</p>
+    </article>
+    <article class="card" id="windows-sandbox-network-filtering-wfp-srt-win">
+      <div class="card-top">
+        <h3>Windows Sandbox Network Filtering (WFP / <code>srt-win</code>) <a class="anchor" href="#windows-sandbox-network-filtering-wfp-srt-win">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Full Windows Filtering Platform (WFP) integration for the Windows sandbox using the <code>srt-win</code> tool. Enables per-process network isolation via Windows discriminator groups and WFP filters, analogous to the macOS sandbox's network control.</p>
+<div class="blabel">Usage</div>
+<pre><code>// In settings.json (windows-specific):
+{
+  &quot;windows&quot;: {
+    &quot;groupName&quot;: &quot;my-sandbox-group&quot;,
+    &quot;groupSid&quot;: &quot;S-1-...&quot;,
+    &quot;sublayerGuid&quot;: &quot;...&quot;
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Requires a one-time installation: <code>npx sandbox-runtime windows-install</code> (triggers one UAC prompt)</li><li>After install, you must log out and back in so the discriminator group SID enters your token</li><li>While the group SID is absent from your token, WFP filter-0 PERMITs all traffic — no connectivity disruption during setup</li><li>Default proxy port range is 60080–60089 (configurable); must match the range passed to <code>srt-win wfp install</code></li><li><code>--group-sid</code> overrides <code>groupName</code> lookup — use for domain environments where name resolution is unreliable</li><li><code>SRT_WIN_PATH</code> environment variable overrides the <code>srt-win.exe</code> search path</li><li>Windows sandbox commands now run via <code>srt-win exec</code> instead of directly through cmd/PowerShell</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>srt-win</code> integration (search for <code>"srt-win.exe"</code> or <code>"Windows sandbox needs a one-time install"</code>) — <code>$38()</code>, <code>YD7()</code>, <code>Oh6()</code> at line ~241773</p>
+    </article>
+    <article class="card" id="lsp-diagnostics-setting">
+      <div class="card-top">
+        <h3>LSP <code>diagnostics</code> Setting <a class="anchor" href="#lsp-diagnostics-setting">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>A new <code>diagnostics</code> boolean option on each LSP server entry in <code>lspServers</code> that controls whether <code>publishDiagnostics</code> notifications are automatically injected into the agent context after file edits.</p>
+<div class="blabel">Usage</div>
+<pre><code>// In settings.json:
+{
+  &quot;lspServers&quot;: [
+    {
+      &quot;name&quot;: &quot;my-lsp&quot;,
+      &quot;command&quot;: &quot;...&quot;,
+      &quot;diagnostics&quot;: false
+    }
+  ]
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Defaults to <code>true</code> — current behavior is unchanged unless you explicitly set <code>false</code></li><li>Setting to <code>false</code> keeps LSP navigation features (go-to-definition, hover, completions) active while suppressing automatic error/warning injection after edits</li><li>Useful when diagnostics are noisy or slow down the agent loop on large projects</li></ul>
+<div class="blabel">Evidence</div>
+<p>Settings schema addition (search for <code>"Whether to push publishDiagnostics into the agent context after edits"</code>) — added to <code>lspServers</code> schema at line ~11733</p>
+    </article>
+    <article class="card" id="remote-session-renamed-to-cloud-session-throughout">
+      <div class="card-top">
+        <h3>"Remote Session" Renamed to "Cloud Session" Throughout <a class="anchor" href="#remote-session-renamed-to-cloud-session-throughout">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>All user-facing text that previously said "remote session", "remote agent", or "background tasks" (in the context of cloud-based agents) now says "cloud session" or "cloud agent". This is a branding/terminology update with no behavior change.</p>
+<div class="blabel">Details</div>
+<ul><li>UI banners, status lines, settings descriptions, error messages, confirmation dialogs</li><li>The <code>remote</code> settings key is now described as "Cloud session configuration" rather than "Remote session configuration"</li><li>Skill prompts like "When the user wants to schedule a recurring remote agent" now read "cloud agent"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Mass rename (search for <code>"Cloud session details dismissed"</code> or <code>"Cloud agent launched"</code>)</p>
+    </article>
+    <article class="card" id="ctrl-x-ctrl-b-added-as-a-background-task-shortcut">
+      <div class="card-top">
+        <h3><code>ctrl+x ctrl+b</code> Added as a Background Task Shortcut <a class="anchor" href="#ctrl-x-ctrl-b-added-as-a-background-task-shortcut">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The keybinding to background the current task (send it to run in the background) now accepts both <code>ctrl+b</code> and the tmux-safe chord <code>ctrl+x ctrl+b</code>. This prevents conflicts in tmux sessions where <code>ctrl+b</code> is the prefix key.</p>
+<div class="blabel">Details</div>
+<ul><li>Both shortcuts trigger the <code>task:background</code> action in the Task context</li><li>In tmux, the displayed hint automatically shows <code>ctrl+x ctrl+b</code> instead of <code>ctrl+b</code></li><li>The previous <code>ctrl+x again to archive</code> binding hint is removed; <code>ctrl+x ctrl+b</code> is the canonical form</li></ul>
+<div class="blabel">Evidence</div>
+<p>Keybinding table change (search for <code>"ctrl+x ctrl+b"</code>) — <code>dA8</code> keybinding table at line ~11817</p>
+    </article>
+    <article class="card" id="text-input-arrow-key-behavior-fixed">
+      <div class="card-top">
+        <h3>Text Input Arrow Key Behavior Fixed <a class="anchor" href="#text-input-arrow-key-behavior-fixed">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Up and down arrow keys in the main prompt input now correctly detect whether the cursor is on the first or last line of a multi-line input using the cursor's actual rendered line position. Previously, off-by-one errors in raw text offset calculations could cause the keys to fall through to message history navigation at the wrong moment.</p>
+<div class="blabel">Details</div>
+<ul><li>Affects the main input box and the plan-editing input</li><li><code>disableCursorMovementForUpDownKeys: true</code> is set on these components to route the logic through the new line-position check</li><li>No change for single-line inputs</li></ul>
+<div class="blabel">Evidence</div>
+<p>Input component change (search for <code>"disableCursorMovementForUpDownKeys"</code>) — structural changes to <code>x4f</code> and <code>B4f</code> at line ~11568</p>
+    </article>
+    <article class="card" id="sendfile-tool-rejects-urls-with-a-clear-error">
+      <div class="card-top">
+        <h3>SendFile Tool Rejects URLs with a Clear Error <a class="anchor" href="#sendfile-tool-rejects-urls-with-a-clear-error">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When the SendFile (file-delivery) tool receives a path that looks like a URL (<code>https://...</code>, <code>ftp://...</code>, etc.), it now returns an actionable error message instead of silently failing or producing a confusing "file not found" error.</p>
+<div class="blabel">Details</div>
+<ul><li>New error text: <code>"looks like a URL, not a local file path. This tool can only send files that exist on the local filesystem — download or write the content to a local file first, then pass that path."</code></li><li>The tool description is also updated to clarify: "Files must already exist on the local filesystem — the tool sends files, it doesn't fetch URLs or render content."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Validation logic (search for <code>"looks like a URL, not a local file path"</code>) — file path validator at line ~28934</p>
+    </article>
+    <article class="card" id="agents-json-gains-all-flag">
+      <div class="card-top">
+        <h3><code>/agents --json</code> Gains <code>--all</code> Flag <a class="anchor" href="#agents-json-gains-all-flag">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>claude agents --json</code> scripting command now accepts an <code>--all</code> flag that includes completed (archived) sessions in the output, not just currently active ones.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude agents --json --all</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Without <code>--all</code>, <code>--json</code> continues to show only active sessions (renamed from "live sessions" to "active sessions" in the help text)</li><li>With <code>--all</code>, the full agent view list — including completed sessions — is returned as JSON</li><li>Useful for post-run scripting or auditing completed cloud agent sessions</li></ul>
+<div class="blabel">Evidence</div>
+<p>CLI option addition (search for <code>"With --json: include completed sessions"</code>) — <code>--all</code> option at line ~23293</p>
+    </article>
+    <article class="card" id="job-persistence-security-non-allowlisted-keys-stripped-on-lo">
+      <div class="card-top">
+        <h3>Job Persistence Security: Non-Allowlisted Keys Stripped on Load <a class="anchor" href="#job-persistence-security-non-allowlisted-keys-stripped-on-lo">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When Claude Code resumes a persisted background job, it now strips any <code>providerEnv</code> keys or <code>respawnFlags</code> tokens from the saved state that are not on the internal allowlist. This prevents unintended environment leakage from older or externally-modified job state.</p>
+<div class="blabel">Details</div>
+<ul><li>A warning is logged when stripping occurs: <code>[jobs] stripped non-allowlisted providerEnv key(s) from persisted job state</code></li><li>Duplicate <code>respawnFlags</code> tokens (same flag specified multiple times) are also deduplicated — the last occurrence wins for flags that take a value</li><li>Behavior is transparent to users; jobs continue to resume normally</li></ul>
+<div class="blabel">Evidence</div>
+<p>Job state sanitizer (search for <code>"[jobs] stripped non-allowlisted providerEnv key(s)"</code>) — <code>nY7()</code> and <code>XXH()</code> at line ~219333</p>
+    </article>
+    <article class="card" id="permission-mode-downgrade-notification">
+      <div class="card-top">
+        <h3>Permission Mode Downgrade Notification <a class="anchor" href="#permission-mode-downgrade-notification">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>When Claude Code detects that a session is trying to use <code>bypass</code> or <code>auto</code> permission mode but the required disclaimer has not been accepted interactively, the mode is silently downgraded to <code>default</code> and a notice is emitted.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously the mode downgrade was not explicitly surfaced; now the message <code>"Permission mode downgraded to default — bypass/auto requires accepting the disclaimer interactively first"</code> is shown</li><li>Affects sessions spawned non-interactively (e.g., from scripts or cloud sessions) that request an elevated permission mode without having gone through the interactive acceptance flow</li></ul>
+<div class="blabel">Evidence</div>
+<p>Downgrade notice (search for <code>"Permission mode downgraded to default"</code>) — <code>JO7</code> constant at line ~220750</p>
+    </article>
+    <article class="card" id="git-credential-interactive-false-injected-for-cloud-sessions">
+      <div class="card-top">
+        <h3>Git <code>credential.interactive=false</code> Injected for Cloud Sessions <a class="anchor" href="#git-credential-interactive-false-injected-for-cloud-sessions">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Git commands run inside cloud sessions now automatically inject <code>GIT_CONFIG_KEY_N=credential.interactive</code> / <code>GIT_CONFIG_VALUE_N=false</code> via the <code>GIT_CONFIG_COUNT</code> mechanism. This prevents git from hanging waiting for interactive credential input when cloning or fetching in a headless cloud environment.</p>
+<div class="blabel">Evidence</div>
+<p>Git env helper (search for <code>"credential.interactive"</code>) — <code>kF()</code> function at line ~223497</p>
+    </article>
+    <article class="card" id="ctrl-g-keybinding-in-hook-script-dialogs-rendered-consistent">
+      <div class="card-top">
+        <h3><code>ctrl+g</code> Keybinding in Hook/Script Dialogs Rendered Consistently <a class="anchor" href="#ctrl-g-keybinding-in-hook-script-dialogs-rendered-consistent">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The "edit in <code>$EDITOR</code>" hint in hook confirmation dialogs and script prompts now renders through the standard keybinding display component (<code>K$</code>) rather than as a plain text string. This means it respects custom keybinding remaps and displays consistently with other shortcuts.</p>
+<div class="blabel">Evidence</div>
+<p>Component change (search for <code>"edit script in $EDITOR"</code>) — structural change in <code>B_A</code> at line ~11873</p>
+    </article>
+    <article class="card" id="goal-error-message-updated">
+      <div class="card-top">
+        <h3><code>/goal</code> Error Message Updated <a class="anchor" href="#goal-error-message-updated">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The error shown when <code>/goal</code> cannot run because hooks are restricted now says "hooks are restricted" instead of "hooks are disabled", better matching the actual condition (which covers both <code>disableAllHooks</code> and <code>allowManagedHooksOnly</code> settings).</p>
+<div class="blabel">Evidence</div>
+<p>Error string change (search for <code>"/goal can't run while hooks are restricted"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed incorrect path-component splitting in URL-to-filename conversion where <code>A</code> (the path array) was referenced as <code>z</code> in certain code paths, causing incorrect encoding of URL path segments (search for <code>"A.split"</code> in the URL path normalizer — <code>nJ</code> structural change at line ~11580).</li></ul>
+<ul><li>Fixed <code>loadMarkdownFilesFromDir</code> timeout log message which incorrectly reported the function name as <code>loadMarkdownFiles</code> (search for <code>"loadMarkdownFilesFromDir: ripgrep timed out scanning"</code>).</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled.</p>
+    </article>
+    <article class="card" id="refusal-continuation-silent-retry-with-fallback-model-in-dev">
+      <div class="card-top">
+        <h3>Refusal Continuation — Silent Retry with Fallback Model [In Development] <a class="anchor" href="#refusal-continuation-silent-retry-with-fallback-model-in-dev">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When the model refuses a request for safety reasons, Claude Code will silently retry with a designated fallback model. If the fallback model responds successfully, the conversation continues as if nothing happened; if the fallback also refuses, the refusal is shown normally.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged. Gated by a server-side <code>refusal_fallback_prompt</code> feature flag that must be present in the account's beta header list.</p>
+<div class="blabel">Details</div>
+<ul><li>A <code>refusalFallbackModelLatch</code> tracks which fallback model was activated and what the previous model override was, so the model is restored after the retry turn</li><li>The detection function <code>fTK()</code> returns <code>false</code> unless <code>On8()</code> (refusal continuation enabled) AND <code>refusal_fallback_prompt</code> is absent from the beta list</li><li>Infrastructure includes latch set/clear/update functions and a <code>refusalFallbackOccurred</code> flag for telemetry</li></ul>
+<div class="blabel">Evidence</div>
+<p>Gated by server-side flag (search for <code>"refusal_fallback_prompt"</code>) — <code>fTK()</code> at line ~122285, <code>refusalFallbackModelLatch</code> state at line ~2551</p>
+    </article>
+    <article class="card" id="claude-design-contextual-tip-in-development">
+      <div class="card-top">
+        <h3>Claude Design Contextual Tip [In Development] <a class="anchor" href="#claude-design-contextual-tip-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new contextual tip "Designing a UI? Claude Design can mock 5 versions of your screen before you build — claude.ai/design" will appear periodically for users who are working on front-end code, pointing them to the new <code>/design-sync</code> skill.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged. Gated by <code>tengu_cedar_plume</code> server-side flag.</p>
+<div class="blabel">Details</div>
+<ul><li>Only shown to first-party claude.ai sessions (<code>hq()</code> check)</li><li>Respects a 15-session cooldown so it doesn't repeat too often</li><li>Also requires the user to be in a context where design suggestions are relevant (<code>cb9()</code> check)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Tip gated by feature flag (search for <code>"tengu_cedar_plume"</code>) — <code>claude-design-contextual</code> tip at line ~25202</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.169.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.169.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

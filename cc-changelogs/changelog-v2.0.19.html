@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.19 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.19."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.19</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.19</span></h1>
+<p class="sub">This is a maintenance release focused on internal code reorganization. Import statements have been restructured to use more specific destructured imports, and minified variable names have been updated throughout the codebase. No user-facing features or functionality changes in this release.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.18 → v2.0.19</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">2</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="import-statement-reorganization">
+      <div class="card-top">
+        <h3>Import Statement Reorganization <a class="anchor" href="#import-statement-reorganization">#</a></h3>
+      </div>
+      <p><strong>What:</strong> The codebase has reorganized how Node.js core modules are imported, moving from default imports to more specific destructured imports in several locations.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Replaced default import <code>import cr from "stream"</code> with destructured <code>import { PassThrough as KR8 } from "stream"</code> at line 465525</li><li>Replaced default import <code>import o90 from "node:child_process"</code> with destructured <code>import { execSync as N2B, spawn as dM6 } from "node:child_process"</code> at line 247555</li><li>Added new destructured import <code>import { cwd as GwA } from "node:process"</code> at line 70285, removing default import <code>import mjQ from "node:process"</code> at line 464092</li><li><strong>Impact:</strong> These are internal refactoring changes with no effect on functionality or user experience. The same capabilities exist with different internal variable names.</li><li><strong>Evidence:</strong> Import changes verified at lines 12585→465525 (stream), 35787→247555 (child_process), 464092→70285 (process)</li></ul>
+    </article>
+    <article class="card" id="minified-variable-name-updates">
+      <div class="card-top">
+        <h3>Minified Variable Name Updates <a class="anchor" href="#minified-variable-name-updates">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Internal variable names and function references have been updated as part of the minification process.</p>
+<p><strong>Details:</strong></p>
+<ul><li>Tool reference variable changed from <code>${O3}</code> to <code>${R3}</code> in TodoWrite tool example documentation at line 204339</li><li>Function call changed from <code>Z4()</code> to <code>Q4()</code> at lines 204403 and 204429</li><li>Variable name changed from <code>qG</code> to <code>$G</code> at line 204427</li><li><strong>Impact:</strong> No functional changes; these are internal identifier updates from the build/minification process</li><li><strong>Evidence:</strong> Variable changes in Ap2 definition at line 204216 and related functions</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Quality Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="quality-notes">
+      <p>This release contains no new features, bug fixes, or user-visible changes. All modifications are internal code organization improvements that maintain identical functionality while potentially improving code maintainability or build output characteristics.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

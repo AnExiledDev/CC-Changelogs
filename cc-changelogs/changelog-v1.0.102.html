@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.102 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.102."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.102</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.102</span></h1>
+<p class="sub">Enhanced background task management with improved architecture, better user interface terminology, and new structured input/output parsing for background tasks.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.100 → v1.0.102</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">5</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="background-task-input-output-parsing">
+      <div class="card-top">
+        <h3>Background Task Input/Output Parsing <a class="anchor" href="#background-task-input-output-parsing">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added support for structured input/output in background tasks using XML-like tags <strong>How to use:</strong></p>
+<pre><code># Background tasks can now parse and display structured content
+# with &lt;background-task-input&gt; and &lt;background-task-output&gt; tags
+claude --some-command &amp;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Enables better formatting and organization of background task communication</li><li>Supports tagged content for clearer task progress tracking</li><li>Improves integration between background processes and the main conversation</li><li><strong>Evidence</strong>: <code>GA1() at line 410790</code> and <code>bbB() at line 410805</code> (new functions not present in v1.0.100)</li></ul>
+    </article>
+    <article class="card" id="task-creation-progress-feedback">
+      <div class="card-top">
+        <h3>Task Creation Progress Feedback <a class="anchor" href="#task-creation-progress-feedback">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Added visual feedback when creating background tasks <strong>Details:</strong></p>
+<ul><li>Shows "Creating background task…" message during task initialization</li><li>Provides better user awareness of task creation process</li><li><strong>Evidence</strong>: New message at <code>line 429262</code> (not found in v1.0.100)</li></ul>
+    </article>
+    <article class="card" id="enhanced-task-management-architecture">
+      <div class="card-top">
+        <h3>Enhanced Task Management Architecture <a class="anchor" href="#enhanced-task-management-architecture">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Improved background task system with better state management and filtering <strong>Details:</strong></p>
+<ul><li>Refactored from direct global state access to parameterized app state management</li><li>Added filtering for shell-type tasks with <code>(G) =&gt; G.type === "shell"</code> logic</li><li>Better separation between running and completed tasks</li><li>More reliable task state tracking and updates</li><li><strong>Evidence</strong>: <code>BV5(A) at line 395850</code> vs <code>zF5() at line 395605</code> in v1.0.100</li></ul>
+    </article>
+    <article class="card" id="refined-user-interface-terminology">
+      <div class="card-top">
+        <h3>Refined User Interface Terminology <a class="anchor" href="#refined-user-interface-terminology">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Updated terminology from "bash shells" to "tasks" throughout the interface <strong>Details:</strong></p>
+<ul><li>Changed "List and manage background bash shells" to "List and manage background tasks"</li><li>Updated "No background shells currently running" to "No tasks currently running"</li><li>More inclusive language supporting different types of background operations</li><li>Consistent terminology across all user-facing messages</li><li><strong>Evidence</strong>: <code>line 411750</code> vs <code>line 408227</code> in v1.0.100, <code>line 411633</code> vs <code>line 408178</code> in v1.0.100</li></ul>
+    </article>
+    <article class="card" id="improved-task-processing-functions">
+      <div class="card-top">
+        <h3>Improved Task Processing Functions <a class="anchor" href="#improved-task-processing-functions">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Enhanced task processing with new filtering and state management functions <strong>Details:</strong></p>
+<ul><li>Replaced <code>U1B()</code> and <code>E1B()</code> functions with <code>g1B()</code> and <code>u1B()</code> functions</li><li>Better encapsulation through app state parameter passing</li><li>More robust task state transitions and error handling</li><li><strong>Evidence</strong>: Functions <code>g1B() at line 395854</code> and <code>u1B() at line 395863</code> (architecture change from v1.0.100)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

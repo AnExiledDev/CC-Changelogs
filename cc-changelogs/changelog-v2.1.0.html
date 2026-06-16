@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.0 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.0."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.0</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.0</span></h1>
+<p class="sub">This release focuses on improving the SDK mode experience, enhancing git commit attribution mechanics, and cleaning up memory resources. Key improvements include context-aware error messages for SDK mode users, pre-emptive trailer injection into git commits (replacing post-commit amendment), a new paste content caching system for large content, and better OAuth URL redaction for security.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.77 → v2.1.0</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">1</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="paste-content-caching">
+      <div class="card-top">
+        <h3>Paste Content Caching <a class="anchor" href="#paste-content-caching">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Large pasted content is now cached to disk rather than stored inline in session transcripts.</p>
+<div class="blabel">Details</div>
+<ul><li>Content larger than 1KB is stored in a separate <code>paste-cache</code> directory</li><li>Content is hashed (SHA-256, truncated to 16 chars) and stored as individual text files</li><li>Old paste cache files are automatically cleaned up on startup based on age</li><li>This reduces memory pressure and transcript file sizes for sessions with large pastes</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>OMB()</code> at line 225421, <code>MMB()</code> at line 225432, <code>RMB()</code> at line 225443 (paste storage/retrieval/cleanup, uses <code>"paste-cache"</code> directory)</p>
+    </article>
+    <article class="card" id="pre-emptive-git-commit-trailer-injection">
+      <div class="card-top">
+        <h3>Pre-emptive Git Commit Trailer Injection <a class="anchor" href="#pre-emptive-git-commit-trailer-injection">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>Git commit attribution trailers are now injected into the commit command before execution, rather than amending commits after the fact.</p>
+<div class="blabel">Details</div>
+<ul><li>Uses <code>PreToolUse</code> hook to intercept git commit commands</li><li>Injects <code>Claude-Generated-By</code>, <code>Claude-Steers</code>, <code>Claude-Permission-Prompts</code>, <code>Claude-Escapes</code>, and <code>Claude-Plan</code> trailers directly into the commit message</li><li>Supports both HEREDOC-style commit messages and quoted <code>-m</code> style messages</li><li>Eliminates race conditions and edge cases from the previous post-commit amendment approach</li><li>Tracks injection state via <code>trailersInjectedForCurrentCommit</code> flag</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>x$7()</code> at line 530968 (contains <code>"Attribution hook: PreToolUse - Injecting trailers into git commit command"</code>)</p>
+    </article>
+    <article class="card" id="double-dash-argument-separator-for-mcp-commands">
+      <div class="card-top">
+        <h3>Double-Dash Argument Separator for MCP Commands <a class="anchor" href="#double-dash-argument-separator-for-mcp-commands">#</a></h3>
+      </div>
+      <div class="blabel">What</div>
+<p>The <code>claude mcp add</code> command now supports <code>--</code> to separate the command from its arguments.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude mcp add myserver -- node server.js --port 3000</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Allows cleaner separation when MCP server commands have their own arguments</li><li>Arguments after <code>--</code> are passed directly to the server command</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>ZC9()</code> at line 535512 (contains <code>"--" &amp;&amp; Q.length &gt; 0</code>)</p>
+    </article>
+    <article class="card" id="sdk-mode-aware-error-messages">
+      <div class="card-top">
+        <h3>SDK Mode-Aware Error Messages <a class="anchor" href="#sdk-mode-aware-error-messages">#</a></h3>
+      </div>
+      <p>Error messages for PDF and image handling now provide context-appropriate guidance based on whether Claude Code is running in SDK mode:</p>
+<ul><li><strong>PDF too large</strong>:</li><li>Interactive: "PDF too large. Please double press esc to edit your message and try again."</li><li>SDK mode: "PDF too large. Try reading the file a different way (e.g., extract text with a CLI tool)."</li></ul>
+<ul><li><strong>Password-protected PDF</strong>:</li><li>Interactive: "PDF is password protected. Please double press esc to edit your message and try again."</li><li>SDK mode: "PDF is password protected. Try using a CLI tool to extract or convert the PDF."</li></ul>
+<ul><li><strong>Image too large</strong>:</li><li>Interactive: "Image was too large. Double press esc to go back and try again with a smaller image."</li><li>SDK mode: "Image was too large. Try resizing the image or using a different approach."</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Hi8()</code> at line 278470, <code>Di8()</code> at line 278475, <code>Fi8()</code> at line 278480 (contain <code>d2()</code> SDK mode check)</p>
+    </article>
+    <article class="card" id="oauth-url-parameter-redaction">
+      <div class="card-top">
+        <h3>OAuth URL Parameter Redaction <a class="anchor" href="#oauth-url-parameter-redaction">#</a></h3>
+      </div>
+      <p>Sensitive OAuth parameters are now redacted from URLs in logs and error messages for improved security.</p>
+<div class="blabel">Details</div>
+<ul><li>Redacts: <code>state</code>, <code>nonce</code>, <code>code_challenge</code>, <code>code_verifier</code>, <code>code</code></li><li>Parameters are replaced with <code>[REDACTED]</code> in logged URLs</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>gB2()</code> at line 296262 (contains <code>Q.searchParams.set(B, "[REDACTED]")</code>)</p>
+    </article>
+    <article class="card" id="tool-search-mode-telemetry">
+      <div class="card-top">
+        <h3>Tool Search Mode Telemetry <a class="anchor" href="#tool-search-mode-telemetry">#</a></h3>
+      </div>
+      <p>Enhanced telemetry for tool search mode decisions, providing better observability into when and why tool search is enabled or disabled.</p>
+<div class="blabel">Details</div>
+<ul><li>Logs <code>tengu_tool_search_mode_decision</code> events with reason codes:</li><li><code>model_unsupported</code>, <code>mcp_search_unavailable</code>, <code>tst_enabled</code></li><li><code>auto_above_threshold</code>, <code>auto_below_threshold</code>, <code>mcp_cli_mode</code>, <code>standard_mode</code></li><li>Includes MCP tool count and threshold information</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>G70()</code> at line 280942 (contains <code>l("tengu_tool_search_mode_decision"</code>)</p>
+    </article>
+    <article class="card" id="session-data-type-classification">
+      <div class="card-top">
+        <h3>Session Data Type Classification <a class="anchor" href="#session-data-type-classification">#</a></h3>
+      </div>
+      <p>Added classification of internal file paths for session memory and transcripts, enabling better handling of internal data access.</p>
+<div class="blabel">Evidence</div>
+<p><code>un8()</code> at line 282585 (returns <code>"session_memory"</code> or <code>"session_transcript"</code>)</p>
+    </article>
+    <article class="card" id="tree-sitter-parser-memory-cleanup">
+      <div class="card-top">
+        <h3>Tree-Sitter Parser Memory Cleanup <a class="anchor" href="#tree-sitter-parser-memory-cleanup">#</a></h3>
+      </div>
+      <p>The shell command parser now properly cleans up tree-sitter AST trees after parsing to prevent memory leaks.</p>
+<div class="blabel">Details</div>
+<ul><li>Calls <code>tree.delete()</code> after extracting pipe positions and redirection nodes</li><li>Pre-extracts needed data before cleanup to avoid use-after-free</li></ul>
+<div class="blabel">Evidence</div>
+<p>Line 1050 in diff: <code>return (Q.tree.delete(), !0);</code> and line 1067: <code>return (G.tree.delete(), new Ww2(A, Z, Y));</code></p>
+    </article>
+    <article class="card" id="focus-tracking-state-cleanup">
+      <div class="card-top">
+        <h3>Focus Tracking State Cleanup <a class="anchor" href="#focus-tracking-state-cleanup">#</a></h3>
+      </div>
+      <p>Improved terminal focus tracking cleanup on exit, with proper state reset to prevent orphaned event listeners.</p>
+<div class="blabel">Evidence</div>
+<p><code>Ew0()</code> at line 457322 (contains <code>process.stdout.write("\x1B[?1004l")</code>, <code>Fw0 = !1</code>)</p>
+    </article>
+    <article class="card" id="cache-clearing-on-reset">
+      <div class="card-top">
+        <h3>Cache Clearing on Reset <a class="anchor" href="#cache-clearing-on-reset">#</a></h3>
+      </div>
+      <p>Added explicit cache clearing when resetting application state, improving memory management.</p>
+<div class="blabel">Evidence</div>
+<p><code>mD1()</code> at line 467837 (contains <code>hV.cache.clear?.()</code> and multiple other cache clears)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed potential memory leak in tree-sitter shell parser by properly deleting AST trees after use (<code>Ww2</code> class at line 370359)</li><li>Fixed terminal focus mode not being properly disabled on exit in some cases (<code>Tt2()</code> at line 457328)</li></ul>
+    </article>
+    <article class="card" id="year-end-2025-rate-limit-promotion">
+      <div class="card-top">
+        <h3>Year-End 2025 Rate Limit Promotion <a class="anchor" href="#year-end-2025-rate-limit-promotion">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <p>The holiday promotion banner displaying "A gift for you - Your rate limits are 2x higher through 12/31" has been removed as the promotion period has ended.</p>
+<div class="blabel">Evidence</div>
+<p>Removed function <code>re2()</code> at line 460646, <code>vw0()</code> at line 460649 (contained <code>"tengu_year_end_2025_campaign_promo"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

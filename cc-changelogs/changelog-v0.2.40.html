@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.40 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.40."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.40</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.40</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.39 → v0.2.40</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-features">
+      <div class="card-top">
+        <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
+      </div>
+      <h4>Interactive Confirmation Prompts</h4>
+<ul><li>Added a new <code>ConfirmInput</code> component that provides Y/n prompts for user confirmations</li><li>Supports customizable default choices and keyboard shortcuts (Y/n or y/N)</li><li>Automatically submits on Enter key based on the default choice</li></ul>
+<h4>Enhanced Shell Prompt Integration (OSC 133)</h4>
+<ul><li>Added support for OSC 133 terminal sequences for better shell integration</li><li>New prompt markers automatically inserted to track command execution:</li><li><code>OSC 133;A</code> - marks prompt start</li><li><code>OSC 133;B</code> - marks prompt end</li><li><code>OSC 133;C</code> - marks command start</li><li><code>OSC 133;D</code> - marks command end</li><li>Includes bracketed paste mode support (<code>OSC ?2026h/l</code>)</li><li>Improves terminal experience with better command boundary detection</li></ul>
+<h4>Improved Allowed Tools Management</h4>
+<ul><li>Redesigned the <code>/approved-tools</code> interface with better visual feedback</li><li>Added confirmation dialogs when deleting allowed tools</li><li>Shows "Press [key] again to exit" hints for better UX</li><li>Improved escape key handling throughout the permission flows</li></ul>
+    </article>
+    <article class="card" id="security-enhancements">
+      <div class="card-top">
+        <h3>Security Enhancements <a class="anchor" href="#security-enhancements">#</a></h3>
+      </div>
+      <h4>URL Validation for WebFetch</h4>
+<ul><li>WebFetch tool now requires URLs to be "provided directly by the user in the current or a previous message"</li><li>Added URL extraction from user messages to maintain a whitelist of allowed URLs</li><li>Prevents potential security issues from arbitrary URL fetching</li></ul>
+<h4>Custom HTTP Headers Support</h4>
+<ul><li>New environment variable <code>ANTHROPIC_CUSTOM_HEADERS</code> for adding custom headers to API requests</li><li>Supports multi-line header definitions with <code>name: value</code> format</li><li>Useful for proxy authentication or custom API configurations</li></ul>
+    </article>
+    <article class="card" id="ui-ux-improvements">
+      <div class="card-top">
+        <h3>UI/UX Improvements <a class="anchor" href="#ui-ux-improvements">#</a></h3>
+      </div>
+      <h4>Better Mode Indicators</h4>
+<ul><li>Reorganized status bar to show mode indicators more clearly</li><li>Added <code># to memorize</code> indicator for memory mode</li><li>Improved layout of bash mode and command hints</li><li>Vim INSERT mode indicator now properly hides other hints when active</li></ul>
+<h4>Enhanced File Writing</h4>
+<ul><li>Added tab-to-spaces conversion for better cross-editor compatibility</li><li>Improved file writing with proper encoding handling</li></ul>
+    </article>
+    <article class="card" id="bug-fixes">
+      <div class="card-top">
+        <h3>Bug Fixes <a class="anchor" href="#bug-fixes">#</a></h3>
+      </div>
+      <ul><li>Fixed release notes history (removed duplicate entries for v0.2.27)</li><li>Improved terminal output handling with better escape sequence filtering</li><li>Enhanced error handling in file operations</li><li>Better support for environments without terminal resize events</li></ul>
+    </article>
+    <article class="card" id="technical-improvements">
+      <div class="card-top">
+        <h3>Technical Improvements <a class="anchor" href="#technical-improvements">#</a></h3>
+      </div>
+      <ul><li>Added <code>PassThrough</code> stream support for better data handling</li><li>Improved MCP (Model Context Protocol) configuration parsing</li><li>Enhanced terminal rendering with proper OSC sequence support</li><li>Better memory management for long-running sessions</li></ul>
+    </article>
+    <article class="card" id="developer-notes">
+      <div class="card-top">
+        <h3>Developer Notes <a class="anchor" href="#developer-notes">#</a></h3>
+      </div>
+      <p>The codebase shows significant refactoring in several areas:</p>
+<ul><li>Terminal rendering engine now supports prompt markers</li><li>Permission management UI components have been modularized</li><li>Stream handling has been improved with proper Node.js stream imports</li><li>Configuration parsing is more robust with better error handling</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

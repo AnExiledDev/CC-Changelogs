@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.117 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.117."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.117</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.117</span></h1>
+<p class="sub">Version 1.0.117 contains internal code optimizations with no user-visible changes or new features. This is a maintenance release focused on improving the efficiency of module imports.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.116 → v1.0.117</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">1</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="import-optimization">
+      <div class="card-top">
+        <h3>Import Optimization <a class="anchor" href="#import-optimization">#</a></h3>
+      </div>
+      <p>The codebase has been refactored to use more specific ES6 named imports instead of default module imports, reducing the amount of code loaded at runtime. This is an internal optimization with no functional impact on CLI behavior or features.</p>
+<p><strong>Technical details:</strong></p>
+<ul><li>Replaced <code>import YJQ from "stream"</code> with <code>import { PassThrough as Jn5 } from "stream"</code> at line 442149</li><li>Replaced <code>import oAQ from "node:process"</code> with <code>import { cwd as fNA } from "node:process"</code> at line 361348</li><li>The <code>Transform</code> class continues to be imported from stream (via <code>YJQ.Transform</code> at line 337901)</li><li>The <code>PassThrough</code> class usage at line 442326 now uses the named import <code>Jn5</code></li><li>The <code>cwd</code> function usage at lines 361467 and 361469 now uses the named import <code>fNA</code></li></ul>
+<p><strong>Impact:</strong> None. This is purely an internal refactoring that improves code organization and potentially reduces memory footprint, but does not change any CLI functionality, commands, flags, or user-facing behavior.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.67 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.67."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.67</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.67</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.66 → v1.0.67</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="import-optimizations">
+      <div class="card-top">
+        <h3>Import Optimizations <a class="anchor" href="#import-optimizations">#</a></h3>
+      </div>
+      <p><strong>Improved module imports for better performance and specificity:</strong></p>
+<ul><li><strong>Stream module imports refined</strong>: Instead of importing entire <code>stream</code> and <code>node:stream</code> modules, the new version only imports the specific <code>PassThrough</code> class that's needed:</li></ul>
+<pre><code>  // Before:
+  import qe0 from &quot;node:stream&quot;;
+  import ZR9 from &quot;stream&quot;;
+  
+  // After:
+  import { PassThrough as KT6 } from &quot;node:stream&quot;;
+  import { PassThrough as GY8 } from &quot;stream&quot;;</code></pre>
+<ul><li><strong>Process module import optimized</strong>: Changed from importing the entire <code>node:process</code> module to only importing the <code>cwd</code> function:</li></ul>
+<pre><code>  // Before:
+  import rgB from &quot;node:process&quot;;
+  
+  // After:
+  import { cwd as Nt0 } from &quot;node:process&quot;;</code></pre>
+    </article>
+    <article class="card" id="error-handling-improvements">
+      <div class="card-top">
+        <h3>Error Handling Improvements <a class="anchor" href="#error-handling-improvements">#</a></h3>
+      </div>
+      <p><strong>Simplified error path extraction logic:</strong></p>
+<p>The error path extraction function has been streamlined to remove unnecessary code for handling unrecognized keys:</p>
+<pre><code>// Before: Handled special case for &#x27;unrecognized_keys&#x27; errors
+function X3Q(A) {
+  if (A.length === 0) return &quot;unknown&quot;;
+  let B = A[0];
+  if (!B) return &quot;unknown&quot;;
+  if (B.path.length &gt; 0) return B.path.join(&quot;.&quot;);
+  if (B.code === &quot;unrecognized_keys&quot; &amp;&amp; &quot;keys&quot; in B) {
+    let Q = B.keys;
+    return Q.length &gt; 0 ? (Q[0] ?? &quot;unknown&quot;) : &quot;unknown&quot;;
+  }
+  return &quot;unknown&quot;;
+}
+
+// After: Simplified logic without special case handling
+function X3Q(A) {
+  if (A.length === 0) return &quot;unknown&quot;;
+  let B = A[0];
+  if (!B) return &quot;unknown&quot;;
+  if (B.path.length &gt; 0) return B.path.join(&quot;.&quot;);
+  return &quot;unknown&quot;;
+}</code></pre>
+    </article>
+    <article class="card" id="summary">
+      <div class="card-top">
+        <h3>Summary <a class="anchor" href="#summary">#</a></h3>
+      </div>
+      <p>This update focuses on performance optimizations through more targeted imports and cleaner error handling logic. The changes reduce memory footprint by importing only the specific functions needed rather than entire modules, and simplify the codebase by removing unnecessary special case handling in error path extraction.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v1.0.68 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v1.0.68."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">1.0.68</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">1.0.68</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v1.0.67 → v1.0.68</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p>Based on my analysis of the diff file for version 1.0.68, here is the detailed changelog:</p>
+<p># Claude Code v1.0.68 Changelog</p>
+    </article>
+    <article class="card" id="teleport-resume-sessions-across-machines">
+      <div class="card-top">
+        <h3>Teleport - Resume Sessions Across Machines <a class="anchor" href="#teleport-resume-sessions-across-machines">#</a></h3>
+      </div>
+      <p>A powerful new <code>--teleport</code> feature allows you to resume Claude Code sessions from other machines or continue someone else's shared session.</p>
+<p><strong>Usage:</strong></p>
+<pre><code># Resume by session ID
+claude --teleport abc123def456
+
+# Resume from a URL
+claude --teleport https://claude.ai/chat/abc123def456</code></pre>
+<p><strong>Features:</strong></p>
+<ul><li>Automatically fetches conversation history from remote sessions</li><li>Switches to the appropriate git branch if needed</li><li>Offers to stash uncommitted changes before switching branches</li><li>Supports custom headers via <code>TELEPORT_HEADERS</code> environment variable</li><li>Validates authentication status before proceeding</li></ul>
+<p><strong>Environment Variables:</strong></p>
+<ul><li><code>TELEPORT_RESUME_URL</code>: Override the default URL for session resumption</li><li><code>TELEPORT_HEADERS</code>: Pass custom headers as JSON (e.g., <code>export TELEPORT_HEADERS='{"Authorization": "Bearer token"}'</code>)</li></ul>
+    </article>
+    <article class="card" id="customizable-output-modes">
+      <div class="card-top">
+        <h3>Customizable Output Modes <a class="anchor" href="#customizable-output-modes">#</a></h3>
+      </div>
+      <p>Configure how Claude Code communicates with you by selecting from different output modes.</p>
+<p><strong>Features:</strong></p>
+<ul><li>Support for custom output modes stored in <code>.claude/output-modes/</code> directories</li><li>Both user-level and project-level output mode configurations</li><li>Interactive selection UI with up to 10 visible options (increased from 3)</li><li>Dynamic loading with "Loading output modes..." indicator</li><li>Each mode includes a description to help you choose</li></ul>
+    </article>
+    <article class="card" id="enhanced-hooks-management">
+      <div class="card-top">
+        <h3>Enhanced Hooks Management <a class="anchor" href="#enhanced-hooks-management">#</a></h3>
+      </div>
+      <p>New global control over Claude Code's hook system for better troubleshooting and control.</p>
+<p><strong>New Capability:</strong></p>
+<ul><li>Disable all hooks globally without deleting your configuration</li><li>Clear UI indicator when hooks are disabled showing:</li><li>Warning banner explaining hooks are disabled</li><li>Count of configured hooks that aren't running</li><li>Option to re-enable all hooks with one click</li></ul>
+    </article>
+    <article class="card" id="expanded-shell-command-support">
+      <div class="card-top">
+        <h3>Expanded Shell Command Support <a class="anchor" href="#expanded-shell-command-support">#</a></h3>
+      </div>
+      <p>10 new commands added to the safe command whitelist, allowing execution without approval prompts:</p>
+<ul><li><code>nl</code> - Number lines in files</li><li><code>hostname</code> - Display system hostname</li><li><code>arch</code> - Show system architecture</li><li><code>groups</code> - List user groups</li><li><code>nproc</code> - Display number of processors</li><li><code>basename</code> - Extract filename from path</li><li><code>dirname</code> - Extract directory from path</li><li><code>realpath</code> - Resolve to absolute path</li><li><code>base64</code> - Encode/decode base64 data</li><li><code>file</code> - Determine file type</li></ul>
+    </article>
+    <article class="card" id="better-error-handling">
+      <div class="card-top">
+        <h3>️ Better Error Handling <a class="anchor" href="#better-error-handling">#</a></h3>
+      </div>
+      <ul><li>Improved shell execution with <code>shell: true</code> option for better compatibility</li><li>Enhanced error messages with clearer explanations</li><li>Try-catch blocks added to critical command execution paths</li><li>Better timeout and cancellation handling for long-running commands</li></ul>
+    </article>
+    <article class="card" id="ui-ux-enhancements">
+      <div class="card-top">
+        <h3>UI/UX Enhancements <a class="anchor" href="#ui-ux-enhancements">#</a></h3>
+      </div>
+      <ul><li>Loading states with descriptive messages throughout the interface</li><li>Interactive prompts for git stash decisions during teleport</li><li>Clearer permission descriptions for tool access levels</li><li>Improved session selection UI when multiple sessions are available</li></ul>
+    </article>
+    <article class="card" id="removed-features">
+      <div class="card-top">
+        <h3>Removed Features <a class="anchor" href="#removed-features">#</a></h3>
+      </div>
+      <ul><li>Removed <code>NotebookRead</code> tool and related Jupyter notebook reading functionality</li><li>Cleaned up unused imports for <code>node:stream</code></li></ul>
+    </article>
+    <article class="card" id="command-execution-improvements">
+      <div class="card-top">
+        <h3>Command Execution Improvements <a class="anchor" href="#command-execution-improvements">#</a></h3>
+      </div>
+      <ul><li>New command tracking infrastructure with unique command IDs</li><li>Enhanced verbose logging with timestamped output</li><li>Escaped command strings for improved security</li><li>Better handling of piped commands and multi-line output</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Breaking Changes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="breaking-changes">
+      <p>None - This release maintains backward compatibility with existing workflows.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <ul><li>The teleport feature requires a clean git working directory or will prompt to stash changes</li><li>Custom output modes can be placed in <code>.claude/output-modes/</code> in your home or project directory</li><li>The expanded shell command whitelist improves productivity for common system tasks while maintaining security</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

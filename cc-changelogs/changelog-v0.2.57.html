@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v0.2.57 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v0.2.57."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">0.2.57</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">0.2.57</span></h1>
+    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v0.2.56 → v0.2.57</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">10</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s"><div class="n">3</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="changes">
+      <p>Based on my analysis of the diff file for version 0.2.57 of Claude Code CLI, here's the detailed changelog:</p>
+<p># Claude Code CLI v0.2.57 Changelog</p>
+    </article>
+    <article class="card" id="project-level-tool-permissions">
+      <div class="card-top">
+        <h3>Project-Level Tool Permissions <a class="anchor" href="#project-level-tool-permissions">#</a></h3>
+      </div>
+      <ul><li><strong>Project settings support</strong>: You can now configure allowed tools at the project level using <code>.claude/settings.json</code></li><li>Permissions can be defined in three scopes:</li><li>CLI arguments (<code>cliArg</code>)</li><li>Local settings (<code>localSettings</code>)</li><li><strong>NEW</strong>: Project settings (<code>projectSettings</code>)</li><li>Project-level permissions are automatically loaded and respected when working in a project directory</li></ul>
+    </article>
+    <article class="card" id="enhanced-user-experience">
+      <div class="card-top">
+        <h3>Enhanced User Experience <a class="anchor" href="#enhanced-user-experience">#</a></h3>
+      </div>
+      <h4>Improved Spinner Animations</h4>
+<ul><li><strong>Haiku-powered spinners</strong>: The loading spinner now generates contextual, whimsical verbs based on your input</li><li>When typing in prompt mode, the spinner dynamically generates related action words (e.g., "Searching", "Building", "Analyzing")</li><li>Configurable spinner styles with haiku word generation for a more engaging experience</li></ul>
+<h4>Better Error Handling</h4>
+<ul><li>Enhanced error messages with clearer formatting</li><li>New <code>eT</code> error class for better error content handling</li><li>Improved truncation of long error messages in bug reports</li></ul>
+    </article>
+    <article class="card" id="shell-improvements">
+      <div class="card-top">
+        <h3>️ Shell Improvements <a class="anchor" href="#shell-improvements">#</a></h3>
+      </div>
+      <ul><li><strong>Shell snapshot creation</strong>: Automatically creates snapshots of shell configuration for better session persistence</li><li>Improved shell detection and compatibility checking</li><li>Better handling of shell configuration files (<code>.bashrc</code>, <code>.zshrc</code>, <code>.profile</code>)</li><li>New <code>tT</code> function for setting the current working directory with validation</li></ul>
+    </article>
+    <article class="card" id="enhanced-output-display">
+      <div class="card-top">
+        <h3>Enhanced Output Display <a class="anchor" href="#enhanced-output-display">#</a></h3>
+      </div>
+      <ul><li><strong>(ctrl+r to expand)</strong> indicator for truncated tool results</li><li>Cleaner output formatting for tools with image detection</li><li>Improved visual hierarchy with better spacing and layout</li></ul>
+    </article>
+    <article class="card" id="developer-tools">
+      <div class="card-top">
+        <h3>Developer Tools <a class="anchor" href="#developer-tools">#</a></h3>
+      </div>
+      <ul><li>New background task management system with improved task classes:</li><li><code>FL1</code>: Base task class with status tracking</li><li><code>Kb2</code>: Background tasks using PersistentShell</li><li><code>Fb2</code>: Background tasks using new shell command system</li><li>Better task output streaming and management</li></ul>
+    </article>
+    <article class="card" id="performance-efficiency">
+      <div class="card-top">
+        <h3>Performance &amp; Efficiency <a class="anchor" href="#performance-efficiency">#</a></h3>
+      </div>
+      <ul><li>Repository listing now warns when content exceeds 40,000 characters</li><li>Optimized file listing with configurable ignore patterns for common directories</li><li>Better handling of large repository structures</li></ul>
+    </article>
+    <article class="card" id="code-quality">
+      <div class="card-top">
+        <h3>Code Quality <a class="anchor" href="#code-quality">#</a></h3>
+      </div>
+      <ul><li>Improved message validation for tool use selection</li><li>Enhanced tool permission context management</li><li>Better separation of concerns in permission handling</li></ul>
+    </article>
+    <article class="card" id="user-interface">
+      <div class="card-top">
+        <h3>User Interface <a class="anchor" href="#user-interface">#</a></h3>
+      </div>
+      <ul><li>Cleaner configuration panel with better visual organization</li><li>Improved theme labels in settings (e.g., "Light text" instead of just "dark")</li><li>Tab key now works alongside Enter/Space for changing settings</li></ul>
+    </article>
+    <article class="card" id="dependencies-imports">
+      <div class="card-top">
+        <h3>Dependencies &amp; Imports <a class="anchor" href="#dependencies-imports">#</a></h3>
+      </div>
+      <ul><li>New imports for better file handling: <code>basename</code>, <code>extname</code>, <code>dirname</code>, <code>join</code>, <code>resolve</code></li><li>Added <code>EOL</code>, <code>platform</code>, and <code>homedir</code> from OS module</li><li>Improved stream handling with <code>Readable</code> and <code>PassThrough</code> streams</li></ul>
+    </article>
+    <article class="card" id="internal-changes">
+      <div class="card-top">
+        <h3>Internal Changes <a class="anchor" href="#internal-changes">#</a></h3>
+      </div>
+      <ul><li>Version bump to 0.2.57</li><li>Updated changelog constant with current version</li><li>Improved error tracking and telemetry</li><li>Better handling of Git repository detection with <code>vL1</code> function</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed issue where messages without text or Edit tool usage were incorrectly validated</li><li>Improved handling of shell process lifecycle</li><li>Better error recovery in background task management</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Configuration Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="configuration-changes">
+      <ul><li>New <code>diffTool</code> setting in user configuration (defaults to "terminal")</li><li>Project settings now support permission configurations</li><li>Enhanced settings validation with proper schemas</li></ul>
+<p>This update focuses on improving the developer experience with better project-level configurations, more engaging UI elements, and robust shell handling capabilities. The addition of project-level tool permissions provides better security and flexibility when working across different projects.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

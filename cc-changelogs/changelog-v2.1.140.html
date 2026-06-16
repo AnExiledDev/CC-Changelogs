@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.140 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.140."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.140</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.140</span></h1>
+<p class="sub">This release adds experimental TLS termination to the sandbox runtime so HTTPS traffic can be inspected by a per-request filter, and introduces the <code>CLAUDE_CODE_RESUME_PROMPT</code> environment variable for customizing auto-resume behavior. It also expands fast mode to support Opus 4.7, tightens plugin-path documentation, and adds a mandatory Context section to plan-mode plans.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.139 → v2.1.140</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">20</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">5</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="experimental-tls-termination-for-sandbox-runtime-experimenta">
+      <div class="card-top">
+        <h3>Experimental TLS Termination for Sandbox Runtime [EXPERIMENTAL] <a class="anchor" href="#experimental-tls-termination-for-sandbox-runtime-experimenta">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The sandbox runtime (SRT) can now terminate TLS in-process, making HTTPS request and response bodies visible to a per-request filter callback.</p>
+<div class="blabel">Usage</div>
+<pre><code>// In a programmatic SDK / harness integration:
+{
+  network: {
+    tlsTerminate: {
+      caCertPath: &quot;/path/to/ca.crt&quot;,  // optional — omit to generate an ephemeral CA
+      caKeyPath:  &quot;/path/to/ca.key&quot;,
+    },
+    filterRequest: (request) =&gt; {
+      // request is a web-standard Request object
+      if (request.url.includes(&quot;evil.com&quot;)) return { action: &quot;deny&quot;, reason: &quot;blocked domain&quot; };
+      return { action: &quot;allow&quot; };
+    }
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>network.tlsTerminate</code> activates in-process CONNECT interception. When a sandboxed child makes an HTTPS request, SRT intercepts the CONNECT tunnel, terminates TLS, and proxies the decrypted traffic through the existing filter pipeline.</li><li>If <code>caCertPath</code>/<code>caKeyPath</code> are omitted, SRT generates an ephemeral RSA CA into a temp directory for the lifetime of the session and configures the sandboxed child to trust it. The ephemeral CA is cleaned up on exit.</li><li><code>caCertPath</code> and <code>caKeyPath</code> must be provided together; providing only one throws an error.</li><li>The CA key must be RSA (non-RSA keys are rejected with <code>"must be RSA"</code>).</li><li><code>network.tlsTerminate</code> and <code>network.mitmProxy</code> are mutually exclusive — enabling both throws <code>"network.tlsTerminate and network.mitmProxy are mutually exclusive"</code>.</li><li><code>filterRequest</code> applies to both plain HTTP and, when <code>tlsTerminate</code> is active, to decrypted HTTPS. Denied requests receive a <code>403</code> with the reason.</li><li>Log prefixes: <code>[mitm-ca]</code> (CA lifecycle), <code>[mitm-leaf]</code> (per-host cert minting), <code>[tls-terminate]</code> (connection errors), <code>[request-filter]</code> (allow/deny decisions).</li></ul>
+<div class="blabel">Evidence</div>
+<p>Full TLS intercept stack (search for <code>"[mitm-ca] generated ephemeral CA at"</code> or <code>"tlsTerminate.caCertPath"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-resume-prompt-environment-variable">
+      <div class="card-top">
+        <h3><code>CLAUDE_CODE_RESUME_PROMPT</code> Environment Variable <a class="anchor" href="#claude-code-resume-prompt-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new environment variable that lets you override the message Claude sends when auto-resuming an interrupted conversation.</p>
+<div class="blabel">Usage</div>
+<pre><code>export CLAUDE_CODE_RESUME_PROMPT=&quot;Pick up exactly where you left off, no preamble.&quot;
+claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>If unset, the default message is <code>"Continue from where you left off."</code>.</li><li>Takes effect whenever the auto-resume prompt is generated (e.g., after a context window compaction or interrupted session).</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>y58()</code> function (search for <code>"CLAUDE_CODE_RESUME_PROMPT"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">18 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="fast-mode-now-supports-opus-4-7">
+      <div class="card-top">
+        <h3>Fast Mode Now Supports Opus 4.7 <a class="anchor" href="#fast-mode-now-supports-opus-4-7">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>/fast</code> toggle and its description have been updated to include Claude Opus 4.7 alongside Opus 4.6.</p>
+<div class="blabel">Details</div>
+<ul><li>Old description: "…is only available on Opus 4.6."</li><li>New description: "…is available on Opus 4.6 and Opus 4.7."</li><li>No change in behavior; <code>/fast</code> enables the same faster-output mode, now on an expanded set of models.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated fast-mode description string (search for <code>"available on Opus 4.6 and Opus 4.7"</code>)</p>
+    </article>
+    <article class="card" id="plugin-path-descriptions-clarified-override-vs-addition-sema">
+      <div class="card-top">
+        <h3>Plugin Path Descriptions Clarified — Override vs. Addition Semantics <a class="anchor" href="#plugin-path-descriptions-clarified-override-vs-addition-sema">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Plugin <code>plugin.json</code> manifest fields that accept paths now clearly state whether they replace or extend the default auto-loaded directory.</p>
+<div class="blabel">Details</div>
+<ul><li>Fields that fully replace the default directory (e.g., <code>agents</code>, <code>commands</code>, <code>output-styles</code>, <code>themes</code>) now document: "When set, the <code>&lt;name&gt;/</code> directory is not auto-loaded — list its files here if you want both."</li><li>Fields that load in addition to the default (e.g., the extra <code>skills</code> path) now document: "Loaded in addition to the <code>skills/</code> directory."</li><li>Previously, descriptions used "in addition to those in the <code>&lt;name&gt;/</code> directory" uniformly, which was ambiguous.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>.describe()</code> strings (search for <code>"When set, the agents/ directory is not auto-loaded"</code>)</p>
+    </article>
+    <article class="card" id="plugin-folder-shadowing-warnings">
+      <div class="card-top">
+        <h3>Plugin Folder-Shadowing Warnings <a class="anchor" href="#plugin-folder-shadowing-warnings">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now surfaces a warning when a <code>plugin.json</code> manifest field shadows the corresponding default auto-loaded folder, and tells the plugin author how to fix it.</p>
+<div class="blabel">Details</div>
+<ul><li>Warning message: <code>"Default &lt;component&gt;/ folder is ignored because plugin.json sets '&lt;manifestField&gt;'"</code>.</li><li>Suggested fix: <code>"Remove '&lt;manifestField&gt;' from plugin.json to auto-load the folder, or add the folder's files to the '&lt;manifestField&gt;' list if you want both"</code>.</li><li>Warnings are categorized separately from hard errors (<code>plugin_errors</code>) — a warned plugin still loads and is present in <code>plugins[]</code>.</li><li>Warnings now appear in the UI via the <code>plugins.warnings</code> state that the plugin panel reads.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>PE()</code> and <code>te$()</code> functions (search for <code>"folder-shadowed-by-manifest"</code>)</p>
+    </article>
+    <article class="card" id="skills-dir-marketplace-name-reserved">
+      <div class="card-top">
+        <h3><code>"skills-dir"</code> Marketplace Name Reserved <a class="anchor" href="#skills-dir-marketplace-name-reserved">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The marketplace identifier <code>"skills-dir"</code> is now reserved by Claude Code for the built-in <code>.claude/skills/</code> auto-loading plugin. Third-party plugins cannot claim this name.</p>
+<div class="blabel">Details</div>
+<ul><li>If your own plugin registration uses the name <code>skills-dir</code>, it will conflict with the built-in slot.</li><li>Reserved-name enforcement happens at load time.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>SF = "skills-dir"</code> constant (search for <code>"Marketplace name \"skills-dir\" is reserved"</code>)</p>
+    </article>
+    <article class="card" id="goal-now-blocked-by-allowmanagedhooksonly">
+      <div class="card-top">
+        <h3><code>/goal</code> Now Blocked by <code>allowManagedHooksOnly</code> <a class="anchor" href="#goal-now-blocked-by-allowmanagedhooksonly">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>/goal</code> skill now reports a more specific reason when it cannot run due to hook policy settings.</p>
+<div class="blabel">Details</div>
+<ul><li>Old message: <code>"/goal is disabled by your organization's policy (disableAllHooks)."</code></li><li>New message: <code>"/goal can't run while hooks are disabled (disableAllHooks or allowManagedHooksOnly is set in settings or by policy)."</code></li><li>The <code>allowManagedHooksOnly</code> policy mode (which restricts hooks to a managed subset) is now correctly cited as a blocking reason in addition to the existing <code>disableAllHooks</code> setting.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated goal-blocked message (search for <code>"allowManagedHooksOnly is set in settings or by policy"</code>)</p>
+    </article>
+    <article class="card" id="plan-mode-requires-a-context-section">
+      <div class="card-top">
+        <h3>Plan Mode Requires a Context Section <a class="anchor" href="#plan-mode-requires-a-context-section">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When writing a plan in plan mode, Claude is now instructed to begin with a <strong>Context</strong> section explaining why the change is being made before listing implementation steps.</p>
+<div class="blabel">Details</div>
+<ul><li>The Context section must describe: the problem or need being addressed, what prompted the change, and the intended outcome.</li><li>This addition helps reviewers understand the motivation before reading the technical steps.</li><li>The rest of the plan format is unchanged (recommended approach, file paths, utilities to reuse, verification steps).</li></ul>
+<div class="blabel">Evidence</div>
+<p>Phase-4 plan instructions (search for <code>"Begin with a <strong>Context</strong> section: explain why this change is being made"</code>)</p>
+    </article>
+    <article class="card" id="user-correction-saved-to-memory-after-tool-rejection">
+      <div class="card-top">
+        <h3>User Correction Saved to Memory After Tool Rejection <a class="anchor" href="#user-correction-saved-to-memory-after-tool-rejection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>After a user rejects a tool use (e.g., blocks a file edit), Claude is now reminded to pay attention to any correction the user provides next, and to save it to memory for future sessions.</p>
+<div class="blabel">Details</div>
+<ul><li>New prompt appended after tool rejection: "The user's next message may contain a correction or preference. Pay close attention — if they explain what went wrong or how they'd prefer you to work, consider saving that to memory for future sessions."</li><li>This makes Claude more likely to learn from in-session feedback rather than repeating the same rejected behavior across sessions.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>p95</code> string (search for <code>"consider saving that to memory for future sessions"</code>)</p>
+    </article>
+    <article class="card" id="plan-rejection-feedback-improved">
+      <div class="card-top">
+        <h3>Plan Rejection Feedback Improved <a class="anchor" href="#plan-rejection-feedback-improved">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a user rejects a plan in plan mode and stays in planning, Claude now receives explicit context about what happened instead of inferring it.</p>
+<div class="blabel">Details</div>
+<ul><li>New message: "The agent proposed a plan that was rejected by the user. The user chose to stay in plan mode rather than proceed with implementation."</li><li>The rejected plan content is included so Claude can revise rather than re-propose the same plan.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>S06</code> string (search for <code>"The agent proposed a plan that was rejected by the user"</code>)</p>
+    </article>
+    <article class="card" id="user-identity-added-to-branch-pattern-context">
+      <div class="card-top">
+        <h3>User Identity Added to Branch Pattern Context <a class="anchor" href="#user-identity-added-to-branch-pattern-context">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Claude now receives the current user's identity (derived from <code>GITHUB_ACTOR</code>, <code>USER</code>, or <code>USERNAME</code>, or the email username) to correctly resolve the <code>$USER/...</code> personal-branch pattern in rules.</p>
+<div class="blabel">Details</div>
+<ul><li>A new context line is injected: <code><strong>User identity</strong>: \</code>&lt;name&gt;\<code>. The \</code>$USER/...\<code> pattern in the rules above resolves to \</code>&lt;name&gt;/...\<code>. Branches whose first path segment is a different person's name (\</code>&lt;other-user&gt;/...\<code>) are NOT this user's personal branches.</code></li><li>This prevents Claude from treating sibling developers' branches as the user's own.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>rm_()</code> function (search for <code>"Branches whose first path segment is a different person's name"</code>)</p>
+    </article>
+    <article class="card" id="lazy-trusted-device-enrollment">
+      <div class="card-top">
+        <h3>Lazy Trusted-Device Enrollment <a class="anchor" href="#lazy-trusted-device-enrollment">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now attempts to auto-enroll the device in the trusted-device program when it detects the device is not yet enrolled but a valid OAuth token is present.</p>
+<div class="blabel">Details</div>
+<ul><li>Log message: <code>"[trusted-device] Not enrolled, attempting lazy enrollment with OAuth token"</code>.</li><li>Enrollment is triggered silently in the background; no user action required.</li><li>If enrollment fails, the session continues without it.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>tO$()</code> function (search for <code>"[trusted-device] Not enrolled, attempting lazy enrollment with OAuth token"</code>)</p>
+    </article>
+    <article class="card" id="progress-bar-pill-variant">
+      <div class="card-top">
+        <h3>Progress Bar Pill Variant <a class="anchor" href="#progress-bar-pill-variant">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new "pill" visual style is available for progress bars, using filled (<code>▰</code>) and unfilled (<code>▱</code>) block characters, in addition to the existing block-fill variant.</p>
+<div class="blabel">Details</div>
+<ul><li>The <code>variant: "pill"</code> option switches to the new style.</li><li>Both filled and empty segments accept color overrides via <code>fillColor</code> and <code>emptyColor</code> props; the empty color dims when no explicit color is set.</li><li>Time-based progress estimation (exponential decay toward 95%) is also available for situations where the true percentage is unknown.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Nn</code> component (search for <code>"▰"</code> or <code>"▱"</code> for the pill characters); <code>jk7()</code> function for time-based estimation</p>
+    </article>
+    <article class="card" id="compaction-progress-tracks-start-time">
+      <div class="card-top">
+        <h3>Compaction Progress Tracks Start Time <a class="anchor" href="#compaction-progress-tracks-start-time">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The compaction state now records when compaction began (<code>compactingStartTime</code>), enabling elapsed-time display in the UI during long compactions.</p>
+<div class="blabel">Details</div>
+<ul><li><code>compactingStartTime</code> is set when compaction transitions to active and cleared when it completes.</li><li>The value is preserved across state updates so elapsed time can be computed without drift.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>$x_()</code> function (search for <code>"compactingStartTime"</code>)</p>
+    </article>
+    <article class="card" id="mcp-url-elicitation">
+      <div class="card-top">
+        <h3>MCP URL Elicitation <a class="anchor" href="#mcp-url-elicitation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new MCP elicitation type (<code>mcp_url_elicitation</code>) allows MCP servers to prompt the user to provide a URL before completing a request.</p>
+<div class="blabel">Details</div>
+<ul><li>MCP servers that need a user-supplied URL (e.g., for resource access) can now issue a structured elicitation request.</li><li>The default response when cancelled is <code>{ action: "cancel" }</code>.</li><li>This follows the same elicitation protocol as other interactive MCP flows.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>De$()</code> / <code>IUH</code> (search for <code>"mcp_url_elicitation"</code>)</p>
+    </article>
+    <article class="card" id="strict-known-marketplaces-policy">
+      <div class="card-top">
+        <h3>Strict Known Marketplaces Policy <a class="anchor" href="#strict-known-marketplaces-policy">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Organizations can now enforce a <code>strictKnownMarketplaces</code> policy that blocks skills-directory plugins from loading.</p>
+<div class="blabel">Details</div>
+<ul><li>When this policy is active, plugins from the <code>.claude/skills/</code> directory are blocked with: <code>"Plugins from &lt;path&gt;/skills/ are blocked by your organization's strictKnownMarketplaces policy and cannot be enabled."</code></li></ul>
+<div class="blabel">Evidence</div>
+<p><code>gH5()</code> function and block message (search for <code>"strictKnownMarketplaces policy and cannot be enabled"</code>)</p>
+    </article>
+    <article class="card" id="marketplace-autoupdate-synced-from-settings">
+      <div class="card-top">
+        <h3>Marketplace <code>autoUpdate</code> Synced from Settings <a class="anchor" href="#marketplace-autoupdate-synced-from-settings">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>autoUpdate</code> setting for known marketplaces can now be centrally managed via <code>managed-settings.json</code>, the <code>--settings</code> flag, or an <code>--add-dir</code> directory's settings file.</p>
+<div class="blabel">Details</div>
+<ul><li>Claude Code checks all settings layers in priority order. If any layer specifies <code>autoUpdate</code> for a marketplace, that value is synced to the persisted marketplace config.</li><li>Log message: <code>"Synced autoUpdate=&lt;value&gt; from settings for marketplace: &lt;name&gt;"</code>.</li><li>The source of the override (managed settings, <code>--settings</code> flag, or add-dir settings) is reported if the user asks to modify it: "…can't be changed here. Update that settings source (or ask your admin to) instead."</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Lr7()</code> function (search for <code>"Synced autoUpdate="</code>)</p>
+    </article>
+    <article class="card" id="browser-auth-fallback-url-updated">
+      <div class="card-top">
+        <h3>Browser Auth Fallback URL Updated <a class="anchor" href="#browser-auth-fallback-url-updated">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The browser-open fallback URL for authentication (shown when Claude Code cannot open a browser automatically) has changed from a YouTube Live stream to a permanent URL.</p>
+<div class="blabel">Details</div>
+<ul><li>Old URL: <code>https://www.youtube.com/live/AUQKjgKQF7w</code></li><li>New URL: <code>https://clau.de/radio</code></li><li>Message: "Couldn't open the browser. Listen at: https://clau.de/radio"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated fallback URL (search for <code>"https://clau.de/radio"</code>)</p>
+    </article>
+    <article class="card" id="sandbox-bare-repo-scrubbing-preserves-git-and-head">
+      <div class="card-top">
+        <h3>Sandbox Bare-Repo Scrubbing Preserves <code>.git</code> and <code>HEAD</code> <a class="anchor" href="#sandbox-bare-repo-scrubbing-preserves-git-and-head">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The sandbox cleanup routine that removes planted bare-repo files now preserves the <code>HEAD</code> file and the <code>.git</code> directory within those repos during the scrub pass.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously all files were deleted recursively without exception.</li><li>Now <code>HEAD</code> and <code>.git</code> entries are skipped during the scrub, avoiding corruption of valid git metadata.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>si1()</code> function (search for <code>"[Sandbox] scrubbed planted bare-repo file"</code>)</p>
+    </article>
+    <article class="card" id="bridge-process-management-unified">
+      <div class="card-top">
+        <h3>Bridge Process Management Unified <a class="anchor" href="#bridge-process-management-unified">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The HTTP and SOCKS proxy bridge process shutdown routines have been merged into a single generic handler, fixing a subtle race where one bridge could be left dangling.</p>
+<div class="blabel">Details</div>
+<ul><li>The new shared handler <code>KpK()</code> correctly checks <code>exitCode</code> and <code>signalCode</code> before sending <code>SIGTERM</code> (previously only <code>pid</code> and <code>killed</code> were checked).</li><li>The <code>setTimeout</code> handle is now <code>.unref()</code>'d so it does not prevent the process from exiting if cleanup takes too long.</li><li>Log messages now use the bridge type as a variable: <code>"Sent SIGTERM to HTTP bridge process"</code> / <code>"Sent SIGTERM to SOCKS bridge process"</code> remain the same visible messages.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>KpK()</code> function (search for <code>"Sent SIGTERM to ${$} bridge process"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li><code>mkdir</code> in the internal filesystem class no longer throws when the directory already exists (<code>EEXIST</code> is now silently ignored). (search for <code>"EEXIST"</code> in the <code>vCK</code> class)</li></ul>
+<ul><li><code>Read</code> tool <code>offset</code> parameter now emits a clearer diagnostic when its value cannot be coerced to an integer: <code>"normalizeToolInput Read.offset coercion failed: &lt;detail&gt;"</code>. (search for <code>"normalizeToolInput Read.offset coercion failed:"</code>)</li></ul>
+<ul><li>Skill health checks that are skipped (e.g., due to network issues or server status) now emit diagnostic log messages (<code>"Skill health fetch skipped:"</code> and <code>"Skill health fetch skipped: status &lt;code&gt;"</code>) instead of silently failing. (search for <code>"Skill health fetch skipped:"</code>)</li></ul>
+<ul><li>The computer use approval dialog is now routed through the standardized <code>requestDialog</code> mechanism rather than the <code>setToolJSX</code> hook, ensuring it participates correctly in abort-signal lifecycle management. (search for <code>"computer_use_approval"</code>)</li></ul>
+<ul><li>Admin request API functions (<code>api_admin_request_create</code>, <code>api_admin_request_list</code>, <code>api_admin_request_eligibility</code>) now use the internal authenticated HTTP client, fixing potential token-refresh failures that could occur when the cached access token expired during a long session. (search for <code>"admin_requests/eligibility:"</code>)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>

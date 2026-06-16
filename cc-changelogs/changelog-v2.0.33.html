@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.0.33 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.0.33."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.0.33</span></span>
+  <span class="spacer"></span>
+</div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.0.33</span></h1>
+<p class="sub">Version 2.0.33 introduces Segment analytics telemetry alongside existing Statsig tracking, enhances LSP file synchronization with four new lifecycle management methods, adds native support for Homebrew installations, and strengthens security with three new protections against path resolution bypass attacks.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.0.32 → v2.0.33</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">9 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="segment-analytics-telemetry">
+      <div class="card-top">
+        <h3>Segment Analytics Telemetry <a class="anchor" href="#segment-analytics-telemetry">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Dual telemetry system that sends all events to both Statsig and Segment analytics platforms <strong>How to use:</strong></p>
+<pre><code># Telemetry is enabled by default and respects existing opt-out mechanisms
+export DISABLE_TELEMETRY=1  # Disables both Statsig and Segment
+export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1  # Also disables both</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>All existing telemetry events (tool usage, file operations, security checks, etc.) now tracked to Segment in addition to Statsig</li><li>Uses anonymous IDs by default (<code>claudecode.v1.{uuid}</code>), adds user IDs when authenticated with Claude.ai</li><li>Feature-gated behind <code>tengu_log_segment_events</code> Statsig flag for controlled rollout</li><li>Events batched (15 per flush) and auto-flushed every 10 seconds</li><li>Graceful shutdown ensures no data loss on exit</li><li><strong>Evidence</strong>: Analytics SDK integration at <code>pF0</code> (line 19111), tracking function <code>Os2()</code> at line 475587, dual-tracking wrapper <code>j1()</code> at line 475648, initialization <code>Ms2</code> at line 475622</li></ul>
+    </article>
+    <article class="card" id="homebrew-installation-support">
+      <div class="card-top">
+        <h3>Homebrew Installation Support <a class="anchor" href="#homebrew-installation-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Native detection and handling of Homebrew-managed installations <strong>How to use:</strong></p>
+<pre><code># When installed via Homebrew, update with:
+brew upgrade claude-code
+
+# Claude Code will detect this and show appropriate instructions
+claude update
+# Output: &quot;Claude is managed by Homebrew.&quot;
+# &quot;To update, run: brew upgrade claude-code&quot;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Detects Homebrew installations by checking for <code>/Caskroom/</code> in executable path</li><li>Prevents self-update attempts that could conflict with Homebrew management</li><li>Shows in-session update notifications with correct "brew upgrade" command</li><li>Polls npm registry every 30 minutes to check for updates</li><li>Configuration tracking automatically skipped for package-manager installations</li><li><strong>Evidence</strong>: Homebrew detection <code>bnA()</code> at line 318415, installation type classifier <code>HN()</code> at line 318435, update handler at line 488357-488400, UI component <code>P22</code> at line 377347</li></ul>
+    </article>
+    <article class="card" id="lsp-file-lifecycle-management">
+      <div class="card-top">
+        <h3>LSP File Lifecycle Management <a class="anchor" href="#lsp-file-lifecycle-management">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Four new methods for synchronizing file state with Language Server Protocol servers <strong>How to use:</strong></p>
+<pre><code>// These methods are called automatically by Claude Code&#x27;s LSP integration
+// Manual use in custom integrations:
+const lspManager = createLSPManager();
+await lspManager.initialize();
+
+// Notify server when opening a file
+await lspManager.openFile(&#x27;/path/to/file.js&#x27;, fileContent);
+
+// Sync content changes
+await lspManager.changeFile(&#x27;/path/to/file.js&#x27;, newContent);
+
+// Notify server when closing
+await lspManager.closeFile(&#x27;/path/to/file.js&#x27;);
+
+// Inspect available servers
+const servers = lspManager.getAllServers();</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li><code>getAllServers()</code> returns Map of all initialized LSP servers for monitoring</li><li><code>openFile(path, content)</code> sends <code>textDocument/didOpen</code> with proper languageId mapping</li><li><code>changeFile(path, content)</code> sends <code>textDocument/didChange</code>, falls back to openFile if server not running</li><li><code>closeFile(path)</code> sends <code>textDocument/didClose</code> for cleanup</li><li>Configuration changed from <code>fileExtensions</code> array to <code>extensionToLanguage</code> object mapping for proper language ID support</li><li>Better error messages in shutdown that include actual error details instead of generic "check logs"</li><li><strong>Evidence</strong>: New methods added to return object at line 446455-446465, <code>openFile()</code> implementation at line 446408, <code>changeFile()</code> at line 446428, <code>closeFile()</code> at line 446442, <code>getAllServers()</code> at line 446405</li></ul>
+    </article>
+    <article class="card" id="enhanced-security-path-resolution-bypass-protection">
+      <div class="card-top">
+        <h3>Enhanced Security: Path Resolution Bypass Protection <a class="anchor" href="#enhanced-security-path-resolution-bypass-protection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Three new security checks to prevent attacks using shell expansion and directory changes <strong>How to use:</strong> These protections are automatic. Commands that trigger them will prompt for approval:</p>
+<pre><code># These patterns now require manual approval:
+echo &quot;data&quot; &gt; /tmp/$VAR/file.txt        # Variable expansion in redirect
+cd /tmp &amp;&amp; rm -rf important/            # Directory change with write operation
+cat file &gt; /etc/$(whoami)/config        # Command substitution in path</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li><strong>Shell expansion detection</strong>: Regex <code>/(?:&gt;&gt;?)\s<em>\S</em>\$/</code> catches variable expansion with redirections</li><li><strong>Dollar sign in paths</strong>: Any file path containing <code>$</code> character now requires approval to prevent variable expansion bypass</li><li><strong>CD with write operations</strong>: Compound commands using <code>cd</code> followed by write operations (rm, mv, cp, etc.) require approval since final working directory cannot be statically verified</li><li>All three checks use <code>"ask"</code> behavior (require approval) rather than <code>"deny"</code> to allow legitimate use cases</li><li><strong>Evidence</strong>: Shell expansion check in <code>tP1()</code> at line 254131, dollar sign check in <code>TYQ()</code> at line 253932, cd detection in <code>Fe8()</code> at line 253997</li></ul>
+    </article>
+    <article class="card" id="better-update-experience">
+      <div class="card-top">
+        <h3>Better Update Experience <a class="anchor" href="#better-update-experience">#</a></h3>
+      </div>
+      <ul><li>Update notifications now appear during active sessions (previously only when running <code>claude update</code>)</li><li>Installation type detection improved with specific handling for development, native, npm-local, npm-global, and package-manager installations</li><li>Configuration mismatch warnings help users understand when running from unexpected installation location</li><li><strong>Evidence</strong>: AutoUpdater wrapper integration at line 377584-377985</li></ul>
+    </article>
+    <article class="card" id="lsp-configuration-structure">
+      <div class="card-top">
+        <h3>LSP Configuration Structure <a class="anchor" href="#lsp-configuration-structure">#</a></h3>
+      </div>
+      <ul><li>Server configurations now use <code>extensionToLanguage</code> mapping instead of simple <code>fileExtensions</code> array</li><li>Enables proper LSP <code>languageId</code> specification in didOpen notifications (e.g., <code>.js</code> → <code>"javascript"</code>)</li><li>More structured format supports language servers that handle multiple languages</li><li><strong>Evidence</strong>: Configuration validation at line 5140-5147 in diff, usage in openFile at line 446412</li></ul>
+    </article>
+    <article class="card" id="error-reporting">
+      <div class="card-top">
+        <h3>Error Reporting <a class="anchor" href="#error-reporting">#</a></h3>
+      </div>
+      <ul><li>LSP shutdown errors now include all failure messages directly in exception text</li><li>Previously directed users to "check logs" without immediate visibility</li><li><strong>Evidence</strong>: Improved error at line 5173-5177 in diff</li></ul>
+    </article>
+    <article class="card" id="code-organization">
+      <div class="card-top">
+        <h3>Code Organization <a class="anchor" href="#code-organization">#</a></h3>
+      </div>
+      <ul><li>Removed unused imports: <code>stream</code>, <code>node:child_process</code>, <code>node:os</code></li><li>Removed internal UI class <code>dR0</code> for cursor management</li><li>Removed React Box component wrapper <code>PRA</code></li><li>Cleaned up questionnaire navigation component <code>A11</code></li><li><strong>Evidence</strong>: Removals listed in diff lines 10-461</li></ul>
+    </article>
+    <article class="card" id="system-prompts">
+      <div class="card-top">
+        <h3>System Prompts <a class="anchor" href="#system-prompts">#</a></h3>
+      </div>
+      <ul><li>Function <code>Lo</code> renamed to <code>bo</code> with signature change (removed one parameter)</li><li>Internal prompt assembly logic reorganized but user-facing behavior unchanged</li><li><strong>Evidence</strong>: Function comparison at diff lines 7090-7417</li></ul>
+<p># Changelog for version 2.0.33</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Changes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="segment-analytics-telemetry">
+      <div class="card-top">
+        <h3>Segment Analytics Telemetry <a class="anchor" href="#segment-analytics-telemetry">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Dual telemetry system that sends all events to both Statsig and Segment analytics platforms</p>
+<p><strong>How to use:</strong></p>
+<pre><code># Telemetry is enabled by default and respects existing opt-out mechanisms
+export DISABLE_TELEMETRY=1  # Disables both Statsig and Segment
+export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1  # Also disables both</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>All existing telemetry events (tool usage, file operations, security checks, etc.) now tracked to Segment in addition to Statsig</li><li>Uses anonymous IDs by default (<code>claudecode.v1.{uuid}</code>), adds user IDs when authenticated with Claude.ai</li><li>Feature-gated behind <code>tengu_log_segment_events</code> Statsig flag for controlled rollout</li><li>Events batched (15 per flush) and auto-flushed every 10 seconds</li><li>Graceful shutdown ensures no data loss on exit</li><li><strong>Evidence</strong>: <code>j1()</code> at line 475648, <code>Os2()</code> at line 475587, <code>Ms2</code> at line 475622</li></ul>
+    </article>
+    <article class="card" id="homebrew-installation-support">
+      <div class="card-top">
+        <h3>Homebrew Installation Support <a class="anchor" href="#homebrew-installation-support">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Native detection and handling of Homebrew-managed installations</p>
+<p><strong>How to use:</strong></p>
+<pre><code># When installed via Homebrew, update with:
+brew upgrade claude-code
+
+# Claude Code will detect this and show appropriate instructions
+claude update
+# Output: &quot;Claude is managed by Homebrew.&quot;
+# &quot;To update, run: brew upgrade claude-code&quot;</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Detects Homebrew installations by checking for <code>/Caskroom/</code> in executable path</li><li>Prevents self-update attempts that could conflict with Homebrew management</li><li>Shows in-session update notifications with correct "brew upgrade" command</li><li>Polls npm registry every 30 minutes to check for updates</li><li>Configuration tracking automatically skipped for package-manager installations</li><li><strong>Evidence</strong>: <code>bnA()</code> at line 318415, <code>HN()</code> at line 318435, <code>Pe2</code> at line 488357, <code>P22</code> at line 377347</li></ul>
+    </article>
+    <article class="card" id="lsp-file-lifecycle-management">
+      <div class="card-top">
+        <h3>LSP File Lifecycle Management <a class="anchor" href="#lsp-file-lifecycle-management">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Four new methods for synchronizing file state with Language Server Protocol servers</p>
+<p><strong>Details:</strong></p>
+<ul><li><code>getAllServers()</code> - Returns Map of all initialized LSP servers for monitoring</li><li><code>openFile(path, content)</code> - Sends <code>textDocument/didOpen</code> with proper languageId mapping</li><li><code>changeFile(path, content)</code> - Sends <code>textDocument/didChange</code>, falls back to openFile if server not running</li><li><code>closeFile(path)</code> - Sends <code>textDocument/didClose</code> for cleanup</li><li>Configuration changed from <code>fileExtensions</code> array to <code>extensionToLanguage</code> object for proper language ID support</li><li><strong>Evidence</strong>: <code>ym2()</code> at line 446307, methods at lines 446405-446454</li></ul>
+    </article>
+    <article class="card" id="enhanced-security-path-resolution-bypass-protection">
+      <div class="card-top">
+        <h3>Enhanced Security: Path Resolution Bypass Protection <a class="anchor" href="#enhanced-security-path-resolution-bypass-protection">#</a></h3>
+      </div>
+      <p><strong>What:</strong> Three new security checks to prevent attacks using shell expansion and directory changes</p>
+<p><strong>Examples that now require approval:</strong></p>
+<pre><code>echo &quot;data&quot; &gt; /tmp/$VAR/file.txt        # Variable expansion in redirect
+cd /tmp &amp;&amp; rm -rf important/            # Directory change with write operation  
+cat file &gt; /etc/$(whoami)/config        # Command substitution in path</code></pre>
+<p><strong>Details:</strong></p>
+<ul><li>Shell expansion detection: Regex <code>/(?:&gt;&gt;?)\s<em>\S</em>\$/</code> catches variable expansion with redirections</li><li>Dollar sign in paths: Any file path containing <code>$</code> character requires approval</li><li>CD with write operations: Compound commands using <code>cd</code> + write operations require approval</li><li>All checks use <code>"ask"</code> behavior (require approval) rather than <code>"deny"</code></li><li><strong>Evidence</strong>: <code>tP1()</code> at line 254131, <code>TYQ()</code> at line 253932, <code>Fe8()</code> at line 253997</li></ul>
+    </article>
+    <article class="card" id="better-update-experience">
+      <div class="card-top">
+        <h3>Better Update Experience <a class="anchor" href="#better-update-experience">#</a></h3>
+      </div>
+      <ul><li>Update notifications now appear during active sessions</li><li>Installation type detection improved with specific handling for development, native, npm-local, npm-global, and package-manager types</li><li>Configuration mismatch warnings help identify unexpected installation locations</li><li><strong>Evidence</strong>: <code>_22</code> at line 377584</li></ul>
+    </article>
+    <article class="card" id="lsp-configuration-structure">
+      <div class="card-top">
+        <h3>LSP Configuration Structure <a class="anchor" href="#lsp-configuration-structure">#</a></h3>
+      </div>
+      <ul><li>Server configurations now use <code>extensionToLanguage</code> mapping instead of <code>fileExtensions</code> array</li><li>Enables proper LSP <code>languageId</code> specification (e.g., <code>.js</code> → <code>"javascript"</code>)</li><li><strong>Evidence</strong>: Configuration validation at line 5140 in diff</li></ul>
+    </article>
+    <article class="card" id="error-reporting">
+      <div class="card-top">
+        <h3>Error Reporting <a class="anchor" href="#error-reporting">#</a></h3>
+      </div>
+      <ul><li>LSP shutdown errors now include all failure messages in exception text instead of generic "check logs" message</li><li><strong>Evidence</strong>: Error handling at line 5173 in diff</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
