@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.181 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.181."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.181</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.181</span></h1>
+<p class="sub">This release ships accessibility screen-reader mode (new <code>--ax-screen-reader</code> flag and <code>axScreenReader</code> setting), a new <code>/design</code> command for Claude Design integration, and the ability to set config values directly from the <code>/config</code> command line. It also introduces MCP archive skills (skills shipped as tar/zip bundles from MCP servers), a new <code>sandbox.allowAppleEvents</code> setting for macOS, and hardened file-write reliability with post-write verification. Under the hood, the old interrupt-continuation stitching system and the bundled HTML sanitizer library have been removed and replaced with cleaner alternatives.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.179 → v2.1.181</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">15</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">6</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">2</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="accessibility-screen-reader-mode">
+      <div class="card-top">
+        <h3>Accessibility Screen Reader Mode <a class="anchor" href="#accessibility-screen-reader-mode">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new screen-reader-friendly rendering mode that outputs flat text with no decorative borders, box-drawing characters, or animations — making Claude Code's output legible to assistive technology.</p>
+<div class="blabel">Usage</div>
+<pre><code># Via CLI flag
+claude --ax-screen-reader
+
+# Via environment variable
+CLAUDE_AX_SCREEN_READER=1 claude
+
+# Via /config
+/config axScreenReader=true</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When active, Claude Code prints <code>[Accessible screen reader mode: on]</code> at startup.</li><li>Forces the classic (non-TUI) renderer; the <code>tui</code> setting has no effect while screen reader mode is active.</li><li>Priority order: <code>--ax-screen-reader</code> CLI flag → <code>CLAUDE_AX_SCREEN_READER</code> env var → <code>axScreenReader</code> settings key.</li><li>The env var is automatically passed to subprocesses (via <code>CLAUDE_AX_SCREEN_READER=1</code>) so nested Claude Code invocations inherit the mode.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Screen reader renderer class (search for <code>"[Accessible screen reader mode: on]"</code>) — <code>Yei</code> class at line ~160584; setting description (search for <code>"Render screen-reader friendly output (flat text, no decorative borders or animations)"</code>)</p>
+    </article>
+    <article class="card" id="design-command-claude-design-hub">
+      <div class="card-top">
+        <h3><code>/design</code> Command — Claude Design Hub <a class="anchor" href="#design-command-claude-design-hub">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>/design</code> slash command that integrates with Claude Design (<code>claude.ai/design</code>), letting you create, import, export, sync, and manage design systems without leaving Claude Code.</p>
+<div class="blabel">Usage</div>
+<pre><code>/design                   # opens hub (shows available subcommands)
+/design login             # authorize with your claude.ai account
+/design sync              # push your local design system to claude.ai/design
+/design import            # pull a Claude Design project into the working directory
+/design export            # push the working directory into a new Claude Design project
+/design status            # show auth status and available design systems
+/design &lt;prompt&gt;          # free-form prompt routed through the design MCP tools</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Requires the Claude Design MCP server to be connected. If it isn't, Claude will tell you to run <code>/design login</code> or add the server.</li><li><code>sync</code> and <code>login</code> are also accessible as the dedicated <code>/design-sync</code> and <code>/design-login</code> commands.</li><li>The command always fetches live Claude Design instructions via the <code>get_claude_design_prompt</code> tool rather than shipping a vendored copy, so behavior stays in sync with the server.</li><li>Tab completion available for the subcommands.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Hub command registration (search for <code>"Work with Claude Design (claude.ai/design) — create, import, export, sync, login"</code>) — <code>c6l()</code> at line ~750618</p>
+    </article>
+    <article class="card" id="mcp-archive-skills">
+      <div class="card-top">
+        <h3>MCP Archive Skills <a class="anchor" href="#mcp-archive-skills">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>MCP servers can now deliver skills (slash commands) as downloadable tar.gz or zip archive bundles. Claude Code fetches, validates, and unpacks the archive, then registers its SKILL.md as a command — all transparently.</p>
+<div class="blabel">Usage</div>
+<pre><code>(Automatic — no user action required. Archive skills appear in the command list
+ alongside regular MCP skills once the server is connected.)</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Archives are fetched via the MCP <code>resources/read</code> protocol.</li><li>Supported formats: <code>application/gzip</code> / <code>application/x-gzip</code> (tar.gz) and <code>application/zip</code>.</li><li>Cached by content hash or declared <code>digest</code> field; subsequent connections to the same server skip re-downloading if nothing changed.</li><li>Hard limits enforced: maximum archive size, maximum file count, maximum uncompressed size.</li><li>Security: rejects path traversal entries, symlinks/hardlinks, sparse/GNU-extension tar entries, base-256 numeric fields, and entries that alias the same disk path under case-folding or dot-segment normalization.</li><li>Requires the MCP server to declare a <code>digest</code> or the archive's SHA-256 to be consistent between calls.</li><li>On load, shows progress message: "Downloading skill archive from \&lt;server\&gt;".</li></ul>
+<div class="blabel">Evidence</div>
+<p>Archive fetch and extraction (search for <code>"Downloading skill archive from"</code>) — <code>WUd()</code> at line ~324105; tar parser (search for <code>"tar archive contains an unsafe entry"</code>) — <code>YZi</code> at line ~323530</p>
+    </article>
+    <article class="card" id="config-key-value-set-settings-from-the-command-line">
+      <div class="card-top">
+        <h3><code>/config key=value</code> — Set Settings from the Command Line <a class="anchor" href="#config-key-value-set-settings-from-the-command-line">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p><code>/config</code> now accepts <code>key=value</code> pairs as arguments, letting you set configuration settings without opening the interactive panel.</p>
+<div class="blabel">Usage</div>
+<pre><code>/config theme=dark
+/config model=claude-opus-4-5 theme=dark
+/config key=value key2=value2</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Works in both interactive mode and non-interactive (<code>--print</code>) mode.</li><li>Invalid keys produce: <code>"&lt;key&gt; isn't a /config setting. Run /config to see what's available."</code> and <code>"can't be set with key=value — open /config to change it from the panel."</code> for panel-only settings.</li><li>Running <code>/config</code> with no arguments still opens the interactive settings panel.</li><li>Some settings (like model and theme) have dedicated slash commands (<code>/model</code>, <code>/theme</code>) that are also surfaced in the error hint.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>/config</code> handler (search for <code>"Usage: /config key=value [key=value ...]"</code>) — <code>xqp</code> handler at line ~570976; key→command map (search for <code>"outputStyle"</code>) — <code>Cqp</code> map at line ~570945</p>
+    </article>
+    <article class="card" id="sandbox-allowappleevents-setting-macos">
+      <div class="card-top">
+        <h3><code>sandbox.allowAppleEvents</code> Setting (macOS) <a class="anchor" href="#sandbox-allowappleevents-setting-macos">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new macOS-only sandbox setting that permits sandboxed commands to send Apple Events — required for <code>open</code>, <code>osascript</code>, and browser-based auth flows that open URLs.</p>
+<div class="blabel">Usage</div>
+<pre><code>// In user or managed settings (not project settings)
+{
+  &quot;sandbox&quot;: {
+    &quot;allowAppleEvents&quot;: true
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Only honored from user, managed/policy, or CLI <code>--settings</code> settings. Project settings (<code>.claude/settings.json</code> and <code>.claude/settings.local.json</code>) are explicitly ignored.</li><li><strong>Security warning:</strong> Enabling this removes code-execution isolation. Sandboxed commands can launch other applications unsandboxed with no user prompt, and can script running apps (e.g. Terminal) subject to the user's per-app TCC automation consent.</li><li>Default: <code>false</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Setting schema (search for <code>"macOS only: Allow sandboxed commands to send Apple Events"</code>) — <code>allowAppleEvents</code> field at line ~46966</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="file-write-verification-against-silent-truncation">
+      <div class="card-top">
+        <h3>File Write Verification Against Silent Truncation <a class="anchor" href="#file-write-verification-against-silent-truncation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>After writing a file, Claude Code now stat()s the result and compares the on-disk size against the expected byte count. If they differ, it throws immediately rather than silently leaving a truncated file.</p>
+<p>This catches a class of failure that commonly occurs on network drives, NFS mounts, and cloud-sync folders (Dropbox, OneDrive, etc.) where the OS kernel reports write success even though the backing store silently truncated the data.</p>
+<p>Error text: <code>"Write verification failed: &lt;path&gt; is &lt;N&gt; bytes on disk, expected &lt;M&gt;. The filesystem may have silently truncated the write (network drive / cloud sync)."</code></p>
+<div class="blabel">Evidence</div>
+<p>Post-write check (search for <code>"writeTextContent: on-disk size mismatch after write"</code>) — <code>YSe()</code> at line ~55365</p>
+    </article>
+    <article class="card" id="graceful-handling-of-fchmod-fsync-on-restricted-filesystems">
+      <div class="card-top">
+        <h3>Graceful Handling of <code>fchmod</code>/<code>fsync</code> on Restricted Filesystems <a class="anchor" href="#graceful-handling-of-fchmod-fsync-on-restricted-filesystems">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The atomic file-write path now catches <code>EINVAL</code>, <code>ENOTSUP</code>, <code>EPERM</code>, and <code>ENOSYS</code> errors from <code>fchmod</code> and <code>fsync</code> calls and continues rather than aborting. This resolves hard write failures on certain network filesystems and Docker-mounted volumes that don't support those syscalls.</p>
+<p>Previously, a <code>fchmod</code> error on a file that had just been written would leave the file in an inconsistent state. Now Claude Code logs the limitation (e.g. <code>"fchmod unsupported on this filesystem"</code>) and continues normally.</p>
+<div class="blabel">Evidence</div>
+<p>Graceful syscall error handling (search for <code>"fchmod unsupported on this filesystem:"</code>) — <code>uze()</code> helper at line ~55344; sync path at line ~55365</p>
+    </article>
+    <article class="card" id="improved-in-place-write-fallback-with-content-preservation">
+      <div class="card-top">
+        <h3>Improved In-Place Write Fallback with Content Preservation <a class="anchor" href="#improved-in-place-write-fallback-with-content-preservation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The file-write fallback path now preserves content in the temporary file if an in-place overwrite fails after the target has been truncated, giving you a chance to recover data. The error message now points you to the temp file path.</p>
+<p>Error text: <code>"writeFileAndFlush: in-place fallback write failed; content preserved at temp path"</code> / <code>"writeFileSyncAndFlush: in-place fallback write failed; content preserved at temp path"</code></p>
+<div class="blabel">Evidence</div>
+<p>Content-preservation fallback (search for <code>"content preserved at temp path"</code>) — <code>hfr()</code> at line ~55659, <code>aEt()</code> at line ~55513</p>
+    </article>
+    <article class="card" id="github-actions-sandbox-now-supports-git-worktrees">
+      <div class="card-top">
+        <h3>GitHub Actions Sandbox Now Supports Git Worktrees <a class="anchor" href="#github-actions-sandbox-now-supports-git-worktrees">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The Linux/GitHub Actions sandbox permission list has been updated to include the files and directories required for git worktree operations:</p>
+<ul><li><code>/.git/worktrees</code> — worktree reference directory</li><li><code>/.git/commondir</code> — points a worktree back to the main <code>.git</code></li><li><code>/.git/config.worktree</code> — per-worktree config overrides</li></ul>
+<p>This means Actions workflows that use <code>git worktree add</code> no longer need to disable sandboxing or add manual overrides.</p>
+<div class="blabel">Evidence</div>
+<p>Sandbox filesystem setup (search for <code>"/.git/worktrees"</code>) — <code>E1r()</code> at line ~174833 and <code>v1r()</code> at line ~175075</p>
+    </article>
+    <article class="card" id="refusal-message-and-category-improvements">
+      <div class="card-top">
+        <h3>Refusal Message and Category Improvements <a class="anchor" href="#refusal-message-and-category-improvements">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Refusal handling has been refactored to better distinguish between model-level safety measures and topic-specific restrictions:</p>
+<ul><li><code>frontier_llm</code> and <code>reasoning_extraction</code> are now recognized as known refusal categories with dedicated handling.</li><li>Cybersecurity refusals now surface an exemption link: <code>https://claude.com/form/cyber-use-case</code></li><li>Refusal messages now explicitly call out which model triggered the block (using a readable model name via <code>Mp()</code> rather than a raw model ID).</li><li>The <code>stop_details.category</code> type is now an open string schema to forward new categories before schema updates ship.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Cybersecurity exemption URL (search for <code>"https://claude.com/form/cyber-use-case"</code>) — <code>xTd</code> constant at line ~265379; category helpers (search for <code>"frontier_llm"</code>) — <code>GNi()</code> at line ~265278</p>
+    </article>
+    <article class="card" id="askuserquestion-tool-clarified-schema-constraints">
+      <div class="card-top">
+        <h3>AskUserQuestion Tool: Clarified Schema Constraints <a class="anchor" href="#askuserquestion-tool-clarified-schema-constraints">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>AskUserQuestion</code> tool's schema descriptions have been updated to make clear that the <code>1–4 questions</code> and <code>2–4 options</code> bounds are hard schema constraints validated at the tool-call layer — the model cannot exceed them even if the user requests more. The guidance now says to split into multiple calls instead.</p>
+<div class="blabel">Evidence</div>
+<p>Updated schema description (search for <code>"hard schema constraints; do not exceed them even if the user requests more"</code>) — <code>AskUserQuestion</code> schema modification at line ~44768</p>
+    </article>
+    <article class="card" id="repeated-tool-validation-failure-hint">
+      <div class="card-top">
+        <h3>Repeated Tool Validation Failure Hint <a class="anchor" href="#repeated-tool-validation-failure-hint">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When the model calls a tool with invalid JSON input multiple times in a row, Claude Code now injects a reminder into the next turn that includes the tool's full JSON Schema. This gives the model concrete structural guidance instead of just repeating a generic error.</p>
+<p>Text injected: <code>"This call has now failed validation N times in a row. The &lt;tool&gt; tool's input schema is: &lt;schema&gt;. Match the parameter names and types exactly on the next attempt."</code></p>
+<div class="blabel">Evidence</div>
+<p>Validation failure counter (search for <code>"This call has now failed validation"</code>) — <code>Bfi()</code> at line ~172918</p>
+    </article>
+    <article class="card" id="powerup-discovery-banner-gradual-rollout">
+      <div class="card-top">
+        <h3>Powerup Discovery Banner [Gradual Rollout] <a class="anchor" href="#powerup-discovery-banner-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new banner for first-time users is gated behind the <code>tengu_birch_lantern</code> feature flag. When shown, it displays:</p>
+<p>"New here? Type /powerup for a 5-minute tour — modes, undo, @-mentions, and how to teach Claude your rules."</p>
+<p>A "step" arm shows a slightly different message focused on quick lessons. The <code>/powerup</code> command itself remains available to all users.</p>
+<div class="blabel">Evidence</div>
+<p>Banner text (search for <code>"New here? Type /powerup for a 5-minute tour"</code>) — <code>y8n</code> init at line ~608728; feature flag (search for <code>"tengu_birch_lantern"</code>) — <code>qEo()</code> at line ~608722</p>
+    </article>
+    <article class="card" id="config-panel-improved-help-text-for-non-panel-settings">
+      <div class="card-top">
+        <h3><code>/config</code> Panel Improved Help Text for Non-Panel Settings <a class="anchor" href="#config-panel-improved-help-text-for-non-panel-settings">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When you try to set a setting via <code>/config key=value</code> that can only be changed through the interactive panel (like language, notifications, or agent view), the error message now names the exact panel location — for example: <code>"/config (Language row)"</code>, <code>"/config (Agents view row)"</code>, <code>"/config (Default teammate model row)"</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Key-to-location map (search for <code>"/config (Language row)"</code>) — <code>Cqp</code> map at line ~570945</p>
+    </article>
+    <article class="card" id="claude-code-artifacts-api-base-url-scrubbed-from-subprocess-">
+      <div class="card-top">
+        <h3><code>CLAUDE_CODE_ARTIFACTS_API_BASE_URL</code> Scrubbed from Subprocess Environments <a class="anchor" href="#claude-code-artifacts-api-base-url-scrubbed-from-subprocess-">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new environment variable <code>CLAUDE_CODE_ARTIFACTS_API_BASE_URL</code> is now included in the list of variables that are stripped when spawning sandboxed subprocesses, preventing the artifacts API endpoint from leaking into shell commands.</p>
+<div class="blabel">Evidence</div>
+<p>Scrub list entry (search for <code>"CLAUDE_CODE_ARTIFACTS_API_BASE_URL"</code>) — env scrub at line ~39753</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed git tilde expansion in bash static analysis: <code>~</code>, <code>~/</code>, <code>~+</code>, <code>~-</code> patterns are now correctly recognized as HOME/PWD/OLDPWD references, preventing false positive security warnings on common shell idioms. (search for <code>"HOME"</code> inside <code>kbd()</code> at line ~253713)</li></ul>
+<ul><li>Fixed a UNC glob pattern defense check on Windows that was incorrectly triggering on valid paths. (search for <code>"UNC glob pattern detected (defense-in-depth check)"</code>)</li></ul>
+<ul><li>Fixed <code>execFileNoThrow</code> maxBuffer exceeded detection to use a dedicated <code>isMaxBuffer</code> property check in addition to the error code, improving reliability across Node.js versions. (search for <code>"execFileNoThrow maxBuffer exceeded:"</code>)</li></ul>
+<ul><li>Fixed presence pulse logic to correctly start a pulse when a <code>client-presence-marker</code> is active, rather than skipping it. (search for <code>"client-presence-marker active → pulse"</code>)</li></ul>
+<ul><li>Fixed <code>/cloud &lt;session_id&gt;</code> to give a clear error when combined with <code>--output-format stream-json</code> (which is not supported for cloud sessions). (search for <code>"Error: --cloud &lt;session_id&gt; does not support --output-format stream-json"</code>)</li></ul>
+<ul><li>Fixed an edge case in the MCP connected-status indicator: when tools fetch fails after a successful connection, the status now shows "Connected · tools fetch failed" rather than silently appearing connected. (search for <code>"! Connected · tools fetch failed"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Removed</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="html-sanitizer-library-xss-filterxss-removed">
+      <div class="card-top">
+        <h3>HTML Sanitizer Library (<code>xss</code>/<code>filterXSS</code>) Removed <a class="anchor" href="#html-sanitizer-library-xss-filterxss-removed">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The <code>xss</code> / <code>filterXSS</code> library (~550 lines of bundled CSS-property whitelist and HTML parser code) has been removed from the CLI bundle. Any HTML sanitization that still occurs uses simpler inline escaping (<code>CRr()</code> at line ~161643 for <code>&amp;</code>, <code>&lt;</code>, <code>&gt;</code>, <code>"</code>, <code>'</code>).</p>
+<div class="blabel">Evidence</div>
+<p>Removed <code>BZ6</code>, <code>UZ6</code>, <code>ucK</code>, <code>UcK</code>, <code>s58</code>, <code>t58</code>, <code>QZ6</code>, <code>flK</code>, <code>cZ6</code> modules (search for <code>"filterXSS"</code> — absent from new version)</p>
+    </article>
+    <article class="card" id="interrupt-continuation-prompt-system-removed">
+      <div class="card-top">
+        <h3>Interrupt-Continuation Prompt System Removed <a class="anchor" href="#interrupt-continuation-prompt-system-removed">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The previous mechanism that stitched interrupted model responses — which prepended a <code>&lt;partial-response&gt;</code> block and instructed the model to "continue from exactly where the quoted text leaves off" — has been removed. The text previously included: <code>"The previous attempt at this response was interrupted before it could complete."</code> This is replaced with a different approach to turn continuity.</p>
+<div class="blabel">Evidence</div>
+<p>Removed <code>$iK()</code> function (search for <code>"The previous attempt at this response was interrupted"</code> — absent from new version)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.181.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.181.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
