@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.182 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.182."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.182</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.182</span></h1>
+<p class="sub">Version 2.1.182 introduces <code>/migrate</code>, a new command for importing configuration from OpenAI Codex and Google Gemini CLI into Claude Code — covering MCP servers, slash commands, subagents, skills, and instruction files with path-safety guards and a dry-run preview mode. The release also adds a built-in <code>/artifact-design</code> skill for structured UI design, a <code>disableClaudeAiConnectors</code> setting to block auto-fetching of cloud MCP connectors, a <code>git.sessionUrl</code> setting to control whether session links appear in commits and PRs, and a <code>CLAUDE_CODE_CONNECT_TIMEOUT_MS</code> environment variable for streaming time-to-first-byte timeouts.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.181 → v2.1.182</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">19</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">5</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="migrate-import-config-from-codex-or-gemini-cli">
+      <div class="card-top">
+        <h3><code>/migrate</code> — Import config from Codex or Gemini CLI <a class="anchor" href="#migrate-import-config-from-codex-or-gemini-cli">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new slash command and CLI subcommand that scans for OpenAI Codex or Google Gemini CLI configuration and imports compatible items into Claude Code.</p>
+<div class="blabel">Usage</div>
+<pre><code># Interactive TUI picker (terminal only)
+claude migrate
+
+# Import from a specific agent
+claude migrate codex
+claude migrate gemini
+
+# Preview without writing anything
+claude migrate --dry-run
+
+# Non-interactive: auto-import user-level items (skips ⚠-flagged and project-level items)
+claude migrate --yes
+claude migrate codex --yes --dry-run</code></pre>
+<p>Or from inside a session:</p>
+<pre><code>/migrate
+/migrate codex --dry-run
+/migrate --yes</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Detects Codex config at <code>~/.codex/config.toml</code>, <code>~/.codex/AGENTS.md</code>, <code>~/.codex/prompts/</code>, and <code>.codex/config.toml</code> in the current project</li><li>Detects Gemini CLI config at <code>~/.gemini/settings.json</code>, <code>~/.gemini/GEMINI.md</code>, <code>~/.gemini/commands/</code>, and <code>GEMINI.md</code> / <code>.gemini/</code> in the current project</li><li>Importable item types: MCP servers, slash commands, subagents, skill directories, and instruction files (AGENTS.md / AGENTS.override.md / GEMINI.md → CLAUDE.md)</li><li>Items requiring extra review are flagged with ⚠ and held back by <code>--yes</code>; they can be individually toggled in the terminal checkbox picker</li><li>Project-level config (from <code>.codex/</code> or <code>.gemini/</code> in the repo) is detected and listed but never auto-imported — project config can be authored by anyone with write access to that repo. Run <code>claude migrate</code> from a terminal to review project items individually</li><li>Items that cannot be mapped automatically (hooks, sandbox settings, named profiles, Gemini extensions) generate a <code>/migrate-to-claude-code</code> fallback skill listing each one with guidance</li><li>On surfaces without an interactive picker, <code>/migrate</code> asks Claude to summarize what was found and guide the user to run <code>--yes</code> or use the terminal</li><li>Path-traversal guards prevent importing files that escape the config directory (symlinks and <code>..</code> components are rejected)</li><li>Files exceeding the size limit are refused with <code>"file exceeds MIGRATE_MAX_FILE_BYTES; refusing to load"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Full migration subsystem — search for <code>"Import config from another AI coding agent (Codex, Gemini CLI)"</code> and <code>"claude migrate [codex|gemini] [--dry-run] [--yes]"</code></p>
+    </article>
+    <article class="card" id="artifact-design-built-in-design-skill-for-artifacts">
+      <div class="card-top">
+        <h3><code>/artifact-design</code> — Built-in design skill for Artifacts <a class="anchor" href="#artifact-design-built-in-design-skill-for-artifacts">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new built-in skill that provides comprehensive design guidance for building distinctive, production-grade frontend pages published as claude.ai Artifacts.</p>
+<div class="blabel">Usage</div>
+<pre><code>/artifact-design</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Guides a two-pass design process: (1) brainstorm a compact token system — 4–6 named hex values, 2+ typeface roles, a layout concept with ASCII wireframes; (2) critique the plan against the subject before building, revise anything that reads as a generic default, then build from the revised plan exactly</li><li>Design principles: hero as a thesis, typography as personality, structure as information, deliberate motion (one orchestrated moment), copy as design material</li><li>Includes a palette-commit format (<code>&lt;palette_commit&gt;</code> block) to pin color decisions before writing CSS</li><li>References three common AI design defaults to avoid (warm cream + high-contrast serif + terracotta; dark + acid-green; broadsheet hairlines) when the user has not specified a visual direction</li><li>User-invocable on all surfaces that support skills</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>artifact-design</code> skill definition — search for <code>"artifact-design"</code> or <code>"Design guidance for Artifact pages — process, principles, palette, copy."</code></p>
+    </article>
+    <article class="card" id="disableclaudeaiconnectors-setting">
+      <div class="card-top">
+        <h3><code>disableClaudeAiConnectors</code> Setting <a class="anchor" href="#disableclaudeaiconnectors-setting">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new boolean setting that prevents Claude Code from automatically fetching and connecting claude.ai MCP cloud connectors.</p>
+<div class="blabel">Details</div>
+<ul><li>Set in any settings source:</li></ul>
+<pre><code>  { &quot;disableClaudeAiConnectors&quot;: true }</code></pre>
+<ul><li>Any-source-true wins: a project can opt out (set <code>true</code>), but a project-level <code>false</code> cannot override a user-level <code>true</code></li><li>Only gates auto-fetched connectors; a <code>claudeai-proxy</code> server passed explicitly via <code>--mcp-config</code> or the SDK <code>mcpServers</code> option still follows the normal MCP config trust flow</li><li>Useful for air-gapped environments, strict compliance setups, or projects requiring explicit MCP server control</li></ul>
+<div class="blabel">Evidence</div>
+<p>New settings schema field — search for <code>"When true in any settings source, claude.ai MCP cloud connectors are not auto-fetched or connected."</code></p>
+    </article>
+    <article class="card" id="attribution-sessionurl-setting">
+      <div class="card-top">
+        <h3><code>attribution.sessionUrl</code> Setting <a class="anchor" href="#attribution-sessionurl-setting">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Controls whether Claude Code appends a claude.ai session link to commits and pull requests created during web or Remote Control sessions.</p>
+<div class="blabel">Details</div>
+<ul><li>Set in settings.json under the <code>attribution</code> key:</li></ul>
+<pre><code>  { &quot;attribution&quot;: { &quot;sessionUrl&quot;: false } }</code></pre>
+<ul><li>Default is <code>true</code> — the <code>Claude-Session</code> commit trailer and PR-body link are added automatically</li><li>Set to <code>false</code> to omit both the trailer and the link (useful for organizations that want clean commit history or disallow external links in PRs)</li></ul>
+<div class="blabel">Evidence</div>
+<p>New settings schema field — search for <code>"Whether to append the claude.ai session link to commits and PRs created from web or Remote Control sessions"</code></p>
+    </article>
+    <article class="card" id="claude-code-connect-timeout-ms-streaming-time-to-first-byte-">
+      <div class="card-top">
+        <h3><code>CLAUDE_CODE_CONNECT_TIMEOUT_MS</code> — Streaming time-to-first-byte timeout <a class="anchor" href="#claude-code-connect-timeout-ms-streaming-time-to-first-byte-">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new environment variable that sets a hard timeout for receiving the first response headers on streaming API calls. When the API does not return headers within the configured time, the request is aborted with a clear error instead of hanging.</p>
+<div class="blabel">Usage</div>
+<pre><code>CLAUDE_CODE_CONNECT_TIMEOUT_MS=15000 claude   # abort if no headers within 15 s</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Applies only to streaming requests (event-stream, Bedrock eventstream, <code>:streamRawPredict</code> paths)</li><li>Error message: "Request timed out: no response headers after 15s (CLAUDE_CODE_CONNECT_TIMEOUT_MS)"</li><li>Warning logged: "[TTFB] no response headers after Nms — aborting (CLAUDE_CODE_CONNECT_TIMEOUT_MS)"</li><li>Previously there was no way to configure a TTFB timeout; streaming requests would wait indefinitely for the first byte before any timeout applied</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>yVu()</code> function and timeout logic — search for <code>"CLAUDE_CODE_CONNECT_TIMEOUT_MS"</code> and <code>"[TTFB] no response headers after"</code></p>
+    </article>
+    <article class="card" id="mcp-resources-directory-read-support">
+      <div class="card-top">
+        <h3>MCP <code>resources/directory/read</code> Support <a class="anchor" href="#mcp-resources-directory-read-support">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now supports MCP servers that implement directory listing via the <code>io.modelcontextprotocol/skills</code> protocol extension, enabling skill-serving MCP servers to expose navigable directory structures.</p>
+<div class="blabel">Details</div>
+<ul><li>MCP servers advertise the capability via <code>extensions["io.modelcontextprotocol/skills"].directoryRead: true</code></li><li>Claude can list directory contents at a URI and descend into subdirectories; subdirectories appear with <code>mimeType: "inode/directory"</code></li><li>When a skill at a URI references a supporting file by relative path (e.g. <code>templates/invoice.md</code>), Claude is told to call the MCP read tool with the full composed URI rather than reading locally</li><li>Cursor-based pagination is handled automatically; an <code>InvalidParams</code> error mid-pagination returns prior-page results with a warning rather than throwing</li><li>URI sanitization strips Unicode control characters, private-use codepoints, and bidirectional markers to prevent path confusion</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>mZi()</code> directory-read function — search for <code>"readMcpDirectory called on a server without directoryRead capability"</code> and <code>"resources/directory/read"</code></p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="fable-model-disabled-state-clearer-messaging">
+      <div class="card-top">
+        <h3>Fable Model Disabled State — Clearer Messaging <a class="anchor" href="#fable-model-disabled-state-clearer-messaging">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When Fable is unavailable because your organization has not provisioned usage credits, it now appears in the model picker as "Fable (disabled)" instead of a selectable option, with the label "— contact your admin to turn on usage credits".</p>
+<p>Contextual messages are also now more specific by plan type:</p>
+<ul><li>Team plan: "Run /usage-credits to request more from your admin, or switch models to keep working."</li><li>Individual: "Buy more to keep using Fable, or switch models to keep working."</li><li>When <code>/usage-credits</code> is disabled via env: "Switch models to keep working."</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>YCd()</code> and <code>Xwn()</code> functions — search for <code>"Fable (disabled)"</code> and <code>"contact your admin to turn on usage credits"</code></p>
+    </article>
+    <article class="card" id="legacy-model-remapping-clearer-warning-and-opt-out">
+      <div class="card-top">
+        <h3>Legacy Model Remapping — Clearer Warning and Opt-Out <a class="anchor" href="#legacy-model-remapping-clearer-warning-and-opt-out">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When Claude Code automatically remaps a deprecated model ID to a current one, the warning now includes the model name being used and mentions the opt-out env var:</p>
+<p>Before: <code>⚠ Claude Opus 4.7 has been updated to claude-opus-4-8.</code></p>
+<p>After: <code>⚠ claude-opus-4-7 is automatically remapped to Claude Opus 4.8 (claude-opus-4-8). Set CLAUDE_CODE_DISABLE_LEGACY_MODEL_REMAP=1 to keep the requested model.</code></p>
+<p>Also, the status-line model indicator now shows the same opt-out hint in shortened form: <code>⚠ Opus 4.7 remaps to Claude Opus 4.8. CLAUDE_CODE_DISABLE_LEGACY_MODEL_REMAP=1 opts out</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Modified <code>DCo()</code> and new <code>lzn()</code> functions — search for <code>"is automatically remapped to"</code> and <code>"CLAUDE_CODE_DISABLE_LEGACY_MODEL_REMAP=1 opts out"</code></p>
+    </article>
+    <article class="card" id="auto-compact-diff-branch-changes-context">
+      <div class="card-top">
+        <h3>Auto-Compact Diff — Branch Changes Context <a class="anchor" href="#auto-compact-diff-branch-changes-context">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The compact view's diff header now distinguishes between uncommitted working-tree changes and changes on a feature branch relative to its upstream base:</p>
+<ul><li>Working-tree only → <code>Uncommitted changes (git diff HEAD)</code></li><li>Branch relative to upstream → <code>Branch changes (vs main)</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Modified compact diff function — search for <code>"Branch changes"</code></p>
+    </article>
+    <article class="card" id="linux-sandbox-bridge-error-actionable-message">
+      <div class="card-top">
+        <h3>Linux Sandbox Bridge Error — Actionable Message <a class="anchor" href="#linux-sandbox-bridge-error-actionable-message">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When the Linux sandbox's socat bridge socket disappears (e.g., because socat died), Claude Code now raises a named <code>SandboxBridgeUnavailableError</code> with a clear message instead of an opaque socket error:</p>
+<p><code>Linux sandbox SOCKS bridge socket is missing (socat may have died). Restart to retry.</code></p>
+<div class="blabel">Evidence</div>
+<p>New <code>SandboxBridgeUnavailableError</code> class — search for <code>"SandboxBridgeUnavailableError"</code> or <code>"bridge socket is missing (socat may have died)"</code></p>
+    </article>
+    <article class="card" id="agent-proxy-ca-certificate-installed-to-linux-system-trust">
+      <div class="card-top">
+        <h3>Agent Proxy CA Certificate Installed to Linux System Trust <a class="anchor" href="#agent-proxy-ca-certificate-installed-to-linux-system-trust">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When the CCR agent proxy runs on Linux, Claude Code now attempts to install its CA certificate into the system-level certificate store in addition to using environment variable trust. Supports:</p>
+<ul><li>Debian/Ubuntu: <code>/usr/local/share/ca-certificates/ccr-agent-proxy.crt</code> + <code>update-ca-certificates</code></li><li>RHEL/CentOS: <code>/etc/pki/ca-trust/source/anchors/ccr-agent-proxy.crt</code> + <code>update-ca-trust extract</code></li></ul>
+<p>Falls back to env-var trust if the system install fails. A notification is logged when system trust succeeds: <code>[agent-proxy] CA installed to system trust via update-ca-certificates</code>.</p>
+<div class="blabel">Evidence</div>
+<p>New <code>Bjl()</code> function — search for <code>"[agent-proxy] CA installed to system trust via"</code> and <code>"/etc/pki/ca-trust/source/anchors"</code></p>
+    </article>
+    <article class="card" id="design-mcp-connector-scope-auto-expansion">
+      <div class="card-top">
+        <h3>Design MCP Connector Scope Auto-Expansion <a class="anchor" href="#design-mcp-connector-scope-auto-expansion">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When a session accesses the Design MCP connector (<code>/v1/design/</code> paths), Claude Code now automatically requests the required <code>user:design:read</code> and <code>user:design:write</code> OAuth scopes if not already present. A one-time notification is shown when the scopes are added:</p>
+<p><code>Added user:design:read and user:design:write to your claude.ai login (for the Design MCP connector).</code></p>
+<div class="blabel">Evidence</div>
+<p>New <code>EWd()</code> function — search for <code>"Added user:design:read and user:design:write to your claude.ai login"</code></p>
+    </article>
+    <article class="card" id="mcp-per-server-permission-mode-override-control-channel">
+      <div class="card-top">
+        <h3>MCP Per-Server Permission Mode Override (Control Channel) <a class="anchor" href="#mcp-per-server-permission-mode-override-control-channel">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The MCP control channel now supports a tighten-only per-server permission mode override. Orchestration layers can downgrade specific MCP server permissions to <code>'default'</code> (or clear the override with <code>null</code>) without a full session restart. Escalation attempts (e.g., setting <code>'auto'</code>) are rejected:</p>
+<p><code>Permission mode override over the control channel is tighten-only ('default' or null); rejected 'auto'</code></p>
+<div class="blabel">Evidence</div>
+<p>New <code>Qta()</code> function — search for <code>"set_mcp_permission_mode_override"</code> and <code>"tighten-only"</code></p>
+    </article>
+    <article class="card" id="team-memory-index-size-warning">
+      <div class="card-top">
+        <h3>Team Memory Index Size Warning <a class="anchor" href="#team-memory-index-size-warning">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When a team memory index file is approaching or exceeding its read limit (configurable via <code>promptIndexMaxBytes</code>), Claude now surfaces a contextual warning during reads:</p>
+<p><code>The memory index at team/[mount]/[path] is [size], approaching the [limit] read limit — content beyond that is dropped when this index is loaded. Compact it to under [target] now: keep one line per entry, move detail into topic files, and merge or drop stale entries.</code></p>
+<div class="blabel">Evidence</div>
+<p>New <code>FXa()</code> function — search for <code>"Compact it to under"</code> and <code>"approaching the"</code> with <code>"read limit"</code></p>
+    </article>
+    <article class="card" id="in-process-teammate-resume-improved-reliability">
+      <div class="card-top">
+        <h3>In-Process Teammate Resume — Improved Reliability <a class="anchor" href="#in-process-teammate-resume-improved-reliability">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Resuming an in-process teammate now:</p>
+<ul><li>Verifies the team context is active before attempting resume, with a clear error: "Cannot resume teammate: no team is active in this session"</li><li>Checks team membership and reports missing teammates: "No teammate named 'X' is currently on team 'Y'. Spawn one with …"</li><li>Loads prior transcript and content replacements before spawning</li><li>Re-registers the teammate in the team file and lifecycle tracker after spawn</li><li>Drops stale protocol frames before delivering the new prompt</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>Lza()</code> function — search for <code>"resumeInProcessTeammate"</code> and <code>"Cannot resume teammate: no team is active in this session"</code></p>
+    </article>
+    <article class="card" id="doctor-hint-on-setup-issue-count">
+      <div class="card-top">
+        <h3><code>/doctor</code> Hint on Setup Issue Count <a class="anchor" href="#doctor-hint-on-setup-issue-count">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When Claude Code detects setup issues at startup (MCP failures, keybinding errors, etc.), the log message now appends "(run /doctor for details)" so users know how to investigate:</p>
+<p><code>2 setup issues: settings, MCP (run /doctor for details)</code></p>
+<div class="blabel">Evidence</div>
+<p>New <code>dD()</code> function — search for <code>"run /doctor for details"</code></p>
+    </article>
+    <article class="card" id="ccr-websearch-proxy">
+      <div class="card-top">
+        <h3>CCR WebSearch Proxy <a class="anchor" href="#ccr-websearch-proxy">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>For Remote Control sessions with <code>CLAUDE_CODE_WEBSEARCH_USE_CCR_PROXY=1</code> set, web searches are now routed through the Anthropic API's session WebSearch proxy (<code>/worker/web-search</code>) instead of directly to the search provider. Error messages from the proxy are surfaced clearly with type-specific descriptions.</p>
+<div class="blabel">Evidence</div>
+<p>New <code>L8a()</code> function — search for <code>"ccr websearch-proxy transport error"</code> and <code>"/worker/web-search"</code></p>
+    </article>
+    <article class="card" id="removed-repeated-tool-validation-schema-dump">
+      <div class="card-top">
+        <h3>Removed Repeated Tool Validation Schema Dump <a class="anchor" href="#removed-repeated-tool-validation-schema-dump">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The feature that appended a verbose JSON schema dump to tool results after multiple consecutive <code>InputValidationError</code> responses (the "This call has now failed validation N times in a row. The tool's input schema is: …" message) has been removed. Tool input errors are now handled without the repeated schema echo, reducing noise and token consumption.</p>
+<div class="blabel">Evidence</div>
+<p>Removed <code>Bfi()</code> function — search for removed string <code>"This call has now failed validation"</code></p>
+    </article>
+    <article class="card" id="senduserfile-tool-usage-example-added">
+      <div class="card-top">
+        <h3><code>SendUserFile</code> Tool — Usage Example Added <a class="anchor" href="#senduserfile-tool-usage-example-added">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>SendUserFile</code> tool description now includes a concrete example: <code>Example: SendUserFile({ files: ["report.md"], caption: "Here's the report.", status: "normal" })</code></p>
+<div class="blabel">Evidence</div>
+<p>Updated <code>R5r</code> string — search for <code>"Example: SendUserFile({ files:"</code></p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed extra keys on <code>{type:'disabled'}</code> thinking parameters being forwarded to the API (gh-68567). A leftover <code>display</code> field or similar on a disabled thinking config is now stripped before the request is sent, preventing API validation failures. (search for <code>"extra key(s) from {type:'disabled'} thinking param (gh-68567)"</code>)</li></ul>
+<ul><li>Fixed VirtualMessageList crash when the message array contains an <code>undefined</code> element. Bounds-checked access now emits a diagnostic error event with neighbor context instead of throwing. (search for <code>"VirtualMessageList: undefined element in messages[]"</code>)</li></ul>
+<ul><li>Fixed opaque socket errors when the Linux sandbox bridge dies. Claude Code now raises a named <code>SandboxBridgeUnavailableError</code> with the message "Linux sandbox [SOCKS|HTTP] bridge socket is missing (socat may have died). Restart to retry." (search for <code>"SandboxBridgeUnavailableError"</code>)</li></ul>
+<ul><li>Fixed <code>input JSON failed to parse</code> errors not including the payload size. The error message now reads <code>input JSON failed to parse — N bytes</code>, making it easier to diagnose oversized or malformed tool inputs. (search for <code>"input JSON failed to parse —"</code>)</li></ul>
+<ul><li>Fixed Codex <code>never</code> approval policy mapping: it is now explicitly mapped to <code>auto</code> permission mode with a warning explaining the sandbox difference, rather than being silently dropped. (search for <code>"Codex \</code>never\<code> relies on Codex's own sandbox"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The <code>/migrate</code> command's <code>--yes</code> flag imports only user-level items that have no ⚠ warning. Items flagged as requiring review — such as commands with shell exec (<code>!{cmd}</code>), MCP servers with repo-authored configs, or permission-mode escalations — are held back and must be reviewed individually via the terminal picker (<code>claude migrate</code> without <code>--yes</code>). Project-level items from <code>.codex/</code> or <code>.gemini/</code> in your repo are always held back in <code>--yes</code> mode because project config can be authored by anyone with write access to the repository.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.182.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.182.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
