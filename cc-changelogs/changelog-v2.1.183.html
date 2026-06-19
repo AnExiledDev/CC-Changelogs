@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.183 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.183."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.183</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.183</span></h1>
+<p class="sub">This release removes the <code>/migrate</code> command and <code>claude migrate</code> CLI that imported configurations from OpenAI Codex and Google Gemini CLI. In its place, the <code>/init</code> command receives a substantial overhaul: it now runs a structured, multi-phase guided interview that sets up not just CLAUDE.md but also personal <code>CLAUDE.local.md</code> files, skills, and hooks in a single session.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.182 → v2.1.183</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">1</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">1</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Removed Features</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="migrate-command-and-claude-migrate-cli-removed">
+      <div class="card-top">
+        <h3>/migrate command and <code>claude migrate</code> CLI removed <a class="anchor" href="#migrate-command-and-claude-migrate-cli-removed">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The <code>/migrate</code> slash command and the <code>claude migrate</code> terminal subcommand have been removed entirely from this version.</p>
+<p>Previously these allowed importing MCP servers, slash commands, subagents, skills, and instruction files from:</p>
+<ul><li>OpenAI Codex (<code>~/.codex/config.toml</code>, <code>AGENTS.md</code>, <code>prompts/</code>)</li><li>Google Gemini CLI (<code>~/.gemini/settings.json</code>, <code>GEMINI.md</code>, <code>commands/</code>)</li></ul>
+<p>The interactive checkbox picker UI, the <code>--dry-run</code> preview mode, the <code>--yes</code> headless mode, and the automatic fallback skill generator are all gone.</p>
+<p>Users who previously relied on <code>/migrate</code> to bring over Codex or Gemini settings will need to perform that migration manually by consulting the relevant config files directly.</p>
+<div class="blabel">Evidence</div>
+<p>CLI argument parser entry removed (search for <code>"Which agent to import from (codex, gemini)"</code>); <code>/migrate</code> slash command registration removed; dozens of supporting functions deleted including the Codex scanner, Gemini scanner, MCP import logic, subagent writer, and interactive picker component.</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="init-command-major-guided-setup-overhaul">
+      <div class="card-top">
+        <h3>/init command — major guided-setup overhaul <a class="anchor" href="#init-command-major-guided-setup-overhaul">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>/init</code> slash command has been significantly expanded. It now runs a structured 8-phase guided interview that covers far more than creating a CLAUDE.md.</p>
+<div class="blabel">Usage</div>
+<pre><code>/init</code></pre>
+<p>The new flow works as follows:</p>
+<p>Phase 0: Checks whether a CLAUDE.md already exists and branches accordingly — offering to review and improve it, leave it alone, or start fresh.</p>
+<p>Phase 1: Asks what to set up, with four options:</p>
+<ul><li>Project <code>CLAUDE.md</code> (team-shared, committed to source control)</li><li>Personal <code>CLAUDE.local.md</code> (private, gitignored)</li><li>Both project and personal files</li><li>"Let Claude decide" — fastest path, no follow-on questions</li></ul>
+<p>A second question asks whether to also set up skills and/or hooks.</p>
+<p>Phase 2: Launches a subagent to survey the codebase — manifest files, README, CI config, existing AI tool configs (<code>.cursor/rules</code>, <code>.github/copilot-instructions.md</code>, AGENTS.md, <code>.devin/rules/</code>, <code>.windsurf/rules/</code>, <code>.clinerules</code>), formatter config, and git worktree layout.</p>
+<p>Phase 3: Asks targeted follow-up questions about anything the code scan couldn't determine — non-standard commands, branch conventions, required env vars, testing quirks, or personal workflow preferences. Synthesizes a proposal listing exactly which files, skills, and hooks will be created, and asks for approval before proceeding.</p>
+<p>Phase 4: Writes the project <code>CLAUDE.md</code> using a strict "would removing this cause Claude to make mistakes?" test to keep it concise. Handles the "review and improve" path with diff proposals rather than silent overwrites. For large projects, suggests organizing into <code>.claude/rules/</code> subdirectory files.</p>
+<p>Phase 5: Writes <code>CLAUDE.local.md</code> for personal preferences (role, sandbox URLs, communication style). For repos using sibling/external git worktrees, it writes the content to <code>~/.claude/&lt;project-name&gt;-instructions.md</code> and creates a one-line stub import in each worktree's <code>CLAUDE.local.md</code>.</p>
+<p>Phase 6: Creates skills from the proposal — both skills the user requested during the interview and additional suggestions that fit the codebase (reference knowledge, repeatable deploy or release workflows, etc.). Places each at <code>.claude/skills/&lt;name&gt;/SKILL.md</code>. Distinguishes between skills that can be model-invoked vs. user-only skills with side effects (<code>disable-model-invocation: true</code>).</p>
+<p>Phase 7: Checks for GitHub CLI (<code>which gh</code>) and offers to explain its benefits if missing; checks for a lint config and offers to set one up if absent; wires up any requested hooks by calling the <code>update-config</code> skill for proper schema validation and live testing.</p>
+<p>Phase 8: Recaps all files written and suggests next steps, including relevant official plugins (frontend-design, playwright, skill-creator) based on what was found in the codebase.</p>
+<div class="blabel">Details</div>
+<ul><li>The "Review and improve" path in Phase 0 skips the interview and goes straight to proposing specific diffs against the existing file.</li><li>The "Leave it" path in Phase 0 skips CLAUDE.md entirely and jumps to skills and hooks setup.</li><li>Q2 (skills/hooks) is a hint rather than a hard filter — if no hook-shaped work exists, <code>/init</code> says so and proposes better-fitting artifacts instead.</li><li>Hook target file defaults: project choice → <code>.claude/settings.json</code>; personal choice → <code>.claude/settings.local.json</code>. Only asks if the user picked "both".</li><li>Git pre-commit hooks are correctly distinguished from Claude Code <code>PostToolUse</code> hooks — if a user asks to "gate before committing", <code>/init</code> routes that to a git hook or husky rather than silently creating a mismatched Claude Code hook.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>qKp</code> string literal contains the full 8-phase guided setup instructions (search for <code>"Phase 0: Check for an existing CLAUDE.md"</code>). New <code>WKp</code> string literal contains the standalone CLAUDE.md creation instructions for non-interactive contexts (search for <code>"Please analyze this codebase and create a CLAUDE.md file"</code>).</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.183.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.183.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
