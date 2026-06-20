@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.185 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.185."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.185</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.185</span></h1>
+<p class="sub">This is a small patch release with two user-facing messaging improvements for slow or stalled API connections, a thinking-budget UI change that restricts an advanced display to first-party accounts, and an internal constant doubling that likely raises a timeout or buffer ceiling.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.183 → v2.1.185</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">3</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="clearer-messaging-when-the-api-is-slow-to-respond">
+      <div class="card-top">
+        <h3>Clearer messaging when the API is slow to respond <a class="anchor" href="#clearer-messaging-when-the-api-is-slow-to-respond">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The status message shown during a stalled request has been reworded to be less alarming and more accurate. Previously the UI displayed "No response from API" in red, which implied a hard failure. It now reads "Waiting for API response", better reflecting that the client is still actively waiting rather than having given up.</p>
+<p>The companion retry hint was also made lowercase for consistency: " · Retrying in " is now " · will retry in ".</p>
+<div class="blabel">Evidence</div>
+<p>stalled-state component (search for <code>"Waiting for API response"</code> and <code>"will retry in"</code>)</p>
+    </article>
+    <article class="card" id="thinking-budget-display-now-restricted-to-first-party-accoun">
+      <div class="card-top">
+        <h3>Thinking-budget display now restricted to first-party accounts <a class="anchor" href="#thinking-budget-display-now-restricted-to-first-party-accoun">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A UI element related to thinking-budget visualization (internally <code>Tun</code>, associated with the "Chert Bezel" feature) was previously gated behind the server-side feature flag <code>tengu_chert_bezel</code>. It is now shown only when the session auth mode resolves to <code>"firstParty"</code> — meaning direct Anthropic accounts — instead of being flag-controlled.</p>
+<p>This effectively removes the server-side toggle in favour of a hard auth-tier check, so Bedrock and Vertex users will not see this component regardless of any flag state.</p>
+<div class="blabel">Evidence</div>
+<p>model-feature array assembly (search for <code>"firstParty"</code> adjacent to the <code>Tun</code> push; previously searched for <code>"tengu_chert_bezel"</code>)</p>
+    </article>
+    <article class="card" id="internal-constant-doubled-10-000-20-000">
+      <div class="card-top">
+        <h3>Internal constant doubled (10 000 → 20 000) <a class="anchor" href="#internal-constant-doubled-10-000-20-000">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A numeric constant was raised from <code>10000</code> to <code>20000</code>. Given its context in the build, this is most likely a timeout value (in milliseconds) or a maximum buffer/retry ceiling somewhere in the daemon or update subsystem. Users would observe this as the tool waiting longer before surfacing a timeout error in affected code paths, rather than any explicit UI change.</p>
+<div class="blabel">Evidence</div>
+<p>removed constant <code>$lc = 1e4</code>, added <code>Woc = 20000</code> (search for <code>Woc</code> in v2.1.185 source)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.185.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.185.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
