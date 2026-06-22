@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.186 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.186."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.186</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.186</span></h1>
+<p class="sub">This release adds <code>mcp login</code> and <code>mcp logout</code> subcommands for managing OAuth credentials for MCP servers (with a <code>--no-browser</code> flag for SSH sessions), introduces the <code>ReadMcpResourceDirTool</code> for listing MCP directory resources, and adds iTerm2 as a new teammate pane mode. It also brings new network security settings (<code>strictAllowlist</code>, deny-all <code>"*"</code> in <code>deniedDomains</code>), a new <code>respondToBashCommands</code> setting, and an AWS credential refresh shortcut in the login wizard.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.185 → v2.1.186</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">17</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">6</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="mcp-oauth-login-and-logout-commands">
+      <div class="card-top">
+        <h3>MCP OAuth Login and Logout Commands <a class="anchor" href="#mcp-oauth-login-and-logout-commands">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Two new <code>mcp</code> subcommands let you authenticate with and de-authenticate from MCP servers that use OAuth (HTTP, SSE, or claude.ai connectors).</p>
+<div class="blabel">Usage</div>
+<pre><code># Authenticate with an MCP server
+claude mcp login &lt;name&gt;
+
+# Authenticate without opening a browser (SSH / headless sessions)
+claude mcp login &lt;name&gt; --no-browser
+
+# Remove stored OAuth credentials
+claude mcp logout &lt;name&gt;</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>mcp login</code> opens your browser to an OAuth authorization page and waits for the redirect URL.</li><li><code>--no-browser</code> prints the authorization URL instead of opening it — paste the redirect URL back into the terminal when prompted. For truly non-interactive contexts, the command reminds you to re-run with <code>-t</code> SSH or a proper terminal.</li><li><code>mcp logout</code> clears stored credentials for the named server. The server remains in your config; only credentials are removed.</li><li>Works for HTTP and SSE servers. stdio servers do not support OAuth login and will show a clear error.</li><li>claude.ai connectors authenticate on the claude.ai side; credentials are not stored locally, so logout gives a different message.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>mcp login</code> / <code>mcp logout</code> command registration (search for <code>"Authenticate with an MCP server (HTTP, SSE, or claude.ai connector)"</code> and <code>"Clear stored OAuth credentials for an MCP server"</code>)</p>
+    </article>
+    <article class="card" id="readmcpresourcedirtool-list-mcp-directory-resources">
+      <div class="card-top">
+        <h3>ReadMcpResourceDirTool — List MCP Directory Resources <a class="anchor" href="#readmcpresourcedirtool-list-mcp-directory-resources">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new built-in tool, <code>ReadMcpResourceDirTool</code> (also reachable as <code>ReadMcpResourceDir</code>), lists the direct children of a directory resource on an MCP server. This implements the SEP-2640 <code>resources/directory/read</code> protocol method.</p>
+<div class="blabel">Details</div>
+<ul><li>Parameters: <code>server</code> (MCP server name) and <code>uri</code> (directory resource URI).</li><li>Only usable against servers that have declared support for directory listing; other servers return a clear error message.</li><li>Subdirectories appear with <code>mimeType</code> set to the directory sentinel type; use the returned <code>uri</code> to descend into them.</li><li>If the URI is not a directory resource, the tool returns a descriptive error and suggests using <code>ReadMcpResourceTool</code> for file resources instead.</li><li>The result is always non-recursive (one level at a time). Use multiple calls to descend.</li><li>Empty directories return <code>"Directory is empty."</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Full tool definition added in new version (search for <code>"list the children of an MCP directory resource"</code> and <code>"resources/directory/read returned"</code>)</p>
+    </article>
+    <article class="card" id="iterm2-teammate-pane-mode">
+      <div class="card-top">
+        <h3>iTerm2 Teammate Pane Mode <a class="anchor" href="#iterm2-teammate-pane-mode">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>teammateMode</code> setting now accepts <code>"iterm2"</code> as a value, allowing spawned agent teammates to open in iTerm2 split panes using the iTerm2 Python API.</p>
+<div class="blabel">Usage</div>
+<pre><code># In your Claude Code settings.json
+{
+  &quot;teammateMode&quot;: &quot;iterm2&quot;
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Requires the iTerm2 Python API to be enabled: Preferences &gt; General &gt; Magic &gt; Enable Python API.</li><li>Requires the <code>it2</code> CLI tool: <code>pip install it2</code>.</li><li>If <code>it2</code> is not on PATH or the Python API is not enabled, Claude prints a diagnostic message and falls back to the next available mode.</li><li>If Claude is not running inside iTerm2, it warns and suggests changing <code>teammateMode</code>.</li><li><code>"auto"</code> mode now also considers iTerm2 availability.</li><li>The <code>--scope server</code> CLI flag is now used for finer-grained <code>mcp remove</code> scope targeting.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New "iterm2" option added to <code>teammateMode</code> enum (search for <code>"How spawned teammates execute (tmux, iterm2, in-process, auto)"</code> and <code>"teammateMode is set to \"iterm2\""</code>)</p>
+    </article>
+    <article class="card" id="aws-credential-refresh-in-login-wizard">
+      <div class="card-top">
+        <h3>AWS Credential Refresh in Login Wizard <a class="anchor" href="#aws-credential-refresh-in-login-wizard">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When an existing Claude Platform on AWS session is detected, a new "Claude Platform on AWS · refresh credentials" option appears in the 3rd-party platform setup screen.</p>
+<div class="blabel">Details</div>
+<ul><li>Invokes the <code>awsAuthRefresh</code> command configured in your settings.</li><li>On success, shows "AWS credentials refreshed." and lets you continue.</li><li>On failure, shows a clear error message and suggests running the command manually in a separate terminal.</li><li>Only appears when an active AWS session context is available.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>aws_refresh</code> / <code>aws_refresh_running</code> / <code>aws_refresh_done</code> states in the login UI (search for <code>"Claude Platform on AWS ·"</code> and <code>"AWS credentials refreshed."</code>)</p>
+    </article>
+    <article class="card" id="respondtobashcommands-setting">
+      <div class="card-top">
+        <h3><code>respondToBashCommands</code> Setting <a class="anchor" href="#respondtobashcommands-setting">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new per-session setting controls whether Claude generates a response after an <code>!</code> input-box bash command completes.</p>
+<div class="blabel">Details</div>
+<ul><li>Default: <code>true</code> — Claude responds after <code>!</code> commands as before.</li><li>Set to <code>false</code> to silently add the command output to the conversation context without triggering a reply. Useful for quiet shell automation where you want to inject output but not spend tokens on a response.</li><li>Configurable in settings.json under the same schema as other session settings.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New Zod field added to settings schema (search for <code>"Whether Claude responds after an input-box ! bash command runs. Set to false to add the command output to context without a response."</code>)</p>
+    </article>
+    <article class="card" id="network-strictallowlist-setting">
+      <div class="card-top">
+        <h3>Network <code>strictAllowlist</code> Setting <a class="anchor" href="#network-strictallowlist-setting">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new boolean field in the <code>network</code> settings block makes the domain allowlist strictly enforced — hosts not in <code>allowedDomains</code> are denied without asking the user.</p>
+<div class="blabel">Details</div>
+<ul><li>When <code>strictAllowlist: true</code>, any outbound host not matched by <code>allowedDomains</code> is immediately denied. The <code>ask</code> callback is never consulted.</li><li>Useful when <code>allowedDomains</code> is a policy control rather than a convenience hint, and you do not want Claude to prompt for unlisted hosts.</li><li>Complements the existing <code>deniedDomains</code> list.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>strictAllowlist</code> field in network settings schema (search for <code>"If true, hosts not in allowedDomains are denied without consulting the ask callback."</code>)</p>
+    </article>
+    <article class="card" id="denieddomains-now-accepts-deny-all-wildcard">
+      <div class="card-top">
+        <h3><code>deniedDomains</code> Now Accepts Deny-All Wildcard <a class="anchor" href="#denieddomains-now-accepts-deny-all-wildcard">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>network.deniedDomains</code> setting now accepts the bare string <code>"*"</code> as a special deny-all value, blocking all outbound connections that are not covered by <code>allowedDomains</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously, <code>deniedDomains</code> only accepted domain patterns. Now <code>["*"]</code> means deny everything.</li><li>Unlike <code>allowedDomains</code>, which does not accept a bare <code>"*"</code>, the deny list specifically supports this to make it easy to implement an allowlist-only policy.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema updated to <code>z.union([z.literal("<em>"), domainPattern])</code> (search for <code>"Unlike allowedDomains, a bare \"</em>\" is accepted here (deny-all)."</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="permission-dialog-now-shows-subagent-names">
+      <div class="card-top">
+        <h3>Permission Dialog Now Shows Subagent Names <a class="anchor" href="#permission-dialog-now-shows-subagent-names">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The permission request dialog now distinguishes between named subagents and workflow agents, and displays the agent name when available.</p>
+<ul><li>Workflow agents: "from the 'WorkflowName' workflow"</li><li>Named subagents: "from the AgentName agent"</li><li>Previously all non-workflow subagents just showed "from a subagent"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Permission header component refactored to handle <code>"subagent"</code> type with name display (search for <code>"from the ${Ia(h, 24, !0)} agent"</code> in the added <code>f0e</code> function)</p>
+    </article>
+    <article class="card" id="proxy-authentication-support-socks">
+      <div class="card-top">
+        <h3>Proxy Authentication Support (SOCKS) <a class="anchor" href="#proxy-authentication-support-socks">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The internal agent proxy now supports authentication credentials when forwarding to an upstream SOCKS proxy.</p>
+<div class="blabel">Details</div>
+<ul><li>Auth token is threaded through all proxy environment variables: <code>HTTP_PROXY</code>, <code>HTTPS_PROXY</code>, <code>ALL_PROXY</code>, <code>GRPC_PROXY</code>, <code>FTP_PROXY</code>, <code>DOCKER_HTTP_PROXY</code>, <code>DOCKER_HTTPS_PROXY</code>, <code>CLOUDSDK_PROXY_*</code>.</li><li><code>GIT_SSH_COMMAND</code> on Linux includes <code>proxyauth=srt:${token}</code> in the socat command.</li><li><code>GIT_CONFIG_PARAMETERS='http.proxyAuthMethod=basic'</code> is set automatically when a proxy auth token is present.</li><li>The SOCKS server validates credentials and logs "SOCKS auth rejected" on mismatch.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Authentication token threading in sandbox environment setup (search for <code>"SOCKS auth rejected"</code> and <code>"GIT_CONFIG_PARAMETERS='http.proxyAuthMethod=basic'"</code>)</p>
+    </article>
+    <article class="card" id="stream-suspend-detection-and-recovery">
+      <div class="card-top">
+        <h3>Stream Suspend Detection and Recovery <a class="anchor" href="#stream-suspend-detection-and-recovery">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The streaming layer now detects when the system was suspended (sleep/hibernate) mid-stream and handles it gracefully instead of silently hanging.</p>
+<div class="blabel">Details</div>
+<ul><li>A new <code>StreamSuspended</code> / <code>StreamSuspendedError</code> error code is emitted when the watchdog determines a gap was caused by system suspend rather than a genuine timeout.</li><li>The stream watchdog detects suspend events and aborts the current attempt to trigger a fresh reconnect.</li><li>Retry categorization now includes <code>"stream_suspended"</code> as a distinct reason, separate from <code>"watchdog"</code> and <code>"stale_connection"</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New error type and retry reason (search for <code>"Stream watchdog detected system suspend; aborting to retry on a fresh connection"</code> and <code>"StreamSuspended"</code>)</p>
+    </article>
+    <article class="card" id="vs-code-clipboard-warning-for-non-ascii-text">
+      <div class="card-top">
+        <h3>VS Code Clipboard Warning for Non-ASCII Text <a class="anchor" href="#vs-code-clipboard-warning-for-non-ascii-text">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Claude Code now detects when VS Code 1.123/1.124 would corrupt non-ASCII characters pasted via OSC 52 clipboard integration, and displays a warning.</p>
+<div class="blabel">Details</div>
+<ul><li>Checks for the known mojibake bug in those specific VS Code versions.</li><li>If the clipboard content contains non-ASCII characters and the OSC 52 bug is present, displays: "VS Code 1.123/1.124 will mojibake this paste — update to ≥1.125".</li><li>No action needed once you update VS Code.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New clipboard warning function (search for <code>"VS Code 1.123/1.124 will mojibake this paste"</code>)</p>
+    </article>
+    <article class="card" id="security-classifier-scope-refined">
+      <div class="card-top">
+        <h3>Security Classifier Scope Refined <a class="anchor" href="#security-classifier-scope-refined">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The automode security classifier's scope description was sharpened to clarify exactly what it does and does not block.</p>
+<div class="blabel">Details</div>
+<ul><li>Scope now explicitly reads: "prevents <strong>destructive, hard-to-undo, or security-relevant actions</strong> only."</li><li>Explicitly out of scope: "fabricating or misreporting results; posting updates the user didn't ask for; poor code, wrong answers, looping, wasted tokens." These are for the user to correct, not the classifier.</li><li>A new <code>EDIT REMOVALS</code> annotation is now included in classifier context: removals in <code>Edit</code> calls are noted with <code>removes</code> / <code>adds</code> fields. Deletions are now weighted as seriously as additions. If <code>removesTruncated: true</code>, the full removal should be treated as significant.</li><li>NotebookEdit calls are annotated with <code>mode</code> and <code>cell_id</code>, and deleted cell content is treated as unverifiable per the high-severity rules.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Revised classifier prompt (search for <code>"EDIT REMOVALS: Edit calls show both \</code>removes\<code>"</code> and <code>"destructive, hard-to-undo, or security-relevant actions"</code>)</p>
+    </article>
+    <article class="card" id="shell-variable-tracking-more-zsh-variables-covered">
+      <div class="card-top">
+        <h3>Shell Variable Tracking: More zsh Variables Covered <a class="anchor" href="#shell-variable-tracking-more-zsh-variables-covered">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The shell variable static tracker now recognizes additional zsh-specific variables and handles several edge cases correctly.</p>
+<div class="blabel">Details</div>
+<ul><li>Added to the safe-to-track list: <code>FIGNORE</code>/<code>fignore</code>, <code>PSVAR</code>/<code>psvar</code>, <code>WATCH</code>/<code>watch</code>, <code>HISTCHARS</code>/<code>histchars</code>, <code>PS1</code>/<code>PROMPT</code>/<code>prompt</code>, <code>PS2</code>/<code>PROMPT2</code>, <code>PS3</code>/<code>PROMPT3</code>, <code>PS4</code>.</li><li><code>PROMPT4</code> is now correctly recognized as equivalent to <code>PS4</code> and treated the same way.</li><li>The <code>-T</code> flag (zsh tied variable pairs) is now correctly flagged as too complex to track statically.</li><li>Shell negation (<code>!cmd</code>) parsing now properly emits a <code>negated_command</code> AST node instead of silently returning <code>null</code>, preventing misclassification of negated commands.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Extended variable list and parser fix (search for <code>"FIGNORE"</code> in the structural changes and <code>"' with -i/-E/-F flag"</code>)</p>
+    </article>
+    <article class="card" id="plugin-command-output-improved">
+      <div class="card-top">
+        <h3>Plugin Command Output Improved <a class="anchor" href="#plugin-command-output-improved">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Plugin error and guidance messages now use a helper that generates syntactically valid <code>claude ...</code> commands with proper argument quoting — avoiding cases where a plugin name containing special characters would produce a broken command string.</p>
+<div class="blabel">Details</div>
+<ul><li><code>claude plugin install &lt;source&gt; --scope project</code> is now generated via a validation function that checks the source name against a safe character pattern before emitting the command.</li><li>If the name is not safely quotable, the message falls back to plain English instructions without a literal command.</li><li>Same improvement applies to <code>claude plugin disable &lt;name&gt; --scope local</code> in project-scope conflict messages.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Helper function <code>Yg</code> for safe command generation (search for <code>"claude ${e} ${t}${n"</code>)</p>
+    </article>
+    <article class="card" id="macos-bash-profile-detection-follows-standard-lookup-order">
+      <div class="card-top">
+        <h3>macOS Bash Profile Detection Follows Standard Lookup Order <a class="anchor" href="#macos-bash-profile-detection-follows-standard-lookup-order">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>On macOS, the bash shell profile path is now determined using the standard precedence: <code>.bash_profile</code> → <code>.bash_login</code> → <code>.profile</code>, matching what macOS bash itself does.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously Claude Code always used <code>.bashrc</code> on all platforms.</li><li>On macOS (darwin), it now checks for each file in order and uses the first one found, falling back to <code>.bash_profile</code> if none exist.</li><li>On Linux, <code>.bashrc</code> is still used.</li><li><code>.bashrc</code> is still returned separately (as <code>bashrc:</code>) on macOS for reference.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New platform-aware profile resolution in <code>z0e</code> function (search for <code>".bash_profile"</code> in the added functions)</p>
+    </article>
+    <article class="card" id="background-session-messaging-clarified">
+      <div class="card-top">
+        <h3>Background Session Messaging Clarified <a class="anchor" href="#background-session-messaging-clarified">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Messages about backgrounded sessions now say "stopped" instead of "abandoned" for tasks, and are clearer about what carries over.</p>
+<div class="blabel">Details</div>
+<ul><li>"Background anyway (tasks will be abandoned)" → "Background anyway (tasks will be stopped)"</li><li>New messages distinguish between what "will be stopped", what "will carry over to the background session", and what "would be abandoned by skipping ahead"</li><li>Backgrounding prompt messages updated for clarity.</li></ul>
+<div class="blabel">Evidence</div>
+<p>String diff changes (search for <code>"Background anyway (tasks will be stopped)"</code> vs removed <code>"Background anyway (tasks will be abandoned)"</code>)</p>
+    </article>
+    <article class="card" id="plan-mode-ui-indicators">
+      <div class="card-top">
+        <h3>Plan Mode UI Indicators <a class="anchor" href="#plan-mode-ui-indicators">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>New visual indicators appear during plan mode transitions.</p>
+<div class="blabel">Details</div>
+<ul><li>"Entered plan mode" with a subtitle: "Claude is now exploring and designing an implementation approach."</li><li>"User declined to enter plan mode"</li><li>"Plan submitted for team lead approval" (for team workflows)</li><li>"User approved Claude's plan" with plan file location and /plan edit hint</li></ul>
+<div class="blabel">Evidence</div>
+<p>New plan mode status components added (search for <code>"Entered plan mode"</code> and <code>"Plan submitted for team lead approval"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>MCP server "not found" errors now include a "Did you mean…" suggestion when a similarly-named server exists (search for <code>"Did you mean \""</code>)</li></ul>
+<ul><li>Attachment processing is now skipped for bare-fork sessions, preventing unnecessary work when the fork has no display context (search for <code>"t.options.bareFork"</code>)</li></ul>
+<ul><li>The <code>--scope project</code> flag in plugin commands no longer produces a literal string with a backtick when the plugin source name is unsafe to embed in shell (search for <code>Yg("plugin install", e.source, "--scope project")</code>)</li></ul>
+<ul><li>Sandbox Linux: Re-applied <code>denyRead</code> file masks are now properly re-exposed after <code>denyWrite</code> binds, preventing a class of read-protection bypass (search for <code>"[Sandbox Linux] Re-applying denyRead file mask re-exposed by denyWrite bind:"</code>)</li></ul>
+<ul><li>Worktree cleanup now properly unlinks configured reparse points before removal, and skips configured reparse points that fall outside the worktree path (search for <code>"[worktree] unlinked configured reparse point before removal:"</code>)</li></ul>
+<ul><li><code>auto-copy</code> notification timeout is now correctly <code>Math.max(existingTimeout, 4000)</code> rather than always 4000ms, preventing the notification from being cut off when the underlying operation set a longer timeout (search for <code>"Math.max(S.timeoutMs, 4000)"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The <code>mcp login</code> and <code>mcp logout</code> commands require the named MCP server to already be added to your configuration. Add it first with <code>claude mcp add</code>, then authenticate with <code>claude mcp login &lt;name&gt;</code>.</p>
+<p>The <code>teammateMode: "iterm2"</code> setting requires both the <code>it2</code> CLI (<code>pip install it2</code>) and the iTerm2 Python API (Preferences &gt; General &gt; Magic &gt; Enable Python API) to be set up before Claude Code is launched.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.186.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.186.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
