@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.187 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.187."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.187</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.187</span></h1>
+<p class="sub">This release renames the <code>/toggle-memory</code> command to <code>/pause-memory</code>, introduces a <code>--bg</code>/<code>--background</code> CLI flag for launching background agent sessions, and adds <code>sandbox.credentials</code> support for protecting credential files and environment variables inside the sandbox. MCP tool idle timeout detection is now configurable via a new env var, skill token footprints appear in <code>/usage</code>, and the keyboard input parser gains robust UTF-8 multi-byte handling.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.186 → v2.1.187</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">19</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">6</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">3</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="pause-memory-replaces-toggle-memory">
+      <div class="card-top">
+        <h3><code>/pause-memory</code> replaces <code>/toggle-memory</code> <a class="anchor" href="#pause-memory-replaces-toggle-memory">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The command that pauses automemory for a session has been renamed from <code>/toggle-memory</code> to <code>/pause-memory</code>. The old name is kept as an alias so existing shortcuts and muscle memory still work.</p>
+<div class="blabel">Usage</div>
+<pre><code>/pause-memory          # pause automemory for this session
+/pause-memory          # run again to resume</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The status indicator in the sidebar now shows "Paused for this session · /pause-memory to resume"</li><li>Error messages shown when memory operations are blocked have been updated to reference the new command name</li><li><code>memory-pause</code> and <code>toggle-memory</code> are registered as aliases — the old command name continues to work</li></ul>
+<div class="blabel">Evidence</div>
+<p>Command renamed (search for <code>"Pause automemory for this session"</code> or <code>"pause-memory"</code> in command list); old alias retained (search for <code>"toggle-memory"</code>)</p>
+    </article>
+    <article class="card" id="sandbox-credentials-credential-protection-in-sandbox">
+      <div class="card-top">
+        <h3><code>sandbox.credentials</code> — Credential protection in sandbox <a class="anchor" href="#sandbox-credentials-credential-protection-in-sandbox">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>credentials</code> section in sandbox configuration lets you declare specific files and environment variables that must be protected when Claude runs sandboxed commands.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;sandbox&quot;: {
+    &quot;credentials&quot;: {
+      &quot;files&quot;: [
+        { &quot;path&quot;: &quot;~/.aws/credentials&quot;, &quot;mode&quot;: &quot;deny&quot; },
+        { &quot;path&quot;: &quot;.env&quot;, &quot;mode&quot;: &quot;deny&quot; }
+      ],
+      &quot;envVars&quot;: [
+        { &quot;name&quot;: &quot;AWS_SECRET_ACCESS_KEY&quot;, &quot;mode&quot;: &quot;deny&quot; },
+        { &quot;name&quot;: &quot;GITHUB_TOKEN&quot;, &quot;mode&quot;: &quot;deny&quot; }
+      ]
+    }
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>mode: "deny"</code> on a file entry blocks reads inside the sandbox</li><li><code>mode: "deny"</code> on an envVar entry unsets the variable for sandboxed commands</li><li>Only explicitly declared files and variables are restricted; everything else is unrestricted by default</li><li>Paths support the same resolution as other sandbox paths: absolute, <code>~</code>-expanded, or relative to the settings file root</li><li><code>mode: "mask"</code> is not yet supported — the sandbox will drop the credentials block and warn if an unsupported mode is specified</li><li>Works alongside existing <code>filesystem.denyRead</code> rules</li></ul>
+<div class="blabel">Evidence</div>
+<p>New schema and logic (search for <code>"sandbox.credentials"</code> or <code>"Credential handling configuration"</code>)</p>
+    </article>
+    <article class="card" id="bg-background-launch-as-background-agent">
+      <div class="card-top">
+        <h3><code>--bg</code> / <code>--background</code> — Launch as background agent <a class="anchor" href="#bg-background-launch-as-background-agent">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new CLI flag that starts the session as a background agent and returns immediately, rather than waiting for the conversation to complete.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --bg &quot;implement the feature described in TASK.md&quot;
+# or
+claude --background &quot;run the test suite and summarize failures&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The session runs detached; you can track and manage it with <code>claude agents</code></li><li>Useful for fire-and-forget tasks or parallel workstreams</li></ul>
+<div class="blabel">Evidence</div>
+<p>New flag definition (search for <code>"--bg, --background"</code> or <code>"Start the session as a background agent"</code>)</p>
+    </article>
+    <article class="card" id="mcp-tool-idle-timeout-detection">
+      <div class="card-top">
+        <h3>MCP tool idle timeout detection <a class="anchor" href="#mcp-tool-idle-timeout-detection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>MCP tools that stop sending progress or responses are now detected and aborted after a configurable timeout. A new env var controls the timeout duration.</p>
+<div class="blabel">Usage</div>
+<pre><code># Set timeout in milliseconds (default is built-in; 0 disables timeout)
+export CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT=120000   # 2 minutes
+export CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT=0        # disable</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When an MCP tool produces no output for the configured duration, Claude aborts the call and reports the timeout</li><li>Error message includes the tool name and duration: "MCP server <code>X</code> tool <code>Y</code> sent no response or progress for Ns; aborting"</li><li>A new <code>McpResponseSchemaError</code> is thrown and surfaced when an MCP server returns a result that fails schema validation, with a description of what was wrong</li></ul>
+<div class="blabel">Evidence</div>
+<p>New timeout guard (search for <code>"CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT"</code> or <code>"MCP tool idle timeout"</code>)</p>
+    </article>
+    <article class="card" id="preset-default-in-allowed-tools">
+      <div class="card-top">
+        <h3><code>preset:default</code> in <code>allowed-tools</code> <a class="anchor" href="#preset-default-in-allowed-tools">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Skill frontmatter can now use the token <code>preset:default</code> in its <code>allowed-tools</code> list to include the full default tool set alongside any custom additions.</p>
+<div class="blabel">Usage</div>
+<pre><code>---
+allowed-tools: preset:default, Bash(make test)
+---</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When <code>preset:default</code> is present, Claude expands it to the full list of default tools and then appends any additional entries in the list</li><li>This makes it easy to write skills that extend — rather than replace — the default tool set</li></ul>
+<div class="blabel">Evidence</div>
+<p>New expansion logic (search for <code>"preset:default"</code>)</p>
+    </article>
+    <article class="card" id="github-app-post-install-github-actions-setup">
+      <div class="card-top">
+        <h3>GitHub App post-install — GitHub Actions setup <a class="anchor" href="#github-app-post-install-github-actions-setup">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>After installing the Claude GitHub App via <code>/install-github-app</code>, a new step offers to set up GitHub Actions workflows so Claude automatically responds to <code>@claude</code> mentions in issues and PRs.</p>
+<div class="blabel">Details</div>
+<ul><li>A selection UI appears after successful App installation: "Set up GitHub Actions workflows" or "Skip for now"</li><li>The header reads "Set up GitHub Actions" with the message "The Claude GitHub App is now installed. You can optionally set up GitHub Actions workflows…"</li><li>Skipping shows "Run /install-github-app again anytime to set up GitHub Actions workflows"</li><li>If workflows are set up, the previous success message "GitHub Actions setup complete!" is displayed</li></ul>
+<div class="blabel">Evidence</div>
+<p>New post-install flow (search for <code>"Set up GitHub Actions workflows"</code> or <code>"GitHub App installed!"</code>)</p>
+    </article>
+    <article class="card" id="subagent-nesting-depth-limit-explicit-error">
+      <div class="card-top">
+        <h3>Subagent nesting depth limit — explicit error <a class="anchor" href="#subagent-nesting-depth-limit-explicit-error">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a subagent tries to spawn another agent beyond the nesting depth cap, it now receives a clear error message explaining what happened and instructing it to complete the task directly.</p>
+<div class="blabel">Details</div>
+<ul><li>Error: "Subagent nesting limit reached (depth N of M). Complete this task directly using your tools instead of spawning another agent."</li><li>Previously this situation could fail silently or produce a confusing error</li></ul>
+<div class="blabel">Evidence</div>
+<p>New depth-cap error (search for <code>"Subagent nesting limit reached"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="skill-token-footprint-in-usage">
+      <div class="card-top">
+        <h3>Skill token footprint in <code>/usage</code> <a class="anchor" href="#skill-token-footprint-in-usage">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Plugin pages in <code>/usage</code> now show how much of the system prompt context budget each plugin's skills consume, broken down per skill.</p>
+<div class="blabel">Details</div>
+<ul><li>Shown under "Skill-listing footprint" — the cached input cost after the first turn, before agents and MCP tools are counted</li><li>Lists each skill with its approximate token cost per turn, sorted by size</li><li>Footer note: "For per-skill invocation counts and cost attribution, see /usage"</li><li>When no model-invocable skills are loaded for a plugin, shows "No model-invocable skills loaded for this plugin"</li></ul>
+<div class="blabel">Evidence</div>
+<p>New skill footprint UI (search for <code>"Skill-listing footprint"</code> or <code>"What this plugin's skill descriptions add to the system prompt"</code>)</p>
+    </article>
+    <article class="card" id="artifact-design-skill-comprehensive-design-guidance">
+      <div class="card-top">
+        <h3>Artifact design skill — comprehensive design guidance <a class="anchor" href="#artifact-design-skill-comprehensive-design-guidance">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>artifact-design</code> skill has been expanded with detailed design principles covering typography, layout, color, copy writing, UI design, and an editorial workflow for higher-stakes creative pages.</p>
+<div class="blabel">Details</div>
+<ul><li>Guidance covers: honoring existing design systems, typeface pairing (with <code>@font-face</code> data URIs since CDNs are blocked), layout with flex/grid, CSS cascade specificity, writing copy, structural vs. decorative elements, and avoiding AI-generated design clichés</li><li>Adds an explicit process: sketch a compact token system (color, type, layout) before writing code</li><li>Adds an "editorial" mode for landing pages, games, and apps — with instructions to make opinionated calls and take one real aesthetic risk</li><li>Description updated from "Design guidance for Artifact pages" to "Design guidance and fundamentals for Artifacts"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill content replaced (search for <code>"Approach this as the design lead at a small studio"</code>)</p>
+    </article>
+    <article class="card" id="designsync-improved-messages-in-non-interactive-sessions">
+      <div class="card-top">
+        <h3>DesignSync — improved messages in non-interactive sessions <a class="anchor" href="#designsync-improved-messages-in-non-interactive-sessions">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p><code>/design-sync</code> error messages now give context-appropriate guidance depending on whether the session is interactive or headless.</p>
+<div class="blabel">Details</div>
+<ul><li>In non-interactive sessions (e.g. claude.ai/code), authorization errors now explain that <code>/design-login</code> is not available and suggest alternatives such as "Send to Claude Code Web" or providing project files directly</li><li>Design token refresh failures in headless environments now direct users to re-authorize from an interactive terminal</li><li>The "wrong_provider" and "essential_traffic_only" error cases are unchanged</li></ul>
+<div class="blabel">Evidence</div>
+<p>Context-aware error messages (search for <code>"DesignSync needs design-system authorization, but /design-login requires an interactive terminal"</code>)</p>
+    </article>
+    <article class="card" id="usage-credits-messages-cleaner-wording">
+      <div class="card-top">
+        <h3>Usage credits messages — cleaner wording <a class="anchor" href="#usage-credits-messages-cleaner-wording">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Several Fable 5 usage-credits status messages have been rewritten for clarity.</p>
+<div class="blabel">Details</div>
+<ul><li>"Fable 5 uses usage credits and you're out · run /usage-credits..." → "You're out of usage credits. Run /usage-credits to keep using Fable 5 or /model to switch models."</li><li>Monthly limit messages now say "You've hit your monthly spend limit" (admin-path: ask admin; user-path: run /usage-credits)</li><li>"Now using usage credits for <code>&lt;model&gt;</code>" notification appears when the model switches to credit-based billing</li><li>Fable 5 onboarding banners (the "Fable 5 is here!" and "Fable 5 now runs on usage credits" intro screens) have been removed now that the launch period is over</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated messaging (search for <code>"You're out of usage credits"</code> or <code>"You've hit your monthly spend limit"</code>)</p>
+    </article>
+    <article class="card" id="plan-mode-clearer-model-restriction-messages">
+      <div class="card-top">
+        <h3>Plan mode — clearer model restriction messages <a class="anchor" href="#plan-mode-clearer-model-restriction-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When a plan-mode upgrade model is blocked by org settings, the error message now mentions both <code>availableModels allowlist</code> and <code>model_access entitlement</code> instead of just the allowlist.</p>
+<div class="blabel">Evidence</div>
+<p>Updated messages (search for <code>"availableModels allowlist or model_access entitlement"</code>)</p>
+    </article>
+    <article class="card" id="advisor-warning-when-model-is-not-in-capability-table">
+      <div class="card-top">
+        <h3>Advisor — warning when model is not in capability table <a class="anchor" href="#advisor-warning-when-model-is-not-in-capability-table">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When Claude Code's advisor feature is activated with a custom model that isn't in its capability table, it now emits a visible warning with guidance.</p>
+<div class="blabel">Details</div>
+<ul><li>Warning: "Warning: Advisor disabled — base model <code>&lt;name&gt;</code> isn't in the advisor capability table. Switch to a public model alias (opus, sonnet, fable) or set CLAUDE_CODE_ENABLE_EXPERIMENTAL_ADVISOR_TOOL=1."</li><li>This replaces a silent failure</li></ul>
+<div class="blabel">Evidence</div>
+<p>New warning (search for <code>"Warning: Advisor disabled"</code>)</p>
+    </article>
+    <article class="card" id="subagent-prompt-file-writing-note-clarified">
+      <div class="card-top">
+        <h3>Subagent prompt — file-writing note clarified <a class="anchor" href="#subagent-prompt-file-writing-note-clarified">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The instruction telling subagents not to write report/summary/analysis files has been clarified to note that writing files as input to another tool is acceptable.</p>
+<div class="blabel">Details</div>
+<ul><li>Old: "Do NOT write report/summary/findings/analysis .md files. Return findings directly..."</li><li>New: "...Return findings directly... (Files written as input to another tool are fine; this note is about report files.)"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Prompt text change (search for <code>"Files written as input to another tool are fine"</code>)</p>
+    </article>
+    <article class="card" id="artifact-tool-improved-file-not-found-error">
+      <div class="card-top">
+        <h3>Artifact tool — improved file-not-found error <a class="anchor" href="#artifact-tool-improved-file-not-found-error">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When the <code>Artifact</code> tool is called with a path that does not exist, the error message now mentions the shell as an alternative to the Write tool.</p>
+<div class="blabel">Details</div>
+<ul><li>Old: "Use the Write tool to create the file first, then call Artifact with the same absolute path."</li><li>New: "Create the file first (Write tool, or via shell if Write is unavailable), then retry with the same path."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated error message (search for <code>"or via shell if Write is unavailable"</code>)</p>
+    </article>
+    <article class="card" id="safety-messages-updated-wording">
+      <div class="card-top">
+        <h3>Safety messages — updated wording <a class="anchor" href="#safety-messages-updated-wording">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Several model safeguard/flagged-message strings have been updated for consistency.</p>
+<div class="blabel">Details</div>
+<ul><li>"This model has safety measures that flagged something in this session." → "This model's safeguards flagged this message."</li><li>Cybersecurity/biology topic messages now use the <code>'s safeguards flagged</code> phrasing consistently</li><li>The broader note now reads "The safeguards are intentionally broad right now and may flag safe and routine coding, cybersecurity, or biology work. These measures let us bring you Mythos-level capabilities sooner..."</li></ul>
+<div class="blabel">Evidence</div>
+<p>String changes (search for <code>"safeguards flagged this message"</code>)</p>
+    </article>
+    <article class="card" id="worktreeremove-hook-fallback-now-logged">
+      <div class="card-top">
+        <h3>WorktreeRemove hook — fallback now logged <a class="anchor" href="#worktreeremove-hook-fallback-now-logged">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When no <code>WorktreeRemove</code> hook is configured and Claude falls back to running <code>git worktree remove</code> directly, this is now logged explicitly.</p>
+<div class="blabel">Details</div>
+<ul><li>Log message: "No WorktreeRemove hook configured; falling back to git worktree remove for: <code>&lt;path&gt;</code>"</li></ul>
+<div class="blabel">Evidence</div>
+<p>New fallback log (search for <code>"No WorktreeRemove hook configured"</code>)</p>
+    </article>
+    <article class="card" id="git-config-lockfiles-excluded-from-file-watching">
+      <div class="card-top">
+        <h3>Git config lockfiles excluded from file watching <a class="anchor" href="#git-config-lockfiles-excluded-from-file-watching">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p><code>.git/config.lock</code> and <code>.git/config.worktree.lock</code> are now included in the list of paths excluded from the file watcher.</p>
+<div class="blabel">Details</div>
+<ul><li>Prevents spurious change events triggered by git operations that momentarily hold a config lock</li></ul>
+<div class="blabel">Evidence</div>
+<p>New exclusion entries (search for <code>".git/config.lock"</code>)</p>
+    </article>
+    <article class="card" id="oauth-error-details-now-tracked">
+      <div class="card-top">
+        <h3>OAuth error details now tracked <a class="anchor" href="#oauth-error-details-now-tracked">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When OAuth token operations fail, the specific error type is now captured and classified (expired token, invalid token, no organization, no account associated).</p>
+<div class="blabel">Evidence</div>
+<p>New OAuth error classification (search for <code>"Refresh token expired"</code> or <code>"No organization associated with this token"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li><strong>UTF-8 multi-byte characters in keyboard input</strong>: The key parser now correctly reassembles multi-byte UTF-8 sequences delivered as individual escape sequences. Previously, non-ASCII characters entered via the terminal (particularly on some Linux/remote terminals) could be dropped or misinterpreted. A <code>pendingByteEvents</code> buffer accumulates bytes and flushes the complete character once all bytes have arrived. (search for <code>"pendingByteEvents"</code>)</li></ul>
+<ul><li><strong>AbortSignal memory leak in event listeners</strong>: Abort-signal subscriptions created during agent turns now use a <code>FinalizationRegistry</code> to automatically remove the listener when the child object is garbage-collected. Previously, long-running sessions with many tool calls could accumulate a growing number of stale abort listeners. (search for <code>"FinalizationRegistry"</code>)</li></ul>
+<ul><li><strong>FileIndex: skip path normalization when unchanged</strong>: Path normalization is now skipped when the raw git paths have not changed, avoiding unnecessary work and a potential re-index cycle. (search for <code>"[FileIndex] skipped path normalization"</code>)</li></ul>
+<ul><li><strong>FileIndex: discard mid-refresh results when cache was reset</strong>: If the file index cache is reset while a refresh is in progress, the results of that refresh are now discarded rather than written over the fresh cache. (search for <code>"[FileIndex] discarding refresh results"</code>)</li></ul>
+<ul><li><strong>Windows: UNC watch paths dropped gracefully</strong>: When the file watcher encounters remote UNC paths on Windows, they are now silently dropped with a debug log rather than crashing the watcher. (search for <code>"FileChanged: dropped remote UNC watch path(s)"</code>)</li></ul>
+<ul><li><strong>MCP schema validation error surfaced as named error</strong>: MCP tool results that fail schema validation now throw a <code>McpResponseSchemaError</code> with the validation message attached, rather than an untyped error. (search for <code>"McpResponseSchemaError"</code> or <code>"MCP server returned a malformed result"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled for general availability.</p>
+    </article>
+    <article class="card" id="startup-announcements-in-development">
+      <div class="card-top">
+        <h3>Startup announcements [In Development] <a class="anchor" href="#startup-announcements-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A server-controlled system for showing one-time startup messages to users — for example, announcing a new feature or a policy change.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged (gated by <code>tengu_startup_announcements</code>)</p>
+<div class="blabel">Details</div>
+<ul><li>Announcements are configured server-side as a JSON array with <code>id</code>, optional <code>title</code>, <code>text</code>, <code>priority</code>, and <code>maxImpressions</code> fields</li><li>Claude Code tracks how many times each announcement has been shown (<code>announcementImpressions</code> in config) and stops showing it once <code>maxImpressions</code> is reached</li><li>When enabled, the announcement appears at the start of the session; slash-command references in the text are highlighted</li></ul>
+<div class="blabel">Evidence</div>
+<p>New announcement component (gated on <code>tengu_startup_announcements</code> flag, search for <code>"startup-announcement"</code>)</p>
+    </article>
+    <article class="card" id="team-memory-partition-manifest-memory-sync-in-development">
+      <div class="card-top">
+        <h3>Team memory partition manifest (<code>.memory-sync</code>) [In Development] <a class="anchor" href="#team-memory-partition-manifest-memory-sync-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Team memory sync will gain a manifest file (<code>.memory-sync</code>) inside each mount directory to detect and handle cross-partition conflicts — preventing one team's memory store from silently being misused by another team that happens to share the same directory path.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged (gated by <code>tengu_silk_almanac</code>)</p>
+<div class="blabel">Details</div>
+<ul><li>Each mount directory gets a <code>.memory-sync</code> manifest recording its <code>partitionId</code></li><li>On sync, if the manifest's partition doesn't match the expected one, the basis is invalidated and re-sync is forced</li><li>If the directory holds a different partition's manifest during a non-user-scoped mid-session sync, sync is suppressed with a warning: "mount dir holds a different partition's <code>.memory-sync</code> — suppressing sync (remove the dir to re-mount)"</li></ul>
+<div class="blabel">Evidence</div>
+<p>New manifest functions (gated on <code>it("tengu_silk_almanac", !1)</code>, search for <code>".memory-sync"</code> or <code>"partition mismatch"</code>)</p>
+    </article>
+    <article class="card" id="per-context-bootstrap-data-cache-in-development">
+      <div class="card-top">
+        <h3>Per-context bootstrap data cache [In Development] <a class="anchor" href="#per-context-bootstrap-data-cache-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Bootstrap data (client configuration, model options, costs) will be cached on a per-context key (entrypoint + model + org UUID + CC version) rather than a single global cache slot, allowing different sessions or entrypoints to carry their own cached data without overwriting each other.</p>
+<div class="blabel">Status</div>
+<p>Partially enabled — the new <code>clientDataCacheSlots</code> field is written by the bootstrap fetch, but the feature is controlled by the <code>tengu_client_data_cache_key</code> telemetry gate.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>clientDataCacheSlots</code> config key stores up to a fixed number of keyed cache entries</li><li>Legacy <code>clientDataCache</code> is still read as a fallback when no slot matches</li></ul>
+<div class="blabel">Evidence</div>
+<p>New slot-keyed cache (search for <code>"clientDataCacheSlots"</code> or <code>"tengu_client_data_cache_key"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.187.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.187.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
