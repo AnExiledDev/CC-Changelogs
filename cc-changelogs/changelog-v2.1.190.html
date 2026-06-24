@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.190 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.190."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.190</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.190</span></h1>
+<p class="sub">This release introduces a new "Fable 5 included" rate limit tier that tracks weekly Fable 5 usage separately from the main weekly limit, with tailored messaging when that included allocation runs out. Model-scoped rate limit data is now returned by the <code>/status</code> endpoint, and in-app announcements can be targeted to specific active models.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.187 → v2.1.190</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">7</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="fable-5-included-usage-limit-new-rate-limit-category">
+      <div class="card-top">
+        <h3>Fable 5 Included-Usage Limit — New Rate Limit Category <a class="anchor" href="#fable-5-included-usage-limit-new-rate-limit-category">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new rate limit type, <code>seven_day_overage_included</code>, tracks weekly Fable 5 usage for accounts where a defined amount is bundled into the plan. When this limit is exhausted, Claude Code now displays a specific message instead of the generic overage prompt:</p>
+<ul><li>"You've reached your Fable 5 limit" — shown in the model picker and notifications</li><li>"You've used your included Fable 5 usage for this week. Continuing on Fable 5 uses usage credits" — explains exactly what happens next</li></ul>
+<p>Previously, hitting any Fable 5 limit while on an account with usage credits would show the generic model-switch / credits dialog. Users on the new included-usage tier now see a distinct, accurate message. The model-switch prompt is suppressed when this limit type is active, since the appropriate next step is purchasing credits rather than switching models.</p>
+<div class="blabel">Evidence</div>
+<p>new rate limit type and display label (search for <code>"seven_day_overage_included"</code> and <code>"Fable 5 limit"</code>)</p>
+    </article>
+    <article class="card" id="model-picker-description-simplified-for-fable-5">
+      <div class="card-top">
+        <h3>Model Picker Description Simplified for Fable 5 <a class="anchor" href="#model-picker-description-simplified-for-fable-5">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The Fable 5 entry in the model picker no longer shows the older "Draws from usage credits" / "Uses your limits ~2× faster than Opus" / "Included with your plan until …" annotation strings. These have been replaced with a single concise label:</p>
+<ul><li>"· Requires usage credits"</li></ul>
+<p>The new label applies whenever Fable 5 requires credits on the current account type, and is omitted when it does not.</p>
+<div class="blabel">Evidence</div>
+<p>removed strings (search for <code>"Draws from usage credits"</code> / <code>"· Uses your limits ~2× faster than Opus"</code> — absent from new version); added string (search for <code>"· Requires usage credits"</code>)</p>
+    </article>
+    <article class="card" id="model-scoped-rate-limits-returned-by-status">
+      <div class="card-top">
+        <h3>Model-Scoped Rate Limits Returned by <code>/status</code> <a class="anchor" href="#model-scoped-rate-limits-returned-by-status">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The internal status endpoint (used by the IDE extensions and the API <code>get_init_params</code> call) now includes a <code>model_scoped</code> array inside the <code>rate_limits</code> object when the server emits per-model windows. Each entry has:</p>
+<ul><li><code>display_name</code> — server-supplied label for the model bucket (e.g. "Fable")</li><li><code>utilization</code> — fraction of the weekly window consumed, or null</li><li><code>resets_at</code> — ISO-8601 timestamp of window reset, or null</li></ul>
+<p>This field is additive: it appears only when the server returns per-model data and the list is non-empty. It gives integrators visibility into Fable 5 usage separate from the aggregate weekly limit.</p>
+<div class="blabel">Evidence</div>
+<p>new schema field (search for <code>"Per-model weekly windows from the server limits[] array"</code> or <code>"model_scoped projection failed:"</code>)</p>
+    </article>
+    <article class="card" id="overage-disabled-reason-now-read-from-error-body">
+      <div class="card-top">
+        <h3>Overage-Disabled Reason Now Read from Error Body <a class="anchor" href="#overage-disabled-reason-now-read-from-error-body">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Previously, when a <code>credits_required</code> error was returned, the overage-disabled reason was read only from the <code>anthropic-ratelimit-unified-overage-disabled-reason</code> response header or from a cached value. The parser now also extracts <code>disabled_reason</code> from the error body JSON, providing a more reliable source of the reason and reducing cases where the wrong message was shown.</p>
+<div class="blabel">Evidence</div>
+<p>new field extraction (search for <code>"credits_required"</code> in the 429 error handler and the <code>overageDisabledReason</code> property)</p>
+    </article>
+    <article class="card" id="credits-balance-api-graceful-handling-when-amount-is-missing">
+      <div class="card-top">
+        <h3>Credits Balance API: Graceful Handling When Amount is Missing <a class="anchor" href="#credits-balance-api-graceful-handling-when-amount-is-missing">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The prepaid credits balance fetch now checks whether the <code>amount</code> field in the API response is a number before using it. If the field is absent (for example, on accounts or regions where the endpoint is not supported), the fetch returns null and records a <code>not_supported</code> telemetry event rather than passing undefined through to the balance display.</p>
+<div class="blabel">Evidence</div>
+<p>guard added before <code>ke("api_prepaid_balance_fetch")</code> (search for <code>"not_supported"</code> in prepaid balance fetch context)</p>
+    </article>
+    <article class="card" id="announcements-now-filter-by-active-model">
+      <div class="card-top">
+        <h3>Announcements Now Filter by Active Model <a class="anchor" href="#announcements-now-filter-by-active-model">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>In-app announcements (the tip-bar messages shown at startup) can now declare a <code>requiresModel</code> field. An announcement with this field set is only shown when the currently active model matches. Previously all eligible announcements were candidates regardless of the selected model.</p>
+<p>The <code>startup_announcement</code> value is also now included in the init info payload sent to extensions, allowing the IDE to display the same announcement that the CLI would show.</p>
+<div class="blabel">Evidence</div>
+<p><code>qCl()</code> filter function (search for <code>"requiresModel"</code> in announcement filter logic) and <code>startupAnnouncement</code> in init payload (search for <code>"startup_announcement"</code>)</p>
+    </article>
+    <article class="card" id="credits-only-tier-detection-for-enterprise">
+      <div class="card-top">
+        <h3>Credits-Only Tier Detection for Enterprise <a class="anchor" href="#credits-only-tier-detection-for-enterprise">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new feature flag <code>tengu_saffron_credits_only_tiers</code> (defaulting to <code>["enterprise"]</code>) specifies which subscription tiers must always pay usage credits for Fable 5. Enterprise accounts without the overage tier are automatically treated as credits-only. A companion flag <code>tengu_saffron_picker_dim</code> allows the model picker entry to be dimmed for these accounts.</p>
+<p>The overage consent check (<code>yae</code>) was also updated to respect an <code>enabled: false</code> field in the saffron plan config, allowing the server to explicitly disable the consent gate.</p>
+<div class="blabel">Evidence</div>
+<p>feature flag (search for <code>"tengu_saffron_credits_only_tiers"</code>) and consent gate (search for <code>"tengu_saffron_picker_dim"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.190.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.190.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
