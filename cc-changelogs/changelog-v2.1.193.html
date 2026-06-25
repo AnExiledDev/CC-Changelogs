@@ -268,13 +268,13 @@
         <h3><code>tengu_cobalt_plinth_putguard</code> [In Development] <a class="anchor" href="#tengu-cobalt-plinth-putguard-in-development">#</a></h3>
 <div class="tags"><span class="tag dev">Dev</span></div>      </div>
       <div class="blabel">What</div>
-<p>A new feature flag has been added to the codebase but gates no visible user-facing behavior yet.</p>
+<p>A dormant security flag that, when enabled, detects proxy interception of GCS artifact uploads by checking for a header that only real GCS responses include.</p>
 <div class="blabel">Status</div>
-<p>Feature-flagged</p>
+<p>Feature-flagged (off by default)</p>
 <div class="blabel">Details</div>
-<ul><li>A new boolean gate <code>mrl()</code> checks <code>it("tengu_cobalt_plinth_putguard", false)</code>.</li><li>No visible user-facing behavior is wired to this flag in this release.</li></ul>
+<ul><li>Export name <code>isFrameSignedPutHeaderCheckEnabled</code> reveals the intent.</li><li>After a successful (2xx) HTTP PUT to Google Cloud Storage, the guard checks for the <code>x-goog-generation</code> response header — present on every authentic GCS response, absent on proxied ones.</li><li>If the header is missing on a 2xx, the upload is rejected with: <code>"upload intercepted: 2xx without x-goog-generation — a proxy answered in place of GCS"</code> (status 403, <code>intercepted: true</code>).</li><li>Scoped to GCS PUT responses only. Anthropic API traffic (<code>api.anthropic.com</code>), telemetry, OAuth, and MCP are unaffected — this does not block proxying of model requests or conversation content.</li><li>When enabled, would break transparent proxies that cannot forward GCS headers intact: Burp Suite, mitmproxy, corporate SSL inspection, LLM gateways (LiteLLM, Portkey, etc.).</li></ul>
 <div class="blabel">Evidence</div>
-<p>New flag check (search for <code>"tengu_cobalt_plinth_putguard"</code>)</p>
+<p>Flag check <code>mrl()</code> in <code>vKp()</code> GCS upload handler; export <code>isFrameSignedPutHeaderCheckEnabled</code> (search for <code>"x-goog-generation"</code>)</p>
     </article>
   </div>
 
