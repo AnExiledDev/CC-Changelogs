@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.193 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.193."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.193</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.193</span></h1>
+<p class="sub">Version 2.1.193 is a security and reliability-focused release. Key highlights include a new <code>disableSideloadFlags</code> enterprise setting that closes CLI-flag bypasses of marketplace restrictions, write-path symlink verification that prevents TOCTOU race conditions on file writes, a new <code>&amp;</code>-operator safety prompt for background shell commands, and automatic recovery when the working directory is deleted. The release also adds plugin renaming support in marketplace manifests and a new <code>model_refusal_no_fallback</code> SDK event for better refusal handling.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.191 → v2.1.193</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">17</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">10</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">1</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="disablesideloadflags-enterprise-setting">
+      <div class="card-top">
+        <h3><code>disableSideloadFlags</code> Enterprise Setting <a class="anchor" href="#disablesideloadflags-enterprise-setting">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new managed setting that blocks <code>--plugin-dir</code>, <code>--plugin-url</code>, <code>--agents</code>, and non-SDK <code>--mcp-config</code> CLI flags at startup, closing the CLI-flag bypass of <code>strictKnownMarketplaces</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Only honored when set in <strong>managed settings</strong> (policy-controlled). Ignored in user, project, or local settings.</li><li>When a blocked flag is used, Claude Code exits with: "X is disabled by your organization's managed settings (disableSideloadFlags). Plugins, custom agents, and MCP servers can only be loaded from sources your administrator has approved."</li><li>Pair with <code>allowedMcpServers</code> for per-server MCP control; this setting does <strong>not</strong> gate other MCP entry points such as <code>claude mcp add</code>, SDK <code>setMcpServers</code>, or <code>.mcp.json</code>.</li><li>Does not block MCP servers configured through approved marketplace sources.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New setting description (search for <code>"disableSideloadFlags"</code> or <code>"rejects the --plugin-dir, --plugin-url, --agents"</code>)</p>
+    </article>
+    <article class="card" id="plugin-renaming-in-marketplace-manifests">
+      <div class="card-top">
+        <h3>Plugin Renaming in Marketplace Manifests <a class="anchor" href="#plugin-renaming-in-marketplace-manifests">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Marketplace authors can now declare plugin renames in their manifest using a <code>renames</code> field. When a plugin is not found under its old name, Claude Code follows the rename chain and migrates the user's settings to the new name automatically.</p>
+<div class="blabel">Details</div>
+<ul><li>The <code>renames</code> field is an append-only map of old plugin name → current name (or <code>null</code> to indicate the plugin was removed).</li><li>On plugin-not-found, the loader resolves the chain and updates <code>enabledPlugins</code> and <code>pluginConfigs</code> in all writable settings files.</li><li>A new <code>tengu_plugin_renamed</code> telemetry event tracks rename outcomes (<code>resolved</code>, <code>removed</code>, <code>unresolved</code>).</li><li>Unresolvable renames (cycles, missing targets, chains deeper than the limit) are logged with the reason.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>renames</code> schema field (search for <code>"Append-only map of old plugin name"</code>) and rename migration logic (search for <code>"migrateRenamedPluginsInSettings"</code>)</p>
+    </article>
+    <article class="card" id="model-refusal-no-fallback-sdk-event">
+      <div class="card-top">
+        <h3><code>model_refusal_no_fallback</code> SDK Event <a class="anchor" href="#model-refusal-no-fallback-sdk-event">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new system event is now emitted when the model ends a turn with stop reason <code>"refusal"</code> and no fallback model is configured, allowing SDK consumers to handle refusals programmatically.</p>
+<div class="blabel">Details</div>
+<ul><li>Event fields: <code>type: "system"</code>, <code>subtype: "model_refusal_no_fallback"</code>, <code>original_model</code>, <code>request_id</code>, <code>api_refusal_category</code>, <code>api_refusal_explanation</code>, <code>content</code>, <code>uuid</code>, <code>session_id</code>.</li><li>A new <code>refused_user_message_uuid</code> field (added to both <code>model_refusal_fallback</code> and <code>model_refusal_no_fallback</code>) contains the UUID of the human turn that triggered the refusal — the rewind target and composer prefill for edit-and-retry.</li><li><code>refused_user_message_uuid</code> is <code>null</code> when the refused turn was not human-authored (e.g., a background task notification or auto-continuation).</li><li>Not emitted when a fallback model existed but was declined or gate-failed (that case uses the existing <code>model_refusal_fallback</code> event).</li></ul>
+<div class="blabel">Evidence</div>
+<p>New event schema (search for <code>"model_refusal_no_fallback"</code> or <code>"UUID of the user message the refused request was for"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">14 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="write-path-symlink-verification">
+      <div class="card-top">
+        <h3>Write-Path Symlink Verification <a class="anchor" href="#write-path-symlink-verification">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When writing a file, Claude Code now verifies that the parent-directory symlink resolution has not changed between when permission was checked and when the write actually happens.</p>
+<div class="blabel">Details</div>
+<ul><li>If symlinks shift between the permission check and the write, the write is blocked with: "Refusing to write X: its parent-directory symlink resolution changed after permission was checked."</li><li>The approved directory list is stashed at check-time (keyed by tool use ID) and compared at write-time, preventing TOCTOU races where a symlink is replaced after approval.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New guard logic (search for <code>"its parent-directory symlink resolution changed after permission was checked"</code>)</p>
+    </article>
+    <article class="card" id="background-operator-safety-warning">
+      <div class="card-top">
+        <h3>Background Operator <code>&amp;</code> Safety Warning <a class="anchor" href="#background-operator-safety-warning">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Shell commands that include the <code>&amp;</code> background operator now always trigger an approval prompt, regardless of existing allow rules.</p>
+<div class="blabel">Details</div>
+<ul><li>The <code>&amp;</code> operator defers execution past approval-time safety checks, so it cannot be pre-approved reliably.</li><li>The prompt message explains: "This command uses the <code>&amp;</code> background operator, which defers execution past approval-time safety checks. Approve only if you trust it."</li><li>This does not apply to <code>&amp;&amp;</code> (and-then) or <code>&amp;&gt;</code> (output redirect); only actual backgrounding operators.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New safety check (search for <code>"background operator, which defers execution past approval-time safety checks"</code>)</p>
+    </article>
+    <article class="card" id="repl-context-poisoning-protection">
+      <div class="card-top">
+        <h3>REPL Context Poisoning Protection <a class="anchor" href="#repl-context-poisoning-protection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When REPL sandbox code renders a global non-configurable (making it impossible to restore to a clean state), Claude Code now detects this, resets the VM context automatically, and shows a clear recovery message.</p>
+<div class="blabel">Details</div>
+<ul><li>A new <code>VMContextPoisonedError</code> class is thrown when this condition is detected.</li><li>The REPL context is reset and the user sees: "REPL context poisoned by non-configurable global; context reset" with a note that "global state (variables, registered tools) starts fresh."</li><li>Uses a WeakSet to identify boundary cap errors — the set is identity-based and not inspectable by attacker code, so a Proxy cannot fake a cap error to escape the walker.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New error class (search for <code>"REPL sandbox code made the global"</code> or <code>"VMContextPoisonedError"</code>)</p>
+    </article>
+    <article class="card" id="workflow-vm-boundary-security">
+      <div class="card-top">
+        <h3>Workflow VM Boundary Security <a class="anchor" href="#workflow-vm-boundary-security">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Values crossing the workflow VM boundary now pass through a security-hardened sanitizer that runs inside the VM context itself, protecting against Proxy-based escape attacks.</p>
+<div class="blabel">Details</div>
+<ul><li>The sanitizer uses a <code>WeakSet</code> for cap-error identity (cannot be faked by an attacker-controlled Proxy whose get-trap returns <code>true</code> for any key).</li><li>Arrays are length-capped at a maximum count; exceeding it throws with "array length N exceeds the maximum of N supported across the workflow VM boundary."</li><li>Functions on crossed values are stripped to <code>undefined</code>.</li><li>Workflow results cannot be functions; attempting this now throws "workflow result cannot be a function."</li></ul>
+<div class="blabel">Evidence</div>
+<p>New in-VM sanitizer (search for <code>"workflow VM boundary"</code> or <code>"workflow result cannot be a function"</code>)</p>
+    </article>
+    <article class="card" id="su-and-runuser-added-to-privilege-escalation-list">
+      <div class="card-top">
+        <h3><code>su</code> and <code>runuser</code> Added to Privilege Escalation List <a class="anchor" href="#su-and-runuser-added-to-privilege-escalation-list">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>su</code> and <code>runuser</code> commands are now added to the set of privilege escalation commands that always require manual approval, alongside the existing <code>sudo</code>, <code>doas</code>, and <code>pkexec</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Updated privilege escalation set (search for <code>"runuser"</code> in the permissions module)</p>
+    </article>
+    <article class="card" id="autocompact-thrashing-detection">
+      <div class="card-top">
+        <h3>Autocompact Thrashing Detection <a class="anchor" href="#autocompact-thrashing-detection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The autocompact circuit breaker now uses a fixed threshold of 3 consecutive rapid refills (rather than a configurable parameter embedded in the message), and the error message is now more actionable.</p>
+<div class="blabel">Details</div>
+<ul><li>New message: "Autocompact is thrashing: the context refilled to the limit within 3 turns of the previous compact, 3 times in a row. A file being read or a tool output is likely too large for the context window. Try reading in smaller chunks, or use /clear to start fresh."</li><li>Previous message was split across multiple string fragments; it's now a single constant.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New constant (search for <code>"Autocompact is thrashing: the context refilled to the limit within 3 turns"</code>)</p>
+    </article>
+    <article class="card" id="working-directory-resilience">
+      <div class="card-top">
+        <h3>Working Directory Resilience <a class="anchor" href="#working-directory-resilience">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>If the current working directory is deleted while Claude Code is running, it now recovers by changing to the nearest existing ancestor directory instead of crashing.</p>
+<div class="blabel">Details</div>
+<ul><li>Logs a warning: "Original directory X no longer exists — returned to Y instead."</li><li>Walks up the directory tree until it finds an existing path.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New recovery logic (search for <code>"no longer exists — returned to"</code> or <code>"Original directory"</code>)</p>
+    </article>
+    <article class="card" id="github-enterprise-host-detection">
+      <div class="card-top">
+        <h3>GitHub Enterprise Host Detection <a class="anchor" href="#github-enterprise-host-detection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>GitHub Enterprise Server instances (self-hosted GitHub) are now properly detected throughout the codebase, replacing hardcoded <code>github.com</code> comparisons with host-aware utility functions.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>Em()</code> function recognizes a hostname as GitHub.com (with or without <code>www.</code> prefix).</li><li>New <code>ewr()</code> and <code>fgs()</code> functions return the correct REST API and GraphQL endpoint URLs for both GitHub.com and GitHub Enterprise.</li><li><code>GH_HOST</code> environment variable comparisons now use normalized host matching (<code>ocn()</code>) instead of exact string equality.</li><li>Marketplace git source fetches now use the constant <code>github.com</code> instead of a hardcoded literal string.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Host detection utilities (search for <code>"https://api.github.com"</code> in <code>ewr()</code>, or <code>"github.com"</code> constant <code>LA</code>)</p>
+    </article>
+    <article class="card" id="org-policy-error-message-consolidation">
+      <div class="card-top">
+        <h3>Org Policy Error Message Consolidation <a class="anchor" href="#org-policy-error-message-consolidation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The per-feature "disabled by policy" messages (previously separate for voice mode, remote control, cloud sessions, and web search) are now generated by a shared utility function that also handles the case where the policy cannot be fetched.</p>
+<div class="blabel">Details</div>
+<ul><li>When policy cannot be fetched (network unreachable), now shows: "Couldn't verify your organization's policy for X. Check your network connection and try again." — instead of silently blocking.</li><li>When policy is fetched and feature is blocked: "X is disabled by your organization's policy. Contact your organization admin to enable it/them."</li><li>Old separate static strings removed.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New shared utility <code>gG()</code> (search for <code>"Couldn't verify your organization's policy for"</code>)</p>
+    </article>
+    <article class="card" id="trust-dialog-enforcement-for-settings-permissions">
+      <div class="card-top">
+        <h3>Trust Dialog Enforcement for Settings Permissions <a class="anchor" href="#trust-dialog-enforcement-for-settings-permissions">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Permission allow-rules and additional directory grants from <code>.claude/settings.json</code> and <code>.claude/settings.local.json</code> are now silently ignored when the workspace has not yet been trusted via the interactive trust dialog.</p>
+<div class="blabel">Details</div>
+<ul><li>Logs to stderr: "Ignoring N permissions.allow entries from .claude/settings.json: this workspace has not been trusted. Run Claude Code interactively here once and accept the trust dialog, or set <code>projects[\"...\"].hasTrustDialogAccepted: true</code> in <code>~/.claude/settings.json</code>."</li><li>Only applies before the trust dialog has been accepted for this workspace; once trusted, all settings are applied normally.</li><li>Managed (policy-level) settings are still honored regardless of trust state.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New enforcement logic (search for <code>"this workspace has not been trusted. Run Claude Code interactively here once"</code>)</p>
+    </article>
+    <article class="card" id="otel-log-assistant-responses-environment-variable">
+      <div class="card-top">
+        <h3><code>OTEL_LOG_ASSISTANT_RESPONSES</code> Environment Variable <a class="anchor" href="#otel-log-assistant-responses-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new environment variable that enables OTEL telemetry logging of assistant response content (previously only <code>OTEL_LOG_USER_PROMPTS</code> existed).</p>
+<div class="blabel">Usage</div>
+<pre><code>OTEL_LOG_ASSISTANT_RESPONSES=1 claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>When either <code>OTEL_LOG_ASSISTANT_RESPONSES</code> or <code>OTEL_LOG_USER_PROMPTS</code> is set, assistant response text is included in OTEL spans.</li><li>Without this flag, response content is logged as <code>&lt;REDACTED&gt;</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New env var check (search for <code>"OTEL_LOG_ASSISTANT_RESPONSES"</code>)</p>
+    </article>
+    <article class="card" id="worktree-symlink-safety-checks">
+      <div class="card-top">
+        <h3>Worktree Symlink Safety Checks <a class="anchor" href="#worktree-symlink-safety-checks">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Worktree setup now checks that entries in <code>.worktreeinclude</code> and <code>settings.local.json</code> copies do not resolve to destinations outside the worktree via committed symlinks, and skips them if they do.</p>
+<div class="blabel">Details</div>
+<ul><li>Logs: "Skipping .worktreeinclude entry: destination escapes worktree via committed symlink: X"</li><li>Logs: "Skipping settings.local.json copy: destination escapes worktree via committed symlink"</li><li>Prevents a worktree setup from being used to read or write files outside the isolated checkout.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New safety messages (search for <code>"destination escapes worktree via committed symlink"</code>)</p>
+    </article>
+    <article class="card" id="screen-reader-mode-cursor-visibility">
+      <div class="card-top">
+        <h3>Screen Reader Mode: Cursor Visibility <a class="anchor" href="#screen-reader-mode-cursor-visibility">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When accessibility mode or screen reader detection is enabled, the cursor is no longer hidden when leaving alternate screen mode.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously, the <code>\x1B[?25l</code> (hide cursor) escape was always sent. Now it is skipped when <code>accessibilityMode</code> or <code>isScreenReaderEnabled</code> is true.</li><li>Screen-reader-driven tools often rely on the cursor being visible for navigation.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Conditional cursor-hide escape (search for <code>"accessibilityMode || this.isScreenReaderEnabled"</code>)</p>
+    </article>
+    <article class="card" id="destructive-command-scope-detection">
+      <div class="card-top">
+        <h3>Destructive Command Scope Detection <a class="anchor" href="#destructive-command-scope-detection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new analysis pass for Bash and PowerShell commands classifies the scope of destructive operations (e.g., <code>rm -rf</code>, <code>Remove-Item -Recurse</code>) as <code>cwd</code>, <code>outside_cwd</code>, <code>tmp</code>, or <code>unknown</code>, enabling more targeted permission prompts.</p>
+<div class="blabel">Details</div>
+<ul><li>Analyzes both bash-style (<code>rm -rf path</code>) and PowerShell cmdlet (<code>Remove-Item -Path target -Recurse -Force</code>) syntax.</li><li>Recognizes temp-directory patterns on macOS (<code>/tmp</code>, <code>/var/tmp</code>, <code>/private/tmp</code>), Linux, and Windows (<code>%TEMP%</code>, <code>AppData\Local\Temp</code>).</li><li>Shell expansions (<code>$VAR</code>, backticks, wildcards) cause the scope to be classified as <code>unknown</code> rather than guessing.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New scope detection (search for <code>"destructive-target-scope parse failed"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>OAuth profile: now requires <strong>both</strong> <code>account</code> and <code>organization</code> fields before applying a fetched profile; previously any non-null result was accepted, potentially leaving org context empty. (search for <code>"l?.account &amp;&amp; l.organization"</code>)</li></ul>
+<ul><li>Bash parse error recovery: when the tree-sitter parser returns an <code>ERROR</code> node wrapping a <code>program</code> node at the root level, the inner <code>program</code> node is now unwrapped before redirect analysis, preventing false-positive dangerous-redirect detections. (search for <code>"n.type === \"ERROR\" &amp;&amp; n.children[0]?.type === \"program\""</code>)</li></ul>
+<ul><li>PowerShell quoting: shell-quoting checks on Windows now use the full Windows quoting rules (backslash at end of string requiring special treatment), not just dollar-sign detection. (search for <code>"SCo(c)"</code> in Windows quoting path)</li></ul>
+<ul><li>Background bash shell memory pressure reaping: Claude Code now registers a <code>memoryPressure</code> event listener on background shell processes when not running as a subagent, allowing the OS to signal when memory is tight. Idle, unnoticed shells are then reaped. (search for <code>"task_local_shell_pressure_reap"</code>)</li></ul>
+<ul><li>MCP needs-auth count is now surfaced in the app state (<code>mcpNeedsAuthCount</code>), enabling the UI to reflect pending MCP authentication requirements. (search for <code>"mcpNeedsAuthCount"</code>)</li></ul>
+<ul><li>Model picker now correctly filters and replaces deprecated model aliases with their first-party equivalents when the model is confirmed available. (search for <code>"Ia(r.aliasModel)"</code> in model picker)</li></ul>
+<ul><li><code>--mcp-debug</code> flag removed; functionality is covered by <code>--debug</code>. (search for removed <code>"--mcp-debug"</code> in string diff)</li></ul>
+<ul><li>Background agent spawn: when resuming a previous session with <code>--resume</code>, the transcript path is now correctly passed through to the background agent launch parameters. (search for <code>"resumeTranscriptPath"</code>)</li></ul>
+<ul><li>HTML content extraction: the web fetch tool now also extracts <code>&lt;meta name="description"&gt;</code> content and <code>&lt;h1&gt;</code> headings for better URL titles when the <code>&lt;title&gt;</code> tag is missing or generic. (search for <code>"&lt;meta[^&gt;]+name="</code> in HTML parser)</li></ul>
+<ul><li>Error telemetry: errors from background spawn failures and console method failures now include a <code>telemetryMessage</code> field (via <code>gh()</code>) so they're correctly categorized in error tracking rather than grouped under generic labels. (search for <code>"background spawn failed"</code> or <code>"console.${s} failed"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="tengu-cobalt-plinth-putguard-in-development">
+      <div class="card-top">
+        <h3><code>tengu_cobalt_plinth_putguard</code> [In Development] <a class="anchor" href="#tengu-cobalt-plinth-putguard-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new feature flag has been added to the codebase but gates no visible user-facing behavior yet.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged</p>
+<div class="blabel">Details</div>
+<ul><li>A new boolean gate <code>mrl()</code> checks <code>it("tengu_cobalt_plinth_putguard", false)</code>.</li><li>No visible user-facing behavior is wired to this flag in this release.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New flag check (search for <code>"tengu_cobalt_plinth_putguard"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.193.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.193.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
