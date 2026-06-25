@@ -266,9 +266,11 @@
       <div class="blabel">What</div>
 <p>Infrastructure for saving the current input box contents as a draft (<code>.prompt-draft</code>) has been added, which would allow the prompt to persist if the session exits unexpectedly.</p>
 <div class="blabel">Status</div>
-<p>Constant defined (<code>".prompt-draft"</code>) but no write/read paths appear to be wired to the UI yet.</p>
+<p>Fully implemented — write and read paths are both present. Not yet confirmed as user-visible in all configurations.</p>
+<div class="blabel">Details</div>
+<ul><li>Draft is written to <code>CLAUDE_JOB_DIR/.prompt-draft</code>, capped at 256 KiB (content is sliced at 262144 bytes before write)</li><li>On session restore, the draft file is read back (up to 1 MiB), then immediately deleted — one-shot recovery, not a persistent store</li><li>If the session is not in auto mode, the draft is restored to the composer input box directly (<code>V$t</code>)</li><li>If the session has no prior prompt set, the draft is restored to in-memory context (<code>Myt</code>)</li><li>The earlier changelog note that "no write/read paths appear to be wired" is outdated — both paths exist in this version</li></ul>
 <div class="blabel">Evidence</div>
-<p>Prompt draft constant (search for <code>".prompt-draft"</code>)</p>
+<p>Draft write/read functions (search for <code>".prompt-draft"</code> or the 262144 byte cap constant)</p>
     </article>
   </div>
   <div class="section-head">

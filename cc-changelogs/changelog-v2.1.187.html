@@ -307,7 +307,7 @@ allowed-tools: preset:default, Bash(make test)
 <div class="blabel">Status</div>
 <p>Feature-flagged (gated by <code>tengu_startup_announcements</code>)</p>
 <div class="blabel">Details</div>
-<ul><li>Announcements are configured server-side as a JSON array with <code>id</code>, optional <code>title</code>, <code>text</code>, <code>priority</code>, and <code>maxImpressions</code> fields</li><li>Claude Code tracks how many times each announcement has been shown (<code>announcementImpressions</code> in config) and stops showing it once <code>maxImpressions</code> is reached</li><li>When enabled, the announcement appears at the start of the session; slash-command references in the text are highlighted</li></ul>
+<ul><li>Announcements are fetched from the server as the value of the <code>tengu_startup_announcements</code> feature flag — the flag carries the announcement payload, not just an on/off gate</li><li>Each announcement has <code>id</code>, optional <code>title</code>, <code>text</code>, <code>priority</code>, and <code>maxImpressions</code> fields</li><li>Claude Code tracks how many times each announcement has been shown (<code>announcementImpressions</code> in config) and stops showing it once <code>maxImpressions</code> is reached; multiple announcements can be queued and the highest-priority un-maxed one is selected</li><li>Rendered as a named UI component (<code>startup-announcement</code>) that appears before the session prompt, not inline during a session</li><li>Slash-command references in the text are syntax-highlighted</li><li>Model requirements can be attached to an announcement, restricting which sessions see it</li></ul>
 <div class="blabel">Evidence</div>
 <p>New announcement component (gated on <code>tengu_startup_announcements</code> flag, search for <code>"startup-announcement"</code>)</p>
     </article>
@@ -320,7 +320,7 @@ allowed-tools: preset:default, Bash(make test)
 <div class="blabel">Status</div>
 <p>Feature-flagged (gated by <code>tengu_silk_almanac</code>)</p>
 <div class="blabel">Details</div>
-<ul><li>Each mount directory gets a <code>.memory-sync</code> manifest recording its <code>partitionId</code></li><li>On sync, if the manifest's partition doesn't match the expected one, the basis is invalidated and re-sync is forced</li><li>If the directory holds a different partition's manifest during a non-user-scoped mid-session sync, sync is suppressed with a warning: "mount dir holds a different partition's <code>.memory-sync</code> — suppressing sync (remove the dir to re-mount)"</li></ul>
+<ul><li>Each team's memory is scoped to a unique <code>partitionId</code> (the backend's partition identifier, likely an org or team UUID)</li><li>Each mount directory gets a <code>.memory-sync</code> manifest (JSON: <code>{ v: 1, partitionId: "..." }</code>) written at sync time</li><li>On pull, the manifest's <code>partitionId</code> is compared against the expected backend partition; a mismatch invalidates the basis and forces a full re-sync</li><li>If a different partition's manifest is detected during a non-user-scoped mid-session sync, sync is suppressed entirely with a warning: "mount dir holds a different partition's <code>.memory-sync</code> — suppressing sync (remove the dir to re-mount)"</li><li>Without this flag enabled, two teams sharing the same directory path could silently read and overwrite each other's memory</li></ul>
 <div class="blabel">Evidence</div>
 <p>New manifest functions (gated on <code>it("tengu_silk_almanac", !1)</code>, search for <code>".memory-sync"</code> or <code>"partition mismatch"</code>)</p>
     </article>
@@ -331,9 +331,9 @@ allowed-tools: preset:default, Bash(make test)
       <div class="blabel">What</div>
 <p>Bootstrap data (client configuration, model options, costs) will be cached on a per-context key (entrypoint + model + org UUID + CC version) rather than a single global cache slot, allowing different sessions or entrypoints to carry their own cached data without overwriting each other.</p>
 <div class="blabel">Status</div>
-<p>Partially enabled — the new <code>clientDataCacheSlots</code> field is written by the bootstrap fetch, but the feature is controlled by the <code>tengu_client_data_cache_key</code> telemetry gate.</p>
+<p>Active — <code>tengu_client_data_cache_key</code> is a telemetry-only gate, not a feature gate. The per-context caching is written and read regardless; the gate only controls whether cache hit/miss/stale/changed stats are reported to telemetry.</p>
 <div class="blabel">Details</div>
-<ul><li>New <code>clientDataCacheSlots</code> config key stores up to a fixed number of keyed cache entries</li><li>Legacy <code>clientDataCache</code> is still read as a fallback when no slot matches</li></ul>
+<ul><li>Cache key is composed of: entrypoint + model + org UUID + CC version — so CLI and IDE extension sessions never clobber each other's cached model/org config</li><li>New <code>clientDataCacheSlots</code> config key stores keyed entries; legacy <code>clientDataCache</code> (global single slot) is still read as a fallback when no matching slot exists (<code>legacy_fallback: true</code> in telemetry)</li><li>Telemetry tracks four outcomes per fetch: <code>slot_hit</code>, <code>slot_changed</code> (remote data differs from cached), <code>legacy_fallback</code>, and <code>slot_stale</code> (cache older than the stale threshold)</li><li>If cache hit and data is unchanged and not stale, the bootstrap write is skipped entirely</li></ul>
 <div class="blabel">Evidence</div>
 <p>New slot-keyed cache (search for <code>"clientDataCacheSlots"</code> or <code>"tengu_client_data_cache_key"</code>)</p>
     </article>
