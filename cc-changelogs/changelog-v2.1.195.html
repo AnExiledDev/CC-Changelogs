@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.195 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.195."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.195</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.195</span></h1>
+<p class="sub">This release is headlined by an interactive cloud gateway login flow with full OAuth device-code authentication and TLS certificate pinning, and a new WebSocket source mode for the Monitor tool. It also ships a substantially richer model catalog with six new or updated model entries, per-organization effort-level enforcement, and better tooling for MCP hook matchers and tool schema normalization.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.193 → v2.1.195</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">6</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="cloud-gateway-oauth-login">
+      <div class="card-top">
+        <h3>Cloud Gateway OAuth Login <a class="anchor" href="#cloud-gateway-oauth-login">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Users can now authenticate with an enterprise cloud gateway directly from Claude Code using a browser-based device code OAuth flow, complete with TLS certificate pinning.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude login          # opens the /login flow; gateway URL is provisioned via managed settings (forceLoginGatewayUrl)
+/login                # same, from inside a session</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The gateway URL must use <code>https://</code> (plain <code>http://</code> is only allowed for localhost in development).</li><li>On first connection, Claude Code shows the gateway's SHA-256 certificate fingerprint and prompts "You haven't connected to this gateway before. Once trusted, it can push settings to this machine that execute commands and change your environment. Only continue if this is your organization's gateway."</li><li>If the certificate changes after a previous trust, a warning is shown: "The TLS certificate for this gateway has changed since you last connected. Only continue if your administrator has confirmed a certificate rotation."</li><li>DNS resolution is validated to confirm the gateway host resolves to private-network addresses only. Direct IPs, dual-stack hostnames with a public AAAA record, and HTTP proxy hosts on public networks are all flagged with specific error messages.</li><li>The token is persisted via secure storage after the browser flow completes.</li><li>If <code>NODE_EXTRA_CA_CERTS</code> is needed for a private CA or self-signed certificate, a help message now explains exactly how to set it (both as an environment variable and via <code>env.NODE_EXTRA_CA_CERTS</code> in <code>~/.claude/settings.json</code>).</li></ul>
+<div class="blabel">Evidence</div>
+<p>Full browser-based OAuth flow (search for <code>"Connecting to gateway…"</code>, <code>"Certificate fingerprint (SHA-256):"</code>, <code>"Gateway URL must use https://"</code>)</p>
+    </article>
+    <article class="card" id="monitor-tool-websocket-support">
+      <div class="card-top">
+        <h3>Monitor Tool WebSocket Support <a class="anchor" href="#monitor-tool-websocket-support">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The Monitor tool now accepts a <code>ws</code> source that opens a WebSocket and streams each incoming text frame as a notification event — no shell process, no polling needed.</p>
+<div class="blabel">Usage</div>
+<pre><code>Monitor({
+  ws: { url: &#x27;wss://events.example.com/stream&#x27;, protocols: [&#x27;v1&#x27;] },
+  description: &#x27;deploy events&#x27;,
+})</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Each text frame becomes one notification; multiline frames stay as one event.</li><li>Binary frames are reported as <code>[binary frame, N bytes]</code> rather than passed through.</li><li>Socket close ends the watch; close code and optional reason are surfaced.</li><li>WebSocket errors appear before close as <code>[WebSocket error: ...]</code>.</li><li>Same rate-limiting as bash monitor — a firehose is suppressed and eventually stopped.</li><li>Blocks connections to private/link-local/cloud-metadata IP ranges (SSRF protection) and respects <code>sandbox.network.deniedDomains</code> and <code>allowManagedDomainsOnly</code>.</li><li>Compliance taint disables arbitrary-URL WebSocket egress with a clear message: "Monitor cannot open a WebSocket: arbitrary-URL egress is disabled by your organization's compliance policy."</li><li>Cannot be combined with <code>command</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>MonitorWsTask</code> and <code>MonitorWsPreconditionError</code> types (search for <code>"MonitorWsTask"</code>, <code>"MonitorWsPreconditionError"</code>, <code>"ws source"</code>)</p>
+    </article>
+    <article class="card" id="model-catalog-new-and-updated-models">
+      <div class="card-top">
+        <h3>Model Catalog: New and Updated Models <a class="anchor" href="#model-catalog-new-and-updated-models">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The model catalog has been reworked into a structured, versioned manifest (<code>schema_version: 1</code>) covering all current models. Several new models are now registered.</p>
+<div class="blabel">Details</div>
+<ul><li>New model entries added: <code>claude-sonnet-4-6</code> (Sonnet 4.6, knowledge cutoff August 2025), <code>claude-opus-4-6</code> (Opus 4.6, knowledge cutoff May 2025 with <code>fast_mode</code>), <code>claude-opus-4-7</code> (Opus 4.7, native 1M context, <code>xhigh_effort</code>, knowledge cutoff January 2026, default effort <code>xhigh</code>), <code>claude-opus-4-8</code> (Opus 4.8, native 1M context, <code>lean_prompt</code>, <code>mid_conv_system</code>, default effort <code>high</code>), <code>claude-fable-5</code> (Fable 5, native 1M context, <code>rejects_disabled_thinking</code>, <code>fable_5_mitigations</code>).</li><li>Family aliases updated: <code>opus</code> → <code>claude-opus-4-8</code>, <code>sonnet</code> → <code>claude-sonnet-4-6</code>, <code>fable</code> → <code>claude-fable-5</code>.</li><li>All models include provider IDs for first_party, bedrock, vertex, foundry, anthropic_aws, mantle, and gateway.</li><li>Capability flags now include <code>effort</code>, <code>max_effort</code>, <code>xhigh_effort</code>, <code>adaptive_thinking</code>, <code>context_management</code>, <code>fast_mode</code>, <code>lean_prompt</code>, and <code>mid_conv_system</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New model catalog object with <code>schema_version: 1</code> (search for <code>"Generated by \</code>bun run generate:model-catalog\<code>"</code>, <code>"claude-sonnet-4-6"</code>, <code>"claude-fable-5"</code>)</p>
+    </article>
+    <article class="card" id="vertex-1m-context-warning-for-unsupported-models">
+      <div class="card-top">
+        <h3>Vertex 1M Context Warning for Unsupported Models <a class="anchor" href="#vertex-1m-context-warning-for-unsupported-models">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A warning is emitted when requesting the 1M context beta (<code>[1m]</code> model suffix) on Vertex for models that do not support it.</p>
+<div class="blabel">Details</div>
+<ul><li>Specific message: "Sonnet 4.5/Sonnet 4 do not support 1M context on Vertex — requests with the context-1m beta (the [1m] model suffix) for these models will be rejected with a 400. Vertex 1M lineup: Opus 4.6+/Sonnet 4..."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Vertex 1M limitation notice (search for <code>"Sonnet 4.5/Sonnet 4 do not support 1M context on Vertex"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="effort-levels-now-enforced-per-organization">
+      <div class="card-top">
+        <h3>Effort Levels Now Enforced Per-Organization <a class="anchor" href="#effort-levels-now-enforced-per-organization">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>If your organization's gateway has set a maximum effort level for a given model, <code>/effort</code> will silently cap selections above that limit and show an explanatory message.</p>
+<div class="blabel">Details</div>
+<ul><li>When you pick an effort level that exceeds the organization cap, Claude Code automatically uses the highest allowed level (or the model's own floor, whichever applies) and logs a message like: "Effort 'xhigh' exceeds your organization's limit for claude-sonnet-4-6; using 'high'."</li><li>The <code>/effort</code> picker displays a "Higher effort levels are restricted by your organization." notice when some effort levels are blocked.</li><li>The <code>Usage: /effort [...]</code> help text now dynamically lists only the effort levels actually available for the current model and session.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Effort capping logic (search for <code>"exceeds your organization's limit for"</code>, <code>"Higher effort levels are restricted by your organization."</code>)</p>
+    </article>
+    <article class="card" id="remote-session-progress-display">
+      <div class="card-top">
+        <h3>Remote Session Progress Display <a class="anchor" href="#remote-session-progress-display">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When starting or resuming a cloud session, a structured progress view now shows each setup step (provision, clone, setup_script, start_cc) with live status, elapsed time, and detail lines.</p>
+<div class="blabel">Details</div>
+<ul><li>Steps shown: "Setting up a cloud container", "Cloning repository", "Running setup script", "Starting Claude Code" (and resume variants: "Resuming your cloud container", "Refreshed repository", etc.).</li><li>Elapsed time is shown per step once it exceeds 5 seconds.</li><li>Messages queued during setup are listed: "N messages queued · sends once the session is ready" or "You can start typing — messages send once the session is ready".</li><li>Final summary: "Remote session ready in Xs" (or "resumed in Xs").</li></ul>
+<div class="blabel">Evidence</div>
+<p>Progress step renderer (search for <code>"Setting up a cloud container"</code>, <code>"Cloning repository"</code>, <code>"You can start typing — messages send once the session is ready"</code>)</p>
+    </article>
+    <article class="card" id="hook-matcher-warnings-for-mcp-server-patterns">
+      <div class="card-top">
+        <h3>Hook Matcher Warnings for MCP Server Patterns <a class="anchor" href="#hook-matcher-warnings-for-mcp-server-patterns">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Claude Code now warns at startup if a hook matcher like <code>mcp__my_server</code> matches no known tool, because hook matchers are compared as exact strings — the correct pattern to match all tools from a server is <code>mcp__my_server__.*</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Warning message: "Hook matcher <code>mcp__server</code> matches no tool (it is compared as an exact string). To match all tools from this server, use <code>mcp__server__.*</code>. See CHANGELOG v2.1.195."</li><li>Only fires once per distinct matcher pattern per session.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Hook matcher warning (search for <code>"matches no tool (it is compared as an exact string). To match all tools from this server, use \</code>"`)</p>
+    </article>
+    <article class="card" id="mcp-tool-schema-normalization">
+      <div class="card-top">
+        <h3>MCP Tool Schema Normalization <a class="anchor" href="#mcp-tool-schema-normalization">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>MCP tools whose input schemas use top-level <code>anyOf</code>, <code>oneOf</code>, or <code>allOf</code> can now be normalized into a flat object schema, making them usable in Claude Code without being dropped.</p>
+<div class="blabel">Details</div>
+<ul><li>Controlled by the <code>tengu_mcp_normalize_root_combinators</code> feature flag. Set to <code>["*"]</code> for all MCP servers, or a list of hostnames to target specific ones.</li><li>When normalization succeeds, a human-readable note is injected into the tool description, e.g.: "Input constraint: Provide parameters for exactly one of: (param_a, param_b)."</li><li>If normalization fails, the tool is dropped with a logged reason rather than silently accepted with a broken schema.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema normalization (search for <code>"Input constraint: Provide parameters for exactly one of"</code>, <code>tengu_mcp_normalize_root_combinators</code>)</p>
+    </article>
+    <article class="card" id="code-review-workflow-improved-verification">
+      <div class="card-top">
+        <h3>Code Review Workflow Improved Verification <a class="anchor" href="#code-review-workflow-improved-verification">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The built-in <code>/code-review</code> workflow now deduplicates candidates before verification — each distinct (file, line) location gets exactly one independent verifier, rather than one verifier per raw candidate.</p>
+<div class="blabel">Details</div>
+<ul><li>Old description: "one independent verifier for every candidate"</li><li>New description: "one independent verifier for every distinct (file, line) location across the pooled candidates"</li><li>Findings from all finder agents are pooled first, then verified — this reduces duplicate work when multiple finders identify the same location.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated code review description constant (search for <code>"one independent verifier for every distinct (file, line) location across the pooled candidates"</code>)</p>
+    </article>
+    <article class="card" id="config-inline-key-value-shortcut">
+      <div class="card-top">
+        <h3>/config Inline Key=Value Shortcut <a class="anchor" href="#config-inline-key-value-shortcut">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>/config</code> command now accepts <code>key=value</code> arguments to set panel settings inline without opening the interactive panel.</p>
+<div class="blabel">Usage</div>
+<pre><code>/config model=claude-opus-4-8
+/config theme=dark</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Supported settings include model, theme, verbose, and output style.</li><li>User-facing tip: "/config key=value sets panel settings (model, theme, verbose, output style, …) inline — no need to open the panel."</li></ul>
+<div class="blabel">Evidence</div>
+<p>New /config inline setting tip (search for <code>"/config key=value sets panel settings"</code>)</p>
+    </article>
+    <article class="card" id="mcp-login-from-cli-with-no-browser">
+      <div class="card-top">
+        <h3>MCP Login from CLI with --no-browser <a class="anchor" href="#mcp-login-from-cli-with-no-browser">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>MCP servers that require authentication can now be authenticated from the command line, with a <code>--no-browser</code> flag for SSH/headless environments where the browser cannot open.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude mcp login &lt;server-name&gt;
+claude mcp login &lt;server-name&gt; --no-browser</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>--no-browser</code> prints the callback URL for manual pasting rather than attempting to open a browser.</li><li>Tip: "<code>claude mcp login &lt;name&gt;</code> authenticates an MCP server from the CLI — add --no-browser to paste the callback URL manually over SSH."</li></ul>
+<div class="blabel">Evidence</div>
+<p>New CLI tip (search for <code>"claude mcp login &lt;name&gt; --no-browser"</code>)</p>
+    </article>
+    <article class="card" id="deny-ask-rules-for-tool-input-parameters">
+      <div class="card-top">
+        <h3>Deny/Ask Rules for Tool Input Parameters <a class="anchor" href="#deny-ask-rules-for-tool-input-parameters">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Permission rules now support matching on a specific tool input parameter value, allowing fine-grained auto-handling without a blanket allow.</p>
+<div class="blabel">Details</div>
+<ul><li>Example rules: <code>deny Agent(model:opus)</code> or <code>ask Bash(run_in_background:true)</code>.</li><li>Tip: "Deny and ask rules can match a tool input parameter — e.g., deny Agent(model:opus) or ask Bash(run_in_background:true) — so that specific pattern is auto-handled without prompting each time."</li><li>The <code>/permissions</code> panel guidance also updated to reference this syntax.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New permissions tip (search for <code>"Deny and ask rules can match a tool input parameter"</code>, <code>"/permissions, then add a Tool(param:value) deny or ask rule"</code>)</p>
+    </article>
+    <article class="card" id="skill-override-lookup-extended-to-local-settings">
+      <div class="card-top">
+        <h3>Skill Override Lookup Extended to Local Settings <a class="anchor" href="#skill-override-lookup-extended-to-local-settings">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Skill enable/disable overrides (<code>skillOverrides</code>) are now checked in local project settings (<code>localSettings</code>) in addition to project and user settings, with local settings taking the highest priority.</p>
+<div class="blabel">Details</div>
+<ul><li>Priority order: localSettings &gt; projectSettings &gt; userSettings.</li><li>The <code>user-invocable-only</code> mode is also correctly applied when a skill's <code>lockSource</code> is <code>"author"</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated skill override resolver (search for <code>"localSettings"</code> in context of <code>skillOverrides</code>)</p>
+    </article>
+    <article class="card" id="interrupted-response-recovery-improved">
+      <div class="card-top">
+        <h3>Interrupted Response Recovery Improved <a class="anchor" href="#interrupted-response-recovery-improved">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a response was interrupted mid-generation, the resume hint now escapes angle brackets inside the fence (HTML-entity-escaped) to avoid parse ambiguities. The prior-partial-output fence boundary is also validated more carefully.</p>
+<div class="blabel">Details</div>
+<ul><li>New message: "Your previous response was interrupted mid-generation. Your prior partial output follows this reminder, fenced as &lt;interrupted-output&gt; (angle brackets inside the fence are HTML-entity-escaped). It is..."</li><li>Logs <code>[reply-on-resume] prefill boundary mismatch</code> if the boundary doesn't match what was expected.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Interrupted output handling (search for <code>"[reply-on-resume] partial-hint"</code>, <code>"[reply-on-resume] prefill boundary mismatch"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Adoption (workflow handoff) now retries on <code>EPERM</code>/<code>EBUSY</code>/<code>EACCES</code> errors up to 3 times with 50ms delay before giving up, reducing failures on Windows and network paths (search for <code>"ebusy_retry"</code>)</li></ul>
+<ul><li><code>system-reminder</code> tags are now stripped from both the leading AND trailing end of assistant text blocks, not just from the start — preventing stale reminders from leaking into prefill boundaries (search for <code>"&lt;/system-reminder&gt;"</code> in the Cur function)</li></ul>
+<ul><li>Daemon error messages and stack traces now have hex session IDs replaced with <code>cc-daemon-<em></code> before logging, preventing log pollution with session-specific noise (search for <code>"cc-daemon-</em>"</code>)</li></ul>
+<ul><li>Monitor stopped message now shows the count of excess output bytes as a number rather than a raw string fragment, and the restart advice is no longer appended (search for <code>"[Monitor stopped — too much output ("</code>)</li></ul>
+<ul><li>Voice stream now handles mid-stream errors by salvaging partial audio rather than silently failing (search for <code>"[voice] mid-stream error: salvaging"</code>)</li></ul>
+<ul><li>MCP server re-authentication notifications are now namespaced with a prefix (<code>mcp-needs-reauth-</code>) to avoid colliding with other notification IDs (search for <code>"mcp-needs-reauth-"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>Hook matchers for MCP servers have changed behavior (or rather, an existing behavior is now surfaced as a warning): <code>mcp__server_name</code> is an exact-string match that will never match any real tool. The correct form to match all tools from a server is <code>mcp__server_name__.<em></code>. If you see the warning "Hook matcher <code>mcp__server</code> matches no tool", update your hook rules in <code>.claude/settings.json</code> to use the <code>__.</em></code> suffix.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.195.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.195.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
