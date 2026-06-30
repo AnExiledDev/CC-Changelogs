@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.197 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.197."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.197</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.197</span></h1>
+<p class="sub">This release introduces <strong>Claude Sonnet 5</strong> (<code>claude-sonnet-5</code>) as the new default Sonnet model for Claude Code, replacing Claude Sonnet 4.6. The model picker gains a promotional pricing display that shows the launch promo price alongside the struck-through list price, and a new "Sonnet 5 (1M context)" option appears alongside the renamed "Sonnet 4.6 (1M context)" entry. Alias-to-canonical-ID resolution was added so that settings referencing saved model IDs survive the transition.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.196 → v2.1.197</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="claude-sonnet-5-is-now-the-default-model">
+      <div class="card-top">
+        <h3>Claude Sonnet 5 Is Now the Default Model <a class="anchor" href="#claude-sonnet-5-is-now-the-default-model">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Claude Sonnet 5 (<code>claude-sonnet-5</code>) becomes the default Sonnet tier model, replacing Claude Sonnet 4.6. The <code>sonnet</code> alias now resolves to <code>claude-sonnet-5</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Model ID: <code>claude-sonnet-5</code></li><li>1M context window, 64K default output tokens, 128K max output tokens</li><li>Full adaptive thinking support (<code>max</code> effort level enabled)</li><li>Available on all providers: first-party Anthropic API, Bedrock (<code>us.anthropic.claude-sonnet-5</code>), Vertex (<code>claude-sonnet-5</code>), Foundry, Gateway, and Mantle (<code>anthropic.claude-sonnet-5</code>)</li><li>Sonnet 4.6 is retained in the model picker as "Sonnet 4.6 · Previous Sonnet version"</li><li>Hook examples in settings/CLAUDE.md now reference <code>claude-sonnet-5</code></li></ul>
+<div class="blabel">Evidence</div>
+<p><code>SONNET_ID</code> constant updated (search for <code>"claude-sonnet-5"</code> in model constants; <code>SONNET_NAME: "Claude Sonnet 5"</code>)</p>
+    </article>
+    <article class="card" id="promotional-launch-pricing-in-model-picker">
+      <div class="card-top">
+        <h3>Promotional Launch Pricing in Model Picker <a class="anchor" href="#promotional-launch-pricing-in-model-picker">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When Sonnet 5 is on a launch promotion, the model picker displays the promo price with the regular list price struck through next to it.</p>
+<div class="blabel">Details</div>
+<ul><li>During the promo period, the Sonnet 5 entry shows: <code>~~$3/$15~~ $2/$10 per Mtok · promo through [date]</code></li><li>The promo expiry date is fetched from server configuration and formatted as a short date (e.g., "Jun 29")</li><li>When no promo is active, the entry reverts to showing the standard pricing description</li><li>The "Sonnet 5 (1M context)" entry in the extended context picker follows the same struck-through display pattern</li><li>This is a new UI field: <code>promoListPrice</code> added to the model row schema specifically to support struck-through rendering in rich pickers</li></ul>
+<div class="blabel">Evidence</div>
+<p>Promo display logic (search for <code>"$2/$10 per Mtok"</code> and <code>"promoListPrice"</code>); schema documentation (search for <code>"@internal List price (e.g. \</code>$3/$15\<code>)"</code>)</p>
+    </article>
+    <article class="card" id="sonnet-5-added-to-the-1m-context-picker">
+      <div class="card-top">
+        <h3>Sonnet 5 Added to the 1M Context Picker <a class="anchor" href="#sonnet-5-added-to-the-1m-context-picker">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A "Sonnet 5 (1M context)" option now appears in the extended-context model picker, and the previous "Sonnet (1M context)" entry is renamed to "Sonnet 4.6 (1M context)".</p>
+<div class="blabel">Details</div>
+<ul><li>New entry: <code>value: "sonnet[1m]"</code> → "Sonnet 5 (1M context)" — "Sonnet 5 with 1M context window - for long sessions with large codebases"</li><li>Renamed entry: <code>value: "claude-sonnet-4-6[1m]"</code> → "Sonnet 4.6 (1M context)"</li><li>Sonnet 5 has <code>native_1m</code> support on all 3rd-party providers (Bedrock, Vertex, Foundry, Gateway); availability is checked per-provider against a new <code>native_1m_3p</code> capability flag</li><li>The "not available for your account" error message updated from "Sonnet 4.6 with 1M context is not available…" to "Sonnet with 1M context is not available…"</li></ul>
+<div class="blabel">Evidence</div>
+<p>New picker option (search for <code>"Sonnet 5 (1M context)"</code>); renamed entry (search for <code>"Sonnet 4.6 (1M context)"</code>); availability check function (search for <code>"native_1m_3p"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="alias-to-canonical-id-resolution-for-persisted-model-prefere">
+      <div class="card-top">
+        <h3>Alias-to-Canonical-ID Resolution for Persisted Model Preferences <a class="anchor" href="#alias-to-canonical-id-resolution-for-persisted-model-prefere">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Model alias matching now uses a canonical wire model ID to let hosts correctly match a stored explicit model ID (e.g., a saved <code>claude-sonnet-4-6</code>) against the alias row that covers it, surviving model transitions without breaking saved settings.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>canonicalId</code> field in the model row schema: <code>"Canonical wire model id this row's value resolves to (e.g. 'sonnet' → 'claude-sonnet-5')"</code></li><li>New <code>cda()</code> function resolves a persisted explicit model ID to the best-matching option in the current picker list, handling alias→concrete mappings</li><li>This means if a user had <code>model: claude-sonnet-4-6</code> saved explicitly, the picker can still locate the correct entry rather than falling back to an unknown state</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema description (search for <code>"Canonical wire model id this row's"</code>); matcher function (search for <code>"Lets hosts match a persisted explicit id"</code>)</p>
+    </article>
+    <article class="card" id="explicit-error-for-missing-bedrock-fallback-id">
+      <div class="card-top">
+        <h3>Explicit Error for Missing Bedrock Fallback ID <a class="anchor" href="#explicit-error-for-missing-bedrock-fallback-id">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The function that resolves default 3rd-party model IDs now throws a descriptive error if a model tier is configured with <code>bedrock: null</code>, instead of silently passing <code>null</code> downstream.</p>
+<div class="blabel">Details</div>
+<ul><li>Previous behavior: <code>null</code> was passed as the Bedrock fallback ID, which could produce cryptic downstream failures</li><li>New behavior: immediately throws <code>"A DEFAULT_3P_*_KEY points at a model config with bedrock: null — Bedrock setup has no fallback id for that tier"</code></li><li>This surfaces misconfiguration at the resolution point rather than at API call time</li></ul>
+<div class="blabel">Evidence</div>
+<p>Error message (search for <code>"A DEFAULT_3P_*_KEY points at a model config with bedrock: null"</code>)</p>
+    </article>
+    <article class="card" id="model-documentation-updated-in-api-reference-context">
+      <div class="card-top">
+        <h3>Model Documentation Updated in API Reference Context <a class="anchor" href="#model-documentation-updated-in-api-reference-context">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The built-in API reference context used by the <code>claude-api</code> skill has been updated to reflect the Claude 5 family.</p>
+<div class="blabel">Details</div>
+<ul><li>Model Migration Guide updated with Sonnet 5 migration guidance including: unchanged features (1M context window, 128K max output, prompt caching, batch, Files API, PDF, vision, tools), plus Sonnet 5-specific notes</li><li>Model Catalog updated: Sonnet 5 listed as active; Sonnet 4.6 reclassified as "Previous-generation Sonnet" with max output corrected to 128K (was shown as 64K in previous version's docs)</li><li>Hook examples in the agent/prompt hook documentation now default to <code>claude-sonnet-5</code></li><li>The model migration table now includes <code>claude-sonnet-5</code> in the source column</li></ul>
+<div class="blabel">Evidence</div>
+<p>Model catalog entry (search for <code>"Claude Sonnet 5"</code> in model catalog strings); migration table (search for <code>"claude-sonnet-5" / "claude-opus-4-8"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.197.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.197.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
