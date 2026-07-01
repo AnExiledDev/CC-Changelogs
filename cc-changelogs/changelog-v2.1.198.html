@@ -149,9 +149,9 @@ claude agents --allow-tools Bash,Read,Write</code></pre>
 <div class="blabel">Usage</div>
 <pre><code>export CLAUDE_MEMORY_STORES=&quot;...&quot;</code></pre>
 <div class="blabel">Details</div>
-<ul><li>Feature-flagged via <code>tengu_moth_copse</code>; the env var provides a user-side path to enable it</li><li>Exact storage targets depend on the value provided; contact support for configuration details</li></ul>
+<ul><li>Feature-flagged via <code>tengu_moth_copse</code>; setting that flag OR providing a non-empty <code>CLAUDE_MEMORY_STORES</code> value enables the multi-store subsystem (<code>qat()</code> returns true in either case)</li><li>The env var accepts a <strong>JSON array</strong>; each element is either a bare path string or an object with fields: <code>path</code> (absolute, required), <code>mode</code> (<code>"rw"</code> | <code>"ro"</code>, default <code>"rw"</code>), <code>scope</code> (<code>"user"</code> | <code>"team"</code>, default <code>"team"</code>), <code>mount</code> (optional alphanumeric name auto-derived from the last path segment if omitted), <code>promptIndex</code> (optional relative path), <code>promptIndexMaxBytes</code> (optional integer)</li><li>Validation is strict: the JSON must parse cleanly, all paths must be absolute and must not override the host, mount names must match <code>/^[A-Za-z0-9_-]+$/</code>, duplicate mount names throw, and only one <code>scope:"user"</code> entry is permitted</li><li>At startup, successfully parsed stores are logged at debug level: <code>"memory-stores: parsed N store(s): mount(mode), ..."</code></li><li>When active, the multi-store router (<code>uL()</code>) supersedes the default single-directory memory path, routing reads and writes to the configured stores based on scope</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>qat()</code> function (search for <code>"CLAUDE_MEMORY_STORES"</code> and <code>tengu_moth_copse</code> flag)</p>
+<p><code>qat()</code> function (search for <code>"CLAUDE_MEMORY_STORES"</code> and <code>tengu_moth_copse</code> flag); <code>eue()</code> parser and <code>zqd</code> schema (search for <code>"CLAUDE_MEMORY_STORES is not valid JSON"</code> and <code>"CLAUDE_MEMORY_STORES has duplicate mount"</code>)</p>
     </article>
   </div>
   <div class="section-head">
@@ -206,9 +206,9 @@ claude agents --allow-tools Bash,Read,Write</code></pre>
       <div class="blabel">What</div>
 <p>A new <code>fold_boundary</code> task subtype allows the harness to insert context fold points in the conversation — compressing completed work to free context budget.</p>
 <div class="blabel">Details</div>
-<ul><li>Feature-gated by <code>tengu_fold_tool</code></li><li>When enabled, fold boundaries appear alongside scheduled-task fires as eligible compression markers</li><li><code>foldedCount</code> is now tracked in session metadata</li></ul>
+<ul><li>Feature-gated by <code>tengu_fold_tool</code>; additionally requires that the session is not running in remote/cloud mode (<code>gr()</code> must be false — the flag is a local-only capability)</li><li><code>vhp()</code> returns true when both conditions are met; <code>Vda()</code> then adds <code>"fold_boundary"</code> to the set of subtypes the loop dispatcher recognises alongside <code>"scheduled_task_fire"</code></li><li>When a <code>fold_boundary</code> system message is written to the transcript, it carries a <code>foldedUuids</code> array listing the UUIDs of the messages that were compressed; the display renderer treats this subtype identically to <code>scheduled_task_fire</code> (dimmed text with a clock prefix)</li><li>During conversation collapsing, each <code>fold_boundary</code> message increments <code>foldedCount</code> by <code>foldedUuids.length</code>; the running total is then propagated to parent summary messages and included in the per-turn stats displayed to the user</li><li><code>foldedCount</code> is preserved when collapsing nested summaries: <code>if (t.foldedCount) e.foldedCount = (e.foldedCount ?? 0) + t.foldedCount</code></li></ul>
 <div class="blabel">Evidence</div>
-<p>Feature flag check (search for <code>tengu_fold_tool</code>) and new subtype (search for <code>"fold_boundary"</code>)</p>
+<p>Feature flag check (search for <code>tengu_fold_tool</code>) and new subtype (search for <code>"fold_boundary"</code>); collapsing logic at <code>o.foldedCount = (o.foldedCount ?? 0) + l.foldedUuids.length</code></p>
     </article>
     <article class="card" id="mcp-per-server-http-request-timeout">
       <div class="card-top">
@@ -247,16 +247,20 @@ claude agents --allow-tools Bash,Read,Write</code></pre>
         <h3>Atomic Write Staging Dir Tamper Detection <a class="anchor" href="#atomic-write-staging-dir-tamper-detection">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
       <p>Internal write atomicity now includes inode-level identity checks on sandbox staging directories, rejecting writes if the directory was replaced or moved after being established by a sandboxed command.</p>
+<div class="blabel">Details</div>
+<ul><li>When a sandboxed command first opens a staging directory (<code>qIs</code>), the directory's <code>dev</code> (device number) and <code>ino</code> (inode number) are recorded in an in-process map alongside a held open file descriptor (using <code>O_RDONLY | O_DIRECTORY | O_NOFOLLOW</code> to prevent symlink traversal)</li><li>Before each subsequent atomic write, <code>FDt()</code> re-opens the directory with the same flags, calls <code>fstatSync</code>, and compares the live <code>dev</code>/<code>ino</code> pair against the recorded values; a mismatch (directory removed and recreated, or replaced by a symlink) triggers <code>_Ie()</code>, which throws <code>StagingDirTamperedError</code> and emits a <code>sandbox_exec</code> / <code>atomic_write_staging_dir_tampered</code> telemetry event</li><li>A separate path (<code>zIs</code>) checks the parent of the staging dir: if the parent resolves to a symlink (ELOOP) or non-directory (ENOTDIR), a <code>SymlinkWriteRefusedError</code> is thrown with <code>"Refusing to stage atomic write under non-directory parent: &lt;path&gt;"</code></li><li>If the staging dir itself becomes ENOENT/ENOTDIR/ELOOP between establishment and write-time, the write falls back to a sibling path in the same directory rather than silently using a potentially hostile target</li><li><code>StagingDirTamperedError</code> is included in the harness's set of named sentinel error types reported to telemetry</li></ul>
 <div class="blabel">Evidence</div>
-<p>Error class (search for <code>"StagingDirTamperedError"</code>) and log message (search for <code>"Refusing to stage atomic write under non-directory parent"</code>)</p>
+<p>Error class (search for <code>"StagingDirTamperedError"</code>); inode comparison (<code>r.dev !== t.dev || r.ino !== t.ino</code>); throw site <code>_Ie()</code> (search for <code>"Refusing to stage atomic write under non-directory parent"</code>)</p>
     </article>
     <article class="card" id="expired-ca-certificates-auto-removed">
       <div class="card-top">
         <h3>Expired CA Certificates Auto-Removed <a class="anchor" href="#expired-ca-certificates-auto-removed">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
       <p>When building the TLS trust bundle from the system certificate store, expired certificates are now silently dropped and the count is logged.</p>
+<div class="blabel">Details</div>
+<ul><li>The <code>kqu()</code> filter runs inside the lazy-initialised TLS trust-bundle builder (<code>kje</code>), which is invoked once and cached</li><li>For each PEM certificate in the bundle, <code>new X509Certificate(s)</code> is constructed and its <code>validTo</code> field parsed via <code>new Date(...).getTime()</code>; if the resulting timestamp is in the past relative to <code>Date.now()</code> at load time, the cert is dropped and a counter incremented</li><li>Certs that throw during <code>new X509Certificate(s)</code> construction (malformed DER/PEM) are <strong>retained</strong> rather than dropped — only cleanly-parsed, definitively-expired certs are removed</li><li>Certs whose <code>validTo</code> parses to <code>NaN</code> (unrecognised date format) are also retained</li><li>The log line is only emitted when at least one cert was dropped: <code>"CA certs: Dropped ${r} expired certificate(s) from system store"</code> (no message when the count is zero)</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>kqu()</code> function log (search for <code>"CA certs: Dropped"</code>)</p>
+<p><code>kqu()</code> function log (search for <code>"CA certs: Dropped"</code>); filter logic <code>new Date(i.validTo).getTime()</code> and <code>catch { return !0 }</code> retain-on-error branch</p>
     </article>
     <article class="card" id="control-cancel-request-message-type">
       <div class="card-top">
@@ -283,6 +287,8 @@ claude agents --allow-tools Bash,Read,Write</code></pre>
         <h3>Skill Upkeep Guidance Improvement <a class="anchor" href="#skill-upkeep-guidance-improvement">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
       <p>The skill-upkeep hint now includes explicit instructions to fold user corrections back into the driving project skill file, so the next session inherits the fix.</p>
+<div class="blabel">Details</div>
+<ul><li>The guidance is injected whenever Claude saves a <code>feedback</code>-type memory for a correction that concerns a repeatable step: verifying changes, committing, opening a PR, or running a project skill</li><li>The instruction text (constant <code>KQr</code>) directs Claude to also edit the corresponding <code>.claude/skills/&lt;name&gt;/SKILL.md</code> file with a terse, general version of the same correction — so the fix is baked into the skill rather than only stored as a private memory</li><li>Claude is told to <strong>edit existing</strong> skill files rather than creating new ones, because a new project skill shadows a same-named built-in skill by that name</li><li>One explicit exception: if the correction concerns how to verify changes in the current repo and <code>.claude/skills/verify/SKILL.md</code> does not yet exist, Claude should create it</li></ul>
 <div class="blabel">Evidence</div>
 <p>Constant <code>KQr</code> (search for <code>"When you save a \</code>feedback\<code> memory because the user corrected how you ran a repeatable step"</code>)</p>
     </article>
@@ -309,8 +315,10 @@ claude agents --allow-tools Bash,Read,Write</code></pre>
         <h3>MCP Tip Improved <a class="anchor" href="#mcp-tip-improved">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
       <p>The MCP expansion tip (shown when a user is manually pasting data from a service already coverable by an MCP server) now requires the tip to name the specific service being bridged, rather than citing the user's existing unrelated servers.</p>
+<div class="blabel">Details</div>
+<ul><li>The <code>mcp-expand</code> tip fires when <code>e.mcpClients.length &gt;= 1</code> (at least one MCP server is already configured) and the user is manually pasting data the model determines could be sourced via MCP</li><li>The updated <code>situation</code> string now contains the explicit constraint: <code>"The configured servers are an eligibility signal only — the tip must name the service the user is manually bridging (e.g. 'the GitHub MCP would let you query issues directly'), never cite their existing unrelated servers as justification"</code></li><li>This prevents the model from producing a generic tip like "you already have MCP, add more" and forces it to identify and name the specific unmapped service</li><li>Feature text presented to the user: <code>"You can add more MCP servers for services your current ones do not cover."</code> with action <code>/mcp</code></li><li>Contrast with the <code>mcp-discovery</code> tip (no MCP at all, <code>e.mcpClients.length === 0</code>) which introduces MCP from scratch</li></ul>
 <div class="blabel">Evidence</div>
-<p>Updated tip situation string (search for <code>"The configured servers are an eligibility signal only"</code>)</p>
+<p>Updated tip situation string (search for <code>"The configured servers are an eligibility signal only"</code>); <code>when</code> condition <code>e.mcpClients.length &gt;= 1</code> in the <code>SXn</code> tip array</p>
     </article>
   </div>
   <div class="section-head">
