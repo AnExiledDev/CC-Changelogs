@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.198 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.198."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.198</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.198</span></h1>
+<p class="sub">This release removes the <code>/agents</code> interactive wizard and the speculation engine, raises the Node.js minimum to 22, and ships an early-access <code>claude plugin eval</code> command for authoring and running eval suites against plugins. Additional highlights include precomputed conversation compaction (feature-flagged), two new shareable-artifact skills (PR walkthrough and code walkthrough), auto-mode setup guidance, and expanded Windows sandbox per-exec deny controls.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.197 → v2.1.198</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">23</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s"><div class="n">10</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="plugin-eval-command-early-access">
+      <div class="card-top">
+        <h3>Plugin Eval Command [Early Access] <a class="anchor" href="#plugin-eval-command-early-access">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>claude plugin eval</code> CLI subcommand that runs structured evaluation suites against a plugin and scores the results.</p>
+<div class="blabel">Usage</div>
+<pre><code># Interactive interview to author a new eval suite
+claude plugin eval init
+
+# Write a blank case template without the interview
+claude plugin eval init --bare &lt;name&gt;
+
+# Run eval cases against a plugin
+claude plugin eval &lt;target&gt; [options]</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Cases live under <code>evals/</code> as <code>case.yaml</code> or <code>prompt.md</code> files with companion graders in <code>graders/*.md</code></li><li>Grader types: <code>regex</code>, <code>tool_order</code>, <code>tool_used</code>, <code>file_exists</code>, <code>llm</code>, <code>baseline</code></li><li>LLM grader uses haiku by default; override with <code>--judge-model &lt;model&gt;</code></li><li>Scoring options: <code>--threshold &lt;0..1&gt;</code>, <code>--max-cost-usd &lt;usd&gt;</code>, <code>--runs &lt;n&gt;</code>, <code>--ablation &lt;none|with-without&gt;</code></li><li>Passes <code>--scaffold</code> to execute each case's <code>scaffold_script</code> (author-only; off by default)</li><li>Emits <code>aggregate-result.json</code>; use <code>--output-dir &lt;dir&gt;</code> to control placement or <code>--json</code> for stdout</li><li>Filter cases with <code>--tag &lt;tag&gt;</code> (repeatable) or a name glob</li><li>Cost ceiling support: if <code>--max-cost-usd</code> is hit, remaining paid graders are skipped while free graders still run</li><li>Early access: gated behind an invitation; the eval suite format and CLI flags may change</li></ul>
+<div class="blabel">Evidence</div>
+<p>CLI help text (search for <code>"Run eval cases (evals/<strong>/case.yaml or evals/</strong>/prompt.md"</code>) and interview system (<code>"Let's set up evals for this plugin."</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-setup">
+      <div class="card-top">
+        <h3>Auto-Mode Setup <a class="anchor" href="#auto-mode-setup">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new guided setup flow (<code>/auto-mode-setup</code>) that helps you configure Claude's auto mode with environment context — trusted repos, sensitive data, domain rules — and optionally proposes adjustments to your CLAUDE.md.</p>
+<div class="blabel">Usage</div>
+<pre><code>/auto-mode-setup</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Reconnaissance phase: Claude reads your project and recent sessions before suggesting an environment section</li><li>Proposes trusted repositories, domains, cloud buckets, and org-specific rules</li><li>Presents a draft for review before writing anything</li><li>Available as a slash command and also surfaced as a setup prompt on first auto-mode activation</li></ul>
+<div class="blabel">Evidence</div>
+<p>Description (search for <code>"Auto mode lets Claude act without asking first. Telling it which repos you trust"</code>) and the prompt <code>"Set up auto mode for your environment?"</code></p>
+    </article>
+    <article class="card" id="pr-walkthrough-artifact-skill">
+      <div class="card-top">
+        <h3>PR Walkthrough Artifact Skill <a class="anchor" href="#pr-walkthrough-artifact-skill">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new built-in skill that generates a shareable HTML walkthrough artifact for a pull request — what changed, why, reviewer-oriented before/after narrative, and annotated code sections.</p>
+<div class="blabel">Usage</div>
+<pre><code># Generate a PR walkthrough artifact
+/explain-pr &lt;PR number or URL&gt;
+
+# Explicitly target a specific PR
+claude &quot;Generate a shareable walkthrough artifact for PR #42&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Produces a self-contained HTML page a reviewer can read before opening the diff</li><li>Sections: summary of what the diff does, motivation, code walkthrough, open questions</li><li>Traces what the code actually does (not just inferred from names)</li><li>After generating findings, publishes them as an artifact for sharing outside the terminal</li><li>Skill invokable with <code>"Generate a shareable walkthrough artifact for a pull request"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill description (search for <code>"Generate a shareable walkthrough artifact for a PR"</code>) and the goal block (<code>"## Goal Produce a <strong>shareable PR walkthrough artifact</strong>"</code>)</p>
+    </article>
+    <article class="card" id="code-walkthrough-artifact-skill">
+      <div class="card-top">
+        <h3>Code Walkthrough Artifact Skill <a class="anchor" href="#code-walkthrough-artifact-skill">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new built-in skill that generates an interactive walkthrough artifact explaining code in a project — expandable sections, annotated snippets, and "why this matters" callouts, pitched at a first-time reader.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude &quot;Generate an interactive walkthrough artifact for code&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Suitable for onboarding, documentation, or architectural overviews</li><li>Expandable sections with annotated code snippets</li><li>Uses a structured template separate from the PR walkthrough skill</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill description (search for <code>"Generate an interactive walkthrough artifact for code"</code>)</p>
+    </article>
+    <article class="card" id="bg-and-allow-tools-flags-for-claude-agents">
+      <div class="card-top">
+        <h3><code>--bg</code> and <code>--allow-tools</code> Flags for <code>claude agents</code> <a class="anchor" href="#bg-and-allow-tools-flags-for-claude-agents">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Two new flags for the <code>claude agents</code> command.</p>
+<div class="blabel">Usage</div>
+<pre><code># Attach to a named background session
+claude agents --bg &lt;session-name&gt;
+
+# Grant specific tools when launching an agent
+claude agents --allow-tools Bash,Read,Write</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>--bg</code> moves a session to the background and detaches (conflicts with <code>--print</code> — the interactive session that <code>claude agents</code> attaches to is never started with <code>--print</code>)</li><li><code>--allow-tools</code> grants specific tool permissions inline; denied tools are listed with an advisory to pass <code>--allow-tools</code> to grant them</li><li>The background session keeps running after detach; re-attach with <code>claude agents</code> from another terminal</li></ul>
+<div class="blabel">Evidence</div>
+<p>Error message (search for <code>"--bg and --print conflict"</code>) and denied-tool notice (search for <code>": denied tools (pass --allow-tools to grant):"</code>)</p>
+    </article>
+    <article class="card" id="ssh-sessions-now-support-model-catalog">
+      <div class="card-top">
+        <h3>SSH Sessions Now Support Model Catalog <a class="anchor" href="#ssh-sessions-now-support-model-catalog">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>SSH-connected remote sessions can now browse and switch models via <code>/model</code>, matching the capability previously only available over the CCR transport.</p>
+<div class="blabel">Details</div>
+<ul><li><code>modelCatalog</code> capability enabled for SSH transport (was <code>false</code>, now <code>true</code>)</li><li><code>/model</code> prompts the cloud session's model list and applies the selection there</li><li>The thin-client picker renders disabled rows (models visible but not selectable) so the full catalog is visible even when some models are restricted</li></ul>
+<div class="blabel">Evidence</div>
+<p>Transport capability table — <code>modelCatalog: !0</code> for SSH (search for <code>"ssh"</code> in the transport caps block); UI strings (search for <code>"Models reported by the cloud session. Your pick applies to that session."</code>)</p>
+    </article>
+    <article class="card" id="memory-stores-env-var">
+      <div class="card-top">
+        <h3>Memory Stores Env Var <a class="anchor" href="#memory-stores-env-var">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>CLAUDE_MEMORY_STORES</code> environment variable activates expanded memory storage, alongside the <code>tengu_moth_copse</code> feature flag.</p>
+<div class="blabel">Usage</div>
+<pre><code>export CLAUDE_MEMORY_STORES=&quot;...&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Feature-flagged via <code>tengu_moth_copse</code>; the env var provides a user-side path to enable it</li><li>Exact storage targets depend on the value provided; contact support for configuration details</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>qat()</code> function (search for <code>"CLAUDE_MEMORY_STORES"</code> and <code>tengu_moth_copse</code> flag)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">16 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="agents-wizard-removed">
+      <div class="card-top">
+        <h3><code>/agents</code> Wizard Removed <a class="anchor" href="#agents-wizard-removed">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The interactive <code>/agents</code> UI wizard has been removed. Claude now creates and manages subagents through natural conversation, and files can be edited directly.</p>
+<p>What replaced it:</p>
+<ul><li>Ask Claude: "Create a code-reviewer subagent that…" and it will write the file</li><li>Edit <code>.claude/agents/</code> for project-scoped agents</li><li>Edit <code>~/.claude/agents/</code> for personal agents</li><li>The <code>(removed)</code> hint appears when the old <code>/agents</code> route is accessed</li></ul>
+<div class="blabel">Evidence</div>
+<p>Removal notice (search for <code>"The /agents wizard has been removed. Ask Claude to create or update subagents for you"</code>)</p>
+    </article>
+    <article class="card" id="taskstop-stop-agents-by-name">
+      <div class="card-top">
+        <h3>TaskStop: Stop Agents by Name <a class="anchor" href="#taskstop-stop-agents-by-name">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>TaskStop</code> tool now accepts agent names and team IDs in addition to task IDs.</p>
+<div class="blabel">Details</div>
+<ul><li>Pass <code>name@team</code> or bare teammate name to stop an agent-team teammate</li><li>Pass the named agent's name to stop a background agent started with a name</li><li>Previously only raw task IDs were accepted</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated tool description (search for <code>"To stop an agent-team teammate, pass its agent ID (\"name@team\") or bare teammate name as task_id"</code>)</p>
+    </article>
+    <article class="card" id="agent-spawn-results-internal-metadata-privacy">
+      <div class="card-top">
+        <h3>Agent Spawn Results: Internal Metadata Privacy <a class="anchor" href="#agent-spawn-results-internal-metadata-privacy">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Agent spawn tool results now include an explicit advisory telling Claude not to quote or paste the internal metadata (agent ID, task ID) into user-facing replies.</p>
+<div class="blabel">Details</div>
+<ul><li>Async agent spawn: <code>"(This tool result is internal metadata — never quote or paste any part of it, including the agentId below, into a user-facing reply.)"</code></li><li>Cloud agent spawn: same advisory for taskId</li><li>Local spawn: same advisory for agent_id</li><li>Prevents Claude from accidentally exposing internal session identifiers to users</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated spawn result strings (search for <code>"This tool result is internal metadata — never quote or paste any part of it"</code>)</p>
+    </article>
+    <article class="card" id="precomputed-conversation-compaction-persistence-gradual-roll">
+      <div class="card-top">
+        <h3>Precomputed Conversation Compaction Persistence [Gradual Rollout] <a class="anchor" href="#precomputed-conversation-compaction-persistence-gradual-roll">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Conversation compaction results are now pre-computed and persisted to a <code>.precompact.json</code> sidecar file, enabling instant compact rehydration when a session restarts.</p>
+<div class="blabel">Details</div>
+<ul><li>Feature-gated by <code>tengu_amber_packet</code>; not universally enabled yet</li><li>Pre-compact file is written to the session directory alongside the transcript</li><li>At session start, if a valid <code>.precompact.json</code> is found and passes age/model/token-drift checks, the compaction result is reused without re-running the LLM summary</li><li>Invalidation conditions: model changed, too old, transcript grew or shrank too much, boundary UUID missing</li><li>Log messages: <code>"precomputed compact: rehydrated"</code>, <code>"precomputed compact: persisted"</code>, <code>"precomputed compact: rehydrate rejected (&lt;reason&gt;)"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>File constant (search for <code>".precompact.json"</code>) and feature flag (search for <code>tengu_amber_packet</code>)</p>
+    </article>
+    <article class="card" id="context-fold-tool-gradual-rollout">
+      <div class="card-top">
+        <h3>Context Fold Tool [Gradual Rollout] <a class="anchor" href="#context-fold-tool-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>fold_boundary</code> task subtype allows the harness to insert context fold points in the conversation — compressing completed work to free context budget.</p>
+<div class="blabel">Details</div>
+<ul><li>Feature-gated by <code>tengu_fold_tool</code></li><li>When enabled, fold boundaries appear alongside scheduled-task fires as eligible compression markers</li><li><code>foldedCount</code> is now tracked in session metadata</li></ul>
+<div class="blabel">Evidence</div>
+<p>Feature flag check (search for <code>tengu_fold_tool</code>) and new subtype (search for <code>"fold_boundary"</code>)</p>
+    </article>
+    <article class="card" id="mcp-per-server-http-request-timeout">
+      <div class="card-top">
+        <h3>MCP Per-Server HTTP Request Timeout <a class="anchor" href="#mcp-per-server-http-request-timeout">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>MCP server configurations now support a <code>request_timeout_ms</code> field that raises the per-request fetch deadline and the tool-call watchdog for that specific server.</p>
+<div class="blabel">Details</div>
+<ul><li>Set by the host via <code>mcp_set_servers</code> control event; not a user-editable field in <code>.claude/settings.json</code></li><li>Capped at 5 minutes</li><li>Applies to both stdio and SSE server types</li><li>Overridden if <code>timeout</code> is also set on the server</li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema description (search for <code>"Per-server HTTP request timeout in milliseconds, set by the host on the mcp_set_servers control event"</code>)</p>
+    </article>
+    <article class="card" id="hooks-improved-validation-error-messages">
+      <div class="card-top">
+        <h3>Hooks: Improved Validation Error Messages <a class="anchor" href="#hooks-improved-validation-error-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Hook configuration parsing now reports cleaner, more specific errors: invalid hook event names, malformed matcher arrays, and wrong top-level types each produce distinct messages with the offending path.</p>
+<div class="blabel">Details</div>
+<ul><li><code>"must be an object mapping hook event names to matcher arrays; received &lt;type&gt;"</code> for wrong root type</li><li><code>"unknown hook event. Valid events: &lt;list&gt;"</code> for unrecognized event names</li><li><code>"must be an array of matchers; received &lt;type&gt;"</code> for non-array event handlers</li></ul>
+<div class="blabel">Evidence</div>
+<p>New validator (search for <code>"must be an object mapping hook event names to matcher arrays"</code>)</p>
+    </article>
+    <article class="card" id="windows-sandbox-per-exec-deny-flags">
+      <div class="card-top">
+        <h3>Windows Sandbox: Per-Exec Deny Flags <a class="anchor" href="#windows-sandbox-per-exec-deny-flags">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Windows sandbox commands now support per-exec <code>denyRead</code> and <code>denyWrite</code> path lists, matching Linux/macOS behavior.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously, Windows sandbox was deny-listed only at the session level</li><li>Now individual exec calls can pass <code>filesystem.denyRead</code> and <code>filesystem.denyWrite</code> path arrays</li><li><code>filesystem.allowRead</code> (re-allow within denyRead) is still not supported on Windows — remove entries or narrow <code>denyRead</code></li><li><code>filesystem.allowWrite</code> is still not supported on Windows (Windows sandbox uses deny-list only)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Error messages (search for <code>"Per-exec filesystem.allowRead (re-allow within denyRead) is not supported on Windows"</code>)</p>
+    </article>
+    <article class="card" id="atomic-write-staging-dir-tamper-detection">
+      <div class="card-top">
+        <h3>Atomic Write Staging Dir Tamper Detection <a class="anchor" href="#atomic-write-staging-dir-tamper-detection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Internal write atomicity now includes inode-level identity checks on sandbox staging directories, rejecting writes if the directory was replaced or moved after being established by a sandboxed command.</p>
+<div class="blabel">Evidence</div>
+<p>Error class (search for <code>"StagingDirTamperedError"</code>) and log message (search for <code>"Refusing to stage atomic write under non-directory parent"</code>)</p>
+    </article>
+    <article class="card" id="expired-ca-certificates-auto-removed">
+      <div class="card-top">
+        <h3>Expired CA Certificates Auto-Removed <a class="anchor" href="#expired-ca-certificates-auto-removed">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When building the TLS trust bundle from the system certificate store, expired certificates are now silently dropped and the count is logged.</p>
+<div class="blabel">Evidence</div>
+<p><code>kqu()</code> function log (search for <code>"CA certs: Dropped"</code>)</p>
+    </article>
+    <article class="card" id="control-cancel-request-message-type">
+      <div class="card-top">
+        <h3>control_cancel_request Message Type <a class="anchor" href="#control-cancel-request-message-type">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new <code>control_cancel_request</code> message type in the session transcript allows in-flight control requests (such as side questions) to be cancelled mid-flight.</p>
+<div class="blabel">Details</div>
+<ul><li>Type carries a <code>request_id</code> string matching the outstanding <code>control_request</code></li><li>Workers that receive this message should abort the in-flight request</li></ul>
+<div class="blabel">Evidence</div>
+<p>Transcript parser addition (search for <code>"control_cancel_request"</code>)</p>
+    </article>
+    <article class="card" id="control-request-progress-messages">
+      <div class="card-top">
+        <h3>control_request_progress Messages <a class="anchor" href="#control-request-progress-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new <code>control_request_progress</code> system message type provides progress updates for long-running client-originated control requests.</p>
+<div class="blabel">Details</div>
+<ul><li>Currently applies to <code>side_question</code> control requests</li><li>Status values: <code>"started"</code> (worker accepted and launched) and <code>"api_retry"</code> (includes retry counters)</li><li>Correlated by <code>request_id</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Schema description (search for <code>"@internal Progress for a long-running client-originated control_request"</code>)</p>
+    </article>
+    <article class="card" id="skill-upkeep-guidance-improvement">
+      <div class="card-top">
+        <h3>Skill Upkeep Guidance Improvement <a class="anchor" href="#skill-upkeep-guidance-improvement">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The skill-upkeep hint now includes explicit instructions to fold user corrections back into the driving project skill file, so the next session inherits the fix.</p>
+<div class="blabel">Evidence</div>
+<p>Constant <code>KQr</code> (search for <code>"When you save a \</code>feedback\<code> memory because the user corrected how you ran a repeatable step"</code>)</p>
+    </article>
+    <article class="card" id="highlight-js-grammar-refreshed">
+      <div class="card-top">
+        <h3>Highlight.js Grammar Refreshed <a class="anchor" href="#highlight-js-grammar-refreshed">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The bundled highlight.js language grammar definitions have been updated. Language definitions now use the modern <code>scope</code>/<code>match</code> API instead of the older <code>className</code>/<code>begin</code>/<code>end</code> API for improved accuracy and consistency. Plugin-provided hljs grammars are now also watched in worker mode (<code>hljsLanguages</code> added to the worker config watcher).</p>
+<div class="blabel">Evidence</div>
+<p>Grammar modules updated (search for <code>"scope: \"attribute\""</code> in the Augmented BNF grammar) and watcher flag (search for <code>hljsLanguages</code> in the config object)</p>
+    </article>
+    <article class="card" id="speculation-engine-removed">
+      <div class="card-top">
+        <h3>Speculation Engine Removed <a class="anchor" href="#speculation-engine-removed">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The speculative-execution subsystem (which pre-ran tool calls ahead of user confirmation to save latency) has been fully removed.</p>
+<div class="blabel">Details</div>
+<ul><li>All <code>[Speculation]</code> log messages, state machines, and the pipelined-suggestion pathway are gone</li><li><code>totalSpeculationTimeSavedMs</code> is no longer tracked in usage stats</li><li>Behavioral change: no pre-executed tool calls; permission prompts now always pause before execution</li></ul>
+<div class="blabel">Evidence</div>
+<p>Removal of all <code>[Speculation]</code> strings and <code>totalSpeculationTimeSavedMs</code> field from the stats shape</p>
+    </article>
+    <article class="card" id="mcp-tip-improved">
+      <div class="card-top">
+        <h3>MCP Tip Improved <a class="anchor" href="#mcp-tip-improved">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The MCP expansion tip (shown when a user is manually pasting data from a service already coverable by an MCP server) now requires the tip to name the specific service being bridged, rather than citing the user's existing unrelated servers.</p>
+<div class="blabel">Evidence</div>
+<p>Updated tip situation string (search for <code>"The configured servers are an eligibility signal only"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Tool denial kind no longer conditionally omitted based on a flag — <code>"user-rejected"</code> is now always set when a tool is denied by the user (search for <code>"toolDenialKind"</code>)</li><li><code>cd</code> command path resolution now correctly handles shell-quoted tilde paths and glob segments without returning false negatives (search for <code>"rqd"</code> path resolver function)</li><li>Transcript writes during process exit are now guaranteed to flush synchronously via a <code>process.on('exit')</code> handler, preventing lost transcript lines when the process exits quickly (search for <code>".precompact.json.tmp"</code> flush path)</li><li>PostgreSQL highlight.js grammar now correctly declares <code>supersetOf: "sql"</code> so SQL sub-patterns are inherited automatically (search for <code>"supersetOf"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>New Environment Variables</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="new-environment-variables">
+      <ul><li><code>CLAUDE_CODE_SKIP_PROMPT_HISTORY</code> — Disables saving CLI input to prompt history</li><li><code>CLAUDE_LOCAL_OAUTH_API_BASE</code> — Sets a local OAuth API base URL for development</li><li><code>CLAUDE_SDK_CAN_USE_TOOL_SHADOWED</code> — Allows SDK tool shadowing</li><li><code>CLAUDE_CODE_MOCK_REMOTE_SETTINGS</code> — Mocks remote settings responses (development/testing)</li><li><code>CLAUDE_CODE_REMOTE_SETTINGS_PATH</code> — Path to a local file providing remote settings overrides</li><li><code>CLAUDE_CODE_CLIENT_KEY_PASSPHRASE</code> — Passphrase for the mTLS client key</li><li><code>CLAUDE_CODE_CUSTOM_OAUTH_URL</code> — Override the OAuth endpoint URL</li><li><code>CLAUDE_CODE_ENABLE_PROXY_AUTH_HELPER</code> — Enables the proxy authentication helper</li><li><code>CLAUDE_CODE_PROXY_AUTH_HELPER_TTL_MS</code> — TTL for proxy auth helper tokens in milliseconds</li><li><code>CLAUDE_CODE_PROXY_RESOLVES_HOSTS</code> — Signals that the proxy resolves hostnames (affects DNS behavior)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p><strong>Node.js 22 Required:</strong> This release raises the minimum Node.js version from 18 to 22. Run <code>node --version</code> to check; upgrade via your package manager or [nodejs.org](https://nodejs.org) before updating Claude Code. Any existing install scripts or CI environments pinned to Node 18 or 20 will need to be updated.</p>
+<p><strong><code>/agents</code> wizard gone:</strong> Workflows relying on the interactive <code>/agents</code> menu (Create agent, Edit agent, Delete agent) no longer exist. Transition to asking Claude directly: <code>"create a code-reviewer subagent that..."</code> or edit <code>.claude/agents/*.md</code> files manually.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.198.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.198.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
