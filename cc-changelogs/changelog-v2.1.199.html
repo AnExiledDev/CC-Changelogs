@@ -234,9 +234,9 @@ export CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS_EXCEPT=&quot;my-plugin,@org/critical-
         <h3>Diff Panel File List Keyboard Navigation <a class="anchor" href="#diff-panel-file-list-keyboard-navigation">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
       <p>New keyboard actions for navigating the file list in the diff panel:</p>
-<ul><li><code>app:diffFileListDown</code> — move down in the diff panel's file list</li><li><code>app:diffFileListUp</code> — move up in the diff panel's file list</li></ul>
+<ul><li><code>app:diffFileListDown</code> — move down in the diff panel's file list; bound to <code>ctrl+down</code> and <code>meta+down</code></li><li><code>app:diffFileListUp</code> — move up in the diff panel's file list; bound to <code>ctrl+up</code> and <code>meta+up</code></li><li>Both actions are registered in the <code>Global</code> keybinding context, meaning they are active in all UI states (chat, task running, diff dialog, etc.) and do not require the diff panel to have keyboard focus</li><li>The actions appear in the global "always-available" action list (<code>fso</code>) alongside <code>app:toggleDiffNoiseFilter</code>, so they are shown in keybindings help when the diff panel is visible</li></ul>
 <div class="blabel">Evidence</div>
-<p>(search for <code>"app:diffFileListDown"</code>, <code>"app:diffFileListUp"</code>)</p>
+<p>(search for <code>"app:diffFileListDown"</code>, <code>"app:diffFileListUp"</code>, <code>"ctrl+up": "app:diffFileListUp"</code>)</p>
     </article>
     <article class="card" id="extracacertpaths-for-tls-certificate-trust">
       <div class="card-top">
@@ -280,10 +280,12 @@ export CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS_EXCEPT=&quot;my-plugin,@org/critical-
 <div class="tags"><span class="tag dev">Dev</span></div>      </div>
       <div class="blabel">What</div>
 <p>Gzip compression of API request bodies, reducing bandwidth for large context uploads.</p>
+<div class="blabel">Details</div>
+<ul><li>Controlled by <code>yGd()</code>: checks <code>CLAUDE_CODE_GZIP_REQUEST_BODIES</code> env var first; if unset, falls back to the <code>tengu_gzip_request_bodies</code> feature flag (default <code>false</code>)</li><li>Only applies to requests whose target host is <code>api.anthropic.com</code> (verified by <code>wce()</code> URL host check); Bedrock, Vertex, custom <code>ANTHROPIC_BASE_URL</code>, and any non-Anthropic endpoints are unaffected</li><li>When enabled, sets <code>compress: "gzip"</code> on the outgoing fetch options object, instructing the underlying HTTP layer to gzip-encode the request body before transmission</li><li>When the request body is a string, a random whitespace suffix is appended before compression: a newline (<code>\n</code>) followed by 0–256 randomly chosen space or tab characters; this adds entropy to the payload to improve compression ratio consistency across requests</li><li>No changes are made to response handling; response decompression was already in place</li></ul>
 <div class="blabel">Status</div>
 <p>Feature-flagged (<code>tengu_gzip_request_bodies</code>, defaulting false). Can be force-enabled with <code>CLAUDE_CODE_GZIP_REQUEST_BODIES=1</code>.</p>
 <div class="blabel">Evidence</div>
-<p>(returns <code>!1</code> by default, search for <code>"CLAUDE_CODE_GZIP_REQUEST_BODIES"</code>, <code>"tengu_gzip_request_bodies"</code>)</p>
+<p>(search for <code>"CLAUDE_CODE_GZIP_REQUEST_BODIES"</code>, <code>"tengu_gzip_request_bodies"</code>, <code>yGd()</code> call at the fetch wrapper, <code>wce(l)</code> host check at line ~161308)</p>
     </article>
   </div>
 
