@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.199 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.199."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.199</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.199</span></h1>
+<p class="sub">Version 2.1.199 introduces a major integration with Claude Design (claude.ai/design) for collaborative design work, a full suite of plugin/skill/connector discovery tools for the Cowork environment, and session grouping in fleet view. Windows sandbox setup is significantly simplified by eliminating the logout requirement, and credential masking gains powerful regex extract support.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.198 → v2.1.199</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">17</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">1</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="claude-design-integration-gradual-rollout">
+      <div class="card-top">
+        <h3>Claude Design Integration [Gradual Rollout] <a class="anchor" href="#claude-design-integration-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>ClaudeDesign</code> tool that lets Claude work directly with claude.ai/design — a collaborative canvas for decks, prototypes, landing pages, and UI mockups backed by your team's design system.</p>
+<div class="blabel">Usage</div>
+<pre><code>/design login         # Authenticate with claude.ai for Design access
+/design consent       # Grant Claude agent access to your Design projects
+/design &lt;prompt&gt;      # Route to Design operations (import, export, status, etc.)</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Operations include: <code>list_projects</code>, <code>read_file</code>, <code>write_files</code>, <code>delete_files</code>, <code>finalize_plan</code>, <code>get_claude_design_prompt</code>, <code>render_preview</code>, and more</li><li>Write operations (<code>write_files</code>, <code>delete_files</code>) require a <code>plan_token</code> obtained from <code>finalize_plan</code> first</li><li>Requires a claude.ai credential — not available via Bedrock, Vertex, or third-party providers</li><li>First-party Design server has a consent gate: the user grants Claude agent access once per account; <code>/design consent</code> handles this</li><li>Not available when <code>nonessential network traffic</code> is restricted</li></ul>
+<div class="blabel">Status</div>
+<p>Feature-flagged (<code>tengu_omelette_fouet</code>) — rolling out gradually.</p>
+<div class="blabel">Evidence</div>
+<p>ClaudeDesign tool (search for <code>"ClaudeDesign"</code>, <code>"/v1/design/mcp"</code>, <code>"claude.ai/design"</code>)</p>
+    </article>
+    <article class="card" id="plugin-skill-and-connector-discovery-tools">
+      <div class="card-top">
+        <h3>Plugin, Skill, and Connector Discovery Tools <a class="anchor" href="#plugin-skill-and-connector-discovery-tools">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Six new tools that let Claude discover, list, and suggest claude.ai plugins, skills, and MCP connectors from within Cowork sessions.</p>
+<div class="blabel">Details</div>
+<ul><li><code>SearchPlugins</code> — search the org's plugin catalog by keyword; triggers <code>SuggestPluginInstall</code> to render an install card</li><li><code>ListPlugins</code> — list the user's currently enabled plugins; call after <code>SuggestPluginInstall</code> to confirm what was installed</li><li><code>SuggestPluginInstall</code> — render an inline plugin install card directly in the conversation</li><li><code>SearchSkills</code> — search the user's skills by keyword; triggers <code>SuggestSkills</code></li><li><code>ListSkills</code> — list currently enabled skills</li><li><code>SuggestSkills</code> — render an add-skills card for org/shared/Anthropic skills not yet enabled</li><li><code>SearchMcpRegistry</code> — search the public MCP connector directory by keyword; returns <code>directoryUuid</code> values</li><li><code>ListConnectors</code> — list the org's installed MCP connectors, with <code>enabledInChat</code> status for this session</li><li><code>SuggestConnectors</code> — suggest connectors matching the user's intent</li></ul>
+<p>These tools are only available in Cowork remote sessions (<code>CLAUDE_CODE_REMOTE</code> is set).</p>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"SearchMcpRegistry"</code>, <code>"ListPlugins"</code>, <code>"SuggestPluginInstall"</code>, <code>"ListConnectors"</code>)</p>
+    </article>
+    <article class="card" id="session-grouping-in-fleet-view">
+      <div class="card-top">
+        <h3>Session Grouping in Fleet View <a class="anchor" href="#session-grouping-in-fleet-view">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Sessions in fleet view can now be tagged with a group label, enabling a "group view" display mode alongside the existing "status view" and "folder view".</p>
+<div class="blabel">Usage</div>
+<pre><code>ctrl+e    # Set a group label on the highlighted session
+ctrl+x    # Ungroup the session (press again to confirm)</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Group names are stored alongside the session metadata</li><li>A new "group view" layout organizes the fleet by group tag</li><li>Reserved group names (like "pinned", "ungrouped") cannot be used as custom labels</li><li>Only local sessions can be grouped; remote sessions are excluded</li><li>The group name is written to a <code>group</code> file in the session directory</li></ul>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"ctrl+e to set group"</code>, <code>"ctrl+x again to ungroup"</code>, <code>"group view"</code>)</p>
+    </article>
+    <article class="card" id="guided-cowork-setup-setup-cowork">
+      <div class="card-top">
+        <h3>Guided Cowork Setup (/setup-cowork) <a class="anchor" href="#guided-cowork-setup-setup-cowork">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>/setup-cowork</code> slash command that walks users through Cowork configuration in a structured onboarding flow: pick a role, install a matching plugin, try a skill, and connect tools.</p>
+<div class="blabel">Details</div>
+<ul><li>Guides users through role selection using an interactive role-picker chip row</li><li>Supports roles including Engineering, Data science, Product management, Healthcare, Human resources, and others</li><li>Includes plugin suggestions and connector setup steps</li><li>Available only in remote Cowork entrypoint (<code>CLAUDE_CODE_ENTRYPOINT=remote_cowork</code>)</li></ul>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"setup-cowork"</code>, <code>"Guided Cowork setup"</code>)</p>
+    </article>
+    <article class="card" id="artifact-publishing-tips">
+      <div class="card-top">
+        <h3>Artifact Publishing Tips <a class="anchor" href="#artifact-publishing-tips">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Three new contextual suggestions now appear during conversations, inviting users to publish their work as a shareable artifact.</p>
+<div class="blabel">Details</div>
+<ul><li>PR walkthrough: triggers when Claude has reviewed, summarized, or explained a PR — suggests "publish an artifact walking through this PR"</li><li>Code explanation: triggers when Claude has explained how code works — suggests "publish this explanation as an artifact"</li><li>Analysis results: triggers when Claude has produced analysis or benchmark results — suggests "publish this as an artifact"</li><li>Plan/design doc tip: surfaces after plan-mode work — "Working on a plan or design doc? Ask Claude to publish it as an artifact"</li></ul>
+<p>All tips only appear when the Artifact tool is available in the session.</p>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"artifact-publish-plan"</code>, <code>"publish an artifact walking through this PR"</code>, <code>"publish this explanation as an artifact"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">12 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="windows-sandbox-no-logout-required">
+      <div class="card-top">
+        <h3>Windows Sandbox: No Logout Required <a class="anchor" href="#windows-sandbox-no-logout-required">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The Windows sandbox now uses a dedicated <code>srt-sandbox</code> user account instead of a Windows security group for network isolation. This eliminates the logout-and-back-in step that was previously required after installation.</p>
+<div class="blabel">Details</div>
+<ul><li>WFP (Windows Filtering Platform) egress filter now keys on the sandbox user's SID rather than a group membership token</li><li>Installation still requires one UAC prompt (<code>srt-win install</code> or <code>npx sandbox-runtime windows-install</code>), but no logout is needed afterward</li><li>New <code>--sandbox-user-sid</code> parameter replaces <code>--group-sid</code> in internal ACL commands</li><li>Removed the "discriminator group" concept that caused token-refresh issues</li><li>New WFP egress verification step (<code>srt-win wfp verify</code>) confirms the fence is active before use</li></ul>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"No logout is needed: the WFP filter keys on the dedicated \</code>srt-sandbox\<code> user"</code>, <code>"--sandbox-user-sid"</code>)</p>
+    </article>
+    <article class="card" id="credential-masking-regex-extract-patterns">
+      <div class="card-top">
+        <h3>Credential Masking: Regex Extract Patterns <a class="anchor" href="#credential-masking-regex-extract-patterns">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>credentials.files</code> sandbox setting now supports extracting and masking only specific values from a file rather than masking the entire file contents.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>extract</code> field: a regex with a capture group 1 that identifies the credential value(s) within the file; the proxy substitutes only those captured values</li><li>New <code>onExtractNoMatch</code> option controls what happens when the pattern matches nothing:</li><li><code>"warn"</code> (default) — logs a warning and leaves the file unprotected</li><li><code>"deny"</code> — degrades to full-file deny mode (file is blocked from sandbox)</li><li><code>"error"</code> — throws at initialization, preventing session start with a misconfigured entry</li><li>New <code>maskDuplicates</code> option: also masks occurrences of extracted values found elsewhere in the file outside the capture groups</li></ul>
+<p>Example config:</p>
+<pre><code>{
+  &quot;credentials&quot;: {
+    &quot;files&quot;: [{
+      &quot;path&quot;: &quot;~/.config/tool/credentials&quot;,
+      &quot;mode&quot;: &quot;mask&quot;,
+      &quot;extract&quot;: &quot;token=([A-Za-z0-9_-]+)&quot;,
+      &quot;onExtractNoMatch&quot;: &quot;deny&quot;,
+      &quot;maskDuplicates&quot;: true
+    }]
+  }
+}</code></pre>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"onExtractNoMatch"</code>, <code>"extract pattern"</code>, <code>"maskDuplicates"</code>)</p>
+    </article>
+    <article class="card" id="plan-artifact-template-cds-design-tokens-and-tab-title-slot">
+      <div class="card-top">
+        <h3>Plan Artifact Template: CDS Design Tokens and TAB_TITLE Slot <a class="anchor" href="#plan-artifact-template-cds-design-tokens-and-tab-title-slot">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The plan artifact HTML template has been upgraded with the official Anthropic CDS (Component Design System) token set and a new title control slot.</p>
+<div class="blabel">Details</div>
+<ul><li>Added <code>{{TAB_TITLE}}</code> slot: controls the browser <code>&lt;title&gt;</code> element separately from the document heading <code>{{TITLE}}</code>. The <code>.md</code> publish path sets it to the filename while the visible <code>&lt;h1&gt;</code> shows the document heading</li><li>Replaced hand-coded CSS color literals with vendored <code>@ant/cds</code> design tokens (the full token CSS is embedded verbatim and drift-tested in CI)</li><li>Adds syntax highlighting for code blocks using highlight.js with language detection</li><li>The plan-artifact skill instructions updated to reflect the new four-slot fill contract (<code>{{TITLE}}</code>, <code>{{TAB_TITLE}}</code>, <code>{{EYEBROW}}</code>, <code>{{SUMMARY}}</code>)</li></ul>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"TAB_TITLE"</code>, <code>"BEGIN vendored @ant/cds tokens"</code>, <code>"artifact-plan.html"</code>)</p>
+    </article>
+    <article class="card" id="hook-additionalcontext-structured-json-output">
+      <div class="card-top">
+        <h3>Hook additionalContext: Structured JSON Output <a class="anchor" href="#hook-additionalcontext-structured-json-output">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Hooks that return exit code 0 now communicate with Claude through a structured <code>additionalContext</code> JSON field instead of plain stdout. This change applies to <code>SubagentStart</code>, <code>PreToolUse</code>, <code>PostToolUse</code>, and session-init hooks.</p>
+<p>Before: Exit code 0 → stdout string shown to Claude/subagent directly.</p>
+<p>After: Exit code 0 → stdout parsed as JSON; the <code>additionalContext</code> field from the parsed object is injected into Claude's context. Exit code 2 now routes stderr to the user only (previously stderr was ignored for blocking errors).</p>
+<p>Hook descriptions updated:</p>
+<pre><code>Exit code 0 - JSON additionalContext shown to subagent
+Exit code 2 - show stderr to user only
+Other exit codes - show stderr to user only</code></pre>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"Exit code 0 - JSON additionalContext shown to subagent"</code>)</p>
+    </article>
+    <article class="card" id="agent-api-error-recovery-partial-output-surfaced">
+      <div class="card-top">
+        <h3>Agent API Error Recovery: Partial Output Surfaced <a class="anchor" href="#agent-api-error-recovery-partial-output-surfaced">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When an agent (Task tool) terminates early due to an API error such as rate limiting, server overload, or server errors, Claude now recovers and presents the partial output the agent produced rather than discarding it entirely.</p>
+<div class="blabel">Details</div>
+<ul><li>A new <code>AgentApiErrorTerminationError</code> class captures early terminations caused by <code>rate_limit</code>, <code>overloaded</code>, or <code>server_error</code> API error kinds</li><li>The partial agent history is surfaced with a clear notice: "Everything below is PARTIAL output recovered from the agent before it was cut off. The agent did NOT finish its task — treat these results as incomplete."</li><li>This prevents complete loss of context when long-running agents hit transient API errors</li></ul>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"AgentApiErrorTerminationError"</code>, <code>"PARTIAL output recovered from the agent"</code>)</p>
+    </article>
+    <article class="card" id="rewind-tip-after-clear">
+      <div class="card-top">
+        <h3>/rewind Tip After /clear <a class="anchor" href="#rewind-tip-after-clear">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new contextual suggestion now triggers when Claude detects the user regrets having used <code>/clear</code> and wants to access content from before the clear. Claude will suggest using <code>/rewind</code> and picking the previous-session entry to restore the conversation.</p>
+<div class="blabel">Details</div>
+<ul><li>Triggers on phrases like "I shouldn't have cleared", "before I cleared we had X", "I lost that when I cleared"</li><li>Suggests: "Press Esc twice or type /rewind, then pick the previous-session entry at the top"</li><li>Does not trigger for regret about file edits (that's undo-changes) or wanting context from an entirely different session</li></ul>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"rewind-past-clear"</code>, <code>"Press Esc twice or type /rewind"</code>)</p>
+    </article>
+    <article class="card" id="memory-sync-richer-status-messages-and-auto-retry">
+      <div class="card-top">
+        <h3>Memory Sync: Richer Status Messages and Auto-Retry <a class="anchor" href="#memory-sync-richer-status-messages-and-auto-retry">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Memory sync status messages now communicate more precisely why a sync is paused and whether it will self-recover.</p>
+<div class="blabel">Details</div>
+<ul><li>Distinguishes transient pauses ("sync retries automatically and will push it once the server recovers") from permanent suppression ("NOT being synced to shared/server memory")</li><li><code>suppressedUntilMs</code> field allows sync to schedule automatic retry after transient failures</li><li>New concurrent write conflict recovery: when another session updates a memory file while a write is in flight, the local write is reloaded from the server's version and the author is notified to re-apply their change</li><li><code>mount_dir_foreign_partition</code> error gives a specific message explaining split-store conflict</li></ul>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"Memory sync is currently paused"</code>, <code>"sync retries automatically"</code>, <code>"concurrent-write conflict"</code>)</p>
+    </article>
+    <article class="card" id="model-catalog-max-output-tokens-limits-and-advisor-rank">
+      <div class="card-top">
+        <h3>Model Catalog: max_output_tokens Limits and advisor_rank <a class="anchor" href="#model-catalog-max-output-tokens-limits-and-advisor-rank">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Models in the internal catalog now carry explicit output token limits and an advisor ranking.</p>
+<div class="blabel">Details</div>
+<ul><li><code>max_output_tokens.default</code> and <code>max_output_tokens.upper</code> are now populated for each model (e.g., Haiku 3.5: 8192/8192; Haiku 4.5: 32000/64000)</li><li><code>advisor_rank</code> field added to models eligible for the advisor tool; models without an advisor rank emit a clearer error message pointing to <code>CLAUDE_CODE_ENABLE_EXPERIMENTAL_ADVISOR_TOOL=1</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"max_output_tokens"</code>, <code>"advisor_rank"</code>, <code>"has no advisor rank in the model catalog"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-skip-plugin-mcp-servers-except-exemption-list">
+      <div class="card-top">
+        <h3>CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS_EXCEPT Exemption List <a class="anchor" href="#claude-code-skip-plugin-mcp-servers-except-exemption-list">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When <code>CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS</code> is set to skip plugin MCP servers, the new <code>CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS_EXCEPT</code> environment variable lets you exempt specific plugins from that skip.</p>
+<div class="blabel">Usage</div>
+<pre><code>export CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS=1
+export CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS_EXCEPT=&quot;my-plugin,@org/critical-plugin&quot;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Accepts a comma-separated list of plugin names or <code>@owner/repo</code> repository identifiers</li><li>Exempted plugins are noted in loading messages: "despite CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS (exempted via CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS_EXCEPT)"</li></ul>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS_EXCEPT"</code>)</p>
+    </article>
+    <article class="card" id="diff-panel-file-list-keyboard-navigation">
+      <div class="card-top">
+        <h3>Diff Panel File List Keyboard Navigation <a class="anchor" href="#diff-panel-file-list-keyboard-navigation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>New keyboard actions for navigating the file list in the diff panel:</p>
+<ul><li><code>app:diffFileListDown</code> — move down in the diff panel's file list</li><li><code>app:diffFileListUp</code> — move up in the diff panel's file list</li></ul>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"app:diffFileListDown"</code>, <code>"app:diffFileListUp"</code>)</p>
+    </article>
+    <article class="card" id="extracacertpaths-for-tls-certificate-trust">
+      <div class="card-top">
+        <h3>extraCaCertPaths for TLS Certificate Trust <a class="anchor" href="#extracacertpaths-for-tls-certificate-trust">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The sandbox TLS certificate bundle builder now accepts an <code>extraCaCertPaths</code> list to include additional PEM CA certificates in the trust bundle.</p>
+<div class="blabel">Details</div>
+<ul><li>Paths listed in <code>extraCaCertPaths</code> are read and validated (must contain at least one <code>CERTIFICATE</code> PEM block)</li><li>Invalid or unreadable paths emit warnings and are skipped rather than failing hard</li><li>Useful in environments that use internal certificate authorities for TLS inspection</li></ul>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"extraCaCertPaths"</code>, <code>"[mitm-ca] extraCaCertPaths:"</code>)</p>
+    </article>
+    <article class="card" id="notification-tool-clearer-not-sent-reason">
+      <div class="card-top">
+        <h3>Notification Tool: Clearer "Not Sent" Reason <a class="anchor" href="#notification-tool-clearer-not-sent-reason">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The PushNotification/desktop notification tool now provides a specific reason when a notification is suppressed because the terminal is active:</p>
+<p>"Not sent — this terminal is active, so your output here already reaches the user; a separate notification would be redundant."</p>
+<p>Previously the tool returned a less specific "Not sent — terminal has focus" message.</p>
+<div class="blabel">Evidence</div>
+<p>(search for <code>"Not sent — this terminal is active, so your output here already reaches the user"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Config write queue now correctly drains before process exit, relaunch, and <code>exitWithMessage</code> paths — previously a race could lose in-flight settings writes on shutdown. (search for <code>"write queue drain timeout"</code>)</li><li>The settings write path now uses a proper async queue with in-order serialization (<code>_f</code>) for all config sections, preventing concurrent writes from clobbering each other. (search for <code>"saveConfigWithLock"</code>, <code>"mbn.set"</code>)</li><li><code>deleteCurrentProjectConfigFields</code> and <code>deleteProjectConfig</code> fallback paths now correctly re-base on the enqueue-time cache snapshot when a concurrent auth write is in flight, preventing auth loss. (search for <code>"enqueue-time cache snapshot. See GH #3117"</code>)</li><li>Model alias picker no longer inserts duplicate entries when the current alias and its 1M variant are both in the list. (search for <code>"Failed to migrate"</code>, model alias migration error strings)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled.</p>
+    </article>
+    <article class="card" id="request-body-gzip-compression-in-development">
+      <div class="card-top">
+        <h3>Request Body Gzip Compression [In Development] <a class="anchor" href="#request-body-gzip-compression-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Gzip compression of API request bodies, reducing bandwidth for large context uploads.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged (<code>tengu_gzip_request_bodies</code>, defaulting false). Can be force-enabled with <code>CLAUDE_CODE_GZIP_REQUEST_BODIES=1</code>.</p>
+<div class="blabel">Evidence</div>
+<p>(returns <code>!1</code> by default, search for <code>"CLAUDE_CODE_GZIP_REQUEST_BODIES"</code>, <code>"tengu_gzip_request_bodies"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.199.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.199.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
