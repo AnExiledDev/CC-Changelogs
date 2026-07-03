@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.200 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.200."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.200</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.200</span></h1>
+<p class="sub">Version 2.1.200 ships full infrastructure for background observer agents — a new experimental capability where a second agent silently watches a main agent's activity and can send one-way advisory reports via a new <code>ObserverReport</code> tool. It also adds a programmatic <code>set_cwd</code> mechanism for SDK hosts, a new <code>askUserQuestionTimeout</code> setting for auto-continuing idle questions, <code>manual</code> as an accepted alias for the <code>default</code> permission mode, and expanded Claude Design tool operations. Claude Tag (Claude in Slack) documentation is now bundled into the <code>/claude-code</code> skill.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.199 → v2.1.200</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">19</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">5</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">1</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="observer-agents-gradual-rollout">
+      <div class="card-top">
+        <h3>Observer Agents [Gradual Rollout] <a class="anchor" href="#observer-agents-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A background observer agent can now be paired with any running subagent. The observer receives read-only activity digests of the observed agent's turns and can report back via the new <code>ObserverReport</code> tool. It never participates in the task directly — its only output channel is the report tool.</p>
+<div class="blabel">Details</div>
+<ul><li>Declared in an agent definition with two new fields: <code>observer</code> (the agent type to spawn as observer) and <code>observerMessage</code> (supplemental postamble to append to each digest)</li><li>The observer receives digests wrapped in <code>&lt;agentName-activity&gt;</code> tags after each of the observed agent's turns</li><li>Observers report via <code>ObserverReport</code> with a concise message; the observed agent receives it as a one-way meta message</li><li>The system enforces no chaining: an observer cannot itself declare an observer</li><li>Observer agents start fresh mid-task if their context is lost (with a note indicating the restart)</li><li>Controlled by three gates: <code>CLAUDE_CODE_EXPERIMENTAL_OBSERVER_AGENTS</code> env var, <code>CLAUDE_CODE_DISABLE_BACKGROUND_TASKS</code> env var (disables), and <code>tengu_observer_agents_enabled</code> feature flag (default true)</li><li>Permission gate runs at arm time and on each delivery — if denied, the pairing is retired</li></ul>
+<div class="blabel">Status</div>
+<p>Feature-flagged — requires <code>CLAUDE_CODE_EXPERIMENTAL_OBSERVER_AGENTS=1</code> to enable.</p>
+<div class="blabel">Evidence</div>
+<p>Observer spawn system (search for <code>"[agentObserver] arm-time permission denied"</code>, <code>"observer-gate-"</code>, <code>"ObserverReport"</code>) — <code>fWn()</code> at ~line 351131 checks all three gates</p>
+    </article>
+    <article class="card" id="observerreport-tool">
+      <div class="card-top">
+        <h3>ObserverReport Tool <a class="anchor" href="#observerreport-tool">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>New tool available exclusively to observer agents for sending one-way advisory reports to the agent they are observing.</p>
+<div class="blabel">Details</div>
+<ul><li>Takes a single <code>report</code> string parameter</li><li>Target is resolved from the observer's pairing — no recipient to name</li><li>Delivers to the observed agent's task queue as a meta message</li><li>Returns an error if called outside an observer context, if the pairing is not armed, or if the observed agent is not running</li><li>Expected usage pattern is silence: only report when something genuinely warrants it</li></ul>
+<div class="blabel">Evidence</div>
+<p>Tool implementation (search for <code>"ObserverReport is only available to an observer agent"</code>, <code>"Your observer pairing is not armed"</code>)</p>
+    </article>
+    <article class="card" id="set-cwd-sdk-tool">
+      <div class="card-top">
+        <h3><code>set_cwd</code> SDK Tool <a class="anchor" href="#set-cwd-sdk-tool">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>New programmatic working-directory change mechanism for SDK hosts (e.g. Claude Desktop) — the headless twin of the interactive <code>/cd</code> command.</p>
+<div class="blabel">Details</div>
+<ul><li>Accepts <code>path</code> (required), <code>trust_accepted</code> (boolean), and <code>trusted_directory</code> (required if <code>trust_accepted</code> is true)</li><li>Runs the same validation, <code>Cd(...)</code> permission rules, and relocation path as the interactive <code>/cd</code></li><li>Returns structured responses: <code>ok</code> (with <code>cwd</code>, <code>changed</code>, <code>transcript_relocated</code>), <code>needs_trust</code> (when the directory requires a trust dialog), or <code>rejected</code> (with reason: <code>busy</code>, <code>not_found</code>, <code>not_a_directory</code>, <code>blocked_by_rule</code>, <code>unsafe_path</code>)</li><li>Rejects requests while a turn is in progress with a clear "busy" reason</li><li>The <code>trust_accepted</code> flow requires echoing back the exact directory string from the <code>needs_trust</code> response to pin the attestation</li><li>Paths containing invisible or non-printing characters are rejected as unsafe</li></ul>
+<div class="blabel">Evidence</div>
+<p>New set_cwd handler (search for <code>"A turn is in progress — the working directory can only change"</code>, <code>"set_cwd: invalid request — path must be a non-empty string"</code>, <code>"set_cwd: invalid request — trust_accepted requires trusted_directory"</code>)</p>
+    </article>
+    <article class="card" id="question-auto-continue-timeout-askuserquestiontimeout">
+      <div class="card-top">
+        <h3>Question Auto-Continue Timeout (<code>askUserQuestionTimeout</code>) <a class="anchor" href="#question-auto-continue-timeout-askuserquestiontimeout">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>New setting that auto-continues Claude's questions after a configurable idle period, using whichever answers are selected so far.</p>
+<div class="blabel">Usage</div>
+<pre><code>{
+  &quot;askUserQuestionTimeout&quot;: &quot;5m&quot;
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Accepted values: <code>"60s"</code>, <code>"5m"</code>, <code>"10m"</code>, <code>"never"</code> (default)</li><li>Only activates when explicitly set — defaults to never auto-continuing</li><li>Applies to questions Claude poses to the user during a session</li></ul>
+<div class="blabel">Evidence</div>
+<p>New settings field (search for <code>"Idle time before Claude's questions auto-continue with any answers"</code>, <code>"askUserQuestionTimeout"</code>)</p>
+    </article>
+    <article class="card" id="manual-as-alias-for-default-permission-mode">
+      <div class="card-top">
+        <h3><code>manual</code> as Alias for <code>default</code> Permission Mode <a class="anchor" href="#manual-as-alias-for-default-permission-mode">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The string <code>"manual"</code> is now accepted wherever <code>"default"</code> is accepted as a permission mode value.</p>
+<div class="blabel">Usage</div>
+<pre><code>claude --permission-mode manual</code></pre>
+<div class="blabel">Details</div>
+<ul><li><code>manual</code> maps to <code>default</code> behavior internally</li><li>Works in CLI flags, settings JSON, and agent definitions</li><li>The settings schema now preprocesses the value to normalize <code>manual</code> → <code>default</code></li><li>Allows configs that used the informal term "manual" to continue working without changes</li></ul>
+<div class="blabel">Evidence</div>
+<p>New alias function (search for <code>"Default permission mode when Claude Code needs access ('manual' is accepted as an alias for 'default')"</code>) — <code>y_()</code> at ~line 63398</p>
+    </article>
+    <article class="card" id="remote-workflow-via-environment-variables">
+      <div class="card-top">
+        <h3>Remote Workflow via Environment Variables <a class="anchor" href="#remote-workflow-via-environment-variables">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Server-launched remote sessions (CCR) can now receive and execute a workflow script delivered through environment variables, enabling fully server-initiated workflow runs without interactive invocation.</p>
+<div class="blabel">Details</div>
+<ul><li><code>CLAUDE_REMOTE_WORKFLOW_SCRIPT</code>: The workflow script content (as a string)</li><li><code>CLAUDE_REMOTE_WORKFLOW_ARGS</code>: Optional JSON-encoded args to pass to the script</li><li><code>CLAUDE_WORKFLOW_NAME_ONLY</code>: Restricts workflow execution to named bundled workflows only</li><li>Gated to sessions where <code>CLAUDE_CODE_REMOTE</code> is set; emits an error if called in a local session</li><li>Validates the script is deterministic (no <code>Date.now()</code>, <code>Math.random()</code>, or <code>new Date()</code>)</li><li>Compiles and runs via the same workflow engine as the interactive <code>Workflow</code> tool</li><li>Returns JSON-encoded results or structured error codes back through the session</li></ul>
+<div class="blabel">Status</div>
+<p>Only active in remote CCR sessions; the internal slash command is hidden with no interactive use.</p>
+<div class="blabel">Evidence</div>
+<p>Remote workflow handler (search for <code>"CLAUDE_REMOTE_WORKFLOW_SCRIPT"</code>, <code>"this command only runs inside a remote (CCR) session"</code>, <code>"workflow scripts must be deterministic"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="claude-design-tool-expanded-operations">
+      <div class="card-top">
+        <h3>Claude Design Tool — Expanded Operations <a class="anchor" href="#claude-design-tool-expanded-operations">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The Claude Design tool gained a substantial set of new operations for managing design projects:</p>
+<ul><li><code>finalize_plan</code> — Finalizes a plan for writing to claude.ai/design; approval also grants prompt-free writes to plan paths for 15 minutes</li><li><code>write_files</code> — Write files to the design project</li><li><code>copy_files</code> — Copy files within the project</li><li><code>delete_files</code> — Delete files from the project</li><li><code>render_preview</code> — Render a design preview</li><li><code>create_support_js</code> — Create a support.js file</li><li><code>add_member</code> — Add a project member</li><li><code>update_member_role</code> — Change a member's role</li><li><code>remove_member</code> — Remove a project member</li><li><code>update_sharing</code> — Update project sharing settings</li></ul>
+<p>The <code>project_write</code> tool also gained a <code>present_to_user</code> parameter (boolean, default false) to mark a document as the user-facing deliverable. Setting it to true on routine saves is explicitly discouraged to avoid unnecessary cache busting.</p>
+<div class="blabel">Evidence</div>
+<p>New operation dispatch table (search for <code>"Finalize plan"</code>, <code>"finalize_plan — the human is the path-review boundary"</code>, <code>"false; leave it unset for routine saves"</code>)</p>
+    </article>
+    <article class="card" id="plan-gated-write-permissions-15-minute-window">
+      <div class="card-top">
+        <h3>Plan-Gated Write Permissions (15-Minute Window) <a class="anchor" href="#plan-gated-write-permissions-15-minute-window">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When a <code>finalize_plan</code> operation is approved, writes and deletes to the exact paths listed in the plan are automatically permitted for up to 15 minutes without additional prompts. The approval dialog now shows:</p>
+<p>&gt; "Approving also lets writes and deletes to exactly these paths run without another prompt for up to 15 minutes (file contents are not shown again; anything to any other path will still ask)."</p>
+<div class="blabel">Evidence</div>
+<p>Plan token authorization system (search for <code>"Approving also lets writes and deletes to exactly these paths"</code>, <code>"approved plan expired"</code>, <code>"path not in approved plan:"</code>)</p>
+    </article>
+    <article class="card" id="claude-tag-claude-in-slack-documentation-added-to-claude-cod">
+      <div class="card-top">
+        <h3>Claude Tag (Claude in Slack) Documentation Added to /claude-code Skill <a class="anchor" href="#claude-tag-claude-in-slack-documentation-added-to-claude-cod">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>/claude-code</code> skill (which answers questions about Claude Code itself) now covers Claude Tag — Anthropic's Slack-native teammate surface. Its description was updated to include "and Claude Tag (Claude in Slack)." A new bundled reference file (<code>references/claude-tag.md</code>) provides offline documentation for Claude Tag, and the live-sources reference now maps Claude Tag topics to their docs URLs at <code>claude.com/docs/claude-tag/</code>.</p>
+<p>Key points bundled:</p>
+<ul><li>Claude Tag replaces the earlier per-user "Claude in Slack" app</li><li>Users <code>@Claude</code> in a thread; an org-managed remote Claude Code session handles the task</li><li>Configuration (repos, tools, spend limit) is an org-owner action at <code>claude.ai/admin-settings/claude-tag</code></li><li>The <code>recent-changes.md</code> reference now notes: "Claude in Slack (the earlier Slack app)" → "Claude Tag"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated skill description (search for <code>"and Claude Tag (Claude in Slack). Verifies against the running build"</code>) and new bundled reference (search for <code>"claude-tag/overview.md"</code>)</p>
+    </article>
+    <article class="card" id="mtls-certificate-hot-reload">
+      <div class="card-top">
+        <h3>mTLS Certificate Hot-Reload <a class="anchor" href="#mtls-certificate-hot-reload">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The mTLS client certificate implementation was refactored to support hot-reloading. Previously, certificates were loaded once at startup (via a singleton). Now:</p>
+<ul><li>Certificates are re-read from disk whenever <code>CLAUDE_CODE_CLIENT_CERT</code> or <code>CLAUDE_CODE_CLIENT_KEY</code> changes</li><li>An async reload function queues sequential refreshes (no concurrent reloads)</li><li>The HTTPS agent is rebuilt only when the certificate content actually changes</li><li>Path and content are both tracked to detect file replacement vs. content changes</li></ul>
+<p>Error messages are now more descriptive, reporting the certificate role (e.g., "client certificate from CLAUDE_CODE_CLIENT_CERT") rather than the file path.</p>
+<div class="blabel">Evidence</div>
+<p>Refactored mTLS module (search for <code>"mTLS: Loaded client certificate from CLAUDE_CODE_CLIENT_CERT"</code>, <code>"mTLS: Creating HTTPS agent with custom certificates"</code>)</p>
+    </article>
+    <article class="card" id="diff-panel-shows-staged-files-in-repos-without-commits">
+      <div class="card-top">
+        <h3>Diff Panel: Shows Staged Files in Repos Without Commits <a class="anchor" href="#diff-panel-shows-staged-files-in-repos-without-commits">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The diff panel now handles new git repositories that have staged files but no commits yet:</p>
+<ul><li>Shows "Staged and new files" as the panel title (instead of "Branch changes")</li><li>Shows "(no commits yet)" in the subtitle</li></ul>
+<div class="blabel">Evidence</div>
+<p>Diff panel source state handling (search for <code>"Staged and new files"</code>, <code>"(no commits yet)"</code>)</p>
+    </article>
+    <article class="card" id="model-id-error-messages-now-suggest-alternatives">
+      <div class="card-top">
+        <h3>Model ID Error Messages Now Suggest Alternatives <a class="anchor" href="#model-id-error-messages-now-suggest-alternatives">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When an unrecognized model ID is passed (e.g., via <code>/model</code> or <code>--model</code>), the error message now:</p>
+<ul><li>Checks if the input looks like a display name and suggests the correct model ID</li><li>Uses fuzzy matching to find the closest valid model ID if available</li><li>Falls back to "Run /model to see available models." when no good match is found</li></ul>
+<p>Example output: <code>Model "claude4" is not a recognized model id. Did you mean 'claude-opus-4-5'?</code></p>
+<div class="blabel">Evidence</div>
+<p>Model ID validator (search for <code>"is not a recognized model id."</code>, <code>"Run /model to see available models."</code>)</p>
+    </article>
+    <article class="card" id="memory-sync-error-classification-improvements">
+      <div class="card-top">
+        <h3>Memory Sync Error Classification Improvements <a class="anchor" href="#memory-sync-error-classification-improvements">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The HTTP error handler for memory operations now parses the server error body and maps specific server error messages to typed error codes:</p>
+<ul><li><code>"memory store has reached its memory limit"</code> → <code>store_full</code></li><li><code>"content must be at most 102400 bytes"</code> → <code>content_too_large</code></li><li><code>"memory content appears to contain a credential or API key"</code> → <code>content_secret</code></li><li>Path validation failures (<code>"path must be at most 1024 bytes"</code>, <code>"path must be NFC-normalized"</code>, etc.) → <code>invalid_path</code></li><li><code>"cannot modify archived resource"</code> → <code>store_archived</code></li></ul>
+<p>Users will see more specific notifications when memory writes fail for these reasons, rather than generic HTTP error messages.</p>
+<div class="blabel">Evidence</div>
+<p>Error classification map (search for <code>"memory store has reached its memory limit"</code>, <code>"cannot modify archived resource"</code>, <code>"content must be at most 102400 bytes"</code>)</p>
+    </article>
+    <article class="card" id="plugin-command-singular-now-used-in-error-messages">
+      <div class="card-top">
+        <h3><code>/plugin</code> Command (Singular) Now Used in Error Messages <a class="anchor" href="#plugin-command-singular-now-used-in-error-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Error messages that previously said "Run /plugins to refresh the plugin cache" now say "Run /plugin to refresh the plugin cache" — matching the actual command name.</p>
+<div class="blabel">Evidence</div>
+<p>Updated error string (search for <code>"Run /plugin to refresh the plugin cache"</code>)</p>
+    </article>
+    <article class="card" id="verify-skill-now-bootstraps-project-verify-skill">
+      <div class="card-top">
+        <h3>Verify Skill: Now Bootstraps Project Verify Skill <a class="anchor" href="#verify-skill-now-bootstraps-project-verify-skill">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The bundled <code>/verify</code> skill description was updated to note that it "bootstraps this repo's project verify skill if none exists yet." It will create <code>.claude/skills/verify/SKILL.md</code> in the appropriate location if the project doesn't have one. The guidance was also refined: verify corrections that are project-specific should go in the closest-scoped skill file and should never be duplicated at broader scopes.</p>
+<div class="blabel">Evidence</div>
+<p>Updated verify skill description (search for <code>"bootstraps this repo's project verify skill if none exists yet"</code>)</p>
+    </article>
+    <article class="card" id="feedback-memory-skill-correction-never-create-new-skills-exc">
+      <div class="card-top">
+        <h3>Feedback Memory Skill Correction: Never Create New Skills (Except <code>verify</code>) <a class="anchor" href="#feedback-memory-skill-correction-never-create-new-skills-exc">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The guidance for the <code>feedback</code> memory (when Claude corrects a repeatable step) was tightened:</p>
+<ul><li>Previously: "Edit existing skill files rather than creating new ones (a new project skill shadows a same-named built-in skill), with one exception: if the correction is about how to verify changes in this repo and <code>.claude/skills/verify/SKILL.md</code> does not exist, create it."</li><li>Now: "Edit existing skill files <strong>only</strong>; never create one — a new project skill silently shadows a same-named built-in skill. The single exception is verify..."</li></ul>
+<p>The verify exception also gained guidance about scoping: the correction goes in the closest-scoped <code>verify/SKILL.md</code> (repo root vs. subproject), never duplicated.</p>
+<div class="blabel">Evidence</div>
+<p>Updated feedback memory string (search for <code>"Edit existing skill files only; never create one"</code>, <code>"Each correction lives in exactly one skill file"</code>)</p>
+    </article>
+    <article class="card" id="gh-cli-detection-expanded">
+      <div class="card-top">
+        <h3><code>gh</code> CLI Detection Expanded <a class="anchor" href="#gh-cli-detection-expanded">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The regex for detecting potentially destructive <code>gh</code> CLI operations was updated to use the <code>gh</code> subcommand format (e.g., <code>gh pr create</code>, <code>gh issue comment</code>) matching the actual <code>gh</code> CLI syntax. The regex now covers: <code>gh pr create</code>, <code>gh pr merge</code>, <code>gh issue create</code>, <code>gh issue comment</code>, <code>gh release create</code>, <code>gh repo fork</code></p>
+<div class="blabel">Evidence</div>
+<p>Updated gh detection regex (search for <code>"ghs+(prs+create|prs+merge|issues+create|issues+comment|releases+create|repos+fork)"</code>)</p>
+    </article>
+    <article class="card" id="background-agent-markers-isbackgroundagent-field">
+      <div class="card-top">
+        <h3>Background Agent Markers: <code>isBackgroundAgent</code> Field <a class="anchor" href="#background-agent-markers-isbackgroundagent-field">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Agent context objects for background (sidecar) agents now carry an <code>isBackgroundAgent: true</code> field. This enables the system to distinguish background agents from in-process subagents without relying on <code>agentType</code> alone.</p>
+<div class="blabel">Evidence</div>
+<p>Background agent context update (search for <code>"isBackgroundAgent: !0"</code> near <code>"isMainSession: !0"</code>)</p>
+    </article>
+    <article class="card" id="session-history-prefetch-filters-stale-control-requests">
+      <div class="card-top">
+        <h3>Session History Prefetch Filters Stale Control Requests <a class="anchor" href="#session-history-prefetch-filters-stale-control-requests">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When replaying session history from disk, the history parser now filters out any <code>control_request</code> events whose matching <code>control_response</code> or <code>control_cancel_request</code> never arrived in the recorded log. This prevents stale pending permission dialogs from re-appearing when a session is resumed.</p>
+<div class="blabel">Evidence</div>
+<p>History event filter (search for <code>"queryWithObserverTap: missing terminal after completion"</code>) — <code>DXm()</code> at ~line 875907</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li><code>isDirEmptySync</code> was replaced with an async <code>opendir</code>-based empty-check, removing a synchronous I/O call from the directory scan path (search for <code>"isDirEmptySync"</code> is now absent)</li><li>TeammateTool member removal now guards against stale removals: if a member re-joined between when a removal was initiated and when it executes, the removal is skipped with a log message <code>"Skipped stale removal"</code> (search for <code>"re-added after removal was initiated"</code>)</li><li>Observer pairing is now retired when a session resumes (<code>lir()</code> called on session start), preventing a stale observer from a previous run from being reused across sessions</li><li><code>plansDirectory</code> validation now correctly handles the case where the configured path resolves to exactly the project root (previously the check <code>!s.startsWith(o + sep)</code> would incorrectly reject root-equal paths)</li><li>The <code>Cd(...)</code> rule check for paths containing control or invisible characters now suppresses the path from the error message to avoid terminal injection (search for <code>"The rule text contains control or invisible characters, so it is not echoed here"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="remote-control-session-resume-improvements-in-development">
+      <div class="card-top">
+        <h3>Remote Control Session Resume Improvements [In Development] <a class="anchor" href="#remote-control-session-resume-improvements-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>New error messages and recovery flows for Remote Control session resume failures were added, including clearer messages when a session cannot be found or has expired:</p>
+<ul><li>"Couldn't reconnect to your Remote Control session. Retry, or start a fresh session without --resume."</li><li>"Error: No recent session found in this directory or its worktrees. Run <code>claude remote-control</code> to start a new one."</li><li>Better handling of the "environment expired" case: creates a fresh session instead of failing</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated Remote Control error strings (search for <code>"Couldn't reconnect to your Remote Control session"</code>, <code>"its environment has expired. Creating a fresh session instead"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.200.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.200.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
