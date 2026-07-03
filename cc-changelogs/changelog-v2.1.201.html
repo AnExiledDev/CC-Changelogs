@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.201 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.201."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.201</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.201</span></h1>
+<p class="sub">Version 2.1.201 is a same-day hotfix release built approximately 16 hours after 2.1.200 (build timestamp advances from 03:43 UTC to 19:53 UTC on 2026-07-03). The only substantive code change is an addition to an internal model-compatibility list that includes <code>claude-sonnet-5</code>. There are no new commands, flags, settings, or user-facing messages in this release.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.200 → v2.1.201</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">1</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="claude-sonnet-5-added-to-model-compatibility-list">
+      <div class="card-top">
+        <h3>claude-sonnet-5 added to model compatibility list <a class="anchor" href="#claude-sonnet-5-added-to-model-compatibility-list">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The identifier <code>"claude-sonnet-5"</code> was added to an internal list of model names that gates a specific runtime behavior. The list already included <code>claude-sonnet-4-0</code>, <code>claude-sonnet-4-5</code>, <code>claude-sonnet-4-6</code>, and <code>claude-haiku-4-5</code>. Functions that check this list return <code>false</code> for any model on it, which typically means a legacy-mode fallback or optional feature is suppressed when using one of these newer models — a pattern the codebase uses to avoid applying compatibility shims to models that don't need them.</p>
+<p>Users who configure Claude Code to use <code>claude-sonnet-5</code> will now receive the same behavior as other recent Sonnet variants rather than triggering an unintended legacy code path.</p>
+<div class="blabel">Evidence</div>
+<p>model name roster check (search for <code>"claude-sonnet-5"</code> in variable <code>tw</code> around line ~162329 of the prettified source)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>All other modifications in this release are mechanical version-string propagation: every embedded copy of the package version (<code>VERSION: "2.1.200"</code> → <code>"2.1.201"</code>), build timestamp, and Git SHA was updated across the roughly 35 structural and 72 string-only locations where these constants appear inline. No user-facing behavior, commands, or settings changed as a result of those updates.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.201.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.201.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
