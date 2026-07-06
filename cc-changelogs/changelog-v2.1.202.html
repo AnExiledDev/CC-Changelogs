@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.202 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.202."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.202</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.202</span></h1>
+<p class="sub">This release adds audio file transcription via @-mention, a new "Dynamic workflow size" setting in <code>/config</code>, and an explicit <code>stop: true</code> mechanism for ending <code>/loop</code> sessions. Background agents also gain improved git/GitHub authentication through a governed git proxy and better cloud credential forwarding. The internal teammate pane backend has been removed in a significant infrastructure cleanup.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.201 → v2.1.202</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="audio-file-transcription-via-mention">
+      <div class="card-top">
+        <h3>Audio File Transcription via @-mention <a class="anchor" href="#audio-file-transcription-via-mention">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Users can now @-mention audio files in their prompts. Claude Code sends the audio to Anthropic's speech-to-text service and injects a structured transcript into the conversation before Claude sees it.</p>
+<div class="blabel">Details</div>
+<ul><li>The transcript is wrapped in <code>&lt;audio-transcript filename="..."&gt;</code> XML with optional <code>duration="M:SS"</code> metadata</li><li>If transcription fails, an error variant is injected instead of silently dropping the attachment</li><li>The reference panel regex that handles pasted/attached items now recognizes <code>[Audio #N]</code> placeholders alongside existing <code>[Image #N]</code> and <code>[Pasted text #N]</code> entries</li><li>Governed by a new HIPAA-compatible permission: <code>allow_voice_file_transcription</code></li><li>Audio attachments are now passed through in subagent message filtering alongside image attachments</li></ul>
+<div class="blabel">Evidence</div>
+<p>Audio transcription handler (search for <code>"audio-transcript"</code> and <code>"The user @-mentioned the audio file"</code>)</p>
+    </article>
+    <article class="card" id="dynamic-workflow-size-setting-in-config">
+      <div class="card-top">
+        <h3>Dynamic Workflow Size Setting in /config <a class="anchor" href="#dynamic-workflow-size-setting-in-config">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new "Dynamic workflow size" option is available in the <code>/config</code> menu, letting users set a persistent default scale for workflow agent counts (unrestricted / small / medium / large).</p>
+<div class="blabel">Usage</div>
+<pre><code>/config → Dynamic workflow size → [unrestricted | small | medium | large]</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The guideline is injected into each workflow turn so the model follows it without requiring repeated prompting</li><li>Changes mid-session emit a context message: "The user changed their workflow size guideline in /config: [size]."</li><li>Removing the setting emits: "The user removed their workflow size guideline in /config — workflow size is unrestricted again."</li><li>Two new tips are registered to teach users about the feature:</li><li><code>workflow-size-prompting</code> — shown in explicit workflow contexts, suggests <code>"use a small workflow, 5 agents max"</code> and mentions <code>/config</code></li><li><code>workflow-size-prompting-ambient</code> — shown in other contexts, suggests <code>"use at most 5 agents"</code></li><li>Prompting inline still works and overrides the setting: "use a small workflow, 5 agents max"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Config menu entry (search for <code>"Dynamic workflow size"</code> and <code>"workflowSizeGuideline"</code>)</p>
+    </article>
+    <article class="card" id="loop-explicit-stop-via-schedulewakeup-stop-true">
+      <div class="card-top">
+        <h3><code>/loop</code> Explicit Stop via <code>ScheduleWakeup({stop: true})</code> <a class="anchor" href="#loop-explicit-stop-via-schedulewakeup-stop-true">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>ScheduleWakeup</code> tool used in dynamic <code>/loop</code> sessions now accepts a <code>stop: true</code> field to explicitly terminate the loop, replacing the previous implicit approach of simply omitting the call.</p>
+<div class="blabel">Details</div>
+<ul><li><code>stop: true</code> cancels all pending wakeups and records a terminal event</li><li>When called after the loop has already ended, it logs a cleanup-only message and suppresses the terminal event to avoid double-firing</li><li>The <code>/loop</code> instructions now clearly enumerate step 6: "To stop the loop — call ScheduleWakeup with <code>stop: true</code> (no other fields) ... Stopping is the loop's normal ending — the user can restart it anytime with /loop."</li><li>A <code>loopEnded</code> flag is now tracked in session state to guard against duplicate stop events</li><li>A <code>noop</code> field was already present; <code>delaySeconds</code>, <code>reason</code>, and <code>prompt</code> are now explicitly documented as required only when <code>stop</code> is not true</li><li>The tool description now reads: "call with <code>stop: true</code> to end the loop immediately" (was: "omit the call to end it")</li></ul>
+<div class="blabel">Evidence</div>
+<p>Loop stop handler (search for <code>"[loop] model called ScheduleWakeup({stop:true})"</code> and <code>"stop the /loop — cancel pending wakeups, schedule nothing"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="agent-proxy-governed-git-and-github-gh-shim">
+      <div class="card-top">
+        <h3>Agent Proxy: Governed Git and GitHub (gh) Shim <a class="anchor" href="#agent-proxy-governed-git-and-github-gh-shim">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Background agents running through the agent proxy now get automatic git and GitHub CLI (<code>gh</code>) authentication wired in per-session.</p>
+<div class="blabel">Details</div>
+<ul><li>On startup, the proxy writes a per-session git config that routes <code>github.com</code> traffic through the relay, sets the CA bundle, and injects a dummy token guard so accidental raw requests to GitHub fail fast</li><li>If <code>gh</code> is on <code>PATH</code>, the proxy also writes a per-session <code>gh</code> wrapper script (shim) in a temp directory and prepends it to <code>PATH</code> so <code>gh</code> commands also route through the relay</li><li>Supported tokens: <code>GH_TOKEN</code>, <code>GITHUB_TOKEN</code>, <code>GH_ENTERPRISE_TOKEN</code>, <code>GITHUB_ENTERPRISE_TOKEN</code></li><li>The relay routing entry is appended to the global git config file named by <code>$GIT_CONFIG_GLOBAL</code> (refuses if the variable is unset to avoid writing a shared config)</li><li>Skip conditions are logged: CA bundle path contains newline/quote, <code>gh</code> not on PATH, path contains a single quote</li><li>The permission pattern for <code>gh</code> operations has been expanded to include <code>prs+comment</code>, <code>releases+upload</code>, and <code>repos+fork</code></li><li>The proxy status message now clearly distinguishes between git-only and git+gh modes</li></ul>
+<div class="blabel">Evidence</div>
+<p>Git proxy config writer (search for <code>"[agent-proxy] governed git: relay routing for"</code> and <code>"governed-git (auto-generated; do not edit)"</code>)</p>
+    </article>
+    <article class="card" id="aws-and-gcp-credential-environment-variables-forwarded-to-su">
+      <div class="card-top">
+        <h3>AWS and GCP Credential Environment Variables Forwarded to Subagents <a class="anchor" href="#aws-and-gcp-credential-environment-variables-forwarded-to-su">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Several cloud SDK environment variables that were previously not forwarded to spawned subagents are now included in the forwarded set.</p>
+<p>Newly forwarded variables:</p>
+<ul><li><code>GCLOUD_PROJECT</code>, <code>GOOGLE_CLOUD_QUOTA_PROJECT</code></li><li><code>GCE_METADATA_HOST</code>, <code>GCE_METADATA_IP</code>, <code>METADATA_SERVER_DETECTION</code></li><li><code>AWS_CONTAINER_CREDENTIALS_FULL_URI</code>, <code>AWS_CONTAINER_CREDENTIALS_RELATIVE_URI</code></li><li><code>AWS_CONTAINER_AUTHORIZATION_TOKEN</code>, <code>AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE</code></li><li><code>AWS_EC2_METADATA_SERVICE_ENDPOINT</code>, <code>AWS_EC2_METADATA_SERVICE_ENDPOINT_MODE</code></li><li><code>AWS_REGION</code>, <code>AWS_DEFAULT_REGION</code></li></ul>
+<p>This fixes authentication failures when subagents attempt to use EC2 instance profiles, ECS task roles, GCE metadata server credentials, or custom metadata endpoints.</p>
+<div class="blabel">Evidence</div>
+<p>Environment forwarding list (search for <code>"METADATA_SERVER_DETECTION"</code> and <code>"AWS_EC2_METADATA_SERVICE_ENDPOINT"</code>)</p>
+    </article>
+    <article class="card" id="unified-credential-error-messages-for-cloud-providers">
+      <div class="card-top">
+        <h3>Unified Credential Error Messages for Cloud Providers <a class="anchor" href="#unified-credential-error-messages-for-cloud-providers">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The separate error strings for each cloud credential provider (Bedrock, Vertex, Foundry, Mantle, Anthropic-on-AWS) have been consolidated into a single generic credential error factory.</p>
+<div class="blabel">Details</div>
+<ul><li>All credential providers now use: "[Provider] credentials are managed by the desktop app, but none are available. The app may have quit or its credential file is stale — restart the desktop app."</li><li>A new explicit message for incompatible credential types: "Background agents and teammates are not supported for this credential kind. Run this from the main session, or switch the desktop app to a profile-based or API-key credential. If this is the main session, restart the desktop app."</li><li>AWS credential detection now uses <code>Pqs()</code> to read <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_PROFILE</code>, <code>AWS_CONFIG_FILE</code>, and <code>AWS_SHARED_CREDENTIALS_FILE</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Credential error factory (search for <code>"host-managed provider credentials unavailable"</code> and <code>"Background agents and teammates are not supported for this credential kind"</code>)</p>
+    </article>
+    <article class="card" id="mcp-connector-duplicate-entry-merging">
+      <div class="card-top">
+        <h3>MCP Connector Duplicate Entry Merging <a class="anchor" href="#mcp-connector-duplicate-entry-merging">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When multiple skill manifest entries resolve to the same MCP connector, they are now automatically merged into a single connector entry instead of producing ambiguous <code>server_ambiguous</code> errors.</p>
+<div class="blabel">Details</div>
+<ul><li>Duplicate entries are merged by unioning their tool lists</li><li>A warning is emitted: "[N] manifest entries resolve to connector '[name]' and were merged into one ([M] tools). A viewer with more than one connector named '[name]' gets server_ambiguous on every call until the duplicates are renamed or removed."</li><li>Entries that cannot be resolved (using the <code>claude_ai_</code> prefix namespace) are reported as unresolved rather than silently dropped</li></ul>
+<div class="blabel">Evidence</div>
+<p>Connector dedup logic (search for <code>"were merged into one ("</code> and <code>"server_ambiguous on every call"</code>)</p>
+    </article>
+    <article class="card" id="skill-re-invocation-deduplication">
+      <div class="card-top">
+        <h3>Skill Re-Invocation Deduplication <a class="anchor" href="#skill-re-invocation-deduplication">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When a slash command (skill) is invoked a second time within the same session, byte-identical invocations are now elided rather than injecting the full skill content again.</p>
+<div class="blabel">Details</div>
+<ul><li>If the content is already present in the conversation body, a brief inline note replaces it: "Skill /[name] is already loaded above; instructions unchanged. Arguments: [args]"</li><li>If the content is only in the invoked-skills attachment (compacted), a new-invocation message is injected: "Skill /[name] was loaded earlier (see the invoked-skills reminder above); this is a NEW invocation — follow those instructions now, including any setup steps."</li><li>If a skill was truncated by compaction, the re-invocation injects the full content preceded by: "(Re-invocation of /[name] — the previously loaded copy was truncated by compaction; the full instructions follow.)"</li><li>Logged when elision occurs: "SkillTool eliding byte-identical re-invocation of skill [name]"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill re-invocation handler (search for <code>"SkillTool eliding byte-identical re-invocation of skill"</code> and <code>"is already loaded above; instructions unchanged"</code>)</p>
+    </article>
+    <article class="card" id="bypasspermissions-mode-not-restored-from-sessions-unless-exp">
+      <div class="card-top">
+        <h3><code>bypassPermissions</code> Mode Not Restored from Sessions Unless Explicitly Launched <a class="anchor" href="#bypasspermissions-mode-not-restored-from-sessions-unless-exp">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When restoring a session whose saved permission mode was <code>bypassPermissions</code>, Claude Code now checks whether the current session was launched with <code>--dangerously-skip-permissions</code> (or the mode is allowed by settings/policy). If not, it falls back to <code>default</code> and logs a warning.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously, a restored session could silently inherit dangerous permissions from a prior session</li><li>The warning logged: "[externalMetadataToAppState] Refusing restored mode 'bypassPermissions' (disabled by settings/policy or session not launched with --dangerously-skip-permissions); falling back to 'default'"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Permission mode restore guard (search for <code>"Refusing restored mode 'bypassPermissions'"</code>)</p>
+    </article>
+    <article class="card" id="worktree-orphan-directory-cleanup">
+      <div class="card-top">
+        <h3>Worktree Orphan Directory Cleanup <a class="anchor" href="#worktree-orphan-directory-cleanup">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new self-healing check detects and removes orphaned worktree directories left behind from interrupted worktree operations.</p>
+<div class="blabel">Details</div>
+<ul><li>A directory is considered orphaned when its path exists on disk but is not registered as an active worktree in git</li><li>Before removing, the check verifies: (1) the branch has no unpushed commits, (2) <code>git remote</code> succeeds, (3) <code>git rev-parse</code> succeeds on the branch ref</li><li>If any safety check fails, removal is refused with a message explaining what to do manually</li><li>On successful cleanup: "[worktree] removed orphaned worktree directory at [path]"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Orphan worktree cleanup (search for <code>"Orphaned worktree dir at"</code> and <code>"refusing to self-heal"</code>)</p>
+    </article>
+    <article class="card" id="binary-update-download-retry-and-error-reporting">
+      <div class="card-top">
+        <h3>Binary Update Download Retry and Error Reporting <a class="anchor" href="#binary-update-download-retry-and-error-reporting">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Updates to the binary downloader improve resilience and error surfacing during interrupted downloads.</p>
+<div class="blabel">Details</div>
+<ul><li>Checksum mismatches now produce a short canonical error string <code>"Checksum mismatch during binary download"</code> in addition to the detailed mismatch message, making them easier to surface and log</li><li>Repeated connection drops during a binary download now report: "Connection dropped repeatedly during binary download" after exhausting retries</li><li>Version fetch failures now emit: "Failed to fetch version from binary repo" as a canonical event alongside the detailed attempt-count message</li><li>Manifest fetch connection drops are similarly tagged: "Manifest fetch connection dropped on attempt [N]"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Binary updater (search for <code>"Checksum mismatch during binary download"</code> and <code>"Connection dropped repeatedly during binary download"</code>)</p>
+    </article>
+    <article class="card" id="pdf-empty-page-tree-detection">
+      <div class="card-top">
+        <h3>PDF Empty Page Tree Detection <a class="anchor" href="#pdf-empty-page-tree-detection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When a PDF attachment reports 0 pages (malformed or empty page tree), Claude Code now emits a specific diagnostic: "PDF reports 0 pages (empty page tree). The PDF may be invalid."</p>
+<div class="blabel">Evidence</div>
+<p>PDF validation (search for <code>"PDF reports 0 pages"</code>)</p>
+    </article>
+    <article class="card" id="refusal-fallback-tracking">
+      <div class="card-top">
+        <h3>Refusal Fallback Tracking <a class="anchor" href="#refusal-fallback-tracking">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Refusal-continuation retries are now tracked explicitly with a <code>refusalFallbackOccurred</code> flag in session state, allowing downstream code to distinguish sessions where a silent retry occurred.</p>
+<div class="blabel">Details</div>
+<ul><li>The internal <code>QueryEvent 'refusal_continuation'</code> description was updated from "window begins" to "retry begins" to more accurately reflect the mechanism</li><li>Session state gains <code>refusalFallbackOccurred: false</code> at initialization, reset per-query via <code>XHn()</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Refusal fallback state (search for <code>"refusalFallbackOccurred"</code> and <code>"x-is-refusal-fallback"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Hook async JSON output that fails schema validation now gracefully delivers recognized fields (<code>systemMessage</code>, <code>metrics</code>, <code>hookSpecificOutput</code>) instead of dropping everything. Malformed individual fields are logged and skipped rather than failing the whole hook output. (search for <code>"async hook JSON output failed schema validation"</code>)</li></ul>
+<ul><li><code>VirtualMessageList</code> desync between item keys and messages array now produces specific diagnostic messages distinguishing a length mismatch from an undefined element, improving debuggability. (search for <code>"VirtualMessageList: itemKeys/messages length desync"</code>)</li></ul>
+<ul><li>The <code>totalTokensReminder</code> setting's <code>padded-countdown</code> mode gains a new <code>totalTokensReminderAfterUserTurn</code> flag. When enabled, the token budget re-anchors to the full configured value at the start of each user turn (task-budget semantics) and the reminder also fires after regular user prompts, not only after tool results. (search for <code>"CLAUDE_CODE_TOTAL_TOKENS_REMINDER_AFTER_USER_TURN"</code>)</li></ul>
+<ul><li>Session hook failures during session reset are now caught and logged with <code>[skills] session-reset hook failed:</code> rather than propagating as unhandled errors. (search for <code>"[skills] session-reset hook failed:"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+<span class="ct">1 item</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="teammate-pane-backend-removed">
+      <div class="card-top">
+        <h3>Teammate Pane Backend Removed <a class="anchor" href="#teammate-pane-backend-removed">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>InProcessBackend</code> and <code>PaneBackendExecutor</code> classes (which backed the teammate/swarm pane UI) have been removed from the codebase. Associated log messages (<code>[InProcessBackend] ...</code>, <code>[PaneBackendExecutor] ...</code>, <code>[BackendRegistry] ...</code>), the <code>--teammate-mode</code> CLI flag, and the <code>ITermBackend</code> pane show/hide/rebalance stubs are gone.</p>
+<p>Users relying on the teammate swarm UI should be aware this infrastructure has been cleaned out. The <code>teammateMode</code> configuration key still exists for compatibility, but the pane-spawning backend is no longer present.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.202.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.202.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
