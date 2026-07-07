@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.203 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.203."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.203</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.203</span></h1>
+<p class="sub">This release tightens break reminder defaults to 30-minute intervals (down from 2 hours), improves proxy URL validation with actionable error messages, and adds detailed diagnostics for <code>E2BIG</code> spawn failures — especially when accumulated git worktrees grow the Bash sandbox deny list. The artifact tool gains first-session listing confirmation, smarter <code>url</code> parameter guidance, and shared-version warnings. EnterWorktree now resolves paths across repos nested in a multi-repo workspace.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.202 → v2.1.203</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">23</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="anthropic-foundry-auth-token-environment-variable">
+      <div class="card-top">
+        <h3>ANTHROPIC_FOUNDRY_AUTH_TOKEN Environment Variable <a class="anchor" href="#anthropic-foundry-auth-token-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Token-based authentication is now supported for Amazon Bedrock Foundry alongside the existing <code>ANTHROPIC_FOUNDRY_API_KEY</code>. When <code>ANTHROPIC_FOUNDRY_AUTH_TOKEN</code> is set, it is used directly as a bearer token instead of deriving credentials from the API key.</p>
+<div class="blabel">Usage</div>
+<pre><code>export ANTHROPIC_FOUNDRY_AUTH_TOKEN=&quot;my-bearer-token&quot;
+claude</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Token-based auth is checked first; API key auth is used as fallback</li><li>Useful when a bearer token is injected by infrastructure (e.g. IAM credential vending)</li><li>Both variables are now shown in <code>/doctor</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Auth provider selection (search for <code>"ANTHROPIC_FOUNDRY_AUTH_TOKEN"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-relaunch-terminal-size-environment-variable">
+      <div class="card-top">
+        <h3>CLAUDE_CODE_RELAUNCH_TERMINAL_SIZE Environment Variable <a class="anchor" href="#claude-code-relaunch-terminal-size-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new internal env var preserves terminal dimensions across session relaunches. When Claude Code spawns a replacement process (upgrade self-respawn, background detach), it captures the current terminal size as <code>COLUMNSxROWS</code> and passes it forward so the new process renders at the correct width and height even when the TTY reports wrong dimensions.</p>
+<div class="blabel">Details</div>
+<ul><li>Set automatically by Claude Code before relaunching; not intended for manual use</li><li>Applies terminal size from the env var only when stdout is a TTY and the OS hasn't already reported a real size</li><li>The env var is deleted from the process environment after being consumed</li></ul>
+<div class="blabel">Evidence</div>
+<p>Terminal size preservation (search for <code>"CLAUDE_CODE_RELAUNCH_TERMINAL_SIZE"</code>)</p>
+    </article>
+    <article class="card" id="fleet-view-past-sessions-gradual-rollout">
+      <div class="card-top">
+        <h3>Fleet View Past Sessions [Gradual Rollout] <a class="anchor" href="#fleet-view-past-sessions-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Past sessions from earlier work can now appear in the fleet/sessions view alongside active ones. When enabled, previously completed sessions are loaded from transcript history and interleaved with live sessions in modification-time order.</p>
+<div class="blabel">Details</div>
+<ul><li>Controlled by feature flag <code>tengu_fleet_past_sessions</code> or the env var <code>CLAUDE_CODE_FLEET_PAST_SESSIONS=true</code></li><li>Past sessions show title (from transcript summary), cwd, and last-modified time</li><li>Failure to load past sessions logs a warning but does not block the fleet view</li></ul>
+<div class="blabel">Evidence</div>
+<p>Past-session loader (search for <code>"tengu_fleet_past_sessions"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">20 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="break-reminder-defaults-shortened">
+      <div class="card-top">
+        <h3>Break Reminder Defaults Shortened <a class="anchor" href="#break-reminder-defaults-shortened">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The break reminder interval defaults have been significantly reduced. The reminder now fires every 30 minutes of continuous use (down from 120 minutes), and 10 minutes of inactivity resets the timer (down from 15 minutes). New short intervals (5 min, 15 min) are available and the longer 2/3/4-hour options have been removed.</p>
+<p>Before:</p>
+<ul><li>Default interval: Every 2 hours; inactivity reset: 15 minutes</li><li>Available: Off, 1h, 2h (default), 3h, 4h</li></ul>
+<p>After:</p>
+<ul><li>Default interval: Every 30 minutes; inactivity reset: 10 minutes</li><li>Available: Off, 5m, 15m, 30m (default), 1h</li></ul>
+<div class="blabel">Evidence</div>
+<p>Break reminder interval options (search for <code>"Every 30 minutes"</code> and <code>"Minutes of continuous use before the reminder fires (default 30)"</code>)</p>
+    </article>
+    <article class="card" id="proxy-url-validation-with-clear-error-messages">
+      <div class="card-top">
+        <h3>Proxy URL Validation with Clear Error Messages <a class="anchor" href="#proxy-url-validation-with-clear-error-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Invalid proxy env vars (<code>https_proxy</code>, <code>HTTPS_PROXY</code>, <code>http_proxy</code>, <code>HTTP_PROXY</code>) are now detected and reported clearly at startup and in <code>/doctor</code>.</p>
+<ul><li>At startup: logs <code>Invalid proxy URL in https_proxy: "&lt;value&gt;" cannot be parsed as a URL. Proxy settings must be a complete URL including the scheme, e.g. "http://proxy.example.com:8080". Fix or unset https_proxy and restart Claude Code.</code></li><li>In <code>/doctor</code>'s connection section: shows <code>(invalid — ignored; fix or unset the proxy env var)</code> next to the bad value</li><li>Previously, bare hostnames or partial URLs were passed directly to the HTTP client and could cause confusing failures</li></ul>
+<div class="blabel">Evidence</div>
+<p>Proxy URL validator (search for <code>"Proxy settings must be a complete URL including the scheme"</code>)</p>
+    </article>
+    <article class="card" id="e2big-spawn-failure-diagnostics">
+      <div class="card-top">
+        <h3>E2BIG Spawn Failure Diagnostics <a class="anchor" href="#e2big-spawn-failure-diagnostics">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When Claude Code cannot start a command because the OS argument/environment limit is exceeded (<code>E2BIG</code>), it now surfaces a detailed diagnostic instead of a generic spawn error:</p>
+<pre><code>Could not start bash: the command line plus environment exceed the OS exec argument
+limit (E2BIG). At spawn: command line 12.3 KB across 47 args (largest single arg
+4.1 KB); environment 38.9 KB across 312 vars (largest: MY_VAR at 2.1 KB).
+The Bash sandbox profile adds 2847 filesystem deny paths to every command, 87 of
+them for registered git worktrees, which grow this list without bound. From another
+terminal, remove worktrees you no longer need (git worktree remove &lt;path&gt;; git
+worktree prune for already-deleted checkouts), then restart Claude Code so the
+profile is rebuilt without them — or relax the Bash sandbox for this session with
+/sandbox.</code></pre>
+<p>The message reports command-line size, arg count, largest arg, environment size, var count, and largest env var. If the Bash sandbox deny list is a factor, it identifies how many paths come from accumulated git worktrees and gives remediation steps.</p>
+<div class="blabel">Evidence</div>
+<p>E2BIG diagnostic builder (search for <code>"the command line plus environment exceed the OS exec argument limit (E2BIG)"</code>)</p>
+    </article>
+    <article class="card" id="cybersecurity-block-message-updated">
+      <div class="card-top">
+        <h3>Cybersecurity Block Message Updated <a class="anchor" href="#cybersecurity-block-message-updated">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When Claude is blocked on a cybersecurity topic, the message now links to the Cyber Verification Program help article and adds a feedback prompt:</p>
+<p>Before: pointed to <code>https://claude.com/form/cyber-use-case</code></p>
+<p>After: "…has safety measures that flagged this message for a cybersecurity topic. To learn about the Cyber Verification Program and apply for access, visit our help center: https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude." If the user was not engaging in a cybersecurity topic, the message now adds: "If you were not engaging in a cybersecurity topic, please send feedback via /feedback."</p>
+<div class="blabel">Evidence</div>
+<p>Cybersecurity block handler (search for <code>"real-time-cyber-safeguards-on-claude"</code>)</p>
+    </article>
+    <article class="card" id="artifact-tool-smarter-url-parameter-guidance">
+      <div class="card-top">
+        <h3>Artifact Tool: Smarter url Parameter Guidance <a class="anchor" href="#artifact-tool-smarter-url-parameter-guidance">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The description for the <code>url</code> parameter in the Artifact tool has been rewritten to cover more update scenarios:</p>
+<p>Before: "Pass when the user gives you a URL for an artifact not published in this session."</p>
+<p>After: "Pass whenever the user wants to update an artifact this conversation did not publish — 'update my artifact', 'keep the same link', a pasted artifact URL — and find the URL with <code>action: 'list'</code> if you don't have it; without this, a conversation that didn't publish the artifact always mints a new URL."</p>
+<p>This teaches Claude to proactively use <code>action: "list"</code> to locate the URL rather than waiting for the user to paste it.</p>
+<div class="blabel">Evidence</div>
+<p>Artifact tool <code>url</code> param description (search for <code>"find it with \</code>action: \"list\"\<code> if you don't have it"</code>)</p>
+    </article>
+    <article class="card" id="artifact-listing-first-session-confirmation-required">
+      <div class="card-top">
+        <h3>Artifact Listing: First-Session Confirmation Required <a class="anchor" href="#artifact-listing-first-session-confirmation-required">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The first <code>action: "list"</code> call within any session now always requires user confirmation, even if the user has previously allowed artifact listing. A permission prompt appears: "Claude wants to list your published artifacts (titles and links from your earlier sessions)."</p>
+<div class="blabel">Details</div>
+<ul><li><code>suppressAlwaysAllowRule</code> is set, so "always allow" rules do not bypass this first-listing ask</li><li>Subsequent listings in the same session proceed without an additional prompt</li><li>Results are now formatted as <code>"N published artifact(s) (most recent first):"</code> with title, URL, and last-updated date per entry</li><li>A note is appended if the result set was truncated: "(More may exist — pass a higher <code>limit</code> (up to 50); artifacts not updated recently can be beyond the listing window.)"</li></ul>
+<div class="blabel">Evidence</div>
+<p>First-listing confirmation (search for <code>"First artifact listing this session requires confirmation"</code>)</p>
+    </article>
+    <article class="card" id="artifact-listing-strict-input-validation">
+      <div class="card-top">
+        <h3>Artifact Listing: Strict Input Validation <a class="anchor" href="#artifact-listing-strict-input-validation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p><code>action: "list"</code> now enforces that no publish-related fields are present:</p>
+<ul><li>If any field other than <code>action</code> or <code>limit</code> is set, the tool returns an error: `<code> action "list" takes only </code>limit<code> — remove &lt;fields&gt;. To publish or update an artifact, omit </code>action<code>. </code>`</li><li>Passing <code>limit</code> with a publish action now returns an error: `<code> </code>limit<code> applies only to action "list" </code>`</li></ul>
+<div class="blabel">Evidence</div>
+<p>Artifact list validation (search for <code>'action "list" takes only \</code>limit\<code>'</code>)</p>
+    </article>
+    <article class="card" id="artifact-publishing-shared-version-warning">
+      <div class="card-top">
+        <h3>Artifact Publishing: Shared Version Warning <a class="anchor" href="#artifact-publishing-shared-version-warning">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When updating an artifact that has been shared (via the claude.ai share menu) but the shared version is not the latest, Claude now surfaces a warning in the tool result:</p>
+<p>"This artifact is shared, and viewers are pinned to an older version — they will not see this update until the user moves the shared version forward from the page's share menu."</p>
+<div class="blabel">Evidence</div>
+<p>Shared artifact notice (search for <code>"viewers are pinned to an older version"</code>)</p>
+    </article>
+    <article class="card" id="artifact-favicon-validation-clearer-error-message">
+      <div class="card-top">
+        <h3>Artifact Favicon Validation: Clearer Error Message <a class="anchor" href="#artifact-favicon-validation-clearer-error-message">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The favicon validation error message is now more specific:</p>
+<p>Before: <code>"favicon must be one or two emoji — no markup"</code></p>
+<p>After: <code>"favicon must be the literal emoji character(s) — not an HTML entity, quoted string, or markup (send 📊, not '&amp;#x1F4CA;' or '&lt;svg/&gt;')"</code></p>
+<div class="blabel">Evidence</div>
+<p>Favicon validator (search for <code>"favicon must be the literal emoji character(s)"</code>)</p>
+    </article>
+    <article class="card" id="enterworktree-multi-repo-workspace-support">
+      <div class="card-top">
+        <h3>EnterWorktree: Multi-Repo Workspace Support <a class="anchor" href="#enterworktree-multi-repo-workspace-support">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>path</code> parameter now resolves worktrees from repositories nested inside the launch directory, not just the exact current repo. This enables entering an existing worktree that belongs to a sub-repo in a multi-repo workspace.</p>
+<div class="blabel">Details</div>
+<ul><li>On first entry from the launch directory, the target path is checked against both the current repo and any git repo nested inside it</li><li>From within an already-entered worktree or from an agent with a pinned cwd, the target must still be under <code>.claude/worktrees/</code> of the same repository</li><li>The parameter description now reads: "Path to an existing worktree to enter instead of creating one — of the current repository, or (on first entry from the launch directory) of a repository nested inside it."</li></ul>
+<div class="blabel">Evidence</div>
+<p>EnterWorktree multi-repo support (search for <code>"multi-repo workspace"</code>)</p>
+    </article>
+    <article class="card" id="worktree-improved-lock-safety-and-error-reporting">
+      <div class="card-top">
+        <h3>Worktree: Improved Lock Safety and Error Reporting <a class="anchor" href="#worktree-improved-lock-safety-and-error-reporting">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Several worktree operations now handle lock-state edge cases more carefully:</p>
+<ul><li>Stale-lock self-heal failures are now logged: <code>[worktree] skipped the stale-lock self-heal for &lt;path&gt;: &lt;reason&gt;</code></li><li>When the worktree registry is unreadable, operations log <code>[worktree] left the lock on &lt;path&gt; — cannot read the worktree registry to verify ownership</code></li><li><code>cleanupWorktree</code> logs when it keeps a worktree because the registry is unreadable, instead of silently skipping cleanup</li><li><code>cleanupStaleAgentWorktrees</code> logs each kept worktree with the lock reason</li></ul>
+<div class="blabel">Evidence</div>
+<p>Worktree lock diagnostics (search for <code>"cannot read the worktree registry to verify lock ownership"</code>)</p>
+    </article>
+    <article class="card" id="agent-isolation-refuses-to-run-after-worktree-removed">
+      <div class="card-top">
+        <h3>Agent Isolation: Refuses to Run After Worktree Removed <a class="anchor" href="#agent-isolation-refuses-to-run-after-worktree-removed">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When an isolated agent's worktree has been removed externally and the only fallback would be running in the parent session's shared checkout, the agent now refuses to run and reports the problem:</p>
+<p>"This agent is isolated in the worktree <code>&lt;path&gt;</code>, but its working directory <code>&lt;cwd&gt;</code> no longer exists and the only recovery target is the parent session's shared checkout. Refusing to run there — the isolation worktree appears to have been removed. Report this instead of retrying."</p>
+<p>Previously the agent might silently run commands in the parent directory.</p>
+<div class="blabel">Evidence</div>
+<p>Isolation safety check (search for <code>"Refusing to run there — the isolation worktree appears to have been removed"</code>)</p>
+    </article>
+    <article class="card" id="ide-bridge-file-upload-errors-now-surface-to-claude">
+      <div class="card-top">
+        <h3>IDE Bridge: File Upload Errors Now Surface to Claude <a class="anchor" href="#ide-bridge-file-upload-errors-now-surface-to-claude">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When a file attachment upload fails in the IDE bridge (VS Code / JetBrains), the failure is now returned as a structured error object to Claude rather than silently dropped. Claude can then inform the user of the specific failure reason:</p>
+<ul><li><code>"upload failed: no OAuth token available"</code></li><li><code>"upload failed: could not read file (&lt;reason&gt;)"</code></li><li><code>"upload failed: server returned &lt;status&gt;"</code></li><li><code>"upload failed: unexpected server response"</code></li><li><code>"upload failed: network error (&lt;reason&gt;)"</code></li><li><code>"upload aborted"</code> (when the request was cancelled)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Bridge upload error reporting (search for <code>"upload failed: no OAuth token available"</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-consent-asks-improved-batching-and-formatting-inst">
+      <div class="card-top">
+        <h3>Auto Mode Consent Asks: Improved Batching and Formatting Instructions <a class="anchor" href="#auto-mode-consent-asks-improved-batching-and-formatting-inst">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When auto mode blocks an action, Claude now receives clearer guidance on how to handle the situation:</p>
+<ol><li>First try an alternative that no rule blocks (feature branch instead of default branch, synthetic data instead of real data, narrower scope).</li><li>If a consent ask must be raised, hold it and batch it with other outstanding asks rather than ending the turn immediately.</li><li>Format each consent item as a single concise sentence with the affected item in <strong>bold</strong>.</li><li>If the block seems wrong, say so directly: "auto mode blocked X because Y — is that wrong?"</li></ol>
+<div class="blabel">Evidence</div>
+<p>Auto mode consent instructions (search for <code>"batch it with your other outstanding asks"</code>)</p>
+    </article>
+    <article class="card" id="code-review-tip-description-updated">
+      <div class="card-top">
+        <h3>/code-review Tip Description Updated <a class="anchor" href="#code-review-tip-description-updated">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The tip that appears in Claude Code now accurately describes what <code>/code-review</code> does:</p>
+<p>Before: "/code-review runs three review agents on your changes — reuse, quality, efficiency — and fixes what they find before you commit."</p>
+<p>After: "/code-review checks your diff for correctness bugs and cleanup opportunities before you commit — add --fix to apply what it finds."</p>
+<div class="blabel">Evidence</div>
+<p>Code-review tip text (search for <code>"/code-review checks your diff for correctness bugs"</code>)</p>
+    </article>
+    <article class="card" id="sonnet-model-reference-updated-to-sonnet-5">
+      <div class="card-top">
+        <h3>Sonnet Model Reference Updated to Sonnet 5 <a class="anchor" href="#sonnet-model-reference-updated-to-sonnet-5">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The advisory shown to Pro-plan users running Opus who have consumed more than half their weekly limit now refers to Sonnet 5:</p>
+<p>Before: "Sonnet 4.6 handles most coding tasks and uses your weekly limit roughly half as fast as Opus."</p>
+<p>After: "Sonnet 5 handles most coding tasks and uses your weekly limit much more slowly than Opus."</p>
+<div class="blabel">Evidence</div>
+<p>Opus usage advisory (search for <code>"Sonnet 5 handles most coding tasks and uses your weekly limit much more slowly than Opus"</code>)</p>
+    </article>
+    <article class="card" id="claude-com-docs-added-to-webfetch-pre-approved-domains">
+      <div class="card-top">
+        <h3>claude.com/docs Added to WebFetch Pre-Approved Domains <a class="anchor" href="#claude-com-docs-added-to-webfetch-pre-approved-domains">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The domain <code>claude.com/docs</code> is now in the set of pre-approved domains that can be fetched without a permission prompt. This includes Claude Tag pages and other documentation at the claude.com docs domain.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously only <code>platform.claude.com</code>, <code>code.claude.com</code>, <code>modelcontextprotocol.io</code>, <code>github.com/anthropics</code>, and <code>agentskills.io</code> were pre-approved</li><li>Claude Tag pages at <code>https://claude.com/docs/claude-tag/overview.md</code> and similar paths are now reachable without extra approval</li></ul>
+<div class="blabel">Evidence</div>
+<p>WebFetch domain allowlist (search for <code>"claude.com/docs"</code>)</p>
+    </article>
+    <article class="card" id="renderer-setting-confirmation-shows-renderer-name">
+      <div class="card-top">
+        <h3>Renderer Setting Confirmation Shows Renderer Name <a class="anchor" href="#renderer-setting-confirmation-shows-renderer-name">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When saving the TUI renderer setting, the confirmation message now includes the name of the renderer that was chosen:</p>
+<p>Before: "Background sessions always use the fullscreen renderer so scrolling and mouse work when attached. The tui setting applies to sessions started directly with <code>claude</code>."</p>
+<p>After: "Saved. Background sessions always use the fullscreen renderer while attached; the <code>&lt;renderer&gt;</code> renderer will apply to sessions started directly with <code>claude</code>."</p>
+<div class="blabel">Evidence</div>
+<p>Renderer save confirmation (search for <code>"renderer will apply to sessions started directly with"</code>)</p>
+    </article>
+    <article class="card" id="stdin-unreadable-helpful-warning-instead-of-silent-failure">
+      <div class="card-top">
+        <h3>Stdin Unreadable: Helpful Warning Instead of Silent Failure <a class="anchor" href="#stdin-unreadable-helpful-warning-instead-of-silent-failure">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When stdin is unreadable (e.g., the process was launched without a proper stdin pipe), Claude Code now emits a clear warning and continues rather than failing silently:</p>
+<p>"Warning: stdin is unreadable (<code>&lt;reason&gt;</code>), proceeding without piped input. If you piped input, it was not received — pass it as a prompt argument, or check that the process launching Claude Code wires stdin to a pipe or /dev/null."</p>
+<div class="blabel">Evidence</div>
+<p>Stdin error handler (search for <code>"pass it as a prompt argument, or check that the process launching Claude Code wires stdin to a pipe or /dev/null"</code>)</p>
+    </article>
+    <article class="card" id="tmux-option-probes-now-cached">
+      <div class="card-top">
+        <h3>Tmux Option Probes Now Cached <a class="anchor" href="#tmux-option-probes-now-cached">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The tmux option queries (mouse mode and focus-events state) are now performed once and cached per session. Previously each check that needed the tmux mouse or focus-events status spawned a new <code>tmux show</code> subprocess. The cached results are shared across all callers within the session.</p>
+<div class="blabel">Evidence</div>
+<p>Tmux probe cache (search for <code>"tmuxMouseOptionProbe"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Worktree <code>deleteJob</code> now correctly detects live-process locks when deciding whether to remove an owned worktree (search for <code>"locked by a live Claude Code process, or with a reason we did not write"</code>)</li><li><code>reapJobWorktreeIfSafe</code> now logs why it kept a worktree that had a non-owned lock, instead of silently skipping it (search for <code>"reapJobWorktreeIfSafe: kept"</code>)</li><li>Transcript retention cleanup is now skipped (with a logged reason) when settings contain parse errors that prevent reading <code>cleanupPeriodDays</code>, to avoid deleting transcripts with an unknown retention period (search for <code>"Transcript retention cleanup is paused until the settings errors above are fixed"</code>)</li><li><code>stream-json</code> stdin errors now produce a proper diagnostic message instead of a generic failure (search for <code>"getInputPrompt: stream-json stdin unreadable"</code>)</li></ul>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.203.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.203.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
