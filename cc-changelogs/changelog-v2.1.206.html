@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.206 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.206."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.206</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.206</span></h1>
+<p class="sub">This release delivers a significantly revamped Claude in Chrome setup experience with an interactive wizard and multi-browser detection, introduces a new EndConversation tool (feature-flagged, rolling out to eligible models), adds <code>/plan share</code> artifact publishing, a new dashboard artifact skill, and Chart.js runtime support for richer artifact charts. Plugin binary provisioning gains mismatch detection, and push permission rules now dynamically pick up non-origin remotes.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.205 → v2.1.206</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">13</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">2</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="claude-in-chrome-revamped-setup-wizard">
+      <div class="card-top">
+        <h3>Claude in Chrome — Revamped Setup Wizard <a class="anchor" href="#claude-in-chrome-revamped-setup-wizard">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The Claude in Chrome installation flow is now an interactive step-by-step wizard inside the terminal, replacing the previous one-shot skill registration.</p>
+<div class="blabel">Details</div>
+<ul><li>When Claude needs browser tools and the extension isn't installed, a new "Claude wants to use your browser" upsell prompt appears with three options: install the extension, skip for now, or "Don't ask again."</li><li>Choosing to install opens a "Setting up Claude in Chrome" dialog that follows the connection progress in real time — tracking "Install the extension" and "Connect to Chrome" as live steps with loading/success/error states.</li><li>If setup stalls, the dialog shows: "Taking longer than expected. Check that the extension is added and that you're signed in to it in Chrome."</li><li>On success: "Browser tools are ready. Continuing keeps them enabled for future sessions too — manage anytime with /chrome."</li><li>Browser detection now covers seven Chromium-family browsers: Chrome, Brave, Arc, Edge, Chromium, Vivaldi, and Opera across macOS, Linux, and Windows.</li><li>Auto-enable is gated by the <code>tengu_chrome_auto_enable</code> feature flag: when enabled, Claude activates browser tools automatically if the extension is already installed/paired.</li><li>The extension install page URL and <code>/chrome</code> management command are unchanged.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Setup wizard UI (search for <code>"Setting up Claude in Chrome"</code>); upsell dialog (search for <code>"Claude wants to use your browser"</code>); browser path map (search for <code>"BraveSoftware"</code>)</p>
+    </article>
+    <article class="card" id="plan-publishing-as-artifact">
+      <div class="card-top">
+        <h3>Plan Publishing as Artifact <a class="anchor" href="#plan-publishing-as-artifact">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p><code>/plan share</code> can now publish the current plan as a shareable web artifact on claude.ai, letting reviewers read the plan in a browser before the session exits.</p>
+<div class="blabel">Details</div>
+<ul><li>When a plan artifact is available, a new "Review plan as artifact" option appears alongside the existing skip option.</li><li>While publishing, the session shows: "Publishing plan for review…"</li><li>On success, the URL is displayed: "Review your plan: {url}"</li><li>If the plan changes after publishing, the status updates to show "(plan changed since publish — after exiting, /plan share publishes the updated plan)"</li><li>If publishing fails: "Couldn't publish plan — run /plan share to retry, or --debug for details."</li><li>If the feature is unavailable: "Publishing plans isn't available right now — the plan was not published."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Status strings (search for <code>"Publishing plan for review"</code>); stale state (search for <code>"plan changed since publish"</code>)</p>
+    </article>
+    <article class="card" id="dashboard-artifact-skill-artifact-dashboard">
+      <div class="card-top">
+        <h3>Dashboard Artifact Skill (<code>artifact-dashboard</code>) <a class="anchor" href="#dashboard-artifact-skill-artifact-dashboard">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new built-in <code>artifact-dashboard</code> skill provides a production-ready template for creating operational dashboard artifacts with KPI tiles, a primary chart, and a breakdown table.</p>
+<div class="blabel">Usage</div>
+<pre><code>Load the artifact-dashboard skill and build a dashboard from its template.</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The skill includes a <code>template.html</code> fragment with slot markers (<code>&lt;!-- SLOT: ... --&gt;</code>) for the title, KPI tiles, chart spec, breakdown rows, and footer note.</li><li>KPI tiles support directional delta styling with <code>up</code>/<code>down</code> classes plus <code>good</code>/<code>bad</code> overrides for cases where a decrease is an improvement (e.g., latency, error rate).</li><li>The primary chart slot takes a compact JSON spec (<code>"type": "line"</code> | <code>"bar"</code> | <code>"donut"</code>, <code>"series"</code>, <code>"x"</code>, <code>"y"</code>) and is rendered by a built-in SVG fallback plus the injected Chart.js runtime (see below).</li><li>A <code>CONTRIBUTING.md</code>-style notes section warns against fabricating data: "Replace every placeholder number — and never invent one."</li><li>Theming uses CDS token values with full dark mode support via <code>@media (prefers-color-scheme: dark)</code> and <code>data-theme</code> overrides.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Skill FRONTMATTER (search for <code>"artifact-dashboard"</code>); slot guidance (search for <code>"SLOT: KPI_TILES"</code>)</p>
+    </article>
+    <article class="card" id="chart-js-runtime-in-published-artifacts">
+      <div class="card-top">
+        <h3>Chart.js Runtime in Published Artifacts <a class="anchor" href="#chart-js-runtime-in-published-artifacts">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Artifacts that include a <code>&lt;script type="application/json" data-chart-runtime&gt;</code> chart spec now receive an injected Chart.js runtime at publish time, enabling bar and donut charts in addition to SVG line charts.</p>
+<div class="blabel">Details</div>
+<ul><li>The publish pipeline detects the <code>data-chart-runtime</code> attribute and injects a bundled Chart.js into the artifact HTML between <code>&lt;!-- chart-runtime --&gt;</code> / <code>&lt;!-- /chart-runtime --&gt;</code> sentinel comments.</li><li>Safety checks reject bundles containing <code>&lt;/script</code>, HTML comment injection risks, or the sentinel strings themselves.</li><li>The runtime reads the spec from the <code>data-chart-runtime</code> element and renders into <code>#primary-chart</code> via Chart.js, fully replacing the SVG fallback.</li><li>Theme support: resolves CSS custom properties from <code>getComputedStyle</code> at render time and re-renders on system dark-mode changes or <code>data-theme</code> flips — same data, same pixels per theme.</li><li>Multi-series line/bar charts include a legend; donut charts accept per-slice color overrides.</li><li>The SVG fallback remains for environments without the runtime, covering the standard time-series line case.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Sentinel string (search for <code>"bundle contains the chart-runtime sentinel"</code>); runtime injection (search for <code>"chart-runtime --&gt;"</code>); Chart.js integration (search for <code>"new Chart(canvas"</code>)</p>
+    </article>
+    <article class="card" id="dynamic-git-remote-detection-for-push-permissions">
+      <div class="card-top">
+        <h3>Dynamic Git Remote Detection for Push Permissions <a class="anchor" href="#dynamic-git-remote-detection-for-push-permissions">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Permission rules for <code>git push</code> now automatically include the repo's configured push remote, not just <code>origin</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Before adding a <code>Bash(git push origin *)</code> rule, Claude now queries <code>git config remote.pushDefault</code> to find the actual configured push target.</li><li>If only one remote is configured, it is used regardless of name.</li><li>The resolved remote is added alongside <code>origin</code> in the allowed-patterns list, so both <code>git push origin <em></code> and <code>git push {remote} </em></code> are permitted.</li><li>This prevents unnecessary permission prompts for repos that push to <code>upstream</code>, a fork remote, or any non-<code>origin</code> name.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Remote resolution (search for <code>"remote.pushDefault"</code>); dynamic rules (search for <code>"git push -u"</code> alongside <code>"rwn"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="plugin-binary-provisioning-mismatch-detection-and-bare-name-">
+      <div class="card-top">
+        <h3>Plugin Binary Provisioning — Mismatch Detection and Bare Name Linking <a class="anchor" href="#plugin-binary-provisioning-mismatch-detection-and-bare-name-">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Plugin binary installation now removes and re-fetches binaries whose on-disk digest doesn't match the manifest, and creates hard links from arch-specific binary names (e.g., <code>tool-aarch64-apple-darwin</code>) to bare names (e.g., <code>tool</code>) for easier execution.</p>
+<div class="blabel">Details</div>
+<ul><li>If a <code>bin/</code> entry exists but its SHA-256 doesn't match the manifest, Claude logs "removed bin/{name} — it is not the artifact pinned by the manifest" and re-downloads it.</li><li>After placement, a hard link from the arch-specific filename to a bare name is created on macOS/Linux when exactly one declared entry derives that bare name (collision-safe).</li><li>Four target triples are recognized for bare-name derivation: <code>aarch64-apple-darwin</code>, <code>x86_64-apple-darwin</code>, <code>aarch64-unknown-linux-musl</code>, <code>x86_64-unknown-linux-musl</code>.</li><li>New telemetry fields track <code>mismatch_removed_count</code> and <code>bare_placed_count</code> separately from download and cache-hit counts.</li><li>A new validation pass checks <code>.mcp.json</code> and nested MCP server configs for binary references that aren't in the <code>binaries</code> map, warning: "bin/{name} is not a shipped file, a declared binaries entry, or a name derivable from the declared entries — the server will fail to start."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Mismatch removal (search for <code>"it is not the artifact pinned by the manifest"</code>); validation (search for <code>"Check for a typo against the \"binaries\" map in plugin.json"</code>)</p>
+    </article>
+    <article class="card" id="model-pricing-catalog">
+      <div class="card-top">
+        <h3>Model Pricing Catalog <a class="anchor" href="#model-pricing-catalog">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Model pricing is now baked into the model catalog at build time rather than fetched at runtime, with validation that every catalog entry has complete pricing data.</p>
+<div class="blabel">Details</div>
+<ul><li>A new pricing-tier resolver (<code>BVo</code>) maps model entries to their pricing shapes, supporting both direct pricing objects and shared tier references.</li><li>Pricing requires <code>input</code>, <code>output</code>, <code>cache_write_5m</code>, <code>cache_read</code>, and <code>web_search</code> fields; missing fields throw at startup: "model catalog entry '{id}' has incomplete pricing — baked entries need the full ModelCosts shape."</li><li>Model IDs must be registered in <code>CATALOG_MODEL_IDS</code>; unregistered IDs throw: "model catalog id '{id}' missing from CATALOG_MODEL_IDS — regenerate with 'bun run generate:model-catalog'."</li><li>The first-party billing UI uses the catalog pricing to display per-token costs in the model picker.</li><li>Claude Sonnet 5 can show promotional pricing text when a promo expiry date is set (search for <code>"promo through"</code>).</li></ul>
+<div class="blabel">Evidence</div>
+<p>Validation error (search for <code>"baked entries need the full ModelCosts shape"</code>); catalog check (search for <code>"model catalog id missing from CATALOG_MODEL_IDS"</code>)</p>
+    </article>
+    <article class="card" id="refusal-category-fallback-routing">
+      <div class="card-top">
+        <h3>Refusal Category Fallback Routing <a class="anchor" href="#refusal-category-fallback-routing">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When the API returns a refusal with a known category, Claude can now route the retry to a specific fallback model rather than always using the armed default fallback.</p>
+<div class="blabel">Details</div>
+<ul><li>The <code>cyber</code> refusal category routes to <code>claude-opus-4-8</code> on Opus plan configs.</li><li>The <code>bio</code> category additionally routes to <code>claude-opus-4-8</code> on Opus plan configs.</li><li>A new env var <code>CLAUDE_CODE_REFUSAL_FALLBACK_CATCH_ALL</code> (if set) enables a catch-all fallback for unmapped categories.</li><li>Per-category routing is overridable by config; unresolvable mapped targets return <code>matched: "none"</code> with reason <code>"mapped_target_unresolvable"</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Category map (search for <code>"cyber": "claude-opus-4-8"</code>); env var (search for <code>"CLAUDE_CODE_REFUSAL_FALLBACK_CATCH_ALL"</code>)</p>
+    </article>
+    <article class="card" id="observer-sidecar-persistence-and-reattach">
+      <div class="card-top">
+        <h3>Observer Sidecar Persistence and Reattach <a class="anchor" href="#observer-sidecar-persistence-and-reattach">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Agent observers (sidecars that monitor running tasks) can now persist across session restarts and reattach to their observed task rather than always spawning fresh.</p>
+<div class="blabel">Details</div>
+<ul><li>Observer state is written to the conversation journal as <code>"observer-ref"</code> entries containing the observer task ID, agent type, and arming mode.</li><li>On a new turn, if a prior observer task ID is found in the journal and the task transcript is still readable, Claude reattaches to the existing observer rather than spawning a new one.</li><li>If the sidecar transcript is unreadable: "[agentObserver] reattach: observer sidecar unreadable — fresh under a new id"</li><li>If the prior observer's agent type doesn't match the declared type, a fresh observer is started.</li><li>Observer teardown now tombstones the sidecar via a <code>stopped: true</code> journal entry to prevent reattach loops.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Journal type (search for <code>"observer-ref"</code>); reattach log (search for <code>"observer sidecar unreadable"</code>)</p>
+    </article>
+    <article class="card" id="screen-reader-mode-reports-activation-source">
+      <div class="card-top">
+        <h3>Screen Reader Mode Reports Activation Source <a class="anchor" href="#screen-reader-mode-reports-activation-source">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The screen reader mode status indicator now shows how the mode was activated (e.g., via environment variable or CLI flag) rather than just showing it's on.</p>
+<div class="blabel">Details</div>
+<ul><li>Old: <code>[Accessible screen reader mode: on]</code></li><li>New: <code>[Screen Reader Mode: on via {source}]</code> when an activation source is known, or <code>[Screen Reader Mode: on]</code> otherwise.</li><li>The source string helps users confirm which mechanism triggered it.</li></ul>
+<div class="blabel">Evidence</div>
+<p>New format (search for <code>"[Screen Reader Mode: on via"</code>); function (search for <code>"activationSource()"</code>)</p>
+    </article>
+    <article class="card" id="oauth-token-expiry-error">
+      <div class="card-top">
+        <h3>OAuth Token Expiry Error <a class="anchor" href="#oauth-token-expiry-error">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Expired OAuth refresh tokens now throw a distinct <code>OAuthRefreshDeadError</code> with a clear message, rather than a generic error.</p>
+<div class="blabel">Details</div>
+<ul><li>Message: "OAuth refresh token is no longer valid; run /login to re-authenticate"</li><li>The error class name <code>"OAuthRefreshDeadError"</code> is surfaced in logs and can be caught specifically.</li><li>Previously, token expiry produced ambiguous error messages.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Error class (search for <code>"OAuthRefreshDeadError"</code>)</p>
+    </article>
+    <article class="card" id="login-expired-message">
+      <div class="card-top">
+        <h3>Login Expired Message <a class="anchor" href="#login-expired-message">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The "login expired" notification now includes the action to take directly in the message.</p>
+<div class="blabel">Details</div>
+<ul><li>New: "Login expired · Please run /login"</li><li>Previously the message and the suggested action were separate.</li></ul>
+<div class="blabel">Evidence</div>
+<p>String (search for <code>"Login expired \xB7 Please run /login"</code>)</p>
+    </article>
+    <article class="card" id="health-check-description-update">
+      <div class="card-top">
+        <h3>Health Check Description Update <a class="anchor" href="#health-check-description-update">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>/doctor</code> health check command description now mentions bloated memory files in addition to duplicated ones.</p>
+<div class="blabel">Details</div>
+<ul><li>Old: "Health-check your setup and fix issues: installation, unused extensions, duplicated memory files, slow hooks, updates, permissions"</li><li>New: "Health-check your setup and fix issues: installation, unused extensions, duplicated or bloated memory files, slow hooks, updates, permissions"</li></ul>
+<div class="blabel">Evidence</div>
+<p>Description string (search for <code>"bloated memory files"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Push permission default rules (<code>Bash(git push origin *)</code>) now correctly add both <code>Bash(...)</code> and <code>PowerShell(...)</code> variants for dynamically resolved remotes, matching the behavior for the static <code>origin</code> entry. (search for <code>"git push -u"</code> in <code>ANd</code>)</li><li>The <code>"scroll to bottom"</code> button in the terminal now truncates its label to fit the available column width rather than overflowing. (search for <code>"wrap: \"truncate-end\""</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled for all users.</p>
+    </article>
+    <article class="card" id="artifact-gallery-artifacts-in-development">
+      <div class="card-top">
+        <h3>Artifact Gallery (<code>/artifacts</code>) [In Development] <a class="anchor" href="#artifact-gallery-artifacts-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>/artifacts</code> command to browse, open, copy links to, and delete your published and shared artifacts from within the terminal.</p>
+<div class="blabel">Status</div>
+<p>Disabled (hardcoded <code>isEnabled: () =&gt; !1</code>)</p>
+<div class="blabel">Details</div>
+<ul><li>Full UI built: scrollable list with selection, title truncation at 50 characters, view count and date metadata, and "shared" badge for artifacts shared by others.</li><li>Keyboard actions: arrow keys to select, Enter or <code>o</code> to open in browser, <code>c</code> to copy URL to clipboard, <code>d</code> to delete (own artifacts only, with <code>y</code>/<code>n</code> confirmation), <code>r</code> to refresh, Escape to close.</li><li>Fetches from <code>/api/frame/frames?limit=200</code> — up to 200 artifacts.</li><li>Soft-deleted artifacts are filtered from the list automatically.</li><li>Error states: "Couldn't load artifacts (network error)", "Couldn't load artifacts (HTTP {status})", "No artifacts yet. Publish one with the Artifact tool."</li><li>Delete errors: "Artifact not found — it may already be deleted, or you are not the owner."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Command registration (search for <code>"Browse your published and shared artifacts"</code>); disabled flag (<code>isEnabled: () =&gt; !1</code> in the command definition); API path (search for <code>"/api/frame/frames?limit=200"</code>)</p>
+    </article>
+    <article class="card" id="endconversation-tool-feature-flagged">
+      <div class="card-top">
+        <h3>EndConversation Tool [Feature-Flagged] <a class="anchor" href="#endconversation-tool-feature-flagged">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new deferred tool (<code>EndConversation</code>) allows the AI to end a conversation in cases of sustained, serious user abuse — after prior warnings and with strict eligibility checks.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged (requires server-side feature flag to enable) and model-gated (opus 4-8, sonnet 5, fable 5, mythos 5).</p>
+<div class="blabel">Details</div>
+<ul><li>The tool is <code>shouldDefer: true</code>, meaning it does not appear in the default tool list and must be loaded via <code>ToolSearch("select:EndConversation")</code> before use.</li><li>In agent/fork contexts, calling the tool does nothing and returns a message explaining that forks cannot end the main conversation.</li><li>The tool implements a two-call confirmation pattern: the first call (without a prior warning in the transcript) returns the full guidance and asks for confirmation; only a second call with a warning already in the transcript actually ends the session.</li><li>On success, the session displays: "Claude has ended this chat."</li><li>Strict "must NOT use" list: stuck loops, task completion, harmful content requests (redirect instead), general frustration, any self-harm or imminent harm scenario.</li><li>A deferred-tool hint is surfaced to eligible models: "use only for sustained user abuse directed at the assistant, or when the user explicitly asks to see it demonstrated."</li></ul>
+<div class="blabel">Evidence</div>
+<p>Deferred hint (search for <code>"Load the full guidance via ToolSearch"</code>); end message (search for <code>"Claude has ended this chat"</code>); two-call pattern (search for <code>"Re-read the"</code>); model eligibility list (search for <code>"mythos"</code>).</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The built-in <code>claude_design</code> first-party MCP server (<code>https://api.anthropic.com/v1/design/mcp</code>) has been removed from the auto-provisioned server list. Users relying on Claude Design should ensure it is configured via their MCP settings or the <code>/design login</code> flow, which routes through the updated hub command rather than a built-in server entry.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.206.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.206.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
