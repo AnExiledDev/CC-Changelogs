@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.207 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.207."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.207</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.207</span></h1>
+<p class="sub">Version 2.1.207 upgrades the default model to Claude Opus 4.8 (<code>claude-opus-4-8</code>), introduces a Morning Brief skill for cowork sessions, and significantly hardens security around symlink traversal, autoMode settings source trust, and Remote Control unsigned-request handling. The <code>/auto-mode-setup</code> command gains smarter analysis of destructive and classifier-bypassing allow-rules, and the ScheduleWakeup tool now gives cache-TTL-aware delay guidance.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.206 → v2.1.207</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">21</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">5</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">2</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="morning-brief-skill-morning">
+      <div class="card-top">
+        <h3>Morning Brief Skill (<code>/morning</code>) <a class="anchor" href="#morning-brief-skill-morning">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>/morning</code> slash command that produces a styled HTML artifact daily brief, or sets up a recurring weekday scheduled task. Triggers on phrases like "morning brief", "daily brief", "what's my day look like".</p>
+<div class="blabel">Details</div>
+<ul><li>Renders today's brief as a timed HTML artifact covering "Your day at a glance" and "Needs your attention" by default; a <code>Sections:</code> list overrides the table of contents.</li><li>Accepts a setup request ("set up a recurring morning brief at 9 AM") — creates the scheduled task then renders today's brief as a preview.</li><li>Custom prompt overridable via <code>CLAUDE_CODE_MORNING_BRIEF_PROMPT</code> env var.</li><li>The flag <code>CLAUDE_CODE_ENABLE_MORNING_BRIEF</code> forces the skill on regardless of cowork entrypoint.</li></ul>
+<div class="blabel">Status</div>
+<p>Feature-flagged — controlled by <code>tengu_morning_brief_skill</code>. Currently only surfaces in cowork/remote-trigger entrypoints (<code>CLAUDE_CODE_IS_COWORK</code> or remote entrypoints) unless the env var override is set.</p>
+<div class="blabel">Evidence</div>
+<p>Morning brief skill registration with description "Render the user's morning brief as a styled HTML artifact, or set it up as a recurring weekday task." (search for <code>"tengu_morning_brief_skill"</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-setup-expanded-rule-audit">
+      <div class="card-top">
+        <h3>/auto-mode-setup: Expanded Rule Audit <a class="anchor" href="#auto-mode-setup-expanded-rule-audit">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>/auto-mode-setup</code> command now audits two additional categories of permission rules, replacing the old "over-broad interpreter-prefix" check with more targeted categories.</p>
+<div class="blabel">Details</div>
+<ul><li>New section: <strong>"Classifier-bypassing entries"</strong> — rules that auto mode ignores at runtime even though they appear in <code>permissions.allow</code>. Lists them explicitly so users can review or remove them.</li><li>New section: <strong>"Destructive entries"</strong> — allow-rules that auto-approve destructive operations without a prompt. Shown separately so users understand which rules carry higher risk.</li><li>When <code>classifyAllShell</code> is active, a note warns that auto mode ignores all Bash/PowerShell allow rules (a superset of the flagged entries).</li><li>If the list is capped at the display limit, a note instructs re-running <code>/auto-mode-setup</code> after cleanup to see the rest.</li><li>Also now reads and reports <code>autoMode</code> keys from the project's <code>.claude/settings.local.json</code> with security checks (symlink gate, link-count-1 requirement, and git-tracking status).</li></ul>
+<div class="blabel">Evidence</div>
+<p>New audit output with headings "Classifier-bypassing entries" and "Destructive permissions.allow entries" (search for <code>"classifier-bypassing"</code> and <code>"Destructive permissions.allow entries"</code>)</p>
+    </article>
+    <article class="card" id="sibling-org-repo-docs-in-auto-mode-setup">
+      <div class="card-top">
+        <h3>Sibling Org Repo Docs in Auto-Mode Setup <a class="anchor" href="#sibling-org-repo-docs-in-auto-mode-setup">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p><code>/auto-mode-setup</code> now fetches CLAUDE.md and README.md from up to 3 sibling repositories in the same GitHub org via <code>gh</code>, providing Claude with additional context about your org's conventions.</p>
+<div class="blabel">Details</div>
+<ul><li>Uses <code>gh repo list &lt;org&gt; --limit 5 --json name,pushedAt</code> sorted by most recently pushed, skipping the current repo.</li><li>Fetches CLAUDE.md or README.md (first match) for each; README is truncated to first 40 lines.</li><li>Content is marked with "unverified provenance" since it comes from sibling repos.</li><li>Gracefully skipped when <code>gh</code> is unavailable, unauthenticated, or the origin is not github.com.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Sibling repo docs fetcher (search for <code>"Sibling repo docs (via gh"</code> and <code>"name,pushedAt"</code>)</p>
+    </article>
+    <article class="card" id="claude-design-auto-refresh-on-401">
+      <div class="card-top">
+        <h3>Claude Design: Auto-Refresh on 401 <a class="anchor" href="#claude-design-auto-refresh-on-401">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a Claude Design request returns HTTP 401, the client now automatically attempts a token refresh and retries once before surfacing an error.</p>
+<div class="blabel">Details</div>
+<ul><li>If the access token has a refresh token available, a single retry with the refreshed credential is attempted.</li><li>Specific error messages depending on credential type: remote CCR sessions, OAuth token env vars, and interactive sessions each get tailored guidance.</li><li>The new <code>DesignAuth401Error</code> type carries a <code>wasRetried</code> flag to prevent retry loops.</li><li>Token values are scrubbed from error messages and response data before surfacing to the user.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Auto-refresh retry in Design client (search for <code>"Claude Design authentication failed (HTTP 401)"</code> and <code>"DesignAuth401Error"</code>)</p>
+    </article>
+    <article class="card" id="schedulewakeup-cache-ttl-aware-delay-guidance">
+      <div class="card-top">
+        <h3>ScheduleWakeup: Cache-TTL-Aware Delay Guidance <a class="anchor" href="#schedulewakeup-cache-ttl-aware-delay-guidance">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>ScheduleWakeup</code> tool's <code>## Picking delaySeconds</code> instructions are now context-aware, giving different guidance based on the session's prompt-cache TTL.</p>
+<div class="blabel">Details</div>
+<ul><li>Sessions with a 1-hour TTL (Claude.ai subscriber sessions) receive guidance that ignores cache-window considerations — any delay in [60, 3600] is warm, so just pick based on what you're polling.</li><li>Sessions with the default 5-minute TTL receive the classic "don't pick 300s" guidance.</li><li>Sessions where the TTL is unknown receive a combined explanation covering both regimes.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Context-aware delay guidance (search for <code>"1-hour Anthropic prompt-cache TTL"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">16 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="default-model-upgraded-to-claude-opus-4-8">
+      <div class="card-top">
+        <h3>Default Model Upgraded to Claude Opus 4.8 <a class="anchor" href="#default-model-upgraded-to-claude-opus-4-8">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The model constant has changed from <code>opus47</code> to <code>opus48</code> (<code>claude-opus-4-8</code>). This applies to the primary model slot across all providers.</p>
+<p>Additionally, for Bedrock and Vertex sessions where only <code>ANTHROPIC_DEFAULT_SONNET_MODEL</code> has been customized (but not <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code>), the system now intelligently falls back to Sonnet as the main model rather than forcing Opus — better matching admin intent when they configured only one model.</p>
+<div class="blabel">Evidence</div>
+<p>Model constant <code>opus48</code> added (search for <code>"opus48"</code>) and provider-aware model selection (search for <code>"CLAUDE_CODE_3P_PROBE_WROTE_SONNET_DEFAULT"</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-no-longer-requires-separate-interactive-disclaimer">
+      <div class="card-top">
+        <h3>Auto Mode No Longer Requires Separate Interactive Disclaimer <a class="anchor" href="#auto-mode-no-longer-requires-separate-interactive-disclaimer">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The permission-mode downgrade message was changed from "bypass/auto requires accepting the disclaimer interactively first" to "bypass requires accepting the disclaimer interactively first". Auto mode's own opt-in dialog was also removed from the non-interactive code path, simplifying the startup flow.</p>
+<div class="blabel">Evidence</div>
+<p>Updated disclaimer message (search for <code>"bypass requires accepting the disclaimer interactively first"</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-settings-locked-to-trusted-sources">
+      <div class="card-top">
+        <h3>Auto Mode Settings Locked to Trusted Sources <a class="anchor" href="#auto-mode-settings-locked-to-trusted-sources">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Auto mode rules (<code>autoMode.*</code>) from <code>projectSettings</code> and <code>localSettings</code> are now silently ignored with a warning, since those files are repo-controlled and could be authored by untrusted parties. Only <code>userSettings</code>, <code>flagSettings</code>, and <code>policySettings</code> may set auto mode classifier rules.</p>
+<div class="blabel">Evidence</div>
+<p>Source-trust guard in autoMode config loader (search for <code>"only user/flag/managed settings may set classifier rules"</code>)</p>
+    </article>
+    <article class="card" id="remote-control-unsigned-request-rejection-feedback">
+      <div class="card-top">
+        <h3>Remote Control: Unsigned Request Rejection Feedback <a class="anchor" href="#remote-control-unsigned-request-rejection-feedback">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When Remote Control receives a remote command or permission response without a valid device signature, it now:</p>
+<ul><li>Logs the rejection to stderr with details including attestation status and actionable hints.</li><li>Sends an explicit error <code>control_response</code> back to the sender, so the remote device knows the request was refused (previously the rejection was silent).</li><li>Rate-limits burst warnings: after a threshold, further warnings for the same burst are suppressed with a note.</li><li>Provides specific re-enrollment hints based on the attestation failure type (absent key, keyless device, etc.).</li></ul>
+<div class="blabel">Evidence</div>
+<p>Rejection notifier and response writer (search for <code>"Remote Control is rejecting a burst of unsigned remote activity"</code> and <code>"[remote-io] refusal write failed"</code>)</p>
+    </article>
+    <article class="card" id="teammatemailbox-invalid-entry-pruning-and-detailed-logging">
+      <div class="card-top">
+        <h3>TeammateMailbox: Invalid Entry Pruning and Detailed Logging <a class="anchor" href="#teammatemailbox-invalid-entry-pruning-and-detailed-logging">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The teammate mailbox now actively prunes schema-invalid inbox entries when it reads the file, instead of silently dropping them only at read time. Detailed error logs are emitted per-entry with the field that failed validation, and a summary of pruned entries is logged.</p>
+<div class="blabel">Evidence</div>
+<p>Mailbox pruning functions (search for <code>"[TeammateMailbox] pruned"</code> and <code>"TeammateMailbox: dropped inbox entry"</code>)</p>
+    </article>
+    <article class="card" id="extensions-worktreeconfig-automatically-restored-after-last-">
+      <div class="card-top">
+        <h3>extensions.worktreeConfig Automatically Restored After Last Worktree Removal <a class="anchor" href="#extensions-worktreeconfig-automatically-restored-after-last-">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When the last linked worktree is removed (either via <code>/exit</code> from a worktree or when an agent worktree is cleaned up), Claude Code now checks whether <code>extensions.worktreeConfig</code> was enabled by Claude and restores the git config to its pre-worktree state automatically.</p>
+<div class="blabel">Evidence</div>
+<p>Worktree config cleanup (search for <code>"Restored extensions.worktreeConfig in"</code> and <code>"enabledWorktreeConfigExtension"</code>)</p>
+    </article>
+    <article class="card" id="symlink-path-safety-hardening">
+      <div class="card-top">
+        <h3>Symlink Path Safety Hardening <a class="anchor" href="#symlink-path-safety-hardening">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Path resolution across file tools and git pointer parsing now validates symlinks more carefully: network automount paths are flagged, cross-filesystem symlinks outside the project root are rejected, and git <code>.git</code> pointer files that are themselves symlinks or point outside the project are blocked.</p>
+<div class="blabel">Evidence</div>
+<p>Symlink-aware path resolver (search for <code>"is a network automount path"</code> and <code>".git pointer file is a symlink"</code>)</p>
+    </article>
+    <article class="card" id="aws-credential-validation-in-mcp-server-config">
+      <div class="card-top">
+        <h3>AWS Credential Validation in MCP Server Config <a class="anchor" href="#aws-credential-validation-in-mcp-server-config">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>MCP server definitions using AWS auth now validate that:</p>
+<ul><li><code>aws_access_key_id</code> and <code>aws_secret_access_key</code> must be set together (not one without the other).</li><li><code>aws_session_token</code> requires <code>aws_access_key_id</code> and <code>aws_secret_access_key</code> to be present.</li></ul>
+<p>Empty-string values are also now rejected (fields require <code>min(1)</code> length). Clear error messages are surfaced on config parse.</p>
+<div class="blabel">Evidence</div>
+<p>AWS credential pair refinements (search for <code>"aws_access_key_id and aws_secret_access_key must be set together"</code>)</p>
+    </article>
+    <article class="card" id="aws-default-chain-credential-resolve-timeout">
+      <div class="card-top">
+        <h3>AWS Default-Chain Credential Resolve Timeout <a class="anchor" href="#aws-default-chain-credential-resolve-timeout">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Bedrock sessions now enforce a timeout on the AWS default credential provider chain resolution. The default is 60 seconds, configurable via <code>CLAUDE_CODE_AWS_CHAIN_RESOLVE_TIMEOUT_MS</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Credential chain timeout wrapper (search for <code>"AWS default-chain credential resolve timed out"</code> and <code>"CLAUDE_CODE_AWS_CHAIN_RESOLVE_TIMEOUT_MS"</code>)</p>
+    </article>
+    <article class="card" id="native-launcher-auto-update-externally-managed-launchers-ski">
+      <div class="card-top">
+        <h3>Native Launcher Auto-Update: Externally Managed Launchers Skipped <a class="anchor" href="#native-launcher-auto-update-externally-managed-launchers-ski">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When running the native version cleanup after an update, Claude Code now checks whether the launcher at the executable path is a native-installer-managed symlink. If the launcher is externally managed (not a symlink into the <code>claude/versions/</code> directory and not an npm shim), version cleanup is skipped with a clear message rather than potentially interfering with the external manager.</p>
+<div class="blabel">Evidence</div>
+<p>Launcher ownership check (search for <code>"Skipping native version cleanup: the launcher at"</code> and <code>"not created by the native installer"</code>)</p>
+    </article>
+    <article class="card" id="streaming-markdown-renderer-long-output-chunking">
+      <div class="card-top">
+        <h3>Streaming Markdown Renderer: Long-Output Chunking <a class="anchor" href="#streaming-markdown-renderer-long-output-chunking">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The streaming markdown renderer (<code>StreamingMarkdown</code>) was rewritten to chunk large outputs into frozen segments rather than keeping everything in a single growing string. Open code fences are tracked across chunks so streaming inside a code block is handled correctly. This improves rendering performance and token-cache efficiency for very long streamed responses.</p>
+<div class="blabel">Evidence</div>
+<p>Chunked streaming renderer (search for <code>"openFence"</code> and <code>"gapAfterChunks"</code> in the renderer)</p>
+    </article>
+    <article class="card" id="payment-amount-input-validated-text-field">
+      <div class="card-top">
+        <h3>Payment Amount Input: Validated Text Field <a class="anchor" href="#payment-amount-input-validated-text-field">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The credit purchase amount input has been redesigned from a filtered numeric text field to a validated text field with inline error feedback. Amounts must be entered as <code>20</code> or <code>20.50</code>; a separate "Confirm amount" dialog now requires typing <code>yes</code> to confirm a billing action.</p>
+<div class="blabel">Evidence</div>
+<p>Amount validator returning <code>"Enter an amount like 20 or 20.50"</code> (search for <code>"Enter an amount like 20 or 20.50"</code>) and new confirmation dialog (search for <code>"Confirm amount"</code>)</p>
+    </article>
+    <article class="card" id="deferredtoolplaceholder-keeps-deferred-tool-loading-active">
+      <div class="card-top">
+        <h3>DeferredToolPlaceholder: Keeps Deferred Tool Loading Active <a class="anchor" href="#deferredtoolplaceholder-keeps-deferred-tool-loading-active">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new placeholder tool named <code>DeferredToolPlaceholder</code> is registered with the description "Reserved placeholder that keeps deferred tool loading active; never call this tool." This internal mechanism ensures the deferred tool loading system remains armed across turn boundaries.</p>
+<div class="blabel">Evidence</div>
+<p>Placeholder tool registration (search for <code>"DeferredToolPlaceholder"</code>)</p>
+    </article>
+    <article class="card" id="cowritten-artifact-html-security-labeling">
+      <div class="card-top">
+        <h3>Cowritten Artifact HTML: Security Labeling <a class="anchor" href="#cowritten-artifact-html-security-labeling">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Artifacts that include content published by other co-writers are now tagged with <code>cowritten-artifact-html</code> and Claude is instructed to treat the tag's contents as untrusted data — not instructions. A co-writer cannot escalate permissions or modify settings through artifact content.</p>
+<div class="blabel">Evidence</div>
+<p>Co-written artifact security annotation (search for <code>"cowritten-artifact-html"</code>)</p>
+    </article>
+    <article class="card" id="model-env-var-whitespace-trimming">
+      <div class="card-top">
+        <h3>Model Env Var Whitespace Trimming <a class="anchor" href="#model-env-var-whitespace-trimming">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Values of <code>ANTHROPIC_DEFAULT_SONNET_MODEL</code>, <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code>, and similar model env vars are now trimmed before use. This prevents subtle mismatches when env vars are set with trailing newlines or spaces (common when set via <code>export VAR=$(command)</code>).</p>
+<div class="blabel">Evidence</div>
+<p><code>.trim()</code> applied to model env var reads (search for <code>"ANTHROPIC_DEFAULT_SONNET_MODEL"</code> in context of <code>.trim()</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-setup-project-settings-local-json-audit">
+      <div class="card-top">
+        <h3>/auto-mode-setup: project settings.local.json Audit <a class="anchor" href="#auto-mode-setup-project-settings-local-json-audit">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>/auto-mode-setup</code> recon now reads and reports <code>autoMode</code> keys from the project's <code>.claude/settings.local.json</code>, subject to strict security checks: the file must be a regular file (not a symlink) with link count 1 inside a real <code>.claude</code> directory. The output also notes whether the file is tracked in git (<code>yes — repo-authored</code> vs <code>no — but untracked does not prove user-authored</code>).</p>
+<div class="blabel">Evidence</div>
+<p>Local settings autoMode reader (search for <code>"Project \</code>.claude/settings.local.json\<code> — autoMode keys"</code> and <code>"Tracked in git"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">5 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed permission hook <code>canUseTool</code> callback: when it returns a schema-invalid result (ZodError), Claude now logs the validation error at the <code>error</code> level and surfaces a clear message ("The canUseTool callback returned an invalid permission result") rather than crashing or passing raw error text. (search for <code>"canUseTool returned a schema-invalid permission result"</code>)</li></ul>
+<ul><li>Fixed worktreeinclude gitignore patterns: patterns that fail to compile are now warned and filtered out rather than causing a crash, with a telemetry event recorded per invalid pattern. (search for <code>"gitignore-style pattern failed to compile"</code>)</li></ul>
+<ul><li>Fixed permission result handling when <code>updatedInput</code> is empty: the resolver now correctly checks <code>Object.keys(e.updatedInput).length &gt; 0</code> only when <code>updatedInput</code> is defined, avoiding a crash on <code>undefined</code>. (search for <code>"updatedInput"</code> in permission result handling)</li></ul>
+<ul><li>Fixed Remote Control session reset on login: re-authenticating now clears <code>replBridgeSessionGroupingId</code> and <code>replBridgeInitialName</code> from app state, preventing stale session grouping data from persisting after sign-out. (search for <code>"replBridgeSessionGroupingId"</code>)</li></ul>
+<ul><li>Improved fs error categorization: additional POSIX error codes (<code>EDEADLK</code>, <code>EINTR</code>, <code>ENXIO</code>, <code>ECANCELED</code>, <code>ENEEDAUTH</code>, <code>ESTALE</code>) are now classified as retryable filesystem errors rather than hard failures. (search for <code>"EDEADLK"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="morning-brief-for-non-cowork-sessions-in-development">
+      <div class="card-top">
+        <h3>Morning Brief for Non-Cowork Sessions [In Development] <a class="anchor" href="#morning-brief-for-non-cowork-sessions-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The Morning Brief skill (<code>/morning</code>) exists in the codebase but is currently only enabled in cowork/remote-trigger entrypoints. Regular interactive sessions will see the skill once <code>tengu_morning_brief_skill</code> is enabled more broadly.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged — <code>tengu_morning_brief_skill</code> defaults to <code>false</code>. Can be forced on with <code>CLAUDE_CODE_ENABLE_MORNING_BRIEF=1</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Skill enablement guard checks <code>CLAUDE_CODE_IS_COWORK</code> (search for <code>"tengu_morning_brief_skill"</code>)</p>
+    </article>
+    <article class="card" id="walnut-spire-plugin-eval-general-availability-in-development">
+      <div class="card-top">
+        <h3>Walnut Spire (<code>plugin eval</code> General Availability) [In Development] <a class="anchor" href="#walnut-spire-plugin-eval-general-availability-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>plugin eval</code> CLI subcommand (for evaluating plugins against test cases) was previously hard-gated behind <code>tengu_walnut_spire</code>. The gate is still present but is now also unlockable via the <code>CLAUDE_CODE_WALNUT_SPIRE</code> environment variable.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged via <code>tengu_walnut_spire</code>; also enabled by <code>CLAUDE_CODE_WALNUT_SPIRE</code> env var.</p>
+<div class="blabel">Evidence</div>
+<p>Gate check refactored to <code>mvc()</code> helper (search for <code>"CLAUDE_CODE_WALNUT_SPIRE"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.207.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.207.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
