@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.208 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.208."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.208</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.208</span></h1>
+<p class="sub">Version 2.1.208 introduces Vim INSERT-mode key remaps, a new <code>CLAUDE_CODE_PROCESS_WRAPPER</code> environment variable for wrapping Claude Code process launches, shell history context integration, and Linux sandbox violation monitoring. On the Windows sandbox side, <code>binShell</code> now accepts an object form and a custom <code>srtWin.path</code> setting is available. The MCP archive-skill distribution mechanism (tar/zip via MCP) was removed, and the auto-mode opt-in dialog is gone.</p>    <div class="meta-row">
+      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.207 → v2.1.208</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">3</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">6 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="vim-insert-mode-key-sequence-remaps">
+      <div class="card-top">
+        <h3>Vim INSERT-mode key sequence remaps <a class="anchor" href="#vim-insert-mode-key-sequence-remaps">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Users who enable vim mode can now define custom two-character key sequences that trigger actions in INSERT mode, similar to the classic <code>jj → &lt;Esc&gt;</code> mapping from Vim configurations.</p>
+<div class="blabel">Usage</div>
+<p>Add to <code>~/.claude/settings.json</code>:</p>
+<pre><code>{
+  &quot;editorMode&quot;: &quot;vim&quot;,
+  &quot;vimInsertModeRemaps&quot;: {
+    &quot;jj&quot;: &quot;&lt;Esc&gt;&quot;,
+    &quot;jk&quot;: &quot;&lt;Esc&gt;&quot;
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Each key is exactly two printable characters typed in sequence</li><li><code>"&lt;Esc&gt;"</code> (return to NORMAL mode) is the only supported target value</li><li>Only active when <code>editorMode</code> is set to <code>"vim"</code></li><li>Multiple remaps can be configured simultaneously</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>vimInsertModeRemaps</code> setting schema (search for <code>"Vim INSERT-mode key-sequence remaps"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-process-wrapper-environment-variable">
+      <div class="card-top">
+        <h3>CLAUDE_CODE_PROCESS_WRAPPER environment variable <a class="anchor" href="#claude-code-process-wrapper-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new environment variable that wraps every Claude Code process launch through a custom launcher binary. All background sessions, daemon-spawned sessions, and self-exec restarts will be run through the configured wrapper.</p>
+<div class="blabel">Usage</div>
+<pre><code># Point at an absolute path to your launcher script
+export CLAUDE_CODE_PROCESS_WRAPPER=&quot;/usr/local/bin/my-launcher&quot;
+
+# Or pass as a JSON array for launchers with fixed arguments
+export CLAUDE_CODE_PROCESS_WRAPPER=&#x27;[&quot;/usr/local/bin/my-launcher&quot;, &quot;--profile&quot;, &quot;claude&quot;]&#x27;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Must be an absolute path (bare names resolved via PATH are not accepted)</li><li>On Windows, the wrapper is not supported — sessions run unwrapped and a warning is logged</li><li>The launcher must exec into Claude Code rather than daemonize; a launcher that daemonizes is detected and rejected</li><li>If the configured launcher path is deleted or becomes non-executable, new background sessions are refused rather than started unwrapped</li><li>Project-scoped settings files (<code>.claude/settings.json</code> and <code>.claude/settings.local.json</code>) cannot configure <code>CLAUDE_CODE_PROCESS_WRAPPER</code>; it must be in user settings or managed settings</li><li>Run <code>claude status</code> to see the current wrapper configuration and any errors</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>CLAUDE_CODE_PROCESS_WRAPPER</code> constant (search for <code>"CLAUDE_CODE_PROCESS_WRAPPER"</code>)</p>
+    </article>
+    <article class="card" id="shell-history-context-integration-with-opt-in">
+      <div class="card-top">
+        <h3>Shell history context integration (with opt-in) <a class="anchor" href="#shell-history-context-integration-with-opt-in">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a user opts in at the context-gathering prompt, Claude now reads shell command history from common history files and includes a filtered view (command words only, no arguments that might carry secrets) in the system prompt context.</p>
+<div class="blabel">Details</div>
+<ul><li>Supported history files: <code>~/.bash_history</code>, <code>~/.zsh_history</code>, <code>~/.local/share/fish/fish_history</code>, <code>~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt</code> (Linux/macOS), and <code>%APPDATA%\...\PSReadLine\ConsoleHost_history.txt</code> (Windows)</li><li>Only command words are included — raw history lines with inline arguments (which may contain secrets) are never read into the transcript</li><li>If the home directory is a network path (UNC share or automount), history is skipped to avoid unintended network authentication</li><li>The feature is gated by an explicit user opt-in at the Q3 context question; if not asked, history is marked "NOT GATHERED"</li></ul>
+<div class="blabel">Evidence</div>
+<p>History file paths (search for <code>"~/.bash_history"</code> and <code>"PSReadLine"</code>)</p>
+    </article>
+    <article class="card" id="github-repo-visibility-and-branch-protection-context">
+      <div class="card-top">
+        <h3>GitHub repo visibility and branch protection context <a class="anchor" href="#github-repo-visibility-and-branch-protection-context">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Claude now gathers repository visibility (public/private), branch protection rules, and rulesets from GitHub via <code>gh</code> when working in a git repository. This gives Claude better context for decisions about pushing, branching, and code review workflows.</p>
+<div class="blabel">Details</div>
+<ul><li>Uses <code>gh</code> CLI to query <code>/rulesets?per_page=100</code> and <code>/branches?protected=true&amp;per_page=100</code></li><li>Includes org-level sibling repo docs (top 50 by <code>pushedAt</code>)</li><li>Degrades gracefully when <code>gh</code> is unavailable, unauthenticated, or the token lacks org scope — each section shows a "not queryable here" marker rather than failing</li><li>Org/repo docs are candidates only — Claude filters to those whose org already appears in known repo facts</li></ul>
+<div class="blabel">Evidence</div>
+<p>New repo context gathering (search for <code>"Repo visibility &amp; branch protection (via gh)"</code> and <code>"/rulesets?per_page=100"</code>)</p>
+    </article>
+    <article class="card" id="linux-sandbox-violation-monitor">
+      <div class="card-top">
+        <h3>Linux sandbox violation monitor <a class="anchor" href="#linux-sandbox-violation-monitor">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When running with the Linux sandbox enabled, Claude now starts a Unix-socket observer that monitors for filesystem violations (writes to paths that should be denied). Violations are reported in real time rather than only being caught after the fact.</p>
+<div class="blabel">Details</div>
+<ul><li>Creates a temporary socket file under <code>/tmp/srt-obs-*</code></li><li>Receives structured violation events (syscall name, path, command) from the sandbox kernel module</li><li>Applies <code>ignoreViolations</code> filters (by path prefix and by command name)</li><li>The monitor socket path is passed to the sandbox so it can report outbound writes</li><li>If the socket fails to start, violation monitoring is disabled but the sandbox itself continues running</li></ul>
+<div class="blabel">Evidence</div>
+<p>Linux sandbox monitor (search for <code>"Started Linux seccomp violation monitor"</code> and <code>"[Sandbox Linux Monitor]"</code>)</p>
+    </article>
+    <article class="card" id="permission-rule-label-filtering">
+      <div class="card-top">
+        <h3>Permission rule label filtering <a class="anchor" href="#permission-rule-label-filtering">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>/permissions</code> command (and related CLI output) now accepts a <code>--label &lt;prefix&gt;</code> option to filter displayed rules to only those whose label starts with the given prefix.</p>
+<div class="blabel">Usage</div>
+<pre><code>/permissions --label bash
+/permissions --label read:</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The filter is case-insensitive</li><li>Matching is prefix-based (not substring)</li><li>Useful for navigating large permission sets created by hooks or plugins</li></ul>
+<div class="blabel">Evidence</div>
+<p>New <code>--label</code> flag (search for <code>"--label &lt;prefix&gt;"</code> and <code>"Show only rules whose label starts with this prefix"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="windows-sandbox-binshell-now-accepts-object-form-and-custom-">
+      <div class="card-top">
+        <h3>Windows sandbox: binShell now accepts object form and custom srt-win path <a class="anchor" href="#windows-sandbox-binshell-now-accepts-object-form-and-custom-">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Two improvements to the Windows sandbox configuration.</p>
+<p>First, <code>binShell</code> can now be specified as an object <code>{"exe": "...", "args": [...]}</code> instead of only as a string token. This allows passing absolute paths to shells with custom argument arrays. The object form is Windows-only and is rejected on macOS/Linux.</p>
+<p>Second, a new <code>windows.srtWin.path</code> setting allows pointing the sandbox at a custom <code>srt-win.exe</code> binary instead of the packaged one.</p>
+<div class="blabel">Details</div>
+<ul><li><code>binShell</code> string form: bare token (<code>cmd</code>, <code>powershell</code>, <code>pwsh</code>) or absolute path to <code>bash.exe</code>/<code>sh.exe</code>/<code>pwsh.exe</code>/<code>powershell.exe</code></li><li><code>binShell</code> object form: <code>{"exe": "&lt;absolute path&gt;", "args": ["..."]}</code></li><li>Error message updated: now accepts <code>pwsh.exe</code> and <code>powershell.exe</code> in addition to the previous <code>bash.exe</code>/<code>sh.exe</code></li><li><code>windows.srtWin.path</code>: if set, the file must exist; remove the key to fall back to the packaged binary</li><li>CA cert path is now passed to sandbox commands, enabling custom CA trust in Windows sandbox mode</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>binShell</code> object form (search for <code>"binShell object form is Windows-only"</code>) and srtWin path (search for <code>"windows.srtWin.path is set to"</code>)</p>
+    </article>
+    <article class="card" id="set-max-thinking-tokens-null-or-omitted-now-resets-to-sessio">
+      <div class="card-top">
+        <h3>set_max_thinking_tokens: null or omitted now resets to session default <a class="anchor" href="#set-max-thinking-tokens-null-or-omitted-now-resets-to-sessio">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When calling <code>set_max_thinking_tokens</code> with <code>max_thinking_tokens</code> omitted or null, thinking now resets to the session default rather than keeping the previously-set mid-session override. This makes it possible to undo a thinking budget adjustment without restarting the session.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously, <code>max_thinking_tokens: null</code> had ambiguous behavior</li><li>Now: omitting or setting to null clears any mid-session budget override back to the spawn-time budget</li><li>For sessions where thinking is disabled, this keeps thinking disabled</li><li><code>max_thinking_tokens</code> must be an integer (or null); non-integer numbers are now rejected</li></ul>
+<div class="blabel">Evidence</div>
+<p>Updated <code>set_max_thinking_tokens</code> description (search for <code>"When max_thinking_tokens is omitted or null, thinking resets to the session default"</code>)</p>
+    </article>
+    <article class="card" id="monitor-tool-description-adapts-to-interactive-vs-non-intera">
+      <div class="card-top">
+        <h3>Monitor tool description adapts to interactive vs non-interactive context <a class="anchor" href="#monitor-tool-description-adapts-to-interactive-vs-non-intera">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The Monitor tool's guidance text now varies based on whether the session is interactive. In interactive sessions (where the user is present at a terminal), Claude is now told to use a foreground Bash <code>until</code> loop for single-notification "tell me when ready" cases. In non-interactive/background sessions, the previous <code>run_in_background</code> recommendation is kept.</p>
+<div class="blabel">Details</div>
+<ul><li>For single-notification use cases in interactive sessions: "run the command in the foreground with Bash, exiting when the condition is true"</li><li>For single-notification use cases in non-interactive sessions: "use Bash with <code>run_in_background</code>"</li><li>The "don't use unbounded command for a single notification" warning likewise adapts its phrasing to the context</li></ul>
+<div class="blabel">Evidence</div>
+<p>Monitor tool description function (search for <code>"run the command in the <strong>foreground with Bash</strong>"</code>)</p>
+    </article>
+    <article class="card" id="credential-masking-extract-patterns-with-onextractnomatch-co">
+      <div class="card-top">
+        <h3>Credential masking: extract patterns with onExtractNoMatch control <a class="anchor" href="#credential-masking-extract-patterns-with-onextractnomatch-co">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The <code>credentials.envVars</code> credential masking feature now supports an <code>extract</code> regex pattern to pull a sub-token out of an environment variable's value before masking. A new <code>onExtractNoMatch</code> option controls what happens when the pattern doesn't match.</p>
+<div class="blabel">Details</div>
+<ul><li><code>extract</code>: a regex applied to the env var value; only the first capture group is masked</li><li><code>onExtractNoMatch</code>:</li><li><code>"warn"</code> (default): variable is left unprotected, a console warning is emitted</li><li><code>"deny"</code>: variable is unset entirely from the sandbox environment</li><li><code>"error"</code>: an error is thrown and the sandbox refuses to start</li><li>A runtime warning is logged when <code>"warn"</code> leaves a variable unprotected, making the risk visible in the log</li></ul>
+<div class="blabel">Evidence</div>
+<p>Credential extract pattern (search for <code>"credentials.envVars entry"</code> and <code>"onExtractNoMatch"</code>)</p>
+    </article>
+    <article class="card" id="github-app-check-now-returns-default-branch-and-transient-st">
+      <div class="card-top">
+        <h3>GitHub App check now returns default branch and transient status <a class="anchor" href="#github-app-check-now-returns-default-branch-and-transient-st">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The internal GitHub App preflight check now returns the repository's default branch (when available from the API response) and a <code>transient</code> flag distinguishing permanent failures from those that might succeed on retry.</p>
+<div class="blabel">Details</div>
+<ul><li><code>defaultBranch</code>: populated from <code>repo.default_branch</code> in the API response; used by the remote agent to avoid reusing the default branch as its work branch</li><li><code>transient: true</code>: network errors, timeouts (408, 429), and null-response profile fetches</li><li><code>transient: false</code>: deterministic failures like missing token scopes or 4xx non-rate-limit responses</li><li>Improved log message when org UUID is missing: distinguishes between "profile fetch null (possibly transient)" and "token lacks user:profile scope (deterministic)"</li></ul>
+<div class="blabel">Evidence</div>
+<p>GitHub App check refactor (search for <code>"checkGithubAppInstalled: No org UUID found (token lacks user:profile scope"</code>)</p>
+    </article>
+    <article class="card" id="official-plugin-prompt-overrides-via-server-side-feature-fla">
+      <div class="card-top">
+        <h3>Official plugin prompt overrides via server-side feature flag <a class="anchor" href="#official-plugin-prompt-overrides-via-server-side-feature-fla">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Anthropic can now push prompt overrides for official (first-party) plugins via the <code>tengu_official_plugin_prompt_overrides</code> GrowthBook feature flag. This allows updating plugin instructions server-side without requiring a CLI release.</p>
+<div class="blabel">Details</div>
+<ul><li>Applies only to plugins from Anthropic's marketplace or known official plugin names</li><li>Overridable fields: <code>server_instructions</code>, <code>server_instructions_by_server</code>, <code>tools</code>, <code>search_hints</code>, <code>param_descriptions</code>, <code>prompts</code>, <code>skills</code></li><li>If the GrowthBook payload fails schema validation, the baked-in plugin text is used and an error is logged</li><li>Per-server instruction overrides via <code>server_instructions_by_server</code> let different MCP servers within the same plugin get different instructions</li></ul>
+<div class="blabel">Evidence</div>
+<p>Plugin prompt override (search for <code>"tengu_official_plugin_prompt_overrides"</code>)</p>
+    </article>
+    <article class="card" id="ripgrep-null-byte-protection">
+      <div class="card-top">
+        <h3>Ripgrep null byte protection <a class="anchor" href="#ripgrep-null-byte-protection">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Ripgrep (used by the Grep tool) now refuses to spawn if any argument, the target path, or the session working directory contains a null byte (<code>\0</code>). Previously, this could produce confusing failures deep in process spawning.</p>
+<div class="blabel">Details</div>
+<ul><li>Throws <code>RipgrepNullByteError</code> with a specific message identifying which argument contains the null byte</li><li>Checked in order: session cwd, target path, caller arguments</li><li>The check happens before spawning, so the error is surfaced at the tool level rather than as a cryptic OS error</li></ul>
+<div class="blabel">Evidence</div>
+<p>Null byte guard (search for <code>"ripgrep spawn blocked: null byte in session cwd"</code>)</p>
+    </article>
+    <article class="card" id="new-structured-error-types">
+      <div class="card-top">
+        <h3>New structured error types <a class="anchor" href="#new-structured-error-types">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Three new error classes are introduced for cleaner error handling and telemetry:</p>
+<ul><li><code>RipgrepNullByteError</code>: thrown when ripgrep is called with a null byte in its arguments</li><li><code>RipgrepUsageError</code>: thrown when ripgrep rejects the pattern, glob, or file type filter without searching (previously these were untyped failures)</li><li><code>SelectedRangeTooLargeError</code>: thrown when a requested line range exceeds the readable limit; the error message now names the limit and suggests searching for specific content instead</li><li><code>BedrockUnexpectedContentTypeError</code>: thrown when a Bedrock streaming response has an unexpected content-type (not <code>application/vnd.amazon.eventstream</code>); includes guidance to set <code>CLAUDE_CODE_DISABLE_BEDROCK_CONTENT_TYPE_GUARD=1</code> to suppress while a gateway is being fixed</li></ul>
+<div class="blabel">Evidence</div>
+<p>New error classes (search for <code>"RipgrepNullByteError"</code>, <code>"RipgrepUsageError"</code>, <code>"SelectedRangeTooLargeError"</code>, <code>"BedrockUnexpectedContentType"</code>)</p>
+    </article>
+    <article class="card" id="mcp-server-bearer-credential-rejection-clearer-error-and-aut">
+      <div class="card-top">
+        <h3>MCP server bearer credential rejection: clearer error and automatic retry <a class="anchor" href="#mcp-server-bearer-credential-rejection-clearer-error-and-aut">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When an MCP server rejects Claude's session credential with an HTTP 401, the connection is now tagged with a dedicated <code>CLI_OWNED_BEARER_REJECTED</code> error code and the error message explicitly states the credential will be retried on the next refresh cycle. Previously, bearer rejection was handled identically to other connection failures.</p>
+<div class="blabel">Evidence</div>
+<p>New bearer rejection handler (search for <code>"CLI_OWNED_BEARER_REJECTED"</code>)</p>
+    </article>
+    <article class="card" id="engine-log-prefix-renamed-from-shoji-engine-to-engine">
+      <div class="card-top">
+        <h3>Engine log prefix renamed from [shoji-engine] to [engine] <a class="anchor" href="#engine-log-prefix-renamed-from-shoji-engine-to-engine">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Debug log messages from the session engine now use the prefix <code>[engine]</code> instead of the old <code>[shoji-engine]</code> prefix. Similarly, <code>[shoji]</code> prefixes on other wire-layer messages have been updated. This affects diagnostic output in <code>claude --debug</code> and log files.</p>
+<div class="blabel">Evidence</div>
+<p>Prefix rename (removed: <code>"[shoji-engine]"</code>, added: <code>"[engine]"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>File deny rules now block edits, not just reads. A new clear error message is shown when a file is covered by a Read deny rule and the user attempts to edit it: "File is covered by a Read deny rule in your permission settings and cannot be edited." (search for <code>"File is covered by a Read deny rule"</code>)</li></ul>
+<ul><li>Ripgrep usage errors (invalid patterns, unsupported glob syntax, unknown file types) are now caught and reported as <code>RipgrepUsageError</code> rather than surfacing as raw subprocess failures. The error message includes the rejection reason: "Search failed — ripgrep rejected the pattern, glob, or file type without searching" (search for <code>"Search failed — ripgrep rejected the pattern"</code>)</li></ul>
+<ul><li>The <code>apiKeyHelper</code> script failure notification is now a clear user-facing message: "Your apiKeyHelper script is failing · This usually means you need to re-authenticate with your provider · Run /status to see the script's error output" (search for <code>"Your apiKeyHelper script is failing"</code>)</li></ul>
+<ul><li>Symlink resolution in the Linux sandbox deny-path logic was improved: deny paths are now resolved through symlinks before enforcement to avoid false positives when a deny path target is accessed via a symlink (search for <code>"[Sandbox Linux] Resolve symlinked deny path"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Removed</h2><div class="ln"></div>
+<span class="ct">3 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="mcp-archive-skill-distribution-removed">
+      <div class="card-top">
+        <h3>MCP archive skill distribution removed <a class="anchor" href="#mcp-archive-skill-distribution-removed">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>MCP skills can no longer be distributed as <code>.tar.gz</code> or <code>.zip</code> archives via the <code>mcp-skill-archive:</code> URI scheme. The entire archive download, extraction, validation, and caching pipeline has been removed.</p>
+<p>If you were distributing skills this way, you must now distribute them as direct MCP server resources or as local directory skills. Skills already cached from previous versions may remain on disk in the extraction directory but will no longer be updated or loaded.</p>
+<div class="blabel">Evidence</div>
+<p>All tar/zip archive parsing functions removed (search for <code>"mcp-skill-archive:"</code>, <code>"Downloading skill archive from"</code> — these strings are absent from v2.1.208)</p>
+    </article>
+    <article class="card" id="auto-mode-opt-in-dialog-removed">
+      <div class="card-top">
+        <h3>Auto-mode opt-in dialog removed <a class="anchor" href="#auto-mode-opt-in-dialog-removed">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The interactive "Enable auto mode?" prompt that appeared for some users has been removed. The strings "Enable auto mode?", "Yes, enable auto mode", "Yes, and make it my default mode", and "No, don't ask again" no longer appear in the codebase. Auto mode is now configured via settings rather than through an in-session dialog.</p>
+<div class="blabel">Evidence</div>
+<p>Removed auto-mode opt-in strings (search for <code>"showAutoModeOptIn"</code> — absent from v2.1.208)</p>
+    </article>
+    <article class="card" id="plan-artifact-html-template-unbundled">
+      <div class="card-top">
+        <h3>Plan artifact HTML template unbundled <a class="anchor" href="#plan-artifact-html-template-unbundled">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The full Anthropic CDS design token CSS block and plan artifact HTML template that were previously embedded inline in the CLI bundle have been removed. The plan artifact generation still works, but the template is no longer shipped inside the CLI binary.</p>
+<div class="blabel">Evidence</div>
+<p>Large CDS token block and <code>u0s</code> / <code>Jvd</code> template variables removed from bundle</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.208.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.208.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
