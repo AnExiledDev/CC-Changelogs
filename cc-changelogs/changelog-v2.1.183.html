@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.183</span></h1>
 <p class="sub">This release removes the <code>/migrate</code> command and <code>claude migrate</code> CLI that imported configurations from OpenAI Codex and Google Gemini CLI. In its place, the <code>/init</code> command receives a substantial overhaul: it now runs a structured, multi-phase guided interview that sets up not just CLAUDE.md but also personal <code>CLAUDE.local.md</code> files, skills, and hooks in a single session.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.182 → v2.1.183</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">1</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.183 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21183" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Improved auto mode safety: destructive git commands (<code>git reset --hard</code>, <code>git checkout -- .</code>, <code>git clean -fd</code>, <code>git stash drop</code>) are now blocked when you didn't ask to discard local work, <code>git commit --amend</code> is blocked when the commit wasn't made by the agent this session, and <code>terraform destroy</code>/<code>pulumi destroy</code>/<code>cdk destroy</code> are blocked unless you asked for the specific stack</li><li>Added a warning when the requested model is deprecated or automatically updated to a newer model, shown on stderr in print mode (<code>-p</code>) and now also covering models set in agent frontmatter</li><li>Added <code>attribution.sessionUrl</code> setting to omit the claude.ai session link from commits and PRs in web and Remote Control sessions</li><li>Added <code>/config --help</code> to list all available shorthand keys for <code>/config key=value</code></li><li>Changed <code>/config</code> toggle behavior: Enter and Space both change the selected setting, and Esc now saves and closes instead of reverting</li><li>Removed the startup "setup issues" line under the logo — run <code>/doctor</code> to see configuration issues or use <code>--debug</code></li><li>Fixed <code>thinking.disabled.display: Extra inputs are not permitted</code> 400 errors on subagent spawns and session-title generation for affected configurations</li><li>Fixed WebSearch returning empty results in subagents</li><li>Fixed the terminal cursor being stranded above the prompt after navigating history in vim mode with the native cursor enabled</li><li>Fixed fullscreen TUI corruption (statusline mid-screen, duplicated spinner rows, merged text) in Windows Terminal under heavy nested-subagent load</li><li>Fixed turns silently completing with no visible output when the model returned only a thinking block; Claude now re-prompts once</li><li>Fixed user-level skills appearing multiple times in slash-command autocomplete when multiple plugins are enabled</li><li>Fixed MCP servers requiring authentication exposing auth-stub tools to the model in headless/SDK mode</li><li>Fixed tmux teammate panes failing to launch when the shell has slow rc-file initialization, and keystrokes typed during agent spawn leaking into the new tmux pane instead of the leader prompt</li><li>Fixed background tasks started by a teammate being killed when the teammate finishes a turn</li><li>Fixed scheduled task and webhook trigger deliveries being treated as keyboard input; they now classify as task notifications and can no longer approve a pending action or set the session title in auto mode</li><li>Fixed focus mode showing "Ran N PostToolUse hooks" timing lines under each response</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 17 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>Removed Features</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>

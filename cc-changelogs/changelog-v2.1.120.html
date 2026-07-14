@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.120</span></h1>
 <p class="sub">This release introduces a condensed "lean prompt" system for reduced token usage on capable models, a new <code>claude ultrareview</code> CLI command for cloud-hosted code reviews, interactive daemon service installation prompts, a memory write confirmation dialog, and expanded Windows PowerShell support. It also adds the <code>tabs_close_mcp</code> Chrome extension tool, a <code>hideVimModeIndicator</code> setting for custom status lines, and several improvements to how deny rules, autocompact notifications, and explore agent descriptions are handled.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.119 → v2.1.120</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">23</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.120 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21120" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Windows: Git for Windows (Git Bash) is no longer required — when absent, Claude Code uses PowerShell as the shell tool</li><li>Added <code>claude ultrareview [target]</code> subcommand to run <code>/ultrareview</code> non-interactively from CI or scripts — prints findings to stdout (<code>--json</code> for raw output) and exits 0 on completion or 1 on failure</li><li>Skills can now reference the current effort level with <code>${CLAUDE_EFFORT}</code> in their content</li><li>Set <code>AI_AGENT</code> environment variable for subprocesses so <code>gh</code> can attribute traffic to Claude Code</li><li>Spinner tips that recommend installing the desktop app or creating skills/agents are now hidden when you already have them</li><li>Show a "use PgUp/PgDn to scroll" hint when the terminal sends arrow keys instead of scroll events</li><li>Faster session start when you have many claude.ai connectors configured but not authorized</li><li>The auto mode denial message now links to the configuration docs</li><li><code>claude plugin validate</code> now accepts <code>$schema</code>, <code>version</code>, and <code>description</code> at the top level of <code>marketplace.json</code> and <code>$schema</code> in <code>plugin.json</code></li><li>Auto-compact in auto mode now displays <code>auto</code> (lowercase, no token count) instead of a misleading token value</li><li>Fixed pressing Esc during a stdio MCP tool call closing the entire server connection (regression in 2.1.105)</li><li>Fixed <code>/rewind</code> and other interactive overlays not responding to keyboard input after launching with <code>claude --resume</code></li><li>Fixed terminal scrollback duplication in non-fullscreen mode (resize, dialog dismiss, long sessions)</li><li>Fixed <code>DISABLE_TELEMETRY</code> / <code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code> not suppressing usage metrics telemetry for API and enterprise users</li><li>Fixed false-positive "Dangerous rm operation" permission prompts in auto mode for multi-line bash commands containing both a pipe and a redirect</li><li>Fixed long selection menus clipping below the terminal in fullscreen mode — the focused option now stays on screen as you scroll</li><li>Fixed Write tool output collapsing instead of expanding when clicking "+N lines" in fullscreen</li><li>Fixed slash command picker jumping while typing, and improved highlight to only match contiguous substrings in blue</li><li>Fixed <code>/plugin</code> marketplace failing to load when one entry uses an unrecognized source format — that entry is shown but installing it prompts you to update</li><li>[VSCode] <code>/usage</code> now opens the native Account &amp; Usage dialog instead of returning plain-text session cost</li><li>[VSCode] Voice dictation now respects the <code>language</code> setting in <code>~/.claude/settings.json</code></li><li>Fixed <code>find</code> in the Bash tool exhausting open file descriptors on large directory trees, causing host-wide crashes (macOS/Linux native builds)</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 22 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">23 items</span>  </div>

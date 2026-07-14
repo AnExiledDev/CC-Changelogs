@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.205</span></h1>
 <p class="sub">This release delivers a major overhaul of the <code>/doctor</code> command — transformed from a passive diagnostics display into a comprehensive 8-check setup repair tool — along with a new <code>claude doctor</code> terminal command that works without a session. It also introduces a <code>--append-subagent-system-prompt</code> flag for agentic workflows, improved PR description writing guidance that reads repo PR templates, richer session restart messaging, and better MCP/enterprise-policy error reporting.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.204 → v2.1.205</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.205 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21205" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Added an auto mode rule that blocks tampering with session transcript files</li><li>Fixed <code>--json-schema</code> silently producing unstructured output when the schema was invalid, and schemas using the <code>format</code> keyword being rejected</li><li>Fixed a message sent while Claude was working being silently lost when the turn ended at the <code>--max-turns</code> limit</li><li>Fixed Windows worktree removal deleting files outside the worktree when an NTFS junction or directory symlink existed inside it</li><li>Fixed background agents staying shown as "failed" or "completed" in the agent list after being resumed with <code>SendMessage</code></li><li>Fixed background jobs flipping from "needs input" back to "working" in the agent list when the agent's turn contained no readable text</li><li>Fixed <code>claude attach</code> erroring when a background agent was mid-upgrade restart instead of waiting for it to come back</li><li>Fixed session-to-PR linking missing a PR created in a Bash call whose output exceeded the 30K inline limit</li><li>Fixed <code>claude mcp add-from-claude-desktop</code> getting stuck when a server name contains unsupported characters; invalid names are now reported and remaining servers still import</li><li>Fixed a plugin LSP server that fails to initialize preventing a valid LSP server from another plugin handling the same file extension</li><li>Fixed a Windows crash when the directory Claude was launched from is deleted, locked, or unmounted while a command is running</li><li>Fixed a crash when a file watcher was closed while a directory scan was still in flight</li><li>Fixed project verify skills being rewritten on every session instead of only when a documented command changed</li><li>Fixed the agent view rendering one line too high and clipping its header when the job list slightly overflowed the screen</li><li>Fixed background tasks in the web and mobile Remote Control panels showing stale "Running" status by forwarding full task state on every membership change</li><li>Improved auto mode to ask before running <code>rm -rf</code> on a variable it can't resolve from context</li><li>Auto-update binary downloads now stream to disk instead of buffering in memory, cutting the updater's peak memory usage by roughly 400 MB</li><li>Background task notifications now explicitly state that no human input has occurred, preventing fabricated in-transcript approvals from being acted on</li><li>Improved agent view: sessions that edit, merge, comment on, or push to an existing PR now link it in <code>claude agents</code></li><li>Improved agent view: rows now show a colored state word and a classifier-written headline instead of raw tool call text, and the peek opens with full status including the exact ask for blocked sessions</li><li><code>/doctor</code> is now a full setup checkup that can diagnose and fix issues; <code>/checkup</code> is its alias</li><li>Reserved the "Claude Browser" MCP server name (alongside "Claude Preview") ahead of the Claude Desktop pane rename; user-configured MCP servers can no longer register under either name</li><li>Fixed Cowork VM-mode local-agent sessions failing to start with "Not logged in · Please run /login" on CLI 2.1.203+</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 23 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>

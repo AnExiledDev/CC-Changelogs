@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.126</span></h1>
 <p class="sub">This is a small release that removes the model-specific malware-analysis system reminder previously injected into file reads, persists <code>/effort</code> selections to user settings so the choice survives across sessions, and extracts the streaming idle-timeout calculation into a small helper. Most of the diff is version-string churn (2.1.124 → 2.1.126); the user-visible changes are limited to those three areas.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.124 → v2.1.126</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">6</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.126 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21126" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>The <code>/model</code> picker now lists models from your gateway's <code>/v1/models</code> endpoint when <code>ANTHROPIC_BASE_URL</code> points at an Anthropic-compatible gateway</li><li>- Added <code>claude project purge [path]</code> to delete all Claude Code state for a project (transcripts, tasks, file history, config entry) — supports <code>--dry-run</code>, <code>-y/--yes</code>, <code>-i/--interactive</code>, and <code>--all</code></li><li><code>--dangerously-skip-permissions</code> now bypasses prompts for writes to <code>.claude/</code>, <code>.git/</code>, <code>.vscode/</code>, shell config files, and other previously-protected paths (catastrophic removal commands still prompt as a safety net)</li><li><code>claude auth login</code> now accepts the OAuth code pasted into the terminal when the browser callback can't reach localhost (WSL2, SSH, containers)</li><li><code>claude_code.skill_activated</code> OpenTelemetry event now fires for user-typed slash commands and carries a new <code>invocation_trigger</code> attribute (<code>"user-slash"</code>, <code>"claude-proactive"</code>, or <code>"nested-skill"</code>)</li><li>Auto mode: the spinner now turns red when a permission check stalls, instead of looking like the tool is running</li><li>Host-managed deployments (<code>CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST</code>) no longer auto-disable analytics on Bedrock/Vertex/Foundry</li><li>Windows: PowerShell 7 installed via the Microsoft Store, MSI without PATH, or <code>.NET global tool</code> is now detected</li><li>Windows: when the PowerShell tool is enabled, Claude now treats PowerShell as the primary shell instead of defaulting to Bash</li><li>Read tool: removed the per-file malware-assessment reminder that could cause spurious refusals and "this is not malware" commentary on legacy models</li><li><strong>Security:</strong> Fixed <code>allowManagedDomainsOnly</code> / <code>allowManagedReadPathsOnly</code> being ignored when a higher-priority managed-settings source lacked a <code>sandbox</code> block</li><li>Fixed pasting an image larger than 2000px breaking the session — images are now downscaled on paste, and oversized images in history are automatically removed and the request retried</li><li>Fixed showing the login screen for "OAuth not allowed for organization" errors — now shows guidance to contact your admin</li><li>Fixed OAuth login failing with timeout on slow or proxied connections, in IPv6-only devcontainers, and when the browser callback can't reach localhost</li><li>Fixed a rare race where a concurrent credential write could clear a valid OAuth refresh token</li><li>Fixed API retry countdown sticking at "0s" instead of counting down between attempts</li><li>Fixed "Stream idle timeout" error after waking Mac from sleep mid-request</li><li>Fixed background and remote sessions falsely aborting with "Stream idle timeout" during long model thinking pauses</li><li>Fixed a hang where the assistant could finish thinking but show no output after a run of empty turns</li><li>Fixed overly fast trackpad scrolling in Cursor and VS Code 1.92–1.104 integrated terminals</li><li>Fixed claude.ai MCP connectors being suppressed by manual servers stuck in needs-auth state</li><li>Fixed Japanese/Korean/Chinese text rendering as garbled characters on Windows in no-flicker mode</li><li>Fixed <code>Ctrl+L</code> clearing the prompt input — it now only forces a screen redraw, matching readline behavior</li><li>Fixed deferred tools (WebSearch, WebFetch, etc.) not being available to skills with <code>context: fork</code> and other subagents on their first turn</li><li>Fixed plan-mode tools being unavailable in interactive sessions launched with <code>--channels</code></li><li>Fixed <code>/plugin</code> Uninstall reporting "Enabled" instead of "Uninstalled"</li><li>Bounded total size of file-modified reminders when a linter touches many files at once</li><li>Fixed <code>/remote-control</code> retries appearing stuck on "connecting…" — each retry now shows its result</li><li>Fixed Remote Control failure notification not showing the error reason for initial connection failures</li><li>Windows: clipboard writes no longer expose copied content in process command-line arguments visible to EDR/SIEM telemetry; also fixes &gt;22KB selections not reaching the clipboard</li><li>PowerShell tool: bare <code>--</code> (e.g. <code>git diff -- file</code>) is no longer mis-flagged as the <code>--%</code> stop-parsing token</li><li>Fixed Agent SDK hang when the model emits a malformed tool name in a parallel tool call batch</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 32 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>

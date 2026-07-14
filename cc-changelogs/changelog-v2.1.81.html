@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.81</span></h1>
 <p class="sub">This release introduces a new <code>RemoteTrigger</code> tool for managing scheduled remote agents, an <code>auto-mode critique</code> CLI subcommand for AI-powered review of custom auto mode rules, MCP channel permissions infrastructure, and configurable shell support for hooks (bash/powershell). It also adds time-based micro-compaction for idle sessions, a user-configurable <code>autoDreamEnabled</code> setting, <code>defaultShell</code> configuration, worktree state persistence, and new plan-approval UX options including "clear context."</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.80 → v2.1.81</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.81 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#2181" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Added <code>--bare</code> flag for scripted <code>-p</code> calls — skips hooks, LSP, plugin sync, and skill directory walks; requires <code>ANTHROPIC_API_KEY</code> or an <code>apiKeyHelper</code> via <code>--settings</code> (OAuth and keychain auth disabled); auto-memory fully disabled</li><li>Added <code>--channels</code> permission relay — channel servers that declare the permission capability can forward tool approval prompts to your phone</li><li>Fixed multiple concurrent Claude Code sessions requiring repeated re-authentication when one session refreshes its OAuth token</li><li>Fixed voice mode silently swallowing retry failures and showing a misleading "check your network" message instead of the actual error</li><li>Fixed voice mode audio not recovering when the server silently drops the WebSocket connection</li><li>Fixed <code>CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS</code> not suppressing the structured-outputs beta header, causing 400 errors on proxy gateways forwarding to Vertex/Bedrock</li><li>Fixed <code>--channels</code> bypass for Team/Enterprise orgs with no other managed settings configured</li><li>Fixed a crash on Node.js 18</li><li>Fixed unnecessary permission prompts for Bash commands containing dashes in strings</li><li>Fixed plugin hooks blocking prompt submission when the plugin directory is deleted mid-session</li><li>Fixed a race condition where background agent task output could hang indefinitely when the task completed between polling intervals</li><li>Resuming a session that was in a worktree now switches back to that worktree</li><li>Fixed <code>/btw</code> not including pasted text when used during an active response</li><li>Fixed a race where fast Cmd+Tab followed by paste could beat the clipboard copy under tmux</li><li>Fixed terminal tab title not updating with an auto-generated session description</li><li>Fixed invisible hook attachments inflating the message count in transcript mode</li><li>Fixed Remote Control sessions showing a generic title instead of deriving from the first prompt</li><li>Fixed <code>/rename</code> not syncing the title for Remote Control sessions</li><li>Fixed Remote Control <code>/exit</code> not reliably archiving the session</li><li>Improved MCP read/search tool calls to collapse into a single "Queried {server}" line (expand with Ctrl+O)</li><li>Improved <code>!</code> bash mode discoverability — Claude now suggests it when you need to run an interactive command</li><li>Improved plugin freshness — ref-tracked plugins now re-clone on every load to pick up upstream changes</li><li>Improved Remote Control session titles to refresh after your third message</li><li>Updated MCP OAuth to support Client ID Metadata Document (CIMD / SEP-991) for servers without Dynamic Client Registration</li><li>Changed plan mode to hide the "clear context" option by default (restore with <code>"showClearContextOnPlanAccept": true</code>)</li><li>Disabled line-by-line response streaming on Windows (including WSL in Windows Terminal) due to rendering issues</li><li>[VSCode] Fixed Windows PATH inheritance for Bash tool when using Git Bash (regression in v2.1.78)</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 27 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">16 items</span>  </div>

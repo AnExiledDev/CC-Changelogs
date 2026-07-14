@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.199</span></h1>
 <p class="sub">Version 2.1.199 introduces a major integration with Claude Design (claude.ai/design) for collaborative design work, a full suite of plugin/skill/connector discovery tools for the Cowork environment, and session grouping in fleet view. Windows sandbox setup is significantly simplified by eliminating the logout requirement, and credential masking gains powerful regex extract support.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.198 → v2.1.199</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">17</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.199 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21199" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Stacked slash-skill invocations like <code>/skill-a /skill-b do XYZ</code> now load all leading skills (up to 5), not just the first</li><li>Fixed SSL certificate errors (TLS-inspecting proxies, missing <code>NODE_EXTRA_CA_CERTS</code>, expired certs) burning retries before showing actionable guidance — they now fail immediately with the fix hint</li><li>Fixed streaming responses being discarded when the API emits a mid-stream overloaded/server error after partial output — the partial is now kept with an incomplete-response notice</li><li>Fixed subagents cut off by a rate limit or server error silently failing instead of returning their partial work to the parent</li><li>Fixed subagents reporting API errors (e.g. usage limit reached) as successful results — the error is now reported to the parent agent</li><li>Fixed the background-agent daemon on Linux killing itself and every running agent every ~50 seconds after an unclean shutdown left a corrupted worker record</li><li>Fixed background agents failing to cold-start over SSH on macOS with "Could not switch to audit session" (regression in 2.1.196)</li><li>Fixed <code>claude stop</code> being silently undone when it raced a background-agent respawn — the respawn now honors the stop</li><li>Fixed background job progress indicators stalling for minutes while the job ran long commands</li><li>Fixed background sessions on memory-starved machines showing a generic error — they now indicate low memory and suggest freeing resources</li><li>Fixed remote sessions briefly flapping between Working and Idle in the agent view when a background agent completes</li><li>Fixed idle subagents vanishing from the agent panel while other subagents were still working; surplus idle agents now collapse into an expandable summary row</li><li>Fixed typing <code>/model</code> or <code>/fast</code> while viewing a subagent silently opening the lead's model picker — a notice now explains the command applies to the lead</li><li>Fixed <code>SessionStart</code>, <code>Setup</code>, and <code>SubagentStart</code> hooks silently hiding stderr when exiting with code 2 — the error is now shown in the transcript</li><li>Fixed <code>claude --dangerously-skip-permissions daemon &lt;subcommand&gt;</code> being treated as a chat prompt instead of running the subcommand</li><li>Fixed <code>SendMessage</code> silently misrouting when a re-spawned agent reuses a previous agent's name — the tool now detects the mismatch and asks the caller to retarget</li><li>Fixed opening or resuming a session with no new messages needlessly growing the transcript file</li><li>Fixed backgrounding a session with <code>←</code> or <code>/background</code> dropping its <code>/color</code> from the agent view row</li><li>Fixed resetting a corrupted config file from the startup recovery dialog destroying it unrecoverably — it now backs up the file first</li><li>Fixed Claude in Chrome repeatedly opening the reconnect page when sessions run from different builds or config directories</li><li>Fixed plan mode not prompting for state-changing browser tool calls; read-only <code>browser_batch</code> calls are now correctly auto-allowed</li><li>Transient server rate-limit errors (429s unrelated to your usage limit) are now retried automatically with backoff for subscribers instead of failing the turn</li><li><code>CLAUDE_CODE_RETRY_WATCHDOG</code> now raises the default retry count for non-capacity transient errors to 300 and lifts the cap of 15 on <code>CLAUDE_CODE_MAX_RETRIES</code></li><li><code>claude agents</code> session rows now show pull-request links as bare <code>#N</code> without the redundant "PR" label</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 24 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>

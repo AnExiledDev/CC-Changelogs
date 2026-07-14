@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.86</span></h1>
 <p class="sub">This release introduces trusted device enrollment for enhanced session security, a new file read caching optimization that avoids re-reading unchanged files, and a context window usage breakdown command. It also adds Slack channel autocomplete integration, expands git/PR operation tracking beyond just <code>git commit</code> and <code>gh pr create</code>, and includes new shell safety checks for zsh equals expansion and bash array subscript injection.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.85 → v2.1.86</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">20</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.86 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#2186" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Added <code>X-Claude-Code-Session-Id</code> header to API requests so proxies can aggregate requests by session without parsing the body</li><li>Added <code>.jj</code> and <code>.sl</code> to VCS directory exclusion lists so Grep and file autocomplete don't descend into Jujutsu or Sapling metadata</li><li>Fixed <code>--resume</code> failing with "tool_use ids were found without tool_result blocks" on sessions created before v2.1.85</li><li>Fixed Write/Edit/Read failing on files outside the project root (e.g., <code>~/.claude/CLAUDE.md</code>) when conditional skills or rules are configured</li><li>Fixed unnecessary config disk writes on every skill invocation that could cause performance issues and config corruption on Windows</li><li>Fixed potential out-of-memory crash when using <code>/feedback</code> on very long sessions with large transcript files</li><li>Fixed <code>--bare</code> mode dropping MCP tools in interactive sessions and silently discarding messages enqueued mid-turn</li><li>Fixed the <code>c</code> shortcut copying only ~20 characters of the OAuth login URL instead of the full URL</li><li>Fixed masked input (e.g., OAuth code paste) leaking the start of the token when wrapping across multiple lines on narrow terminals</li><li>Fixed official marketplace plugin scripts failing with "Permission denied" on macOS/Linux since v2.1.83</li><li>Fixed statusline showing another session's model when running multiple Claude Code instances and using <code>/model</code> in one of them</li><li>Fixed scroll not following new messages after wheel scroll or click-to-select at the bottom of a long conversation</li><li>Fixed <code>/plugin</code> uninstall dialog: pressing <code>n</code> now correctly uninstalls the plugin while preserving its data directory</li><li>Fixed a regression where pressing Enter after clicking could leave the transcript blank until the response arrived</li><li>Fixed <code>ultrathink</code> hint lingering after deleting the keyword</li><li>Fixed memory growth in long sessions from markdown/highlight render caches retaining full content strings</li><li>Reduced startup event-loop stalls when many claude.ai MCP connectors are configured (macOS keychain cache extended from 5s to 30s)</li><li>Reduced token overhead when mentioning files with <code>@</code> — raw string content no longer JSON-escaped</li><li>Improved prompt cache hit rate for Bedrock, Vertex, and Foundry users by removing dynamic content from tool descriptions</li><li>Memory filenames in the "Saved N memories" notice now highlight on hover and open on click</li><li>Skill descriptions in the <code>/skills</code> listing are now capped at 250 characters to reduce context usage</li><li>Changed <code>/skills</code> menu to sort alphabetically for easier scanning</li><li>Auto mode now shows "unavailable for your plan" when disabled by plan restrictions (was "temporarily unavailable")</li><li>[VSCode] Fixed extension incorrectly showing "Not responding" during long-running operations</li><li>[VSCode] Fixed extension defaulting Max plan users to Sonnet after the OAuth token refreshes (8 hours after login)</li><li>Read tool now uses compact line-number format and deduplicates unchanged re-reads, reducing token usage</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 26 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">17 items</span>  </div>

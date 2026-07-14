@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.117</span></h1>
 <p class="sub">This release introduces the <code>/fork</code> command for spawning background agents that inherit the full conversation context, a team artifacts discovery system that notifies you about new skills and commands from teammates, and one-time scheduled remote agent execution (<code>run_once_at</code>). It also includes significant security hardening (path traversal detection, version string validation, stricter git reflog safety, <code>cd</code> multi-argument validation), a terminology rename from "triggers" to "routines" for scheduled agents, removal of the <code>/mode</code> and <code>/autocompact</code> interactive commands, and updated model deprecation tracking with remapping for Opus 4, Opus 4.1, and Sonnet 4.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.116 → v2.1.117</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">27</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.117 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21117" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Forked subagents can now be enabled on external builds by setting <code>CLAUDE_CODE_FORK_SUBAGENT=1</code></li><li>Agent frontmatter <code>mcpServers</code> are now loaded for main-thread agent sessions via <code>--agent</code></li><li>Improved <code>/model</code>: selections now persist across restarts even when the project pins a different model, and the startup header shows when the active model comes from a project or managed-settings pin</li><li>The <code>/resume</code> command now offers to summarize stale, large sessions before re-reading them, matching the existing <code>--resume</code> behavior</li><li>Faster startup when both local and claude.ai MCP servers are configured (concurrent connect now default)</li><li><code>plugin install</code> on an already-installed plugin now installs any missing dependencies instead of stopping at "already installed"</li><li>Plugin dependency errors now say "not installed" with an install hint, and <code>claude plugin marketplace add</code> now auto-resolves missing dependencies from configured marketplaces</li><li>Managed-settings <code>blockedMarketplaces</code> and <code>strictKnownMarketplaces</code> are now enforced on plugin install, update, refresh, and autoupdate</li><li>Advisor Tool (experimental): dialog now carries an "experimental" label, learn-more link, and startup notification when enabled; sessions no longer get stuck with "Advisor tool result content could not be processed" errors on every prompt and <code>/compact</code></li><li>The <code>cleanupPeriodDays</code> retention sweep now also covers <code>~/.claude/tasks/</code>, <code>~/.claude/shell-snapshots/</code>, and <code>~/.claude/backups/</code></li><li>OpenTelemetry: <code>user_prompt</code> events now include <code>command_name</code> and <code>command_source</code> for slash commands; <code>cost.usage</code>, <code>token.usage</code>, <code>api_request</code>, and <code>api_error</code> now include an <code>effort</code> attribute when the model supports effort levels. Custom/MCP command names are redacted unless <code>OTEL_LOG_TOOL_DETAILS=1</code> is set</li><li>Native builds on macOS and Linux: the <code>Glob</code> and <code>Grep</code> tools are replaced by embedded <code>bfs</code> and <code>ugrep</code> available through the Bash tool — faster searches without a separate tool round-trip (Windows and npm-installed builds unchanged)</li><li>Windows: cached <code>where.exe</code> executable lookups per process for faster subprocess launches</li><li>Default effort for Pro/Max subscribers on Opus 4.6 and Sonnet 4.6 is now <code>high</code> (was <code>medium</code>)</li><li>Fixed Plain-CLI OAuth sessions dying with "Please run /login" when the access token expires mid-session — the token is now refreshed reactively on 401</li><li>Fixed <code>WebFetch</code> hanging on very large HTML pages by truncating input before HTML-to-markdown conversion</li><li>Fixed a crash when a proxy returns HTTP 204 No Content — now surfaces a clear error instead of a <code>TypeError</code></li><li>Fixed <code>/login</code> having no effect when launched with <code>CLAUDE_CODE_OAUTH_TOKEN</code> env var and that token expires</li><li>Fixed prompt-input undo (<code>Ctrl+_</code>) doing nothing immediately after typing, and skipping a state on each undo step</li><li>Fixed <code>NO_PROXY</code> not being respected for remote API requests when running under Bun</li><li>Fixed rare spurious escape/return triggers when key names arrive as coalesced text over slow connections</li><li>Fixed SDK <code>reload_plugins</code> reconnecting all user MCP servers serially</li><li>Fixed Bedrock application-inference-profile requests failing with 400 when backed by Opus 4.7 with thinking disabled</li><li>Fixed MCP <code>elicitation/create</code> requests auto-cancelling in print/SDK mode when the server finishes connecting mid-turn</li><li>Fixed subagents running a different model than the main agent incorrectly flagging file reads with a malware warning</li><li>Fixed idle re-render loop when background tasks are present, reducing memory growth on Linux</li><li>[VSCode] Fixed "Manage Plugins" panel breaking when multiple large marketplaces are configured</li><li>Fixed Opus 4.7 sessions showing inflated <code>/context</code> percentages and autocompacting too early — Claude Code was computing against a 200K context window instead of Opus 4.7's native 1M</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 28 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">24 items</span>  </div>

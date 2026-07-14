@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.14</span></h1>
 <p class="sub">This release renames <code>MCPSearch</code> to <code>ToolSearch</code> to better reflect its broader tool discovery capabilities, adds support for dynamically discovered skills from <code>.claude/skills</code> directories, introduces a new <code>CLAUDE_CODE_GLOB_TIMEOUT_SECONDS</code> environment variable for controlling glob timeouts, and simplifies the ExitPlanMode tool documentation. Additionally, Claude.ai MCP server integration has been expanded with improved telemetry and eligibility checking.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.12 → v2.1.14</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">16</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.14 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#2114" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Added history-based autocomplete in bash mode (<code>!</code>) - type a partial command and press Tab to complete from your bash command history</li><li>Added search to installed plugins list - type to filter by name or description</li><li>Added support for pinning plugins to specific git commit SHAs, allowing marketplace entries to install exact versions</li><li>Fixed a regression where the context window blocking limit was calculated too aggressively, blocking users at ~65% context usage instead of the intended ~98%</li><li>Fixed memory issues that could cause crashes when running parallel subagents</li><li>Fixed memory leak in long-running sessions where stream resources were not cleaned up after shell commands completed</li><li>Fixed <code>@</code> symbol incorrectly triggering file autocomplete suggestions in bash mode</li><li>Fixed <code>@</code>-mention menu folder click behavior to navigate into directories instead of selecting them</li><li>Fixed <code>/feedback</code> command generating invalid GitHub issue URLs when description is very long</li><li>Fixed <code>/context</code> command to show the same token count and percentage as the status line in verbose mode</li><li>Fixed an issue where <code>/config</code>, <code>/context</code>, <code>/model</code>, and <code>/todos</code> command overlays could close unexpectedly</li><li>Fixed slash command autocomplete selecting wrong command when typing similar commands (e.g., <code>/context</code> vs <code>/compact</code>)</li><li>Fixed inconsistent back navigation in plugin marketplace when only one marketplace is configured</li><li>Fixed iTerm2 progress bar not clearing properly on exit, preventing lingering indicators and bell sounds</li><li>Improved backspace to delete pasted text as a single token instead of one character at a time</li><li>[VSCode] Added <code>/usage</code> command to display current plan usage</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 16 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">12 items</span>  </div>

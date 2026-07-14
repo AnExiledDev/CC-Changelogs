@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.187</span></h1>
 <p class="sub">This release renames the <code>/toggle-memory</code> command to <code>/pause-memory</code>, introduces a <code>--bg</code>/<code>--background</code> CLI flag for launching background agent sessions, and adds <code>sandbox.credentials</code> support for protecting credential files and environment variables inside the sandbox. MCP tool idle timeout detection is now configurable via a new env var, skill token footprints appear in <code>/usage</code>, and the keyboard input parser gains robust UTF-8 multi-byte handling.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.186 → v2.1.187</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">19</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.187 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21187" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Added <code>sandbox.credentials</code> setting to block sandboxed commands from reading credential files and secret environment variables</li><li>Added org-configured model restrictions to the model picker, <code>--model</code>, <code>/model</code>, and <code>ANTHROPIC_MODEL</code>, with a "restricted by your organization's settings" message when a restricted model is selected</li><li>Added mouse click support to select menus (permission prompts, <code>/model</code>, <code>/config</code>, etc.) in fullscreen mode</li><li>Fixed <code>--resume</code> failing with "No conversation found" when the original <code>-p</code> run produced no model turns</li><li>Fixed <code>--json-schema</code> and workflow <code>agent({schema})</code> structured output: the model can no longer re-call <code>StructuredOutput</code> indefinitely after a successful call, and follow-up turns now reliably return structured output</li><li>Fixed remote MCP tool calls that hang with no response for 5 minutes — they now abort with an error instead of blocking indefinitely (override with <code>CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT</code>)</li><li>Fixed Claude Code Remote sessions taking ~2.7s longer to start after the agent proxy CA system-trust install was added</li><li>Fixed pasted Korean/CJK text turning into mojibake in terminals that deliver paste as per-byte extended-key events</li><li>Fixed <code>/update</code> over Remote Control hanging when a startup trust dialog would have shown</li><li>Fixed background jobs in the agents view getting stuck in "working" indefinitely when the agent ended a turn without producing structured output</li><li>Fixed channel connections dropping after navigating to the agents view and back, and after <code>/bg</code>, <code>/tui</code>, or <code>/update</code></li><li>Fixed agent stop notifications not correctly attributing who stopped the agent, and improved wording ("finished"/"stopped" instead of "came to rest")</li><li>Fixed subagent depth tracking: resumed subagents now restore their original spawn depth, and forked subagents now count toward the depth cap</li><li>Fixed leaked agent worktree registrations: locked <code>.git/worktrees/</code> entries from killed agents are now cleaned up automatically</li><li>Fixed Cmd+click not opening URLs in fullscreen mode in Ghostty on macOS</li><li>Fixed <code>claude --help</code> not listing the <code>--bg</code>/<code>--background</code> flag</li><li>Fixed Esc, Ctrl-C, and Ctrl-D not working while <code>/share</code> is uploading</li><li>Improved <code>/install-github-app</code>: GitHub Actions workflow setup is now optional — you can install just the GitHub App and skip the workflow/secret steps</li><li>Improved <code>/btw</code> with ←/→ arrow navigation to step through earlier answers</li><li>Improved <code>/plugin</code> to surface plugins you haven't used recently so you can clean them up</li><li>[VSCode] Fixed extension becoming unresponsive when resuming a large session</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 21 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>

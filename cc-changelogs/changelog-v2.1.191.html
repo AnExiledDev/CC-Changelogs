@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.191</span></h1>
 <p class="sub">This release introduces an AI-powered contextual tips system that surfaces relevant feature suggestions mid-session based on what you are doing, a team discovery feature that surfaces teammates' shared MCP servers and skills, and MCP tool-level permission policies. It also hardens several security boundaries (Linux automount <code>/net</code> paths, Windows drive-relative paths, HIPAA/data-residency Files API restrictions) and fixes a critical config corruption issue affecting users who hit parse errors during writes (GH #3117).</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.190 → v2.1.191</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">17</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.191 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21191" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Added <code>/rewind</code> support for resuming a conversation from before <code>/clear</code> was run</li><li>Fixed scroll position jumping to the bottom while reading earlier output during a streaming response</li><li>Fixed background agents resurrecting after being stopped — stopping an agent from the tasks panel is now permanent</li><li>Fixed <code>/voice</code> showing a generic "not available" message when disabled by an organization's policy — it now explains the restriction</li><li>Fixed <code>/login</code> URL opening truncated in Windows Terminal when it wraps across lines</li><li>Fixed Cmd+click on links in fullscreen mode for Ghostty over ssh/tmux</li><li>Fixed <code>claude agents</code> sending builtin slash commands like <code>/usage</code> to background sessions as prompt text instead of showing a hint</li><li>Fixed <code>claude agents</code> job rows showing full filesystem paths for pasted images instead of the <code>[Image #N]</code> placeholder</li><li>Fixed hooks with comma-separated matchers (e.g. <code>"Bash,PowerShell"</code>) silently never firing</li><li>Fixed <code>/permissions</code> Recently-denied tab: approving a denial now persists on close instead of being silently discarded</li><li>Fixed the agent panel jumping by one row when scrolling the roster past the overflow cap</li><li>Fixed the welcome splash art overflowing the default 80×24 macOS Terminal window</li><li>Fixed managed settings: <code>forceRemoteSettingsRefresh</code> now takes effect when set via MDM or file policy, and the fetch sends <code>Cache-Control: no-cache</code> to prevent proxies from serving stale responses</li><li>Improved sandbox network permission dialog: hosts you allow with "Yes" are now remembered for the rest of the session instead of re-prompting on every connection</li><li>Improved MCP server reliability: capability discovery (<code>tools/list</code>, <code>prompts/list</code>, <code>resources/list</code>) now retries transient network errors with short backoff</li><li>Improved MCP OAuth: discovery and token requests now retry once after transient network errors, and headless environments skip the browser popup and go straight to the paste-the-URL prompt</li><li>Improved MCP error messages: HTTP 404 errors now show the URL and point to your MCP config</li><li>Improved vim mode prompt-history search (NORMAL <code>/</code>) to hint how to reach slash commands</li><li>Reduced CPU usage during streaming responses by ~37% by coalescing text updates to 100ms</li><li>Reduced long-session memory growth from terminal output cache</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 20 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>

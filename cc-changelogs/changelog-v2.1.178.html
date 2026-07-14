@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.178</span></h1>
 <p class="sub">This release replaces the explicit TeamCreate/TeamDelete tools with a simpler named-agent model, introduces a standalone <code>/design-login</code> command for design-system access independent of the main session token, and adds <code>isolation: "remote"</code> support to the Agent tool for cloud-hosted subagents. Fable 5 usage credits receive a significant UX overhaul, and the code-review skill gains a new CLAUDE.md conventions angle.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.177 → v2.1.178</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">18</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.178 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21178" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Agent teams: removed the <code>TeamCreate</code> and <code>TeamDelete</code> tools. With <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</code> set, every session now has one implicit team — spawn teammates directly with the Agent tool's <code>name</code> parameter, no setup step needed. The <code>team_name</code> parameter on the Agent tool is still accepted but ignored.</li><li>Added <code>Tool(param:value)</code> syntax for permission rules to match a tool's input parameters (with <code>*</code> wildcard), e.g. <code>Agent(model:opus)</code> to block Opus subagents</li><li>Skills in nested <code>.claude/skills</code> directories now load when working on files there; on a name clash, the nested skill appears as <code>&lt;dir&gt;:&lt;name&gt;</code> so both stay available</li><li>Nested <code>.claude/</code> directories: the agent, workflow, and output-style closest to the working directory now wins when names collide; project-scope workflow saves now target the closest existing <code>.claude/workflows/</code></li><li>Improved auto mode: subagent spawns are now evaluated by the classifier before launch, closing a gap where a subagent could request a blocked action without review</li><li>Improved <code>/doctor</code> with consistent flat tree layout across all sections, clearer section status icons, and highlighted command names</li><li>Improved the skill listing truncation warning to show how many skill descriptions are affected</li><li>Changed the workflow prompt keyword to use a purple shimmer highlight and trigger only on explicit phrases like "run a workflow" or "workflow:", not on any mention of the word</li><li>Improved Remote Control error messages: connection failures now show a persistent red "/rc failed" indicator in the footer, and the "not yet enabled" error now explains whether it's a gate, a check failure, stale entitlement, or org policy</li><li><code>/bug</code> now requires a description before submitting, and no longer uses model-refusal text as the GitHub issue title</li><li>Fixed a crash (out-of-memory) when the CLI inherits a stale websocket/OAuth file-descriptor environment variable from a parent process</li><li>Fixed Claude in Chrome silently failing to connect when the OAuth token belongs to a different account than the Claude Code login</li><li>Fixed nested <code>.claude/skills</code> skills with directory-qualified names being blocked by permission prompts in non-interactive runs</li><li>Fixed several subagent issues: viewing a subagent's transcript now shows tool results and live progress, messages sent while it finishes its turn are no longer dropped, and backgrounding a running subagent (ctrl+b) no longer restarts it from scratch</li><li>Fixed <code>claude agents</code> workers failing with <code>401 Invalid bearer token</code> when the daemon was started from a shell with a custom API gateway via <code>ANTHROPIC_BASE_URL</code> and <code>ANTHROPIC_AUTH_TOKEN</code></li><li>Fixed compaction not honoring <code>--fallback-model</code>: compaction now falls back to the configured fallback model chain on overload or model-availability errors</li><li>Fixed model requests continuing to fail with auth errors after credentials were refreshed outside the session, due to a stale cached request configuration</li><li>Fixed background sessions created with <code>/bg</code> or <code>←←</code> after a turn finished showing "Working" forever in the agents list</li><li>Fixed Linux sandbox failing to start when <code>.claude/skills</code> or <code>.claude/hooks</code> is a symlink</li><li>Fixed <code>CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1</code> preventing fresh marketplace installs from cloning</li><li>Fixed MCP server-level specs (<code>mcp__server</code>, <code>mcp__server__<em></code>, <code>mcp__</em></code>) in subagent <code>disallowedTools</code> being silently ignored</li><li>Fixed vim mode undo: <code>u</code> now steps through NORMAL/VISUAL-mode commands one at a time instead of merging commands in quick succession into a single undo step</li><li>Fixed statusline links with custom URI schemes (e.g. <code>vscode://</code>) not opening when clicked in <code>claude agents</code></li><li>[VSCode] Fixed pressing Esc to dismiss a CJK IME candidate window canceling the running Claude task</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 24 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>

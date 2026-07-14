@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.6</span></h1>
 <p class="sub">This release introduces git token injection for private repository cloning, a new <code>/keybindings</code> command for keyboard shortcut customization, enhanced <code>/stats</code> with date range filtering, and improved "add directory to workspace" with tab completion. The internal command explanation system has been refactored to use tool-based structured output, and the cache warming feature has been removed.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.5 → v2.1.6</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">11</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.6 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#216" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Added search functionality to <code>/config</code> command for quickly filtering settings</li><li>Added Updates section to <code>/doctor</code> showing auto-update channel and available npm versions (stable/latest)</li><li>Added date range filtering to <code>/stats</code> command - press <code>r</code> to cycle between Last 7 days, Last 30 days, and All time</li><li>Added automatic discovery of skills from nested <code>.claude/skills</code> directories when working with files in subdirectories</li><li>Added <code>context_window.used_percentage</code> and <code>context_window.remaining_percentage</code> fields to status line input for easier context window display</li><li>Added an error display when the editor fails during Ctrl+G</li><li>Fixed permission bypass via shell line continuation that could allow blocked commands to execute</li><li>Fixed false "File has been unexpectedly modified" errors when file watchers touch files without changing content</li><li>Fixed text styling (bold, colors) getting progressively misaligned in multi-line responses</li><li>Fixed the feedback panel closing unexpectedly when typing 'n' in the description field</li><li>Fixed rate limit warning appearing at low usage after weekly reset (now requires 70% usage)</li><li>Fixed rate limit options menu incorrectly auto-opening when resuming a previous session</li><li>Fixed numpad keys outputting escape sequences instead of characters in Kitty keyboard protocol terminals</li><li>Fixed Option+Return not inserting newlines in Kitty keyboard protocol terminals</li><li>Fixed corrupted config backup files accumulating in the home directory (now only one backup is created per config file)</li><li>Fixed <code>mcp list</code> and <code>mcp get</code> commands leaving orphaned MCP server processes</li><li>Fixed visual artifacts in ink2 mode when nodes become hidden via <code>display:none</code></li><li>Improved the external CLAUDE.md imports approval dialog to show which files are being imported and from where</li><li>Improved the <code>/tasks</code> dialog to go directly to task details when there's only one background task running</li><li>Improved @ autocomplete with icons for different suggestion types and single-line formatting</li><li>Updated "Help improve Claude" setting fetch to refresh OAuth and retry when it fails due to a stale OAuth token</li><li>Changed task notification display to cap at 3 lines with overflow summary when multiple background tasks complete simultaneously</li><li>Changed terminal title to "Claude Code" on startup for better window identification</li><li>Removed ability to @-mention MCP servers to enable/disable - use <code>/mcp enable &lt;name&gt;</code> instead</li><li>[VSCode] Fixed usage indicator not updating after manual compact</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 25 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">11 items</span>  </div>

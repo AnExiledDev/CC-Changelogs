@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.110</span></h1>
 <p class="sub">This release adds five new remote workflow slash commands (<code>/autopilot</code>, <code>/bugfix</code>, <code>/dashboard</code>, <code>/docs</code>, <code>/investigate</code>), a <code>/tui</code> command to switch between the classic and flicker-free fullscreen renderer, a <code>/focus</code> command for a minimal transcript view, a PushNotification tool (feature-flagged) for terminal and mobile alerts, plugin favorites, transcript undo, new settings for auto-scroll and external editor context, and the <code>/recap</code> command is now enabled by default. The idle-return ("You've been away") dialog has been removed.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.109 → v2.1.110</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">31</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.110 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21110" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Added <code>/tui</code> command and <code>tui</code> setting — run <code>/tui fullscreen</code> to switch to flicker-free rendering in the same conversation</li><li>Added push notification tool — Claude can send mobile push notifications when Remote Control and "Push when Claude decides" config are enabled</li><li>Changed <code>Ctrl+O</code> to toggle between normal and verbose transcript only; focus view is now toggled separately with the new <code>/focus</code> command</li><li>Added <code>autoScrollEnabled</code> config to disable conversation auto-scroll in fullscreen mode</li><li>Added option to show Claude's last response as commented context in the <code>Ctrl+G</code> external editor (enable via <code>/config</code>)</li><li>Improved <code>/plugin</code> Installed tab — items needing attention and favorites appear at the top, disabled items are hidden behind a fold, and <code>f</code> favorites the selected item</li><li>Improved <code>/doctor</code> to warn when an MCP server is defined in multiple config scopes with different endpoints</li><li><code>--resume</code>/<code>--continue</code> now resurrects unexpired scheduled tasks</li><li><code>/context</code>, <code>/exit</code>, and <code>/reload-plugins</code> now work from Remote Control (mobile/web) clients</li><li>Write tool now informs the model when you edit the proposed content in the IDE diff before accepting</li><li>Bash tool now enforces the documented maximum timeout instead of accepting arbitrarily large values</li><li>SDK/headless sessions now read <code>TRACEPARENT</code>/<code>TRACESTATE</code> from the environment for distributed trace linking</li><li>Session recap is now enabled for users with telemetry disabled (Bedrock, Vertex, Foundry, <code>DISABLE_TELEMETRY</code>). Opt out via <code>/config</code> or <code>CLAUDE_CODE_ENABLE_AWAY_SUMMARY=0</code>.</li><li>Fixed MCP tool calls hanging indefinitely when the server connection drops mid-response on SSE/HTTP transports</li><li>Fixed non-streaming fallback retries causing multi-minute hangs when the API is unreachable</li><li>Fixed session recap, local slash-command output, and other system status lines not appearing in focus mode</li><li>Fixed high CPU usage in fullscreen when text is selected while a tool is running</li><li>Fixed plugin install not honoring dependencies declared in <code>plugin.json</code> when the marketplace entry omits them; <code>/plugin</code> install now lists auto-installed dependencies</li><li>Fixed skills with <code>disable-model-invocation: true</code> failing when invoked via <code>/&lt;skill&gt;</code> mid-message</li><li>Fixed <code>--resume</code> sometimes showing the first prompt instead of the <code>/rename</code> name for sessions still running or exited uncleanly</li><li>Fixed queued messages briefly appearing twice during multi-tool-call turns</li><li>Fixed session cleanup not removing the full session directory including subagent transcripts</li><li>Fixed dropped keystrokes after the CLI relaunches (e.g. <code>/tui</code>, provider setup wizards)</li><li>Fixed garbled startup rendering in macOS Terminal.app and other terminals that don't support synchronized output</li><li>Hardened "Open in editor" actions against command injection from untrusted filenames</li><li>Fixed <code>PermissionRequest</code> hooks returning <code>updatedInput</code> not being re-checked against <code>permissions.deny</code> rules; <code>setMode:'bypassPermissions'</code> updates now respect <code>disableBypassPermissionsMode</code></li><li>Fixed <code>PreToolUse</code> hook <code>additionalContext</code> being dropped when the tool call fails</li><li>Fixed stdio MCP servers that print stray non-JSON lines to stdout being disconnected on the first stray line (regression in 2.1.105)</li><li>Fixed headless/SDK session auto-title firing an extra Haiku request when <code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code> or <code>CLAUDE_CODE_DISABLE_TERMINAL_TITLE</code> is set</li><li>Fixed potential excessive memory allocation when piped (non-TTY) Ink output contains a single very wide line</li><li>Fixed <code>/skills</code> menu not scrolling when the list overflows the modal in fullscreen mode</li><li>Fixed Remote Control sessions showing a generic error instead of prompting for re-login when the session is too old</li><li>Fixed Remote Control session renames from claude.ai not persisting the title to the local CLI session</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 33 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">26 items</span>  </div>

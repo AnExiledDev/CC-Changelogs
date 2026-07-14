@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.73</span></h1>
 <p class="sub">This release adds the <code>--remote-control</code> CLI flag for launching Remote Control sessions directly from the command line, introduces native clipboard image reading on macOS for faster paste workflows, and deprecates the <code>/output-style</code> command in favor of <code>/config</code>. Under the hood, it adds a new <code>modelOverrides</code> enterprise setting, improves plugin dependency resolution, strengthens Bash command safety analysis, and adds SSH session management infrastructure for remote connections.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.72 → v2.1.73</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">14</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.73 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#2173" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Added <code>modelOverrides</code> setting to map model picker entries to custom provider model IDs (e.g. Bedrock inference profile ARNs)</li><li>Added actionable guidance when OAuth login or connectivity checks fail due to SSL certificate errors (corporate proxies, <code>NODE_EXTRA_CA_CERTS</code>)</li><li>Fixed freezes and 100% CPU loops triggered by permission prompts for complex bash commands</li><li>Fixed a deadlock that could freeze Claude Code when many skill files changed at once (e.g. during <code>git pull</code> in a repo with a large <code>.claude/skills/</code> directory)</li><li>Fixed Bash tool output being lost when running multiple Claude Code sessions in the same project directory</li><li>Fixed subagents with <code>model: opus</code>/<code>sonnet</code>/<code>haiku</code> being silently downgraded to older model versions on Bedrock, Vertex, and Microsoft Foundry</li><li>Fixed background bash processes spawned by subagents not being cleaned up when the agent exits</li><li>Fixed <code>/resume</code> showing the current session in the picker</li><li>Fixed <code>/ide</code> crashing with <code>onInstall is not defined</code> when auto-installing the extension</li><li>Fixed <code>/loop</code> not being available on Bedrock/Vertex/Foundry and when telemetry was disabled</li><li>Fixed SessionStart hooks firing twice when resuming a session via <code>--resume</code> or <code>--continue</code></li><li>Fixed JSON-output hooks injecting no-op system-reminder messages into the model's context on every turn</li><li>Fixed voice mode session corruption when a slow connection overlaps a new recording</li><li>Fixed Linux sandbox failing to start with "ripgrep (rg) not found" on native builds</li><li>Fixed Linux native modules not loading on Amazon Linux 2 and other glibc 2.26 systems</li><li>Fixed "media_type: Field required" API error when receiving images via Remote Control</li><li>Fixed <code>/heapdump</code> failing on Windows with <code>EEXIST</code> error when the Desktop folder already exists</li><li>Improved Up arrow after interrupting Claude — now restores the interrupted prompt and rewinds the conversation in one step</li><li>Improved IDE detection speed at startup</li><li>Improved clipboard image pasting performance on macOS</li><li>Improved <code>/effort</code> to work while Claude is responding, matching <code>/model</code> behavior</li><li>Improved voice mode to automatically retry transient connection failures during rapid push-to-talk re-press</li><li>Improved the Remote Control spawn mode selection prompt with better context</li><li>Changed default Opus model on Bedrock, Vertex, and Microsoft Foundry to Opus 4.6 (was Opus 4.1)</li><li>Deprecated <code>/output-style</code> command — use <code>/config</code> instead. Output style is now fixed at session start for better prompt caching</li><li>VSCode: Fixed HTTP 400 errors for users behind proxies or on Bedrock/Vertex with Claude 4.5 models</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 26 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">14 items</span>  </div>

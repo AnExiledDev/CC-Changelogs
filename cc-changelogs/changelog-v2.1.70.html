@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.70</span></h1>
 <p class="sub">This release adds incremental MCP server instruction delivery (delta-based), a token-saving output compression system for Bash tool results, and improved CA certificate handling from Claude Code config. It also introduces a "fork" agent mode (feature-flagged), softens "kill" terminology to "stop" across the UI, fixes clipboard error messages on Windows/WSL, and includes numerous rendering and stability improvements.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.69 → v2.1.70</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">26</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.70 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#2170" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Fixed API 400 errors when using <code>ANTHROPIC_BASE_URL</code> with a third-party gateway — tool search now correctly detects proxy endpoints and disables <code>tool_reference</code> blocks</li><li>Fixed <code>API Error: 400 This model does not support the effort parameter</code> when using custom Bedrock inference profiles or other model identifiers not matching standard Claude naming patterns</li><li>Fixed empty model responses immediately after <code>ToolSearch</code> — the server renders tool schemas with system-prompt-style tags at the prompt tail, which could confuse models into stopping early</li><li>Fixed prompt-cache bust when an MCP server with <code>instructions</code> connects after the first turn</li><li>Fixed Enter inserting a newline instead of submitting when typing over a slow SSH connection</li><li>Fixed clipboard corrupting non-ASCII text (CJK, emoji) on Windows/WSL by using PowerShell <code>Set-Clipboard</code></li><li>Fixed extra VS Code windows opening at startup on Windows when running from the VS Code integrated terminal</li><li>Fixed voice mode failing on Windows native binary with "native audio module could not be loaded"</li><li>Fixed push-to-talk not activating on session start when <code>voiceEnabled: true</code> was set in settings</li><li>Fixed markdown links containing <code>#NNN</code> references incorrectly pointing to the current repository instead of the linked URL</li><li>Fixed repeated "Model updated to Opus 4.6" notification when a project's <code>.claude/settings.json</code> has a legacy Opus model string pinned</li><li>Fixed plugins showing as inaccurately installed in <code>/plugin</code></li><li>Fixed plugins showing "not found in marketplace" errors on fresh startup by auto-refreshing after marketplace installation</li><li>Fixed <code>/security-review</code> command failing with <code>unknown option merge-base</code> on older git versions</li><li>Fixed <code>/color</code> command having no way to reset back to the default color — <code>/color default</code>, <code>/color gray</code>, <code>/color reset</code>, and <code>/color none</code> now restore the default</li><li>Fixed a performance regression in the <code>AskUserQuestion</code> preview dialog that re-ran markdown rendering on every keystroke in the notes input</li><li>Fixed feature flags read during early startup never refreshing their disk cache, causing stale values to persist across sessions</li><li>Fixed <code>permissions.defaultMode</code> settings values other than <code>acceptEdits</code> or <code>plan</code> being applied in Claude Code Remote environments — they are now ignored</li><li>Fixed skill listing being re-injected on every <code>--resume</code> (~600 tokens saved per resume)</li><li>Fixed teleport marker not rendering in VS Code teleported sessions</li><li>Improved error message when microphone captures silence to distinguish from "no speech detected"</li><li>Improved compaction to preserve images in the summarizer request, allowing prompt cache reuse for faster and cheaper compaction</li><li>Improved <code>/rename</code> to work while Claude is processing, instead of being silently queued</li><li>Reduced prompt input re-renders during turns by ~74%</li><li>Reduced startup memory by ~426KB for users without custom CA certificates</li><li>Reduced Remote Control <code>/poll</code> rate to once per 10 minutes while connected (was 1–2s), cutting server load ~300×. Reconnection is unaffected — transport loss immediately wakes fast polling.</li><li>[VSCode] Added spark icon in VS Code activity bar that lists all Claude Code sessions, with sessions opening as full editors</li><li>[VSCode] Added full markdown document view for plans in VS Code, with support for adding comments to provide feedback</li><li>[VSCode] Added native MCP server management dialog — use <code>/mcp</code> in the chat panel to enable/disable servers, reconnect, and manage OAuth authentication without switching to the terminal</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 29 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">22 items</span>  </div>

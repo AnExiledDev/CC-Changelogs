@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.71</span></h1>
 <p class="sub">This is a major release introducing <strong>Auto Mode</strong>, a new AI-powered permission system that automatically approves or blocks tool actions for unattended workflows; <strong>Team Memory</strong>, enabling shared persistent context synced across all team members via the cloud; and <strong>/loop</strong>, a built-in scheduler for running prompts on recurring intervals. Additionally, <code>find</code> and <code>grep</code> are now shadowed with faster embedded alternatives (bfs and ugrep), voice mode has been updated with configurable push-to-talk, and a new heap dump diagnostic tool has been added for debugging memory issues.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.70 → v2.1.71</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">20</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.71 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#2171" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Added <code>/loop</code> command to run a prompt or slash command on a recurring interval (e.g. <code>/loop 5m check the deploy</code>)</li><li>Added cron scheduling tools for recurring prompts within a session</li><li>Added <code>voice:pushToTalk</code> keybinding to make the voice activation key rebindable in <code>keybindings.json</code> (default: space) — modifier+letter combos like <code>meta+k</code> have zero typing interference</li><li>Added <code>fmt</code>, <code>comm</code>, <code>cmp</code>, <code>numfmt</code>, <code>expr</code>, <code>test</code>, <code>printf</code>, <code>getconf</code>, <code>seq</code>, <code>tsort</code>, and <code>pr</code> to the bash auto-approval allowlist</li><li>Fixed stdin freeze in long-running sessions where keystrokes stop being processed but the process stays alive</li><li>Fixed a 5–8 second startup freeze for users with voice mode enabled, caused by CoreAudio initialization blocking the main thread after system wake</li><li>Fixed startup UI freeze when many claude.ai proxy connectors refresh an expired OAuth token simultaneously</li><li>Fixed forked conversations (<code>/fork</code>) sharing the same plan file, which caused plan edits in one fork to overwrite the other</li><li>Fixed the Read tool putting oversized images into context when image processing failed, breaking subsequent turns in long image-heavy sessions</li><li>Fixed false-positive permission prompts for compound bash commands containing heredoc commit messages</li><li>Fixed plugin installations being lost when running multiple Claude Code instances</li><li>Fixed claude.ai connectors failing to reconnect after OAuth token refresh</li><li>Fixed claude.ai MCP connector startup notifications appearing for every org-configured connector instead of only previously connected ones</li><li>Fixed background agent completion notifications missing the output file path, which made it difficult for parent agents to recover agent results after context compaction</li><li>Fixed duplicate output in Bash tool error messages when commands exit with non-zero status</li><li>Fixed Chrome extension auto-detection getting permanently stuck on "not installed" after running on a machine without local Chrome</li><li>Fixed <code>/plugin marketplace update</code> failing with merge conflicts when the marketplace is pinned to a branch/tag ref</li><li>Fixed <code>/plugin marketplace add owner/repo@ref</code> incorrectly parsing <code>@</code> — previously only <code>#</code> worked as a ref separator, causing undiagnosable errors with <code>strictKnownMarketplaces</code></li><li>Fixed duplicate entries in <code>/permissions</code> Workspace tab when the same directory is added with and without a trailing slash</li><li>Fixed <code>--print</code> hanging forever when team agents are configured — the exit loop no longer waits on long-lived <code>in_process_teammate</code> tasks</li><li>Fixed "❯ Tool loaded." appearing in the REPL after every <code>ToolSearch</code> call</li><li>Fixed prompting for <code>cd &lt;cwd&gt; &amp;&amp; git ...</code> on Windows when the model uses a mingw-style path</li><li>Improved startup time by deferring native image processor loading to first use</li><li>Improved bridge session reconnection to complete within seconds after laptop wake from sleep, instead of waiting up to 10 minutes</li><li>Improved <code>/plugin uninstall</code> to disable project-scoped plugins in <code>.claude/settings.local.json</code> instead of modifying <code>.claude/settings.json</code>, so changes don't affect teammates</li><li>Improved plugin-provided MCP server deduplication — servers that duplicate a manually-configured server (same command/URL) are now skipped, preventing duplicate connections and tool sets. Suppressions are shown in the <code>/plugin</code> menu.</li><li>Updated <code>/debug</code> to toggle debug logging on mid-session, since debug logs are no longer written by default</li><li>Removed startup notification noise for unauthenticated org-registered claude.ai connectors</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 28 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">15 items</span>  </div>

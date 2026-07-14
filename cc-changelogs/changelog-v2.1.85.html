@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.85</span></h1>
 <p class="sub">This release introduces a billing and quota system for ultrareviews, adds an upstream proxy for remote sessions, significantly hardens the Bash tool's security validation (especially on Windows/PowerShell), and replaces native Rust/WASM modules with pure JavaScript implementations for file indexing and syntax highlighting. Hooks gain a new <code>if</code> field for conditional filtering, and enterprise administrators can now block plugins by organization policy.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.84 → v2.1.85</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">17</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.85 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#2185" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Added <code>CLAUDE_CODE_MCP_SERVER_NAME</code> and <code>CLAUDE_CODE_MCP_SERVER_URL</code> environment variables to MCP <code>headersHelper</code> scripts, allowing one helper to serve multiple servers</li><li>Added conditional <code>if</code> field for hooks using permission rule syntax (e.g., <code>Bash(git *)</code>) to filter when they run, reducing process spawning overhead</li><li>Added timestamp markers in transcripts when scheduled tasks (<code>/loop</code>, <code>CronCreate</code>) fire</li><li>Added trailing space after <code>[Image #N]</code> placeholder when pasting images</li><li>Deep link queries (<code>claude-cli://open?q=…</code>) now support up to 5,000 characters, with a "scroll to review" warning for long pre-filled prompts</li><li>MCP OAuth now follows RFC 9728 Protected Resource Metadata discovery to find the authorization server</li><li>Plugins blocked by organization policy (<code>managed-settings.json</code>) can no longer be installed or enabled, and are hidden from marketplace views</li><li>PreToolUse hooks can now satisfy <code>AskUserQuestion</code> by returning <code>updatedInput</code> alongside <code>permissionDecision: "allow"</code>, enabling headless integrations that collect answers via their own UI</li><li><code>tool_parameters</code> in OpenTelemetry tool_result events are now gated behind <code>OTEL_LOG_TOOL_DETAILS=1</code></li><li>Fixed <code>/compact</code> failing with "context exceeded" when the conversation has grown too large for the compact request itself to fit</li><li>Fixed <code>/plugin enable</code> and <code>/plugin disable</code> failing when a plugin's install location differs from where it's declared in settings</li><li>Fixed <code>--worktree</code> exiting with an error in non-git repositories before the <code>WorktreeCreate</code> hook could run</li><li>Fixed <code>deniedMcpServers</code> setting not blocking claude.ai MCP servers</li><li>Fixed <code>switch_display</code> in the computer-use tool returning "not available in this session" on multi-monitor setups</li><li>Fixed crash when <code>OTEL_LOGS_EXPORTER</code>, <code>OTEL_METRICS_EXPORTER</code>, or <code>OTEL_TRACES_EXPORTER</code> is set to <code>none</code></li><li>Fixed diff syntax highlighting not working in non-native builds</li><li>Fixed MCP step-up authorization failing when a refresh token exists — servers requesting elevated scopes via <code>403 insufficient_scope</code> now correctly trigger the re-authorization flow</li><li>Fixed memory leak in remote sessions when a streaming response is interrupted</li><li>Fixed persistent ECONNRESET errors during edge connection churn by using a fresh TCP connection on retry</li><li>Fixed prompts getting stuck in the queue after running certain slash commands, with up-arrow unable to retrieve them</li><li>Fixed Python Agent SDK: <code>type:'sdk'</code> MCP servers passed via <code>--mcp-config</code> are no longer dropped during startup</li><li>Fixed raw key sequences appearing in the prompt when running over SSH or in the VS Code integrated terminal</li><li>Fixed Remote Control session status staying stuck on "Requires Action" after a permission is resolved</li><li>Fixed shift+enter and meta+enter being intercepted by typeahead suggestions instead of inserting newlines</li><li>Fixed stale content bleeding through when scrolling up during streaming</li><li>Fixed terminal left in enhanced keyboard mode after exit in Ghostty, Kitty, WezTerm, and other terminals supporting the Kitty keyboard protocol — Ctrl+C and Ctrl+D now work correctly after quitting</li><li>Improved @-mention file autocomplete performance on large repositories</li><li>Improved PowerShell dangerous command detection</li><li>Improved scroll performance with large transcripts by replacing WASM yoga-layout with a pure TypeScript implementation</li><li>Reduced UI stutter when compaction triggers on large sessions</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 30 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">17 items</span>  </div>

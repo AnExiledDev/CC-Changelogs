@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.116</span></h1>
 <p class="sub">This release introduces OIDC Federation authentication for enterprise CI/CD environments, a new <code>/mode</code> command for switching permission modes, and a non-interactive <code>/fast</code> command for toggling fast mode. Voice mode gains significant usability improvements including hold/tap/off arguments, auto-finish timeouts, and auto-submit. The update also adds a <code>UserPromptExpansion</code> hook event, web search / connector isolation policy enforcement, auto-copy on text selection, and several new keyboard shortcuts and navigation commands.</p>    <div class="meta-row">
-      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.114 → v2.1.116</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">34</div><div class="l">Features &amp; Changes</div></div>
@@ -45,6 +45,34 @@
 
 <div class="wrap wide">
 <main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.116 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21116" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li><code>/resume</code> on large sessions is significantly faster (up to 67% on 40MB+ sessions) and handles sessions with many dead-fork entries more efficiently</li><li>Faster MCP startup when multiple stdio servers are configured; <code>resources/templates/list</code> is now deferred to first <code>@</code>-mention</li><li>Smoother fullscreen scrolling in VS Code, Cursor, and Windsurf terminals — <code>/terminal-setup</code> now configures the editor's scroll sensitivity</li><li>Thinking spinner now shows progress inline ("still thinking", "thinking more", "almost done thinking"), replacing the separate hint row</li><li><code>/config</code> search now matches option values (e.g. searching "vim" finds the Editor mode setting)</li><li><code>/doctor</code> can now be opened while Claude is responding, without waiting for the current turn to finish</li><li><code>/reload-plugins</code> and background plugin auto-update now auto-install missing plugin dependencies from marketplaces you've already added</li><li>Bash tool now surfaces a hint when <code>gh</code> commands hit GitHub's API rate limit, so agents can back off instead of retrying</li><li>The Usage tab in Settings now shows your 5-hour and weekly usage immediately and no longer fails when the usage endpoint is rate-limited</li><li>Agent frontmatter <code>hooks:</code> now fire when running as a main-thread agent via <code>--agent</code></li><li>Slash command menu now shows "No commands match" when your filter has zero results, instead of disappearing</li><li>Security: sandbox auto-allow no longer bypasses the dangerous-path safety check for <code>rm</code>/<code>rmdir</code> targeting <code>/</code>, <code>$HOME</code>, or other critical system directories</li><li>Claude Code and installer now use <code>https://downloads.claude.ai/claude-code-releases</code> instead of <code>https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases</code></li><li>Fixed Devanagari and other Indic scripts rendering with broken column alignment in the terminal UI</li><li>Fixed Ctrl+- not triggering undo in terminals using the Kitty keyboard protocol (iTerm2, Ghostty, kitty, WezTerm, Windows Terminal)</li><li>Fixed Cmd+Left/Right not jumping to line start/end in terminals that use the Kitty keyboard protocol (Warp fullscreen, kitty, Ghostty, WezTerm)</li><li>Fixed Ctrl+Z hanging the terminal when Claude Code is launched via a wrapper process (e.g. <code>npx</code>, <code>bun run</code>)</li><li>Fixed scrollback duplication in inline mode where resizing the terminal or large output bursts would repeat earlier conversation history</li><li>Fixed modal search dialogs overflowing the screen at short terminal heights, hiding the search box and keyboard hints</li><li>Fixed scattered blank cells and disappearing composer chrome in the VS Code integrated terminal during scrolling</li><li>Fixed an intermittent API 400 error related to cache control TTL ordering that could occur when a parallel request completed during request setup</li><li>Fixed <code>/branch</code> rejecting conversations with transcripts larger than 50MB</li><li>Fixed <code>/resume</code> silently showing an empty conversation on large session files instead of reporting the load error</li><li>Fixed <code>/plugin</code> Installed tab showing the same item twice when it appears under Needs attention or Favorites</li><li>Fixed <code>/update</code> and <code>/tui</code> not working after entering a worktree mid-session</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 25 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">29 items</span>  </div>
