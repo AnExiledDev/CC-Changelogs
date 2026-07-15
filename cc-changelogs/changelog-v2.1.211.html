@@ -97,9 +97,9 @@ RefreshMcpTools({ server: &quot;myserver&quot; })</code></pre>
 <div class="blabel">Usage</div>
 <pre><code>claude --print --output-format=stream-json --forward-subagent-text &quot;your prompt&quot;</code></pre>
 <div class="blabel">Details</div>
-<ul><li>Requires both <code>--print</code> and <code>--output-format=stream-json</code> — the flag is rejected otherwise with a clear error message.</li><li>Allows external tooling (CI pipelines, orchestration layers) to receive the complete content of nested subagent turns rather than only the top-level result.</li></ul>
+<ul><li>Requires both <code>--print</code> and <code>--output-format=stream-json</code>. When explicitly specified on the CLI without those flags, the process exits with: <code>"Error: --forward-subagent-text requires --print and --output-format=stream-json."</code> When the option is supplied programmatically via the SDK <code>forwardSubagentText: true</code> init-config field, it silently degrades to <code>false</code> rather than erroring if the output conditions are not met.</li><li>Without the flag, only <code>tool_use</code> and <code>tool_result</code> content blocks from subagent turns are forwarded upstream in the progress event stream. With the flag enabled, all content types — including <code>text</code> and <code>thinking</code> blocks — are forwarded.</li><li>Forwarded subagent messages are emitted as <code>progress</code> events (<code>data.type === "agent_progress"</code>) carrying the full <code>assistant</code> or <code>user</code> message wrapper. The stream-json serializer converts these into top-level <code>assistant</code>/<code>user</code> message events with <code>parent_tool_use_id</code> set to the spawning agent's tool-use ID, allowing callers to reconstruct the full agent conversation tree.</li><li>When <code>forwardSubagentText</code> is active, thinking blocks in subagent turns are not suppressed: the thinking configuration object is returned unchanged rather than having its <code>display</code> property overridden to <code>"omitted"</code> — which is the default behaviour for non-interactive stream-json sessions.</li><li>Allows external tooling (CI pipelines, orchestration layers) to receive the complete content of nested subagent turns rather than only the top-level result.</li></ul>
 <div class="blabel">Evidence</div>
-<p>New CLI flag added to the argument parser (search for <code>"--forward-subagent-text"</code>)</p>
+<p>New CLI flag added to the argument parser (search for <code>"--forward-subagent-text"</code>); forwarding gate (search for <code>"forwardSubagentText"</code> near <code>"tool_use"</code> and <code>"tool_result"</code> checks); thinking-config passthrough in <code>Flc</code> function</p>
     </article>
     <article class="card" id="screenshot-save-to-disk-for-claude-in-chrome">
       <div class="card-top">
@@ -157,7 +157,7 @@ RefreshMcpTools({ server: &quot;myserver&quot; })</code></pre>
       <div class="blabel">What</div>
 <p>The MCP OAuth callback port flag (<code>--callback-port</code>) now validates that the port number falls within the valid TCP range <code>[1, 65535]</code>, rather than only checking it is a positive integer.</p>
 <div class="blabel">Details</div>
-<ul><li>The error message now reads: "Error: --callback-port must be an integer in [1, 65535]"</li><li>Port 0 is no longer accepted.</li></ul>
+<ul><li>The error message now reads: "Error: --callback-port must be an integer in [1, 65535]"</li><li>Port 0 is no longer accepted. The validation expression is <code>!Number.isInteger(m) || m &lt;= 0 || m &gt; 65535</code>, so port 0, negative values, and non-integer inputs (e.g. <code>1.5</code> or non-numeric strings that parse to <code>NaN</code>) are all rejected.</li><li>The same validation is applied in two separate command paths: <code>claude mcp add</code> (for SSE and HTTP transports) and <code>claude mcp oauth identity-provider set</code>.</li></ul>
 <div class="blabel">Evidence</div>
 <p>Updated validation error string (search for <code>"--callback-port must be an integer in [1, 65535]"</code>)</p>
     </article>
