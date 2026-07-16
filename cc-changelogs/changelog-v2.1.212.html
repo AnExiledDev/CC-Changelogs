@@ -181,7 +181,7 @@
 <div class="tags"><span class="tag new">New</span></div>      </div>
       <p>GrowthBook feature flag evaluation can now use an authenticated endpoint (<code>/api/eval-authed/</code>) that attaches your auth headers, enabling per-user flag targeting. Falls back to the unauthenticated <code>/api/eval</code> endpoint on any error.</p>
 <div class="blabel">Details</div>
-<ul><li>Controlled by <code>tengu_gb_eval_authed_enable</code> (default: false).</li><li>On failure: logs "GrowthBook eval-authed returned non-ok; falling back to /api/eval" or "GrowthBook eval-authed fetch threw; falling back to /api/eval".</li></ul>
+<ul><li>Controlled by <code>tengu_gb_eval_authed_enable</code> (default: false).</li><li>When enabled, GrowthBook's <code>fetchRemoteEvalCall</code> hook is monkey-patched once at startup (idempotent — a boolean sentinel prevents double-installation). Subsequent feature-flag evaluations POST to <code>&lt;host&gt;/api/eval-authed/&lt;clientKey&gt;</code> instead of the standard <code>&lt;host&gt;/api/eval/&lt;clientKey&gt;</code>.</li><li>Auth headers are sourced from the user's current authentication state via <code>getAuthHeaders()</code>: an OAuth access token adds <code>Authorization: Bearer &lt;token&gt;</code> and the <code>anthropic-beta</code> header; an API key adds <code>x-api-key</code>; gateway or third-party provider sessions attach no auth headers, leaving the request functionally unauthenticated despite hitting the authed endpoint.</li><li>On non-2xx response: logs <code>"GrowthBook eval-authed returned non-ok; falling back to /api/eval"</code> and re-runs the call via the original unauthenticated path.</li><li>On network or exception error: logs <code>"GrowthBook eval-authed fetch threw; falling back to /api/eval"</code> and falls back similarly.</li></ul>
 <div class="blabel">Evidence</div>
 <p>"GrowthBook eval-authed fetch threw; falling back to /api/eval" (search for <code>"/api/eval-authed/"</code>)</p>
     </article>
@@ -280,9 +280,11 @@
       <div class="card-top">
         <h3>Resume Session at Flag <a class="anchor" href="#resume-session-at-flag">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>New CLI flag <code>--resume-session-at=&lt;timestamp|boundary&gt;</code> for resuming a session starting at a specific point in the transcript.</p>
+      <p>New CLI flag <code>--resume-session-at=&lt;message-uuid&gt;</code> for resuming a session starting at a specific point in the transcript.</p>
+<div class="blabel">Details</div>
+<ul><li>Must be combined with <code>--resume</code>; without it Claude Code exits immediately with <code>Error: --resume-session-at requires --resume</code>.</li><li>The value is the <code>uuid</code> field of a specific message in the saved transcript — not a timestamp, ordinal index, or boundary marker.</li><li>When the UUID is found, the loaded transcript is sliced to include only messages up to and including that message (<code>messages.slice(0, index + 1)</code>), so the resumed session behaves as if the conversation ended exactly at that point.</li><li>When the UUID is not found in the transcript, Claude Code exits with <code>No message found with message.uuid of: &lt;value&gt;</code> and a non-zero exit code.</li><li>Available in the TypeScript SDK as the <code>resumeSessionAt</code> option on the session options object; the SDK translates it to <code>--resume-session-at=&lt;value&gt;</code> in the subprocess argument list.</li><li>The flag is hidden from <code>--help</code> output (<code>.hideHelp()</code>); the internal help string reads: "When resuming, only messages up to and including the assistant message with &lt;message.id&gt;".</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>"--resume-session-at="</code> (search in added strings)</p>
+<p><code>--resume-session-at &lt;message id&gt;</code> CLI option definition and the <code>c.messages.findIndex((d) =&gt; d.uuid === t.resumeSessionAt)</code> slicing inside <code>loadInitialMessages</code> / <code>dqf</code> (search for <code>"resume-session-at"</code>)</p>
     </article>
     <article class="card" id="claude-code-tmpdir-environment-variable">
       <div class="card-top">
@@ -297,8 +299,10 @@
         <h3>CLAUDE_CODE_SIMPLE Environment Variable <a class="anchor" href="#claude-code-simple-environment-variable">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
       <p>New <code>CLAUDE_CODE_SIMPLE</code> environment variable for enabling a simplified mode.</p>
+<div class="blabel">Details</div>
+<ul><li>Activated by setting <code>CLAUDE_CODE_SIMPLE=1</code> in the environment <strong>or</strong> by passing the <code>--bare</code> CLI flag; both paths go through <code>cf()</code>, which returns true for either.</li><li>When active, the following subsystems are <strong>disabled</strong>: CLAUDE.md reading, skills discovery, plugins, syntax-highlight language packs (<code>hljsLanguages</code>), hooks, MCP agent frontmatter, agent definitions, and LSP servers.</li><li>The following subsystems remain <strong>enabled</strong> in simple mode: workflows, themes, status line, file suggestions, auto-discovered MCP, Claude.ai MCP, output styles, and keybindings.</li><li>Authentication is narrowed to the minimum: OAuth (Claude.ai login) is bypassed entirely; only <code>ANTHROPIC_API_KEY</code> or an <code>apiKeyHelper</code>-sourced key is accepted. The normal managed-key and OAuth token paths return <code>null</code>.</li><li>Auto-memory (persistent write-after-turn memory) is unconditionally disabled regardless of other memory settings or the <code>CLAUDE_CODE_DISABLE_AUTO_MEMORY</code> env var.</li><li>Several background startup jobs are skipped: plugin hook setup and hot-reload, session file access hooks, release-notes prefetch, and memory extraction after turns.</li><li>In coordinator/multi-agent mode, worker tool guidance is abbreviated: workers are described as having access only to bash, computer-use, read/write tools, and connected MCP tools — the Skill and Workflow tools are omitted from the listing.</li><li>Forking is refused: <code>/fork</code> exits with "Cannot fork — this session was started with launch flags (safe or bare mode, a custom system prompt, a tool allowlist, or restricted settings) that the copy wouldn't inherit…"</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>Z.CLAUDE_CODE_SIMPLE</code> (search for <code>"Zys"</code>)</p>
+<p><code>function cf() { return qt(process.env.CLAUDE_CODE_SIMPLE) || fsi("--bare"); }</code> and the <code>Ffg</code> feature-disable map at <code>ZT</code> initialization (search for <code>"CLAUDE_CODE_SIMPLE"</code> and <code>"Ffg"</code>)</p>
     </article>
   </div>
   <div class="section-head">
