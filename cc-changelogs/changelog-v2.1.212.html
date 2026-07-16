@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.212 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.212."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.212</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.212</span></h1>
+<p class="sub">This release introduces a major feedback system where Claude can draft bug reports and feature requests for user review, adds a <code>/fork</code> command to split a conversation into a background session, and ships a comprehensive Windows sandbox installation workflow. The entire context-tips system (proactive spinner tips) was removed and replaced with nothing yet visible, and the <code>propose_skills</code> tool was added so Claude can surface recurring procedures as skill candidates.</p>    <div class="meta-row">
+<span class="chip chip-official pending"><span class="k">Official notes</span> <b>pending</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.211 → v2.1.212</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">23</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">2</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head official-head pending">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Awaiting notes</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official pending">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div>
+            <div class="ob-title">Official release notes pending</div>
+            <div class="ob-sub">Anthropic has not published official notes for v2.1.212 yet. This section updates automatically when the entry appears in the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Official changelog &#8599;</a>
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="sendfeedback-tool-and-feedback-command">
+      <div class="card-top">
+        <h3>SendFeedback Tool and /feedback Command <a class="anchor" href="#sendfeedback-tool-and-feedback-command">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Claude now has a <code>SendFeedback</code> tool that lets it draft product feedback or bug reports at high-signal moments — such as after encountering a recurring issue or completing a complex workflow. Drafts are written locally and never sent without your review.</p>
+<div class="blabel">Usage</div>
+<pre><code>/feedback        # review and send queued feedback drafts
+/bug             # same as /feedback, also aliased to /share</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Claude drafts feedback silently without announcing it. A counter in the footer shows when drafts are queued.</li><li>The <code>/feedback</code> panel lets you review, edit, or discard each draft before sending. You can toggle transcript inclusion, edit the title/details/area, and choose the type (bug report vs. feature request).</li><li>Drafts expire after 30 days and live only on your machine.</li><li>The tool is rate-limited: Claude can queue at most N drafts per session. Once the limit is reached, existing queued drafts are unaffected.</li><li>A "quiet" mode and "off" mode are configurable in settings (<code>model-drafted feedback</code> setting).</li><li>Transcript content from third-party providers is withheld from submissions for privacy.</li></ul>
+<div class="blabel">Evidence</div>
+<p>"Queue a draft product-feedback report about Claude Code itself for the user to review and send later. Nothing is sent anywhere by this tool — it writes a local draft the user can review, edit, and explicitly send with /feedback." (search for <code>"SendFeedback"</code>)</p>
+    </article>
+    <article class="card" id="fork-command">
+      <div class="card-top">
+        <h3>/fork Command <a class="anchor" href="#fork-command">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>New <code>/fork</code> command copies the current conversation into a new background session, letting you branch off to explore an idea or delegate work without interrupting the main thread.</p>
+<div class="blabel">Usage</div>
+<pre><code>/fork                        # fork with no initial prompt
+/fork &lt;prompt&gt;               # fork and immediately send the prompt to the copy</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The fork starts with your full conversation history up to this point.</li><li>The forked session runs as a background agent — check on it with <code>claude attach</code> or the agent view.</li><li>Cannot fork if session persistence is off, or if the session was started with certain launch flags (safe mode, custom system prompt, tool allowlist) that the copy wouldn't inherit.</li><li>The fork tip: "(← moves this session into the agent view too) · tip: /fork \&lt;prompt\&gt; starts the copy working right away"</li></ul>
+<div class="blabel">Evidence</div>
+<p>"Copy this conversation into a new background session and keep working here" (search for <code>"fork"</code> in command definitions)</p>
+    </article>
+    <article class="card" id="subtask-command">
+      <div class="card-top">
+        <h3>/subtask Command <a class="anchor" href="#subtask-command">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>New <code>/subtask</code> command sends a subagent off with your full conversation context; its result lands back in the current session.</p>
+<div class="blabel">Usage</div>
+<pre><code>/subtask &lt;task&gt;</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The subagent runs synchronously and its result returns inline to the current conversation.</li><li>Not available in coordinator sessions — use <code>/branch</code> there instead.</li><li>Cannot be started before the first conversation turn.</li></ul>
+<div class="blabel">Evidence</div>
+<p>"Send a subagent off with your full context; its result comes back here" (search for <code>"subtask"</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-setup-auto-mode-setup">
+      <div class="card-top">
+        <h3>Auto-mode Setup (/auto-mode-setup) <a class="anchor" href="#auto-mode-setup-auto-mode-setup">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>New <code>/auto-mode-setup</code> command scans your repository and recent sessions, then generates a proposed auto-mode configuration for your review. The scan runs in the background; a review card pops up when it's ready.</p>
+<div class="blabel">Usage</div>
+<pre><code>/auto-mode-setup             # scan and propose auto-mode rules
+/auto-mode                   # inspect or reset current auto-mode configuration</code></pre>
+<div class="blabel">Details</div>
+<ul><li>If your GitHub org is accessible, the scan also reviews org-level patterns.</li><li>The proposal includes new auto-approve rules and may flag existing <code>permissions.allow</code> entries for removal.</li><li>After reviewing the proposal, you can accept, decline, or discard it. Only accepting writes to your settings file.</li><li><code>/auto-mode reset</code> removes the <code>autoMode</code> section from your user settings, restoring shipped defaults.</li><li>Managed settings auto-mode rules always apply regardless of reset.</li><li>Only one setup scan can run at a time; a second <code>/auto-mode-setup</code> while a scan is active shows status.</li></ul>
+<div class="blabel">Evidence</div>
+<p>"Gathering data and drafting your auto-mode setup; back soon" (search for <code>"auto-mode-setup"</code>)</p>
+    </article>
+    <article class="card" id="propose-skills-tool">
+      <div class="card-top">
+        <h3>Propose Skills Tool <a class="anchor" href="#propose-skills-tool">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Claude now has a <code>propose_skills</code> tool that surfaces recurring multi-step procedures from the session as skill proposals. A review card appears in the conversation; nothing is written until you approve.</p>
+<div class="blabel">Details</div>
+<ul><li>Claude uses this tool when you ask to turn a workflow into a skill, or when it notices the same procedure has recurred.</li><li>The card shows up to 3 proposals at once.</li><li>Render-only — selecting a proposal on the card triggers the actual skill-save flow.</li></ul>
+<div class="blabel">Evidence</div>
+<p>"Surface recurring multi-step procedures from this session as skill proposals. Render-only — calling this shows a review card in the conversation; it does not write any files or create the skill." (search for <code>"propose_skills"</code>)</p>
+    </article>
+    <article class="card" id="windows-sandbox-installation">
+      <div class="card-top">
+        <h3>Windows Sandbox Installation <a class="anchor" href="#windows-sandbox-installation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Windows sandbox support now includes a full one-time install flow that sets up a dedicated sandbox user and WFP (Windows Filtering Platform) network filters.</p>
+<div class="blabel">Usage</div>
+<pre><code>/sandbox install             # install sandbox user and WFP network filters
+/sandbox                     # check current sandbox status</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Requires administrator privileges for the initial install (an elevation prompt appears).</li><li>After install: <code>Sandbox user and network filters installed</code> — confirmed via <code>/sandbox</code>.</li><li>If the elevation prompt was missed: re-run <code>/sandbox install</code> and approve within a minute.</li><li>WFP filter installation is idempotent; passing <code>force: true</code> replaces existing filters if the port range or sandbox user name changed.</li><li>New error classes: <code>SandboxCommandTooLongError</code> (command too long for the OS argv limit — write to a file instead), <code>SandboxPolicyRefusalError</code> (enterprise policy blocks the command), <code>SandboxUnavailableForShellError</code> (shell not sandboxable).</li><li>PowerShell commands on Windows are labeled <code>PowerShell command (unsandboxed)</code> to clarify they bypass the sandbox.</li><li>Feature-gated via <code>tengu_nankeen_kestrel</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p>"Windows sandbox needs a one-time install." (search for <code>"srt-win install"</code> and <code>"ClaudeCodeSandbox"</code>)</p>
+    </article>
+    <article class="card" id="persistent-file-based-memory-tengu-stone-shell-gradual-rollo">
+      <div class="card-top">
+        <h3>Persistent File-Based Memory (tengu_stone_shell) [Gradual Rollout] <a class="anchor" href="#persistent-file-based-memory-tengu-stone-shell-gradual-rollo">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new memory system gives Claude a persistent, file-based scratchpad stored in a configurable memory directory. Information saved there carries over to future sessions.</p>
+<div class="blabel">Details</div>
+<ul><li>Enabled by the <code>tengu_stone_shell</code> feature flag.</li><li>Claude receives detailed guidance on what makes a good memory: applicable (prevents repeated mistakes), durable (recurring workflows), and legible (self-contained, full sentences).</li><li>Claude is instructed to write memory before the end of any turn where the user corrects it or it discovers something new about the environment.</li><li>Memory files use markdown with frontmatter (<code>name</code>, <code>description</code> keys).</li><li>This is separate from the existing <code>#/memory</code> shortcut system; it's a lower-level persistent layer.</li></ul>
+<div class="blabel">Evidence</div>
+<p>"You have a persistent, file-based memory stored at <code>{memory_dir}</code>." (search for <code>"TVh"</code> or <code>"tengu_stone_shell"</code>)</p>
+    </article>
+    <article class="card" id="artifact-syntax-highlighting-tengu-artifact-hljs-highlight">
+      <div class="card-top">
+        <h3>Artifact Syntax Highlighting (tengu_artifact_hljs_highlight) <a class="anchor" href="#artifact-syntax-highlighting-tengu-artifact-hljs-highlight">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Published artifacts that contain fenced code blocks now include an inline highlight.js (hljs) runtime for client-side syntax highlighting. The runtime is appended only when the artifact contains recognizable language classes.</p>
+<div class="blabel">Details</div>
+<ul><li>Feature-flagged via <code>tengu_artifact_hljs_highlight</code> (default: true).</li><li>The hljs bundle is loaded from <code>/$bunfs/root/hljsBundle.generated.min.js</code> and embedded inline so artifacts remain standalone.</li><li>A per-artifact token budget limits how much code gets highlighted to keep page load fast.</li><li>The runtime is validated before injection; unsafe bundles are rejected.</li><li>The artifact footer note now reads: "— includes the inline syntax-highlight runtime (~1MB), appended because the page contains fenced code"</li></ul>
+<div class="blabel">Evidence</div>
+<p>"bundle contains an hljs runtime sentinel" (search for <code>"tengu_artifact_hljs_highlight"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-insights-report">
+      <div class="card-top">
+        <h3>Claude Code Insights Report <a class="anchor" href="#claude-code-insights-report">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>New <code>/auto-mode-setup</code> scanning infrastructure also powers a "Claude Code Insights" HTML artifact — a richly styled personal usage report with charts, statistics, and AI-generated analysis.</p>
+<div class="blabel">Details</div>
+<ul><li>Shows total messages, lines added/removed, files modified, days active, messages per day.</li><li>Sections: What You Work On, How You Use Claude Code, Impressive Things You Did, Where Things Go Wrong, Features to Try, New Ways to Use Claude Code, On the Horizon, Team Feedback.</li><li>Includes "At a Glance" summary, tool usage charts, language distribution, session types, user response time distribution, and multi-clauding (parallel session) detection.</li><li>Features a time-of-day histogram with timezone selector (PT, ET, London, CET, Tokyo, custom).</li><li>Suggested CLAUDE.md additions are shown with checkboxes and a "Copy All Checked" button.</li></ul>
+<div class="blabel">Evidence</div>
+<p>"Claude Code Insights" title in generated HTML (search for <code>"Claude Code Insights"</code>)</p>
+    </article>
+    <article class="card" id="growthbook-authenticated-feature-flag-fetch-gradual-rollout">
+      <div class="card-top">
+        <h3>GrowthBook Authenticated Feature Flag Fetch [Gradual Rollout] <a class="anchor" href="#growthbook-authenticated-feature-flag-fetch-gradual-rollout">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>GrowthBook feature flag evaluation can now use an authenticated endpoint (<code>/api/eval-authed/</code>) that attaches your auth headers, enabling per-user flag targeting. Falls back to the unauthenticated <code>/api/eval</code> endpoint on any error.</p>
+<div class="blabel">Details</div>
+<ul><li>Controlled by <code>tengu_gb_eval_authed_enable</code> (default: false).</li><li>On failure: logs "GrowthBook eval-authed returned non-ok; falling back to /api/eval" or "GrowthBook eval-authed fetch threw; falling back to /api/eval".</li></ul>
+<div class="blabel">Evidence</div>
+<p>"GrowthBook eval-authed fetch threw; falling back to /api/eval" (search for <code>"/api/eval-authed/"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="ultrareview-auto-fetches-missing-branches">
+      <div class="card-top">
+        <h3>Ultrareview Auto-Fetches Missing Branches <a class="anchor" href="#ultrareview-auto-fetches-missing-branches">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When <code>/code-review ultra</code> or <code>/review</code> can't find the specified base branch, it now attempts to auto-fetch it from origin before failing. If fetch succeeds, the review proceeds without user intervention.</p>
+<div class="blabel">Details</div>
+<ul><li>Uses <code>git ls-remote --heads origin &lt;branch&gt;</code> to check existence, then <code>git fetch ... refs/heads/&lt;branch&gt;:refs/remotes/origin/&lt;branch&gt;</code>.</li><li>If the branch exists on origin but couldn't be fetched: <code>"&lt;branch&gt;" exists on origin but couldn't be fetched. Run \</code>git fetch origin &lt;branch&gt;\<code> and try again.</code></li><li>If the branch name looks like a typo, Claude now suggests the closest branch: <code>"&lt;name&gt;" is not a branch in this repo. Did you mean \</code>&lt;suggestion&gt;\<code>?</code></li><li>Shallow clone detection: if fetch succeeds but no merge-base exists, suggests <code>git fetch --unshallow origin</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>"exists on origin but couldn't be fetched. Run \</code>git fetch origin"<code> (search for </code>"JI_"`)</p>
+    </article>
+    <article class="card" id="worktree-symlink-security-check">
+      <div class="card-top">
+        <h3>Worktree Symlink Security Check <a class="anchor" href="#worktree-symlink-security-check">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Worktree creation now rejects <code>.claude</code>, <code>.claude/worktrees</code>, and <code>.claude/worktrees/&lt;name&gt;</code> if any of them is a symbolic link, preventing path traversal outside the repository.</p>
+<p>Error shown: <code>Cannot create worktree: &lt;path&gt; is a symlink. A repository-committed symlink at .claude, .claude/worktrees, or .claude/worktrees/&lt;name&gt; could redirect worktree creation outside the repository. Remove the symlink and retry.</code></p>
+<div class="blabel">Evidence</div>
+<p>"is a symlink. A repository-committed symlink at .claude, .claude/worktrees…" (search for <code>"git_worktree_create_symlink_rejected"</code>)</p>
+    </article>
+    <article class="card" id="shell-cwd-read-back-validation">
+      <div class="card-top">
+        <h3>Shell CWD Read-back Validation <a class="anchor" href="#shell-cwd-read-back-validation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The shell's current working directory reported back after commands is now validated against several conditions before being trusted. Ignored cases are logged at warn level:</p>
+<ul><li>Contains a dot-segment (<code>/./</code> or <code>/../</code>)</li><li>Is a network path (UNC path on Windows)</li><li>Crosses a foreign automount host</li><li>Resolves through a network symlink or junction</li><li>Is not an absolute path</li><li>Is not a directory (stat check)</li><li>Is not readable</li></ul>
+<div class="blabel">Evidence</div>
+<p>"shell cwd read-back contains a dot-segment; ignoring" (search for <code>"dwu"</code>)</p>
+    </article>
+    <article class="card" id="per-turn-effort-control">
+      <div class="card-top">
+        <h3>Per-Turn Effort Control <a class="anchor" href="#per-turn-effort-control">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The API request builder now supports a <code>per_turn_effort</code> capability: when the server reports it supports per-turn effort, Claude sends an <code>outputConfig.effort</code> field on system-turn messages. If the server rejects this (400 with "effort parameter" and "not support"), the effort field is stripped and the model is added to a permanent blocklist for the session.</p>
+<div class="blabel">Evidence</div>
+<p>"rejected output_config.effort; latching unsupported and retrying without it." (search for <code>"per_turn_effort"</code>)</p>
+    </article>
+    <article class="card" id="cache-control-demotion-on-mid-conversation-system">
+      <div class="card-top">
+        <h3>Cache Control Demotion on Mid-Conversation System <a class="anchor" href="#cache-control-demotion-on-mid-conversation-system">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When the API rejects <code>cache_control</code> on a mid-conversation system turn with an "additional properties", "unknown field", or similar error, Claude now detects this and demotes the cache breakpoint to the trailing message rather than the system block. Logged as: <code>[mid-conv-system] proxy rejected cache_control on the api_system tail — demoting the breakpoint to the trailing message for this conversation</code>.</p>
+<div class="blabel">Evidence</div>
+<p><code>"retry:api-system-cache-demote"</code> (search for <code>"q9i"</code>)</p>
+    </article>
+    <article class="card" id="login-method-enforcement-improvements">
+      <div class="card-top">
+        <h3>Login Method Enforcement Improvements <a class="anchor" href="#login-method-enforcement-improvements">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p><code>forceLoginMethod</code> settings are now validated per-session with clearer error messages:</p>
+<ul><li><code>forceLoginMethod is 'claudeai' in &lt;settings&gt;; log in with a Claude.ai subscription account instead.</code></li><li><code>forceLoginMethod is 'console' in &lt;settings&gt;; log in with an Anthropic Console account instead.</code></li><li><code>forceLoginMethod is 'gateway' in managed settings; run /login from an interactive terminal to authenticate.</code></li><li>When <code>CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST</code> is set, the login method is not enforced and a warning is logged.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>"forceLoginMethod is 'claudeai' in"</code> (search for <code>"_tt"</code>)</p>
+    </article>
+    <article class="card" id="subagent-mode-parameter-deprecated">
+      <div class="card-top">
+        <h3>Subagent Mode Parameter Deprecated <a class="anchor" href="#subagent-mode-parameter-deprecated">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>mode</code> parameter for the Agent tool in teammate/subagent contexts is now marked as deprecated: <code>"Deprecated; ignored. Subagents inherit the parent session's permission mode; agent-definition frontmatter may override it."</code> Previously this produced different error text referencing <code>mode</code> as unavailable.</p>
+<div class="blabel">Evidence</div>
+<p>"Deprecated; ignored. Subagents inherit the parent session's permission mode" (search for the string directly)</p>
+    </article>
+    <article class="card" id="mcp-websocket-subprotocol-support">
+      <div class="card-top">
+        <h3>MCP WebSocket Subprotocol Support <a class="anchor" href="#mcp-websocket-subprotocol-support">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>MCP WebSocket connection errors now include the list of subprotocols offered by the server when relevant. The message format is <code>(subprotocols: "proto1", "proto2")</code> appended to connection error text.</p>
+<div class="blabel">Evidence</div>
+<p>"(subprotocols:" (search for <code>"Nxu"</code>)</p>
+    </article>
+    <article class="card" id="git-config-remote-url-parser">
+      <div class="card-top">
+        <h3>Git Config Remote URL Parser <a class="anchor" href="#git-config-remote-url-parser">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new native git config parser (<code>W_s</code>) replaces reliance on spawning <code>git config</code> to read remote URLs. It correctly handles quoted values, escape sequences, section headers with subsection names, and continuation lines.</p>
+<div class="blabel">Evidence</div>
+<p>Internal function reading <code>[remote "..."]</code> sections (search for <code>"W_s"</code>)</p>
+    </article>
+    <article class="card" id="fork-session-safety-checks">
+      <div class="card-top">
+        <h3>Fork Session Safety Checks <a class="anchor" href="#fork-session-safety-checks">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p><code>/fork</code> refuses in additional edge cases with clear messages:</p>
+<ul><li>Session not yet saved: <code>"Couldn't fork — this conversation is still being saved. Try again in a moment."</code></li><li>No messages yet: <code>"Nothing to fork yet — send a message first."</code></li><li>Session started with incompatible launch flags: describes which flags prevent inheritance.</li></ul>
+<div class="blabel">Evidence</div>
+<p>"Cannot fork — session persistence is off, so the new session would have nothing to start from." (search for <code>"Cannot fork"</code>)</p>
+    </article>
+    <article class="card" id="resume-session-at-flag">
+      <div class="card-top">
+        <h3>Resume Session at Flag <a class="anchor" href="#resume-session-at-flag">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>New CLI flag <code>--resume-session-at=&lt;timestamp|boundary&gt;</code> for resuming a session starting at a specific point in the transcript.</p>
+<div class="blabel">Evidence</div>
+<p><code>"--resume-session-at="</code> (search in added strings)</p>
+    </article>
+    <article class="card" id="claude-code-tmpdir-environment-variable">
+      <div class="card-top">
+        <h3>CLAUDE_CODE_TMPDIR Environment Variable <a class="anchor" href="#claude-code-tmpdir-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>New <code>CLAUDE_CODE_TMPDIR</code> environment variable lets you override the temporary directory used by Claude Code (defaults to <code>os.tmpdir()</code>).</p>
+<div class="blabel">Evidence</div>
+<p><code>Z.CLAUDE_CODE_TMPDIR</code> (search for <code>"CLAUDE_CODE_TMPDIR"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-simple-environment-variable">
+      <div class="card-top">
+        <h3>CLAUDE_CODE_SIMPLE Environment Variable <a class="anchor" href="#claude-code-simple-environment-variable">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>New <code>CLAUDE_CODE_SIMPLE</code> environment variable for enabling a simplified mode.</p>
+<div class="blabel">Evidence</div>
+<p><code>Z.CLAUDE_CODE_SIMPLE</code> (search for <code>"Zys"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed OTLP telemetry requests failing with missing <code>Content-Length</code> header when the request body was written in chunks rather than all at once. (search for <code>"OTLP request body chunk conversion failed"</code>)</li></ul>
+<ul><li>Fixed proxy auth helper TTL parsing to accept <code>0</code> as a valid value (previously <code>0</code> was silently ignored and defaulted to the built-in TTL). (search for <code>"CLAUDE_CODE_PROXY_AUTH_HELPER_TTL_MS"</code>)</li></ul>
+<ul><li>Fixed shell CWD read-back accepting network paths and automount-crossing paths that could cause incorrect directory resolution on Windows and NFS setups. (search for <code>"shell cwd read-back is a network path"</code>)</li></ul>
+<ul><li>Fixed cache_control being rejected by some proxies when sent on the api_system message tail; Claude now gracefully demotes the breakpoint and continues the conversation without interruption. (search for <code>"retry:api-system-cache-demote"</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Removed</h2><div class="ln"></div>
+<span class="ct">2 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="context-tips-system-removed">
+      <div class="card-top">
+        <h3>Context Tips System Removed <a class="anchor" href="#context-tips-system-removed">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The entire proactive context-tips system (spinner tips) has been removed. This system used a side-call AI classifier to detect friction patterns in your conversation and surface relevant tips (e.g., "you're doing Y — X would help"). The classifier, tip catalog, reception scoring, and all tip-related UI code are gone from this version.</p>
+<p>The tip catalog included situations like: correction spirals, large context windows, opus-on-pro near limit, workflow orchestration, tmux users, and more. These tips will no longer appear.</p>
+<div class="blabel">Evidence</div>
+<p>All <code>[context-tips]</code> log strings removed (search for <code>"[context-tips]"</code> — absent in new version)</p>
+    </article>
+    <article class="card" id="agentic-session-search-removed">
+      <div class="card-top">
+        <h3>Agentic Session Search Removed <a class="anchor" href="#agentic-session-search-removed">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>The AI-powered session search feature (which used a subagent with Grep/Read tools to find matching sessions) has been removed. The <code>/resume</code> UI now loads past sessions by listing them directly rather than running an agentic search.</p>
+<div class="blabel">Evidence</div>
+<p>"Agentic search found", "Agentic search response:", "agenticSessionSearch: query loop failed" — all removed (search for <code>"C4o"</code> — absent in new version)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The context-tips removal is the largest behavioral change in this release. If you relied on proactive tips appearing during conversations to discover features, those will no longer show. The feature infrastructure (tip catalog, classifier prompt) has been fully removed rather than just disabled.</p>
+<p>The Windows sandbox (<code>/sandbox install</code>) requires administrator rights for the one-time setup. If your machine is managed and the elevation prompt doesn't appear or is blocked, contact your administrator and point them to <code>https://code.claude.com/docs/en/sandboxing</code>.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.212.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.212.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
