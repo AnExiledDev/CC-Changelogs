@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.217 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.217."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.217</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.217</span></h1>
+<p class="sub">This release introduces MCP tool errors that now throw typed exceptions in workflow scripts (a behavioral change to be aware of), a new emoji shortcode typeahead feature with a user-controllable toggle, and session memories accessible directly from the chat footer. It also ships a major path-containment security overhaul, a remote workflow launch system for CCR (server-driven workflows), and a migration from resource-based to <code>skills/list</code> paginated discovery for MCP skill providers.</p>    <div class="meta-row">
+<span class="chip chip-official pending"><span class="k">Official notes</span> <b>pending</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.216 → v2.1.217</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">21</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">10</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">4</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head official-head pending">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Awaiting notes</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official pending">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div>
+            <div class="ob-title">Official release notes pending</div>
+            <div class="ob-sub">Anthropic has not published official notes for v2.1.217 yet. This section updates automatically when the entry appears in the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Official changelog &#8599;</a>
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">8 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="emoji-shortcode-typeahead">
+      <div class="card-top">
+        <h3>Emoji Shortcode Typeahead <a class="anchor" href="#emoji-shortcode-typeahead">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A comprehensive emoji shortcode autocomplete system has been added. When you type <code>:</code> followed by an emoji name in the chat input, a suggestion popup appears showing matching emoji. Typing <code>:thumbs</code> suggests <code>:thumbs_up: 👍</code>, <code>:thumbsdown: 👎</code>, etc. Selecting a suggestion inserts the emoji character inline.</p>
+<p>The feature is enabled by default. To turn it off, set <code>emojiCompletionEnabled</code> to <code>false</code> in user settings.</p>
+<div class="blabel">Details</div>
+<ul><li>The suggestion popup appears after <code>:</code> and filters in real time as you type</li><li>Suggestions are ranked by prefix match first, then by name length</li><li>Up to a configurable number of suggestions are shown at once</li><li>Multi-code-point emoji (family groups, flags, ZWJ sequences) are included</li></ul>
+<div class="blabel">Evidence</div>
+<p>Emoji shortcode search function (search for <code>"emoji:"</code> in suggestion IDs) and new setting (search for <code>"the :emoji: shortcode typeahead"</code>)</p>
+    </article>
+    <article class="card" id="session-memories-in-footer">
+      <div class="card-top">
+        <h3>Session Memories in Footer <a class="anchor" href="#session-memories-in-footer">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When a session has recalled memories, a "memories" tab now appears in the chat footer alongside tasks and workflows. Clicking it (or pressing the associated keyboard shortcut) opens the session memories view. The tab only appears when memories are present and the feature is enabled.</p>
+<div class="blabel">Details</div>
+<ul><li>Shows count of memories recalled in the current session (<code>"memory" / "memories"</code> count label)</li><li>Accessible via the footer keyboard cycle or by clicking</li><li>Controlled by the <code>UOe()</code> feature check (requires the memories feature to be on)</li><li>Selecting "memories" from the footer calls <code>onOpenSessionMemories</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Footer memories tab (search for <code>"footer:memories"</code> or <code>"sessionMemories"</code>)</p>
+    </article>
+    <article class="card" id="footer-dismiss-keybinding">
+      <div class="card-top">
+        <h3>Footer Dismiss Keybinding <a class="anchor" href="#footer-dismiss-keybinding">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Pressing <code>backspace</code> or <code>delete</code> in the footer context now dismisses the current footer selection (equivalent to the existing <code>x</code> key). A new <code>footer:dismiss</code> action has been added to the keybinding registry.</p>
+<div class="blabel">Evidence</div>
+<p>New key action (search for <code>"footer:dismiss"</code>)</p>
+    </article>
+    <article class="card" id="transcript-persistence-warnings">
+      <div class="card-top">
+        <h3>Transcript Persistence Warnings <a class="anchor" href="#transcript-persistence-warnings">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>New persistent warning banners appear in the TUI when transcript saving is suppressed or failing:</p>
+<ul><li>If <code>CLAUDE_CODE_SKIP_PROMPT_HISTORY</code> is set: shows "Transcript saving is off — CLAUDE_CODE_SKIP_PROMPT_HISTORY is set" with "· --resume will not find this session; if unintended, unset it and restart"</li><li>If running as a child session (inherited <code>CLAUDE_CODE_CHILD_SESSION</code> marker): shows "Transcript saving is off — inherited CLAUDE_CODE_CHILD_SESSION marker" with "· restart with CLAUDE_CODE_FORCE_SESSION_PERSISTENCE=1 to keep future transcripts"</li><li>If transcript writes are failing: shows "Transcript writes are failing (…)" with "· recent messages may not be saved for resume" — error codes are translated: <code>ENOSPC</code> → "disk full", <code>EROFS</code> → "read-only filesystem", <code>EDQUOT</code> → "disk quota exceeded", etc.</li></ul>
+<div class="blabel">Evidence</div>
+<p>Persistence suppressed notification (search for <code>"Transcript saving is off"</code>) and transcript writer degraded notification (search for <code>"Transcript writes are failing"</code>)</p>
+    </article>
+    <article class="card" id="rate-limit-grace-window-banner">
+      <div class="card-top">
+        <h3>Rate Limit Grace Window Banner <a class="anchor" href="#rate-limit-grace-window-banner">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When your account enters the usage-limit grace window (reported via <code>anthropic-ratelimit-unified-grace-status</code> and utilization headers), a persistent warning now appears in the session:</p>
+<p>&gt; [Usage limit reached — grace window active. Wrap up: finish or checkpoint; don't start subagents or long work.]</p>
+<p>The grace state is tracked from <code>anthropic-ratelimit-unified-grace-5h-utilization</code> and <code>anthropic-ratelimit-unified-grace-7d-utilization</code> response headers. The signal is latched on first observation (grace &gt; 0) and cleared when a subsequent response reports it back at zero.</p>
+<div class="blabel">Evidence</div>
+<p>Grace window message (search for <code>"grace window active"</code>) and header names (search for <code>"anthropic-ratelimit-unified-grace-5h-utilization"</code>)</p>
+    </article>
+    <article class="card" id="frame-link-dismiss">
+      <div class="card-top">
+        <h3>Frame Link Dismiss <a class="anchor" href="#frame-link-dismiss">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Frame links shown in the footer can now be dismissed from the list. Pressing the dismiss keybinding removes the current frame URL from the footer and shows a brief confirmation: "Dismissed {name} from this list".</p>
+<div class="blabel">Evidence</div>
+<p>Frame dismiss handler (search for <code>"frame_link_dismiss"</code>)</p>
+    </article>
+    <article class="card" id="bridge-fork-session-warning">
+      <div class="card-top">
+        <h3>Bridge Fork Session Warning <a class="anchor" href="#bridge-fork-session-warning">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When Claude Code detaches from a remote (CCR) session by resuming it locally (fork via bridge), it now shows an informational notice:</p>
+<p>&gt; This terminal now has its own copy of the session: new work here stays local and will not appear in the Claude app. To continue on your phone later, run /remote-control in this session.</p>
+<div class="blabel">Evidence</div>
+<p>Bridge fork message (search for <code>"This terminal now has its own copy of the session"</code>)</p>
+    </article>
+    <article class="card" id="screen-reader-startup-quiet-period">
+      <div class="card-top">
+        <h3>Screen Reader Startup Quiet Period <a class="anchor" href="#screen-reader-startup-quiet-period">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Screen reader output (for accessibility tools) is now suppressed briefly after startup, preventing the initial UI state from being announced as changes. The quiet duration is controlled by <code>CLAUDE_AX_STARTUP_QUIET_MS</code> (environment variable, optional override of the internal default).</p>
+<div class="blabel">Evidence</div>
+<p>Startup quiet timer (search for <code>"srStartupQuietTimer"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">13 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="mcp-tool-errors-now-throw-typed-exceptions-in-workflow-scrip">
+      <div class="card-top">
+        <h3>MCP Tool Errors Now Throw Typed Exceptions in Workflow Scripts <a class="anchor" href="#mcp-tool-errors-now-throw-typed-exceptions-in-workflow-scrip">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>This is the most impactful behavioral change in this release for workflow authors.</p>
+<p>Previously, MCP tool call failures inside workflow scripts silently resolved to <code>{error: string}</code> objects, making them indistinguishable from a successful tool call that returned an object with an <code>error</code> field. Now, MCP tool failures throw a proper <code>McpToolError</code> exception that crosses the VM sandbox boundary with structured fields.</p>
+<p>The thrown error has:</p>
+<ul><li><code>.name === "McpToolError"</code></li><li><code>.toolName</code> — the name of the MCP tool that failed</li><li><code>.error</code> — the error message string</li><li><code>.detail</code> — parsed JSON of the response body, if the error response was JSON</li></ul>
+<p>In scripts, use try/catch:</p>
+<pre><code>try {
+  const result = await mcp__server__tool({ ... })
+} catch (e) {
+  if (e.name === &quot;McpToolError&quot;) {
+    console.log(e.toolName, e.error, e.detail)
+  }
+}</code></pre>
+<p>The behavior is gated by <code>tengu_repl_mcp_error_throw</code> (default: <code>true</code>). The system prompt documentation for workflow scripts has been updated to reflect that MCP tools THROW on failure while built-in tools return <code>{error: string}</code>.</p>
+<div class="blabel">Evidence</div>
+<p><code>McpToolError</code> class (search for <code>"McpToolError"</code>) and VM sandbox bridge (search for <code>"_throwMcpVM"</code>)</p>
+    </article>
+    <article class="card" id="skills-discovery-migrated-to-skills-list-paginated-method">
+      <div class="card-top">
+        <h3>Skills Discovery Migrated to <code>skills/list</code> Paginated Method <a class="anchor" href="#skills-discovery-migrated-to-skills-list-paginated-method">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>MCP servers providing skills no longer need to expose a <code>skill://index.json</code> resource. The discovery protocol has changed to use a standard <code>skills/list</code> MCP method that supports cursor-based pagination.</p>
+<p>Changes:</p>
+<ul><li>Old: MCP server exposes <code>skill://index.json</code> resource with a JSON index of skills (URL-based)</li><li>New: MCP server implements the <code>skills/list</code> method, returning pages of skills with <code>uri</code> fields and optional <code>digest</code> and <code>nextCursor</code></li><li>Pagination is handled automatically — Claude Code iterates until all pages are fetched or limits are reached</li><li>Dropped entries are logged: "N skills/list entries skipped (malformed, missing, or oversized fields)"</li><li>If a page fails mid-pagination, already-fetched entries are used and a warning is logged</li></ul>
+<p>If you operate an MCP server that provides skills, update it from the resource-based index to the <code>skills/list</code> method.</p>
+<div class="blabel">Evidence</div>
+<p>New discovery function (search for <code>"skills/list failed"</code>) and old discovery removed (search for <code>"skill://index.json"</code> — now gone)</p>
+    </article>
+    <article class="card" id="worker-agent-system-prompt">
+      <div class="card-top">
+        <h3>Worker Agent System Prompt <a class="anchor" href="#worker-agent-system-prompt">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Worker agents launched in multi-agent workflows now receive a structured system prompt covering environment awareness, scope limits, resumed task handling, error escalation, and output format. Key guidelines:</p>
+<ul><li>Don't modify code you don't understand; stop and report to the coordinator if confused</li><li>Complete exactly what was asked; suggest follow-ups for unrelated issues found</li><li>If you have the Task tool, you may use it to fan out — but workers at the depth cap don't receive it</li><li>Output structured: "What you did or found" then "Summary: one sentence"</li></ul>
+<p>The subagent spawn depth ceiling is now configurable via <code>tengu_hazel_trellis</code> (feature flag) or <code>CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH</code> (environment variable).</p>
+<div class="blabel">Evidence</div>
+<p>Worker prompt (search for <code>"You are a worker agent executing a task assigned by the coordinator"</code>) and depth env var (search for <code>"CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH"</code>)</p>
+    </article>
+    <article class="card" id="path-containment-security-overhaul">
+      <div class="card-top">
+        <h3>Path Containment Security Overhaul <a class="anchor" href="#path-containment-security-overhaul">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The system that prevents worktree-isolated agents from writing outside their assigned worktree has been substantially rewritten to handle complex path forms that could previously bypass containment.</p>
+<p>New protections:</p>
+<ul><li>UNC shares (Windows <code>\\server\share</code> paths) are detected and blocked when the session root is local</li><li><code>/net/</code> automount paths (Linux/macOS NFS automounts) are recognized and normalized</li><li>Apple <code>/System/Volumes/Data/</code> paths are remapped to their real root</li><li>Paths with raw dot-segments that survive <code>path.normalize</code> are blocked</li><li>Windows paths with trailing dots or spaces (a Windows security concern) are detected</li><li>Device namespace paths (<code>\\?\</code>) are unwrapped or blocked as appropriate</li><li>Symlink resolution now iterates up to 8 rounds to reach a stable canonical form</li></ul>
+<p>Error messages are more specific. For example, a network-shaped path against a local checkout says: &gt; This write was blocked because the path is network-shaped (a UNC share or /net automount spelling) while this session's checkout is local.</p>
+<p>A path that can't be safely resolved says: &gt; This write was blocked because the path is spelled in a form that cannot be safely resolved (for example through a symlink storing a raw dot segment, a network-share or device-namespace shape, or an unreadable ancestor directory).</p>
+<p>Commands run by worktree-isolated agents now get a more specific rejection if their working directory resolves outside the worktree due to letter-case mismatch: "(this path differs from the registered spelling only by letter case — respell it to match exactly)".</p>
+<div class="blabel">Evidence</div>
+<p>Path resolution (search for <code>"resolves-to-trailing-dot-or-space"</code>) and network-shaped block (search for <code>"network-shaped (a UNC share"</code>)</p>
+    </article>
+    <article class="card" id="concurrency-slot-tracking-for-subagents">
+      <div class="card-top">
+        <h3>Concurrency Slot Tracking for Subagents <a class="anchor" href="#concurrency-slot-tracking-for-subagents">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Subagents now properly claim and release a concurrency slot via <code>takeConcurrencySlot()</code> / <code>onRunSettled()</code>. The store now tracks <code>runningSubagents</code> as a counter. This enables accurate display of running agent count and proper enforcement of concurrent subagent limits (controlled by <code>CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS</code>).</p>
+<div class="blabel">Evidence</div>
+<p>Concurrency tracking (search for <code>"Concurrent subagent limit reached"</code>)</p>
+    </article>
+    <article class="card" id="import-fingerprinting-for-mcp-servers-and-slash-commands">
+      <div class="card-top">
+        <h3>Import Fingerprinting for MCP Servers and Slash Commands <a class="anchor" href="#import-fingerprinting-for-mcp-servers-and-slash-commands">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Import proposals for MCP servers, slash commands, and GEMINI.md files now include a <code>fingerprint</code> field. The fingerprint is a stable hash of the entry's configuration, enabling detection of drift when an import item's config has changed since it was last imported.</p>
+<div class="blabel">Evidence</div>
+<p>MCP server fingerprint (search for <code>"fingerprint: JSON.stringify"</code>)</p>
+    </article>
+    <article class="card" id="brace-pattern-expansion-budget">
+      <div class="card-top">
+        <h3>Brace Pattern Expansion Budget <a class="anchor" href="#brace-pattern-expansion-budget">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Glob patterns with brace expansion (<code>{a,b,c}</code>) now have a budget guard. If expanding a brace pattern would produce too many results or exceed the byte budget, it is used unexpanded with a warning:</p>
+<p>&gt; Brace pattern expansion exceeds the budget; using it unexpanded: {pattern}</p>
+<p>This prevents accidental combinatorial explosion from deeply nested or wide brace patterns.</p>
+<div class="blabel">Evidence</div>
+<p>Budget guard (search for <code>"Brace pattern expansion exceeds the budget"</code>)</p>
+    </article>
+    <article class="card" id="auto-mode-setup-gets-apply-target-request-id-and-expect-sha2">
+      <div class="card-top">
+        <h3><code>/auto-mode-setup</code> Gets <code>--apply-target</code>, <code>--request-id</code>, and <code>--expect-sha256</code> <a class="anchor" href="#auto-mode-setup-gets-apply-target-request-id-and-expect-sha2">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>/auto-mode-setup</code> command now supports:</p>
+<ul><li><code>--request-id &lt;uuid&gt;</code> — must come first; the UUID is echoed back in the JSON result as <code>requestId</code> so a host with multiple in-flight commands can match replies</li><li><code>--apply-target &lt;user|project&gt;</code> — specifies where to save settings; the apply step validates that the proposal's scope matches the target (user ↔ scope=all, project ↔ scope=project)</li><li><code>--expect-sha256 &lt;64-hex&gt;</code> — required before <code>--apply-file</code>; the apply refuses unless the file's bytes hash to the given SHA256</li></ul>
+<p>The proposal object returned by <code>--propose</code> now also includes the <code>scope</code> field.</p>
+<div class="blabel">Evidence</div>
+<p>Command usage string (search for <code>"--apply-target must be"</code>)</p>
+    </article>
+    <article class="card" id="workshop-artifact-skill-page-based-decision-resolution">
+      <div class="card-top">
+        <h3>Workshop Artifact Skill: Page-Based Decision Resolution <a class="anchor" href="#workshop-artifact-skill-page-based-decision-resolution">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>/workshop</code> skill (interactive decision artifact) has been updated to a page-self-publish model. Decisions are now resolved by readers clicking option rows directly on the published page, with the page republishing itself via <code>window.claude.self.publish</code> — no separate server-side interaction store is polled. The session loop now detects pending decisions by diffing the live page's DOM state (resolved vs. open call-items) rather than reading from an interactions API.</p>
+<p>Additional clarity added to the skill prompt: when building or publishing a workshop, talk about the workshop at the product level — don't narrate internal machinery (publish declarations, renderer wiring, etc.) to the user.</p>
+<div class="blabel">Evidence</div>
+<p>Workshop self-publish JS (search for <code>"window.claude.self"</code> or <code>"data-decision-state"</code>)</p>
+    </article>
+    <article class="card" id="remote-workflow-launch-via-server-events-ccr">
+      <div class="card-top">
+        <h3>Remote Workflow Launch via Server Events (CCR) <a class="anchor" href="#remote-workflow-launch-via-server-events-ccr">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Claude Code Remote sessions can now receive <code>workflow_launch</code> SSE events from the server, which trigger automatic workflow execution. This enables server-initiated multi-agent workflows in remote sessions without requiring a user to type a command.</p>
+<p>The flow:</p>
+<ol><li>Server pushes a <code>workflow_launch</code> event with a signed workflow bundle (filestore path + SHA256)</li><li>Claude Code fetches the bundle, verifies the SHA256, and validates the format (version byte, script frame, args frame)</li><li>If all checks pass, the script is executed via the workflow engine</li><li>Results are posted back to the server as a <code>workflow_launch_result</code> system event</li></ol>
+<p>Policy gates:</p>
+<ul><li>Blocked entirely if <code>disableWorkflows</code> is set in managed settings (separate message from org policy block)</li><li>Blocked if org policy <code>allow_workflows</code> is false</li><li>At most one <code>workflow_launch</code> event per session is permitted</li></ul>
+<p>The <code>CLAUDE_CODE_REMOTE_SESSION_ORIGIN</code> env var (set to <code>"review"</code>) bypasses the org policy check for server-authored carriers.</p>
+<div class="blabel">Evidence</div>
+<p>Launch handler (search for <code>"workflow_launch received outside a remote (CCR) session"</code>) and bundle validation (search for <code>"unsupported bundle format version"</code>)</p>
+    </article>
+    <article class="card" id="bridge-placeholder-sweep">
+      <div class="card-top">
+        <h3>Bridge Placeholder Sweep <a class="anchor" href="#bridge-placeholder-sweep">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new background cleanup task archives orphaned bridge placeholder session records. When a session is initiated via the bridge but then abandoned (never received any messages after creation), its placeholder entry is cleaned up. The sweep runs at startup (after a delay) and checks each placeholder: if the underlying session record shows <code>created_at === updated_at</code> (never used), the placeholder is archived. Records older than 30 days are removed unconditionally.</p>
+<div class="blabel">Evidence</div>
+<p>Sweep (search for <code>"[bridge:placeholder] archived orphaned placeholder"</code>)</p>
+    </article>
+    <article class="card" id="session-file-update-via-method-call">
+      <div class="card-top">
+        <h3>Session File Update via Method Call <a class="anchor" href="#session-file-update-via-method-call">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The session file path is now set via a <code>setSessionFile()</code> method call rather than direct property assignment, preparing for more controlled session lifecycle management.</p>
+<div class="blabel">Evidence</div>
+<p>Method call (search for <code>"r.setSessionFile(o)"</code>)</p>
+    </article>
+    <article class="card" id="worktree-auto-compaction-trigger">
+      <div class="card-top">
+        <h3>Worktree Auto-Compaction Trigger <a class="anchor" href="#worktree-auto-compaction-trigger">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When the remote hydration process (CCR delta sync) appends entries and the session file grows past a threshold, it now automatically requests compaction via <code>requestCompact()</code>. This keeps remote session transcripts from growing unboundedly.</p>
+<div class="blabel">Evidence</div>
+<p>Auto-compact trigger (search for <code>"requestCompact"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">10 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Fixed resume attachment validation: malformed or missing attachment payloads in saved transcripts are now dropped with an error log rather than causing resume to fail (search for <code>"the session transcript appears partially corrupt"</code>)</li></ul>
+<ul><li>Fixed the workflow VM sandbox to properly handle <code>MCP</code>-thrown errors in <code>resolveDeep</code>'s auto-await loop — a script ending on an unawaited MCP call no longer silently swallows the error (search for <code>"mcpToolError: true"</code>)</li></ul>
+<ul><li>Fixed request cancellation in the load-balancing request router: when a request can't be sent and falls back to local handling, the outstanding remote request slot is now explicitly cancelled via <code>cancelRequest()</code> (search for <code>"i.cancelRequest(a)"</code>)</li></ul>
+<ul><li>Fixed the bridge <code>prependUserMessage</code> method: adding a prepended message now wakes the async input reader immediately rather than waiting for the next chunk, which fixes a race in remote workflow dispatch (search for <code>"prependWaker"</code>)</li></ul>
+<ul><li>Fixed fleet view: deleting a pinned background agent now also unpins it before deletion, preventing stale pin state (search for <code>"Gos(o.id, !1).catch"</code>)</li></ul>
+<ul><li>Fixed <code>skills/list</code> validation to also reject oversized fields (previously only checked for malformed/missing required fields) (search for <code>"malformed, missing, or oversized fields"</code>)</li></ul>
+<ul><li>Fixed <code>discoveryCache</code> leaking into serialized MCP server config: the field is now deleted before the config is stored (search for <code>"delete a.discoveryCache"</code>)</li></ul>
+<ul><li>Fixed injectControlResponse to return a boolean indicating whether the response was consumed — previously it always returned void, making it impossible for callers to detect no-op responses (search for <code>"injectControlResponse"</code>)</li></ul>
+<ul><li>Fixed word-wrap rendering in the terminal output renderer to use the correct source array (<code>E</code> vs <code>v</code>) when iterating tokens without wrapping (search for <code>"R = E.map"</code>)</li></ul>
+<ul><li>Fixed the workflow VM context builder to use the correct <code>budget_usd</code> registration path, ensuring budget tracking is available in the right VM scope (search for <code>"ab(\"budget_usd\""</code>)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="in-development">
+      <p>Features with infrastructure added but not yet enabled or gated behind feature flags currently being rolled out.</p>
+    </article>
+    <article class="card" id="tengu-moth-copse-voice-mcp-url-elicitation-toggle-feature-fl">
+      <div class="card-top">
+        <h3><code>tengu_moth_copse</code> — Voice/MCP URL Elicitation Toggle [Feature-Flagged] <a class="anchor" href="#tengu-moth-copse-voice-mcp-url-elicitation-toggle-feature-fl">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A feature flag <code>tengu_moth_copse</code> controls whether the MCP URL elicitation flow (asking users to provide a URL for MCP server connection) is active. When the flag is on, a separate function <code>rVi()</code> is also checked.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged (<code>tengu_moth_copse</code>)</p>
+<div class="blabel">Evidence</div>
+<p>Flag check (search for <code>"tengu_moth_copse"</code>)</p>
+    </article>
+    <article class="card" id="tengu-heron-tallow-new-feature-gate-feature-flagged">
+      <div class="card-top">
+        <h3><code>tengu_heron_tallow</code> — New Feature Gate [Feature-Flagged] <a class="anchor" href="#tengu-heron-tallow-new-feature-gate-feature-flagged">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new feature flag <code>tengu_heron_tallow</code> is available. It can also be enabled via the <code>CLAUDE_CODE_HERON_TALLOW</code> environment variable or via managed settings.</p>
+<div class="blabel">Status</div>
+<p>Feature-flagged (also overridable via <code>CLAUDE_CODE_HERON_TALLOW</code> env var)</p>
+<div class="blabel">Evidence</div>
+<p>Gate check (search for <code>"tengu_heron_tallow"</code>)</p>
+    </article>
+    <article class="card" id="four-new-unnamed-feature-flags-in-development">
+      <div class="card-top">
+        <h3>Four New Unnamed Feature Flags [In Development] <a class="anchor" href="#four-new-unnamed-feature-flags-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <p>Four new feature flag constants have been added without any observable user-facing behavior yet:</p>
+<ul><li><code>tengu_amber_astrolabe</code> (also: <code>CLAUDE_CODE_AMBER_ASTROLABE</code> env var)</li><li><code>tengu_bison_cairn</code> (also: <code>CLAUDE_CODE_BISON_CAIRN</code> env var)</li><li><code>tengu_larch_cistern</code> (also: <code>CLAUDE_CODE_LARCH_CISTERN</code> env var)</li><li><code>tengu_alder_wicket</code> (also: <code>CLAUDE_CODE_ALDER_WICKET</code> env var)</li></ul>
+<p>These are infrastructure additions that will be wired to behavior in a future release.</p>
+<div class="blabel">Evidence</div>
+<p>Flag constants (search for <code>"tengu_amber_astrolabe"</code>)</p>
+    </article>
+    <article class="card" id="ratelimitgraceactive-session-state-field-in-development">
+      <div class="card-top">
+        <h3><code>rateLimitGraceActive</code> Session State Field [In Development] <a class="anchor" href="#ratelimitgraceactive-session-state-field-in-development">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new <code>rateLimitGraceActive</code> boolean field has been added to the session state schema (marked <code>@internal</code>). It tracks whether the account is currently in the usage-limit grace zone, as observed from extended-request response headers. The field is described as observation-lagged — it stays latched when extended requests stop and should be expired via <code>resetsAt</code> rather than waiting for a clearing event.</p>
+<div class="blabel">Status</div>
+<p>Infrastructure added; the header parsing and state tracking are live (see rate limit grace window under New Features), but <code>rateLimitGraceActive</code> as a schema field is documented as internal.</p>
+<div class="blabel">Evidence</div>
+<p>Schema field (search for <code>"rateLimitGraceActive"</code> or <code>"tengu_lantern_spool"</code>)</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.217.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.217.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
