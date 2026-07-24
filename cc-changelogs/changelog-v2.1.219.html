@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.219 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.219."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.219</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.219</span></h1>
+<p class="sub">Version 2.1.219 introduces Claude Opus 5 as the new primary model, adds a pinned memory system that automatically injects selected memories into every conversation, and introduces a new <code>DirectoryAdded</code> hook type. The release also includes significant improvements to workshop live-edit safety, MCP server validation, and model fallback behavior.</p>    <div class="meta-row">
+<span class="chip chip-official pending"><span class="k">Official notes</span> <b>pending</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.218 → v2.1.219</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">22</div><div class="l">Features &amp; Changes</div></div>
+  <div class="stat b"><div class="n">7</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">In Development</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head official-head pending">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Awaiting notes</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official pending">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div>
+            <div class="ob-title">Official release notes pending</div>
+            <div class="ob-sub">Anthropic has not published official notes for v2.1.219 yet. This section updates automatically when the entry appears in the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Official changelog &#8599;</a>
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
+  <div class="section-head">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">4 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="claude-opus-5-support">
+      <div class="card-top">
+        <h3>Claude Opus 5 Support <a class="anchor" href="#claude-opus-5-support">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Claude Opus 5 is now the default and recommended model in Claude Code. The model picker has been updated to reflect this, with Opus 5 labeled "best for everyday, complex tasks" and Opus 4.8 demoted to "Previous Opus version."</p>
+<div class="blabel">Details</div>
+<ul><li>New model IDs recognized: <code>claude-opus-5</code>, <code>anthropic.claude-opus-5</code>, <code>us.anthropic.claude-opus-5</code></li><li>An Opus 5 with 1M context variant (<code>claude-opus-5[1m]</code>) is also available for long sessions with large codebases</li><li>Fast mode (<code>/fast</code>) now supports Opus 5 in addition to Opus 4.8 and 4.7</li><li>The model picker description for Opus 4.8 now reads "Opus 4.8 · Previous Opus version" (search for <code>"Opus 4.8 - previous Opus version"</code>)</li><li>Model description line updated: "The most recent Claude models are the Claude 5 family and Haiku 4.5" (Opus 4.8 removed from the headline list)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Model picker entries for Opus 5 (search for <code>"Opus 5 - best for everyday, complex tasks"</code> and <code>"claude-opus-5"</code>)</p>
+    </article>
+    <article class="card" id="pinned-memories">
+      <div class="card-top">
+        <h3>Pinned Memories <a class="anchor" href="#pinned-memories">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Memory files can now be marked as "pinned" using a metadata frontmatter field. Pinned memories are automatically injected at the start of every conversation under the heading <code># Pinned memories (apply to every conversation)</code>, making them available without the model needing to look them up.</p>
+<div class="blabel">Usage</div>
+<p>Add the following frontmatter to any memory file to pin it:</p>
+<pre><code>---
+name: my-preference
+description: My team&#x27;s coding conventions
+metadata:
+  pinned: true
+---
+
+Your memory content here.</code></pre>
+<div class="blabel">Details</div>
+<ul><li>Pinned memories are scanned each session and injected into the system prompt automatically</li><li>The feature is gated behind <code>tengu_gable_onyx_sluice</code> and <code>tengu_larch_pavise</code> flags (gradual rollout)</li><li>Pinned memories appear in context under the XML-like tag <code>&lt;pinned-memory path="..."&gt;...&lt;/pinned-memory&gt;</code></li><li>Up to a configurable cap of pinned files are injected; files exceeding the limit are dropped with telemetry logged</li><li>The <code>AutoMemPinned</code> type is used internally to track these injected memories (search for <code>"AutoMemPinned"</code>)</li></ul>
+<div class="blabel">Evidence</div>
+<p>New memory scan infrastructure (search for <code>"# Pinned memories (apply to every conversation)"</code>)</p>
+    </article>
+    <article class="card" id="directoryadded-hook">
+      <div class="card-top">
+        <h3>DirectoryAdded Hook <a class="anchor" href="#directoryadded-hook">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new <code>DirectoryAdded</code> hook event type fires whenever a working directory is added to the session mid-run, either via the <code>/add-dir</code> slash command or via an SDK <code>register_repo_root</code> control request.</p>
+<div class="blabel">Usage</div>
+<p>Configure the hook in your <code>settings.json</code> or <code>settings.local.json</code>:</p>
+<pre><code>{
+  &quot;hooks&quot;: {
+    &quot;DirectoryAdded&quot;: [
+      {
+        &quot;matcher&quot;: &quot;&quot;,
+        &quot;hooks&quot;: [{ &quot;type&quot;: &quot;command&quot;, &quot;command&quot;: &quot;echo &#x27;Directory added&#x27;&quot; }]
+      }
+    ]
+  }
+}</code></pre>
+<div class="blabel">Details</div>
+<ul><li>The hook payload includes <code>Absolute path of the directory that was added</code> and <code>How the directory was added: "slash_command" for /add-dir, "register_repo_root" for the SDK control_request</code></li><li>Hook execution failures are logged with the messages <code>"DirectoryAdded hook exec failed:"</code>, <code>"DirectoryAdded hook execution failed:"</code>, and <code>"DirectoryAdded hook failed:"</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>New hook event type (search for <code>"DirectoryAdded"</code>)</p>
+    </article>
+    <article class="card" id="add-dir-scope-expanded">
+      <div class="card-top">
+        <h3>/add-dir Scope Expanded <a class="anchor" href="#add-dir-scope-expanded">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>/add-dir</code> command now accepts directories that are subdirectories of directories passed at launch via <code>--add-dir</code>, in addition to subdirectories of cwd.</p>
+<p>Before: Directories added mid-session had to be strict subdirectories of the current working directory.</p>
+<p>After: Directories added mid-session can be subdirectories of cwd or of any directory passed at launch via <code>--add-dir</code>.</p>
+<div class="blabel">Evidence</div>
+<p>Updated <code>/add-dir</code> description (search for <code>"is not a subdirectory of cwd or of a launch-time --add-dir root"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">18 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="workshop-live-edit-now-blocked-for-workshop-pages">
+      <div class="card-top">
+        <h3>Workshop Live-Edit Now Blocked for Workshop Pages <a class="anchor" href="#workshop-live-edit-now-blocked-for-workshop-pages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Live-edit (direct in-place editing of a published artifact) is now blocked when the target artifact is a workshop page. This prevents bypassing the publish-time validation that ensures workshop HTML integrity.</p>
+<p>When attempting to live-edit a workshop page, you will now see:</p>
+<pre><code>live-edit is not available on workshop pages — edit the local workshop file and republish; the publish path is the validation chokepoint live-edit would bypass</code></pre>
+<p>If the page's workshop nature cannot be verified due to a transient network failure, you'll see a more specific message with a retry suggestion.</p>
+<div class="blabel">Evidence</div>
+<p>New workshop live-edit guard (search for <code>"live-edit is not available on workshop pages"</code>)</p>
+    </article>
+    <article class="card" id="cybersecurity-safeguard-messages-improved">
+      <div class="card-top">
+        <h3>Cybersecurity Safeguard Messages Improved <a class="anchor" href="#cybersecurity-safeguard-messages-improved">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The messaging shown when Claude's safety system flags a message has been updated:</p>
+<ul><li>The old vague message has been replaced with more specific and actionable text</li><li>For cybersecurity topics: "Our intentionally broad safeguards allow us to deliver more capabilities faster, but can sometimes flag legitimate cybersecurity work."</li><li>Users are now directed to apply to the <strong>Cyber Verification Program</strong> to reduce these interruptions, with a link to <code>https://support.claude.com/en/articles/16049681</code></li><li>For general coding, cybersecurity, and biology tasks: "Our intentionally broad safeguards allow us to deliver more capabilities faster, but can sometimes flag legitimate coding, cybersecurity, and biology tasks."</li></ul>
+<p>The old text like "These measures let us bring you Mythos-level capabilities sooner" and "They may flag safe, normal content as well" has been removed.</p>
+<div class="blabel">Evidence</div>
+<p>New safeguard strings (search for <code>"Apply to the Cyber Verification Program to reduce these interruptions."</code>)</p>
+    </article>
+    <article class="card" id="memory-sync-error-messages-now-include-resolution-steps">
+      <div class="card-top">
+        <h3>Memory Sync Error Messages Now Include Resolution Steps <a class="anchor" href="#memory-sync-error-messages-now-include-resolution-steps">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When memory sync is disabled due to a directory conflict, the error messages now include specific resolution steps with timing information.</p>
+<p>Before (mount_dir_foreign_partition): &gt; Memory sync is disabled for this file's directory: it contains sync state from a different memory store (mount_dir_foreign_partition). This write was saved locally but is NOT being synced…</p>
+<p>After: &gt; Memory sync is disabled for this file's directory: it already holds the synced memory of a different memory store (mount_dir_foreign_partition), so writes here are saved locally but are NOT synced to shared/server memory. To resolve it, rename or relocate the conflicting directory team/[name]/ — sync re-enables automatically on the next sync cycle once it is out of the way (within the hour at most, sooner on the next write or restart); deleting it instead discards any unsynced files inside it…</p>
+<p>Similar improvements apply to <code>mount_dir_unmanifested_nonempty</code>. Both messages now instruct the model to tell the user about the conflict.</p>
+<div class="blabel">Evidence</div>
+<p>Improved sync error messages (search for <code>"condition cleared — re-adopting the mount dir"</code>)</p>
+    </article>
+    <article class="card" id="claude-code-git-bash-path-no-longer-crashes-on-bad-path">
+      <div class="card-top">
+        <h3>CLAUDE_CODE_GIT_BASH_PATH No Longer Crashes on Bad Path <a class="anchor" href="#claude-code-git-bash-path-no-longer-crashes-on-bad-path">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>Previously, setting <code>CLAUDE_CODE_GIT_BASH_PATH</code> to a path that didn't exist would cause Claude Code to exit with <code>process.exit(1)</code>. Now it validates both that the path exists and that the file is actually a bash/sh binary (bash.exe, sh.exe, bash, sh), logs a warning with details, and falls back to auto-detection.</p>
+<p>New warning messages:</p>
+<ul><li>If the file doesn't exist: <code>CLAUDE_CODE_GIT_BASH_PATH "[path]" not found; falling back to auto-detection</code></li><li>If it exists but isn't a bash/sh binary: <code>CLAUDE_CODE_GIT_BASH_PATH "[path]" is not a bash/sh binary; falling back to auto-detection</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Improved path validation (search for <code>"is not a bash/sh binary"</code>)</p>
+    </article>
+    <article class="card" id="read-page-data-schema-validation-improved">
+      <div class="card-top">
+        <h3>read_page_data Schema Validation Improved <a class="anchor" href="#read-page-data-schema-validation-improved">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>read_page_data</code> Artifact action now validates that the requested schema is registered in the session before proceeding, and returns a clearer error.</p>
+<p>Before: A generic "schema required" error with the workshop-decisions example hardcoded.</p>
+<p>After:</p>
+<ul><li>If no schema is provided: the error message dynamically shows an example from the available schemas</li><li>If the schema is provided but not registered: <code>interaction schema "[name]" is not available in this session. Available schemas: [list]</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Improved schema error handling (search for <code>"is not available in this session. Available schemas:"</code>)</p>
+    </article>
+    <article class="card" id="mcp-server-name-proto-is-now-reserved">
+      <div class="card-top">
+        <h3>MCP Server Name <code>__proto__</code> Is Now Reserved <a class="anchor" href="#mcp-server-name-proto-is-now-reserved">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>MCP server config entries using <code>__proto__</code> as the server name are now rejected at load time. The server will not be loaded, and a warning is displayed:</p>
+<pre><code>&quot;__proto__&quot; is a reserved MCP server name and was not loaded</code></pre>
+<p>This prevents prototype pollution via MCP server naming.</p>
+<div class="blabel">Evidence</div>
+<p>Reserved name check (search for <code>"__proto__" is a reserved MCP server name and was not loaded"</code>)</p>
+    </article>
+    <article class="card" id="mcp-config-whitespace-validation">
+      <div class="card-top">
+        <h3>MCP Config Whitespace Validation <a class="anchor" href="#mcp-config-whitespace-validation">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>MCP server config values (command, url, args, env, headers) are now validated for leading or trailing whitespace. If found, the validation reports which field contains the whitespace:</p>
+<pre><code>Leading or trailing whitespace in: [field name]</code></pre>
+<div class="blabel">Evidence</div>
+<p>New whitespace validation (search for <code>"Leading or trailing whitespace in:"</code>)</p>
+    </article>
+    <article class="card" id="mcp-policy-url-variable-expansion-safety">
+      <div class="card-top">
+        <h3>MCP Policy URL Variable Expansion Safety <a class="anchor" href="#mcp-policy-url-variable-expansion-safety">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When MCP policy URL predicates use <code>${VAR}</code> variable substitution, the expansion is now checked for unsafe patterns:</p>
+<ul><li>Variables that inject wildcard semantics (<code>*</code>)</li><li>Variables that restructure the URL (inject <code>/</code>, <code>?</code>, <code>#</code>, etc.)</li><li>Variables whose values span authority or scheme positions when they shouldn't</li></ul>
+<p>A warning is logged for unsafe expansions, and allowlist URL entries using such variables fail closed (deny by default). Denylist entries are not affected.</p>
+<div class="blabel">Evidence</div>
+<p>New URL expansion safety check (search for <code>"MCP policy URL predicate expansion was unsafe"</code>)</p>
+    </article>
+    <article class="card" id="engine-pre-release-tag-now-recognized">
+      <div class="card-top">
+        <h3><code>"engine"</code> Pre-Release Tag Now Recognized <a class="anchor" href="#engine-pre-release-tag-now-recognized">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The version string parser now recognizes <code>engine</code> as a valid pre-release tag in semver strings (alongside <code>dev</code>, <code>alpha</code>, <code>beta</code>, <code>rc</code>, <code>test</code>, <code>nightly</code>). This affects internal version comparison logic used for daemon upgrade decisions.</p>
+<div class="blabel">Evidence</div>
+<p>Regex update (search for the updated version regex pattern that includes <code>"engine"</code>)</p>
+    </article>
+    <article class="card" id="artifact-pr-review-skill-rebuilt-as-template-filling-flow">
+      <div class="card-top">
+        <h3>Artifact PR Review Skill Rebuilt as Template-Filling Flow <a class="anchor" href="#artifact-pr-review-skill-rebuilt-as-template-filling-flow">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The <code>artifact-pr-review</code> skill has been substantially updated. It now uses a four-step template-filling flow where the model authors a JSON object and fills a bundled HTML template directly, rather than passing a payload to the Artifact tool's <code>pr_review</code> input. This gives the model full control over the page HTML while maintaining strict validation at publish time.</p>
+<p>Key changes:</p>
+<ul><li>Step 1: Gather the PR (unchanged)</li><li>Step 2: Author a JSON "generated" object (new schema, with explainer blocks, synthesis, concerns)</li><li>Step 3: Fill the bundled template from the JSON, wire the staleness signal and decision pills manually</li><li>Step 4: Publish the filled HTML with the Artifact tool</li></ul>
+<p>The validation contract is more explicit: the model must HTML-escape all PR-derived strings, validate JSON fields against length limits, and ensure no external resources are referenced.</p>
+<div class="blabel">Evidence</div>
+<p>Skill rewrite (search for <code>"fill the bundled template"</code> and <code>"SLOT:"</code>)</p>
+    </article>
+    <article class="card" id="workshop-skill-loop-stays-on-the-page">
+      <div class="card-top">
+        <h3>Workshop Skill: Loop Stays on the Page <a class="anchor" href="#workshop-skill-loop-stays-on-the-page">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The workshop skill instructions have been strengthened: the model is now explicitly told to keep the decision loop in the artifact, not in chat. Follow-up questions and clarification requests from typed answers should be turned into new decision blocks on the page, not conversation messages. The skill also now requires updating the workshop document with links to deliverables after the build ships.</p>
+<div class="blabel">Evidence</div>
+<p>Improved loop guidance (search for <code>"This includes YOUR follow-up questions"</code> and <code>"After the build: close the loop on the page"</code>)</p>
+    </article>
+    <article class="card" id="workflow-size-guideline-messaging-improved">
+      <div class="card-top">
+        <h3>Workflow Size Guideline Messaging Improved <a class="anchor" href="#workflow-size-guideline-messaging-improved">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The workflow size guideline system prompts have been reworded for clarity:</p>
+<ul><li>The message now distinguishes between session-configured and default guidelines</li><li>"Unrestricted" sessions now show: <code>"Workflow size is now unrestricted — no size guideline applies."</code></li><li>Users are reminded they can adjust the setting: <code>"The user can raise or remove it with \"Dynamic workflow size\" in /config."</code></li></ul>
+<div class="blabel">Evidence</div>
+<p>Improved guideline strings (search for <code>"Advisory size guideline for the dynamic workflows Claude writes"</code>)</p>
+    </article>
+    <article class="card" id="model-descriptions-in-picker-show-usage-credit-requirement">
+      <div class="card-top">
+        <h3>Model Descriptions in Picker Show Usage Credit Requirement <a class="anchor" href="#model-descriptions-in-picker-show-usage-credit-requirement">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When a model requires usage credits (extra_usage disabled scenario), its description in the model picker now appends <code>" · Requires usage credits"</code> to alert users before they select it.</p>
+<div class="blabel">Evidence</div>
+<p>New description suffix (search for <code>"Requires usage credits"</code>)</p>
+    </article>
+    <article class="card" id="memory-system-instruction-condensed">
+      <div class="card-top">
+        <h3>Memory System Instruction Condensed <a class="anchor" href="#memory-system-instruction-condensed">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The memory system prompt shown to the model has been significantly condensed while preserving all key behavioral rules. The verbose multi-section format has been replaced with a shorter, denser version that is easier to follow for the model. The new version also adds:</p>
+<ul><li>Clearer handling of scope words like "in this change" or "for now" (indicating one-off, not a rule to save)</li><li>Explicit guidance on what counts as a "correction" even when phrased as a task or question</li></ul>
+<div class="blabel">Evidence</div>
+<p>Condensed memory prompt (search for <code>"A good memory is applicable, durable, and legible:"</code>)</p>
+    </article>
+    <article class="card" id="sidecar-file-history-tracked-for-workshop-pages">
+      <div class="card-top">
+        <h3>Sidecar File History Tracked for Workshop Pages <a class="anchor" href="#sidecar-file-history-tracked-for-workshop-pages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The artifact publish system now tracks which sidecar files (renderable or executable) have been associated with an artifact. Workshop pages cannot ship renderable or executable sidecar files, and a new publish validation checks this history to prevent accidental sidecar inclusion.</p>
+<p>Error when sidecar files are detected:</p>
+<pre><code>workshop pages cannot ship renderable or executable sidecar files —</code></pre>
+<div class="blabel">Evidence</div>
+<p>Sidecar history tracking (search for <code>"refusedSidecarHistory"</code> and <code>"workshop pages cannot ship renderable or executable sidecar files"</code>)</p>
+    </article>
+    <article class="card" id="agent-workflow-tool-invocation-restrictions">
+      <div class="card-top">
+        <h3>Agent/Workflow Tool Invocation Restrictions <a class="anchor" href="#agent-workflow-tool-invocation-restrictions">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>When running as a subagent or in restricted contexts, two new behavioral guards are now explicitly stated in the system prompt:</p>
+<pre><code>Do not call the AgentTool unless the user requested it
+Do not use workflows or deep-research unless the user requested it</code></pre>
+<div class="blabel">Evidence</div>
+<p>New explicit restrictions (search for <code>"Do not call the AgentTool unless the user requested it"</code>)</p>
+    </article>
+    <article class="card" id="fast-mode-status-tracking-improved">
+      <div class="card-top">
+        <h3>Fast Mode Status Tracking Improved <a class="anchor" href="#fast-mode-status-tracking-improved">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>The internal fast mode (Opus "penguin mode") status tracking has been refactored to be more robust:</p>
+<ul><li>Status transitions now emit events properly when the disabled reason changes (not just when enabled/disabled state changes)</li><li>A new "server-disabled" state (<code>source: "server"</code>) prevents redundant API calls when the organization has server-disabled fast mode</li><li>The error message when the org status fetch fails changed from "defaulting to" to "standing on" to better describe the behavior (using last-known state rather than a default)</li></ul>
+<div class="blabel">Evidence</div>
+<p>Improved fast mode state machine (search for <code>"Failed to fetch org fast mode status, standing on"</code>)</p>
+    </article>
+    <article class="card" id="secret-redaction-in-error-messages">
+      <div class="card-top">
+        <h3>Secret Redaction in Error Messages <a class="anchor" href="#secret-redaction-in-error-messages">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <p>A new utility function now automatically redacts credentials from error message strings before they are displayed to users. Bearer tokens, API keys, passwords, and other common secret patterns are replaced with <code>[redacted]</code>.</p>
+<div class="blabel">Evidence</div>
+<p>New redaction utility (search for <code>"bearer|basic"</code> in the new redaction function, or <code>"[redacted]"</code>)</p>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">7 items</span>  </div>
+  <div class="card-grid">
+    <article class="card" id="bug-fixes">
+      <ul><li>Shell command detection for memory deletion now uses a compiled regex (<code>rm|remove-item|ri|del|erase</code>) rather than an inline pattern, improving consistency and adding Windows PowerShell removal commands (<code>remove-item</code>, <code>ri</code>, <code>del</code>, <code>erase</code>) (search for <code>"rm|remove-item|ri|del|erase"</code>)</li></ul>
+<ul><li>The <code>--teleport</code> repo mismatch error now correctly handles hostname differences by stripping port numbers before comparison and using a helper function to format the session/current repo display (search for <code>"Vvo"</code> function with <code>sessionDisplay</code>/<code>currentDisplay</code>)</li></ul>
+<ul><li>Conversation cleanup on shutdown (<code>findUnresolvedToolUse</code>) now correctly handles the case where tool results were interrupted by shutdown, preventing false "unresolved tool use" reports in sessions that ended abruptly (search for <code>"interruptedByShutdown"</code>)</li></ul>
+<ul><li>MCP OAuth flow attempt IDs are now hashed before being sent to telemetry, preventing raw UUIDs from appearing in analytics data (search for <code>"tengu_mcp_oauth_flow_start"</code>)</li></ul>
+<ul><li>The org memory discovery conflict-resolution logic now correctly delegates to the shared <code>fnu()</code> helper rather than duplicating the logic inline (internal refactor, no user-facing change)</li></ul>
+<ul><li>Plan slug collision detection now checks for sidecar file paths in addition to <code>.md</code> paths, preventing overwrite issues when plan files have associated sidecar content</li></ul>
+<ul><li>The daemon upgrade check now requires that both versions parse as semver and belong to the same semver "engine" before comparing version numbers, preventing cross-build-channel upgrade attempts (search for <code>"phn"</code> function checking pre-release tags)</li></ul>
+    </article>
+  </div>
+  <div class="section-head">
+    <h2>Notes</h2><div class="ln"></div>
+  </div>
+  <div class="card-grid">
+    <article class="card" id="notes">
+      <p>The <code>artifact-pr-review</code> skill has changed its publish mechanism from the Artifact tool's structured <code>pr_review</code> input to direct HTML template filling. Sessions that have the old skill cached may need to be refreshed. If you see <code>"composed review publishing is not enabled in this session"</code>, start a new session to pick up the updated skill.</p>
+<p>The <code>__proto__</code> MCP server name restriction is a breaking change for any configuration using that exact name. Rename the server in your MCP config.</p>
+    </article>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.219.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.219.txt</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+</script>
+</body>
+</html>
