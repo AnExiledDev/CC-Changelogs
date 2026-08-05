@@ -106,9 +106,9 @@
         <li><a href="#destructive-mcp-tools-can-be-included-in-remote-auto-mode">A check forcing prompts for destructive MCP tools in remote auto mode is gated on tengu_remote_auto_mode_include_destructive_mcp, false in source.</a> <code class="tok">tengu_remote_auto_mode_include_destructive_mcp</code><span class="ar">Permissions</span></li>
         <li><a href="#parked-askuserquestion-prompts-can-survive-stream-shutdown">Preserving a parked AskUserQuestion across stream shutdown is fully wired with telemetry, but gated behind a remote value that must resolve to &#34;preserve&#34;; the fallback is off, so cancel-and-deny still happens.</a><span class="ar">Permissions</span></li>
         <li><a href="#unsafe-path-command-resolution-guard-off-in-this-build">Three spawn wrappers now share an unsafe-PATH check, but its controlling predicate returns false so nothing is refused.</a><span class="ar">Sandbox</span></li>
-        <li><a href="#claude-import-is-stubbed-out-in-this-build">Argument parsing for `claude import` is present, but the command is gated on a config flag and prints a message instead of running.</a> <code class="tok">claude import</code><code class="tok">--yes</code><code class="tok">/import</code><span class="ar">Internals</span></li>
         <li><a href="#session-state-tracks-pending-branch-links">A pendingBranchLinks map and a command-matching regex sit in session state with no surfaced behaviour in this build.</a><span class="ar">Session State</span></li>
         <li><a href="#skill-frontmatter-metadata-is-kept-on-the-loaded-record">Skill frontmatter now keeps an object-valued metadata field on the loaded record, with no behaviour attached in this build.</a> <code class="tok">metadata</code><span class="ar">Skills</span></li>
+        <li><a href="#claude-import-is-stubbed-out-in-this-build">Argument parsing for `claude import` is present, but the command is gated on a config flag and prints a message instead of running.</a> <code class="tok">claude import</code><code class="tok">--yes</code><code class="tok">/import</code><span class="ar">Internals</span></li>
         <li><a href="#sdk-stream-shutdown-can-preserve-parked-permission-requests">Parked permission requests can be preserved through shutdown, behind two internal checks with no resolvable flag name.</a><span class="ar">SDK</span></li>
         <li><a href="#settings-reader-computes-a-host-model-overlay">A host-managed model overlay is read as a settings source but is only reachable when a host provider is configured, otherwise unresolved.</a><span class="ar">Settings</span></li>
         <li><a href="#footer-can-show-an-ide-indicator">An IDE indicator element and its width maths exist in the footer, but its render condition could not be resolved.</a><span class="ar">Elsewhere</span></li>
@@ -141,7 +141,7 @@
   </div>
   <div class="section-head lead">
     <h2>What probably matters to you</h2><div class="ln"></div>
-<span class="ct">28 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+<span class="ct">25 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
 <p class="section-note">Anything you can use today, anything that visibly changes, and anything worth poking at. One line each, open for detail.</p>  <div class="card-list">
   <div class="col">
     <article class="card folded q4" id="artifacts-dialog-can-dismiss-frames-with-x" data-f="juicy k-new-features t-use x-setting x-slash">
@@ -350,38 +350,21 @@
 <p><code>footer_indicator</code></p>
 <hr></div>
     </article>
-    <article class="card folded q2" id="session-state-tracks-pending-branch-links" data-f="juicy k-internal-changes t-soon upcoming">
+    <article class="card folded q2" id="skill-frontmatter-metadata-is-kept-on-the-loaded-record" data-f="juicy k-internal-changes t-soon upcoming x-setting">
       <div class="card-top">
-        <h3>Session state tracks pending branch links <a class="anchor" href="#session-state-tracks-pending-branch-links">#</a></h3>
+        <h3>Skill frontmatter metadata is kept on the loaded record <a class="anchor" href="#skill-frontmatter-metadata-is-kept-on-the-loaded-record">#</a></h3>
 <div class="tags"><span class="tag key">Juicy</span></div>      </div>
-      <p class="glance">Sessions can now track branch links alongside pull-request links, with detection for git, gh, glab and curl commands.</p>
+      <p class="glance">Skills can carry a metadata block in their frontmatter, but nothing uses it yet.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Not switched on</b> &middot; Session State</span>
+<div class="toks"><code class="tok">metadata</code></div>        <span class="where"><b>Not switched on</b> &middot; Skills</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>Session state carries pending branch links alongside pending PR links, with the PR-created path folded into one helper.</p>
+<p>Plugin skill loading now carries an object-valued <code>metadata</code> frontmatter field through into the loaded skill record.</p>
 <div class="blabel">Details</div>
-<ul><li>A <code>pendingBranchLinks</code> Map was added to the session state object and to both reset paths.</li><li>Sits next to the existing <code>pendingPrLinks</code> set.</li><li>A new regex matches git, gh, glab and curl in commands.</li></ul>
+<ul><li>Stored alongside declaredFields rather than being dropped during parse.</li><li>No user-visible behaviour attaches to the field in this build.</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>pendingBranchLinks</code></p>
-<hr></div>
-    </article>
-    <article class="card folded q2" id="sdk-stream-shutdown-can-preserve-parked-permission-requests" data-f="k-in-development t-internal upcoming">
-      <div class="card-top">
-        <h3>SDK stream shutdown can preserve parked permission requests <a class="anchor" href="#sdk-stream-shutdown-can-preserve-parked-permission-requests">#</a></h3>
-      </div>
-      <p class="glance">Pending permission prompts can survive an SDK stream closing instead of vanishing.</p>
-      <div class="card-actions">
-        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Under the hood</b> &middot; SDK</span>
-      </div>
-      <div class="card-body" hidden><div class="blabel">What</div>
-<p>The control client can remember pending can_use_tool requests for a parked tool when the input stream closes, so they survive shutdown instead of being dropped.</p>
-<div class="blabel">Details</div>
-<ul><li>Preserved ids live in a preservedParkRequestIds set.</li><li>While any are preserved the session is not flipped back to "running".</li><li>Ids are cleared as responses arrive or when the park is retracted.</li><li>Guarded by two internal predicates evaluated at shutdown time that could not be resolved to a flag name.</li></ul>
-<div class="blabel">Evidence</div>
-<p><code>preservedParkRequestIds</code></p>
+<p><code>declaredFields</code></p>
 <hr></div>
     </article>
   </div>
@@ -575,61 +558,27 @@
 <p><code>not found or is in an unsafe location (current directory)</code></p>
 <hr></div>
     </article>
-    <article class="card folded q2" id="claude-import-is-stubbed-out-in-this-build" data-f="k-in-development t-soon upcoming x-flag x-setting x-slash">
+    <article class="card folded q2" id="session-state-tracks-pending-branch-links" data-f="juicy k-internal-changes t-soon upcoming">
       <div class="card-top">
-        <h3><code>claude import</code> is stubbed out in this build <a class="anchor" href="#claude-import-is-stubbed-out-in-this-build">#</a></h3>
-      </div>
-      <p class="glance">The import command exists but just prints a message instead of starting a session here.</p>
-      <div class="card-actions">
-        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-<div class="toks"><code class="tok">claude import</code><code class="tok">--yes</code><code class="tok">/import</code></div>        <span class="where"><b>Not switched on</b> &middot; Internals</span>
-      </div>
-      <div class="card-body" hidden><div class="blabel">What</div>
-<p>The import argument handling was rewritten into a parser plus a rewrite decision, but the command itself is not wired up here and prints a message instead of starting a session.</p>
-<div class="blabel">Details</div>
-<ul><li>Gated on a config-derived availability flag; when unavailable it prints the message below and exits.</li><li>If the config cannot be read at all it prints a recovery message instead.</li><li>The <code>--yes</code> help text now mentions a digest taken from the <code>/import</code> preview.</li></ul>
-<div class="blabel">Evidence</div>
-<p><code>claude import</code> is not yet available in this build. Run <code>claude</code> and use /mcp or edit ~/.claude/settings.json directly.</p>
-<hr></div>
-    </article>
-    <article class="card folded q2" id="skill-frontmatter-metadata-is-kept-on-the-loaded-record" data-f="juicy k-internal-changes t-soon upcoming x-setting">
-      <div class="card-top">
-        <h3>Skill frontmatter metadata is kept on the loaded record <a class="anchor" href="#skill-frontmatter-metadata-is-kept-on-the-loaded-record">#</a></h3>
+        <h3>Session state tracks pending branch links <a class="anchor" href="#session-state-tracks-pending-branch-links">#</a></h3>
 <div class="tags"><span class="tag key">Juicy</span></div>      </div>
-      <p class="glance">Skills can carry a metadata block in their frontmatter, but nothing uses it yet.</p>
+      <p class="glance">Sessions can now track branch links alongside pull-request links, with detection for git, gh, glab and curl commands.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-<div class="toks"><code class="tok">metadata</code></div>        <span class="where"><b>Not switched on</b> &middot; Skills</span>
+        <span class="where"><b>Not switched on</b> &middot; Session State</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>Plugin skill loading now carries an object-valued <code>metadata</code> frontmatter field through into the loaded skill record.</p>
+<p>Session state carries pending branch links alongside pending PR links, with the PR-created path folded into one helper.</p>
 <div class="blabel">Details</div>
-<ul><li>Stored alongside declaredFields rather than being dropped during parse.</li><li>No user-visible behaviour attaches to the field in this build.</li></ul>
+<ul><li>A <code>pendingBranchLinks</code> Map was added to the session state object and to both reset paths.</li><li>Sits next to the existing <code>pendingPrLinks</code> set.</li><li>A new regex matches git, gh, glab and curl in commands.</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>declaredFields</code></p>
-<hr></div>
-    </article>
-    <article class="card folded q2" id="settings-reader-computes-a-host-model-overlay" data-f="k-internal-changes t-internal upcoming">
-      <div class="card-top">
-        <h3>Settings reader computes a host model overlay <a class="anchor" href="#settings-reader-computes-a-host-model-overlay">#</a></h3>
-      </div>
-      <p class="glance">Settings can inherit a model choice from a managing host, though that path only exists when one is configured.</p>
-      <div class="card-actions">
-        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Under the hood</b> &middot; Settings</span>
-      </div>
-      <div class="card-body" hidden><div class="blabel">What</div>
-<p>The parent-slice settings reader also derives a model overlay from the host-managed provider, and reports it as a source of truth.</p>
-<div class="blabel">Details</div>
-<ul><li>The source-of-truth lookup returns "parent" when either the parent slice or the <code>hostModelOverlay</code> is present.</li><li>Only reachable when a host-managed provider is configured; state otherwise unresolved.</li></ul>
-<div class="blabel">Evidence</div>
-<p><code>hostModelOverlay</code></p>
+<p><code>pendingBranchLinks</code></p>
 <hr></div>
     </article>
   </div>
   </div>
   <div class="group-divider rest">
-    <div class="gd-title">Everything else &middot; 93</div>
+    <div class="gd-title">Everything else &middot; 96</div>
     <div class="gd-sub">Smaller changes and internals, grouped as the pipeline found them. Nothing is dropped, it is only further down.</div>
   </div>
   <div class="section-head muted">
@@ -1749,8 +1698,78 @@
   </div>
   <div class="section-head muted">
     <h2>In Development</h2><div class="ln"></div>
-<span class="ct">5 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+<span class="ct">7 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
   <div class="card-list">
+  <div class="col">
+    <article class="card folded q2" id="claude-import-is-stubbed-out-in-this-build" data-f="k-in-development t-soon upcoming x-flag x-setting x-slash">
+      <div class="card-top">
+        <h3><code>claude import</code> is stubbed out in this build <a class="anchor" href="#claude-import-is-stubbed-out-in-this-build">#</a></h3>
+      </div>
+      <p class="glance">The import command exists but just prints a message instead of starting a session here.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">claude import</code><code class="tok">--yes</code><code class="tok">/import</code></div>        <span class="where"><b>Not switched on</b> &middot; Internals</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The import argument handling was rewritten into a parser plus a rewrite decision, but the command itself is not wired up here and prints a message instead of starting a session.</p>
+<div class="blabel">Details</div>
+<ul><li>Gated on a config-derived availability flag; when unavailable it prints the message below and exits.</li><li>If the config cannot be read at all it prints a recovery message instead.</li><li>The <code>--yes</code> help text now mentions a digest taken from the <code>/import</code> preview.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>claude import</code> is not yet available in this build. Run <code>claude</code> and use /mcp or edit ~/.claude/settings.json directly.</p>
+<hr></div>
+    </article>
+    <article class="card folded q1" id="more-state-gains-v5-backed-code-paths" data-f="k-in-development t-internal upcoming">
+      <div class="card-top">
+        <h3>More state gains v5-backed code paths <a class="anchor" href="#more-state-gains-v5-backed-code-paths">#</a></h3>
+      </div>
+      <p class="glance">Themes, settings, tasks and transcripts gained alternative storage paths that stay dormant without a backend.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Internals</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Several stores now have a v5 backend path sitting alongside the existing file path, taken only when a backend is supplied.</p>
+<div class="blabel">Details</div>
+<ul><li>Covers theme listing and saving, MCP task metadata (write, delete and list under an <code>mcp-tasks</code> sidecar), scheduled-task status, user settings writes, and ranged transcript reads.</li><li>Settings write failures now raise a distinct error naming the failure class.</li><li>Each path is inert unless a v5 backend is passed in; what supplies it could not be determined.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>settings storageV5 write failed</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="footer-can-show-an-ide-indicator" data-f="k-in-development t-soon upcoming">
+      <div class="card-top">
+        <h3>Footer can show an IDE indicator <a class="anchor" href="#footer-can-show-an-ide-indicator">#</a></h3>
+      </div>
+      <p class="glance">The footer reserves room for an IDE indicator, though whether it actually shows is unresolved.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The status footer computes an indicator element rendered in the "ide" color with a lozenge glyph, and the compact-footer width maths now reserves space for it. Whether it renders in this build could not be resolved.</p>
+<div class="blabel">Details</div>
+<ul><li>Thresholds deciding whether the compact footer fits add the indicator's width plus five.</li><li>An extra check hides content below 48 columns when the indicator is present.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>"footer-indicator"</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="codex-config-import-parses-toml-with-bun-s-built-in-parser" data-f="k-in-development t-soon upcoming x-setting">
+      <div class="card-top">
+        <h3>Codex config import parses TOML with Bun's built-in parser <a class="anchor" href="#codex-config-import-parses-toml-with-bun-s-built-in-parser">#</a></h3>
+      </div>
+      <p class="glance">Importing another agent&#39;s config now parses TOML natively, reachable only through the gated import path.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">tengu_import</code></div>        <span class="where"><b>Not switched on</b> &middot; Internals</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Reading a foreign agent's Codex config during import now uses Bun's native TOML parser through a one-line wrapper, before the config is mapped.</p>
+<div class="blabel">Details</div>
+<ul><li>The wrapper calls <code>Bun.TOML.parse(e)</code> on the config file contents</li><li>Reachable only via the import path, which is behind <code>tengu_import</code></li><li>A filename/label normalizer was added alongside it: NFKC normalize, lowercase, strip trailing dots and spaces</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Bun.TOML.parse</code></p>
+<hr></div>
+    </article>
+  </div>
   <div class="col">
     <article class="card folded q1" id="telemetry-retry-batches-can-persist-as-v5-streams" data-f="k-in-development t-internal upcoming">
       <div class="card-top">
@@ -1786,64 +1805,28 @@
 <p><code>transcript stream append failed</code></p>
 <hr></div>
     </article>
-    <article class="card folded q2" id="codex-config-import-parses-toml-with-bun-s-built-in-parser" data-f="k-in-development t-soon upcoming x-setting">
+    <article class="card folded q2" id="sdk-stream-shutdown-can-preserve-parked-permission-requests" data-f="k-in-development t-internal upcoming">
       <div class="card-top">
-        <h3>Codex config import parses TOML with Bun's built-in parser <a class="anchor" href="#codex-config-import-parses-toml-with-bun-s-built-in-parser">#</a></h3>
+        <h3>SDK stream shutdown can preserve parked permission requests <a class="anchor" href="#sdk-stream-shutdown-can-preserve-parked-permission-requests">#</a></h3>
       </div>
-      <p class="glance">Importing another agent&#39;s config now parses TOML natively, reachable only through the gated import path.</p>
+      <p class="glance">Pending permission prompts can survive an SDK stream closing instead of vanishing.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-<div class="toks"><code class="tok">tengu_import</code></div>        <span class="where"><b>Not switched on</b> &middot; Internals</span>
+        <span class="where"><b>Under the hood</b> &middot; SDK</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>Reading a foreign agent's Codex config during import now uses Bun's native TOML parser through a one-line wrapper, before the config is mapped.</p>
+<p>The control client can remember pending can_use_tool requests for a parked tool when the input stream closes, so they survive shutdown instead of being dropped.</p>
 <div class="blabel">Details</div>
-<ul><li>The wrapper calls <code>Bun.TOML.parse(e)</code> on the config file contents</li><li>Reachable only via the import path, which is behind <code>tengu_import</code></li><li>A filename/label normalizer was added alongside it: NFKC normalize, lowercase, strip trailing dots and spaces</li></ul>
+<ul><li>Preserved ids live in a preservedParkRequestIds set.</li><li>While any are preserved the session is not flipped back to "running".</li><li>Ids are cleared as responses arrive or when the park is retracted.</li><li>Guarded by two internal predicates evaluated at shutdown time that could not be resolved to a flag name.</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>Bun.TOML.parse</code></p>
-<hr></div>
-    </article>
-  </div>
-  <div class="col">
-    <article class="card folded q1" id="more-state-gains-v5-backed-code-paths" data-f="k-in-development t-internal upcoming">
-      <div class="card-top">
-        <h3>More state gains v5-backed code paths <a class="anchor" href="#more-state-gains-v5-backed-code-paths">#</a></h3>
-      </div>
-      <p class="glance">Themes, settings, tasks and transcripts gained alternative storage paths that stay dormant without a backend.</p>
-      <div class="card-actions">
-        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Under the hood</b> &middot; Internals</span>
-      </div>
-      <div class="card-body" hidden><div class="blabel">What</div>
-<p>Several stores now have a v5 backend path sitting alongside the existing file path, taken only when a backend is supplied.</p>
-<div class="blabel">Details</div>
-<ul><li>Covers theme listing and saving, MCP task metadata (write, delete and list under an <code>mcp-tasks</code> sidecar), scheduled-task status, user settings writes, and ranged transcript reads.</li><li>Settings write failures now raise a distinct error naming the failure class.</li><li>Each path is inert unless a v5 backend is passed in; what supplies it could not be determined.</li></ul>
-<div class="blabel">Evidence</div>
-<p><code>settings storageV5 write failed</code></p>
-<hr></div>
-    </article>
-    <article class="card folded q2" id="footer-can-show-an-ide-indicator" data-f="k-in-development t-soon upcoming">
-      <div class="card-top">
-        <h3>Footer can show an IDE indicator <a class="anchor" href="#footer-can-show-an-ide-indicator">#</a></h3>
-      </div>
-      <p class="glance">The footer reserves room for an IDE indicator, though whether it actually shows is unresolved.</p>
-      <div class="card-actions">
-        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Not switched on</b> &middot; Elsewhere</span>
-      </div>
-      <div class="card-body" hidden><div class="blabel">What</div>
-<p>The status footer computes an indicator element rendered in the "ide" color with a lozenge glyph, and the compact-footer width maths now reserves space for it. Whether it renders in this build could not be resolved.</p>
-<div class="blabel">Details</div>
-<ul><li>Thresholds deciding whether the compact footer fits add the indicator's width plus five.</li><li>An extra check hides content below 48 columns when the indicator is present.</li></ul>
-<div class="blabel">Evidence</div>
-<p><code>"footer-indicator"</code></p>
+<p><code>preservedParkRequestIds</code></p>
 <hr></div>
     </article>
   </div>
   </div>
   <div class="section-head muted">
     <h2>Internal Changes</h2><div class="ln"></div>
-<span class="ct">22 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+<span class="ct">23 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
   <div class="card-list">
   <div class="col">
     <article class="card folded q2" id="heartbeat-failure-streak-detection-in-the-ccr-client" data-f="k-internal-changes t-internal">
@@ -1999,38 +1982,55 @@
 <p><code>extraShellOutputRoot</code></p>
 <hr></div>
     </article>
-    <article class="card folded q1" id="named-ansi-colors-backed-by-an-object-literal" data-f="k-internal-changes t-internal">
+    <article class="card folded q2" id="model-enforcement-stays-inactive-for-the-parent-settings-sou" data-f="k-internal-changes t-internal">
       <div class="card-top">
-        <h3>Named ANSI colors backed by an object literal <a class="anchor" href="#named-ansi-colors-backed-by-an-object-literal">#</a></h3>
+        <h3>Model enforcement stays inactive for the parent settings source <a class="anchor" href="#model-enforcement-stays-inactive-for-the-parent-settings-sou">#</a></h3>
       </div>
-      <p class="glance">Terminal color names are stored differently; nothing changes for you.</p>
+      <p class="glance">Model restrictions won&#39;t kick in when your settings come from a trusted parent source.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
+        <span class="where"><b>Under the hood</b> &middot; Settings</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>The terminal color name list is now an object literal, with the lookup Set derived from its keys.</p>
+<p>A policy view with no model keys sourced from "parent" is treated as cascade-trusted instead of triggering enforcement.</p>
 <div class="blabel">Details</div>
-<ul><li>Moved into a separate module init.</li></ul>
+<ul><li>The <code>availableModels</code> enforcement check previously accepted only the "hkcu" source in this case.</li><li>It now also accepts "parent", returning <code>{ state: "inactive", cascadeTrusted: !0 }</code>.</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>magentaBright</code></p>
+<p><code>cascadeTrusted</code></p>
 <hr></div>
     </article>
-    <article class="card folded q2" id="task-output-files-use-a-memoized-path-and-lazy-directory-cre" data-f="k-internal-changes t-internal">
+    <article class="card folded q1" id="turn-effort-updates-can-skip-creating-an-entry" data-f="k-internal-changes t-internal">
       <div class="card-top">
-        <h3>Task output files use a memoized path and lazy directory creation <a class="anchor" href="#task-output-files-use-a-memoized-path-and-lazy-directory-cre">#</a></h3>
+        <h3>Turn-effort updates can skip creating an entry <a class="anchor" href="#turn-effort-updates-can-skip-creating-an-entry">#</a></h3>
       </div>
-      <p class="glance">Task output files skip repeated path work and only create folders when actually writing.</p>
+      <p class="glance">Empty effort updates no longer leave junk state behind for each agent.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
         <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>Task output writing resolves its file path once per task and creates the containing directory only when the file is opened, replacing an upfront directory-creation step.</p>
+<p>The per-agent UI state updater no longer materializes a store entry for a no-op write.</p>
 <div class="blabel">Details</div>
-<ul><li><code>&lt;taskId&gt;.output</code> is resolved through a per-task path cache</li><li>The parent directory is created at open time with <code>mkdir(dirname, { recursive: true })</code></li><li>The previous upfront directory creation helper was removed</li><li>The cache entry is dropped when the task output is flushed, cleared or cleaned up</li></ul>
+<ul><li>The updater takes a <code>materialize</code> option.</li><li>It skips creating an entry when both the effort and the model being set are null.</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>.output</code></p>
+<p><code>materialize</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q1" id="prefilled-prompt-warning-notification-rendered-from-text-seg" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Prefilled-prompt warning notification rendered from text segments <a class="anchor" href="#prefilled-prompt-warning-notification-rendered-from-text-seg">#</a></h3>
+      </div>
+      <p class="glance">The external-link prompt warning is built differently but looks exactly the same.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Terminal UI</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The pinned warning shown for pre-filled and deep-link prompts is now built as plain text segments rather than a rendered element. Nothing visible changed.</p>
+<div class="blabel">Details</div>
+<ul><li>The notification is pushed as <code>segments</code> produced by a small helper instead of a JSX element</li><li>A JSX segment-list component was removed</li><li>User-visible strings are unchanged, including "Prompt from an external link" and the scroll/review suffixes</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Prompt from an external link</code></p>
 <hr></div>
     </article>
   </div>
@@ -2171,55 +2171,55 @@
 <p><code>inheritedWorktreePath</code></p>
 <hr></div>
     </article>
-    <article class="card folded q2" id="model-enforcement-stays-inactive-for-the-parent-settings-sou" data-f="k-internal-changes t-internal">
+    <article class="card folded q2" id="settings-reader-computes-a-host-model-overlay" data-f="k-internal-changes t-internal upcoming">
       <div class="card-top">
-        <h3>Model enforcement stays inactive for the parent settings source <a class="anchor" href="#model-enforcement-stays-inactive-for-the-parent-settings-sou">#</a></h3>
+        <h3>Settings reader computes a host model overlay <a class="anchor" href="#settings-reader-computes-a-host-model-overlay">#</a></h3>
       </div>
-      <p class="glance">Model restrictions won&#39;t kick in when your settings come from a trusted parent source.</p>
+      <p class="glance">Settings can inherit a model choice from a managing host, though that path only exists when one is configured.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
         <span class="where"><b>Under the hood</b> &middot; Settings</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>A policy view with no model keys sourced from "parent" is treated as cascade-trusted instead of triggering enforcement.</p>
+<p>The parent-slice settings reader also derives a model overlay from the host-managed provider, and reports it as a source of truth.</p>
 <div class="blabel">Details</div>
-<ul><li>The <code>availableModels</code> enforcement check previously accepted only the "hkcu" source in this case.</li><li>It now also accepts "parent", returning <code>{ state: "inactive", cascadeTrusted: !0 }</code>.</li></ul>
+<ul><li>The source-of-truth lookup returns "parent" when either the parent slice or the <code>hostModelOverlay</code> is present.</li><li>Only reachable when a host-managed provider is configured; state otherwise unresolved.</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>cascadeTrusted</code></p>
+<p><code>hostModelOverlay</code></p>
 <hr></div>
     </article>
-    <article class="card folded q1" id="turn-effort-updates-can-skip-creating-an-entry" data-f="k-internal-changes t-internal">
+    <article class="card folded q1" id="named-ansi-colors-backed-by-an-object-literal" data-f="k-internal-changes t-internal">
       <div class="card-top">
-        <h3>Turn-effort updates can skip creating an entry <a class="anchor" href="#turn-effort-updates-can-skip-creating-an-entry">#</a></h3>
+        <h3>Named ANSI colors backed by an object literal <a class="anchor" href="#named-ansi-colors-backed-by-an-object-literal">#</a></h3>
       </div>
-      <p class="glance">Empty effort updates no longer leave junk state behind for each agent.</p>
+      <p class="glance">Terminal color names are stored differently; nothing changes for you.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
         <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>The per-agent UI state updater no longer materializes a store entry for a no-op write.</p>
+<p>The terminal color name list is now an object literal, with the lookup Set derived from its keys.</p>
 <div class="blabel">Details</div>
-<ul><li>The updater takes a <code>materialize</code> option.</li><li>It skips creating an entry when both the effort and the model being set are null.</li></ul>
+<ul><li>Moved into a separate module init.</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>materialize</code></p>
+<p><code>magentaBright</code></p>
 <hr></div>
     </article>
-    <article class="card folded q1" id="prefilled-prompt-warning-notification-rendered-from-text-seg" data-f="k-internal-changes t-internal">
+    <article class="card folded q2" id="task-output-files-use-a-memoized-path-and-lazy-directory-cre" data-f="k-internal-changes t-internal">
       <div class="card-top">
-        <h3>Prefilled-prompt warning notification rendered from text segments <a class="anchor" href="#prefilled-prompt-warning-notification-rendered-from-text-seg">#</a></h3>
+        <h3>Task output files use a memoized path and lazy directory creation <a class="anchor" href="#task-output-files-use-a-memoized-path-and-lazy-directory-cre">#</a></h3>
       </div>
-      <p class="glance">The external-link prompt warning is built differently but looks exactly the same.</p>
+      <p class="glance">Task output files skip repeated path work and only create folders when actually writing.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Under the hood</b> &middot; Terminal UI</span>
+        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>The pinned warning shown for pre-filled and deep-link prompts is now built as plain text segments rather than a rendered element. Nothing visible changed.</p>
+<p>Task output writing resolves its file path once per task and creates the containing directory only when the file is opened, replacing an upfront directory-creation step.</p>
 <div class="blabel">Details</div>
-<ul><li>The notification is pushed as <code>segments</code> produced by a small helper instead of a JSX element</li><li>A JSX segment-list component was removed</li><li>User-visible strings are unchanged, including "Prompt from an external link" and the scroll/review suffixes</li></ul>
+<ul><li><code>&lt;taskId&gt;.output</code> is resolved through a per-task path cache</li><li>The parent directory is created at open time with <code>mkdir(dirname, { recursive: true })</code></li><li>The previous upfront directory creation helper was removed</li><li>The cache entry is dropped when the task output is flushed, cleared or cleaned up</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>Prompt from an external link</code></p>
+<p><code>.output</code></p>
 <hr></div>
     </article>
   </div>

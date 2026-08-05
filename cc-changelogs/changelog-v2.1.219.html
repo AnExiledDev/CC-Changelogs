@@ -144,7 +144,7 @@
   </div>
   <div class="section-head lead">
     <h2>What probably matters to you</h2><div class="ln"></div>
-<span class="ct">52 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+<span class="ct">43 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
 <p class="section-note">Anything you can use today, anything that visibly changes, and anything worth poking at. One line each, open for detail.</p>  <div class="card-list">
   <div class="col">
     <article class="card folded q5" id="opus-5-replaces-opus-4-8-as-the-default-opus-model" data-f="juicy k-new-features t-notice x-env x-setting">
@@ -438,38 +438,21 @@
 <p><code>tengu_sorrel_avocet</code></p>
 <hr></div>
     </article>
-    <article class="card folded q3" id="memory-recall-now-triggers-on-cjk-input-with-no-spaces" data-f="k-in-development t-soon upcoming">
+    <article class="card folded q3" id="pinned-memories-are-injected-into-the-session" data-f="juicy k-in-development t-soon upcoming x-env x-setting">
       <div class="card-top">
-        <h3>Memory recall now triggers on CJK input with no spaces <a class="anchor" href="#memory-recall-now-triggers-on-cjk-input-with-no-spaces">#</a></h3>
-      </div>
-      <p class="glance">Chinese, Japanese and Korean messages without spaces could trigger memory recall, but that branch is off here.</p>
-      <div class="card-actions">
-        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Not switched on</b> &middot; Memory</span>
-      </div>
-      <div class="card-body" hidden><div class="blabel">What</div>
-<p>Recall previously required whitespace in the user's message, which excluded Chinese, Japanese and Korean text written without spaces.</p>
-<div class="blabel">Details</div>
-<ul><li>Adds a branch accepting NFKC-normalized text matching CJK and Hangul ranges.</li><li>That branch is gated on <code>eJi() = Ke("tengu_mill_orange", !1)</code>, so off absent a remote value.</li><li>Separately and unconditionally, exhausting the per-session recall byte budget is now reported as a feature error instead of returning silently.</li></ul>
-<div class="blabel">Evidence</div>
-<p><code>session_budget_exhausted</code></p>
-<hr></div>
-    </article>
-    <article class="card folded q3" id="pinned-memory-files" data-f="juicy k-in-development t-soon upcoming x-env x-setting">
-      <div class="card-top">
-        <h3>Pinned memory files <a class="anchor" href="#pinned-memory-files">#</a></h3>
+        <h3>Pinned memories are injected into the session <a class="anchor" href="#pinned-memories-are-injected-into-the-session">#</a></h3>
 <div class="tags"><span class="tag key">Juicy</span></div>      </div>
-      <p class="glance">Memory files marked pinned would be injected into every conversation instead of waiting to be recalled.</p>
+      <p class="glance">Adding `pinned: true` to a memory file&#39;s frontmatter would apply it to every session automatically.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-<div class="toks"><code class="tok">pinned</code><code class="tok">CLAUDE_COWORK_MEMORY_INDEX_CONTENT</code></div>        <span class="where"><b>Not switched on</b> &middot; Memory</span>
+<div class="toks"><code class="tok">pinned: true</code><code class="tok">CLAUDE_COWORK_MEMORY_INDEX_CONTENT</code></div>        <span class="where"><b>Not switched on</b> &middot; Memory</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>Memory files can mark themselves pinned in frontmatter and are then injected as their own prompt section on every conversation rather than listed with ordinary memory files.</p>
+<p>Memory files whose frontmatter carries <code>pinned: true</code> are injected so they apply to every session rather than only when retrieved.</p>
 <div class="blabel">Details</div>
-<ul><li><code>metadata.pinned</code> is parsed into a <code>pinnedState</code> of true, false or malformed; the most recently modified pinned files are selected up to a cap and read as a new <code>AutoMemPinned</code> entry type.</li><li>Rendered as a dedicated section of <code>&lt;pinned-memory path="…"&gt;</code> blocks with control characters stripped from the path, and excluded from the ordinary memory-file editor list.</li><li>Telemetry: <code>memory_pinned_inject</code> records injected counts, truncation, malformed pins and cap drops; <code>tengu_memdir_pinned_injected</code> records counts plus truncated/malformed; <code>tengu_memdir_pin_write</code> fires on writes to memory files.</li><li>Lives in the cowork memory path, running only when the surrounding index gate passes and the <code>CLAUDE_COWORK_MEMORY_INDEX_CONTENT</code> env var is unset.</li></ul>
+<ul><li>Pinned files are scanned, sorted by mtime, capped in count, and truncated when oversized</li><li>Frontmatter documentation now describes the <code>pinned</code> field</li><li>New one-shot telemetry event <code>tengu_memdir_pinned_injected</code> reports pinned_file_count, pinned_injected_count, pinned_injected_chars, truncated and malformed counts</li><li>New scan-failure paths log "memory_scan_readdir_failed" and "pin_scan_failed"</li><li>Gated on <code>tengu_stone_shell</code> with fallback false, and suppressed entirely when CLAUDE_COWORK_MEMORY_INDEX_CONTENT is set</li></ul>
 <div class="blabel">Evidence</div>
-<p><code># Pinned memories (apply to every conversation)</code>, <code>AutoMemPinned</code></p>
+<p><code>tengu_memdir_pinned_injected</code></p>
 <hr></div>
     </article>
     <article class="card folded q3" id="shutdown-synthesized-tool-results-no-longer-resolve-an-inter" data-f="juicy k-in-development t-soon upcoming x-env">
@@ -489,38 +472,21 @@
 <p><code>shutdownUnwindResultsDoNotResolve</code>, <code>findUnresolvedToolUseInTranscript</code>, <code>interruptedByShutdown</code></p>
 <hr></div>
     </article>
-    <article class="card folded q3" id="workshop-html-artifact-publishing-gains-a-publish-time-verif" data-f="k-in-development t-soon upcoming">
+    <article class="card folded q3" id="effort-profile-added-for-claude-opus-5" data-f="juicy k-internal-changes t-internal">
       <div class="card-top">
-        <h3>Workshop HTML artifact publishing gains a publish-time verifier <a class="anchor" href="#workshop-html-artifact-publishing-gains-a-publish-time-verif">#</a></h3>
-      </div>
-      <p class="glance">Published HTML artifacts can be checked against rules first and refused outright instead of shipping something unsafe.</p>
+        <h3>Effort profile added for claude-opus-5 <a class="anchor" href="#effort-profile-added-for-claude-opus-5">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">A reasoning-effort table now includes settings for a model named claude-opus-5, with new medium and high profiles.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Not switched on</b> &middot; Artifacts</span>
+        <span class="where"><b>Under the hood</b> &middot; Model Config</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>Artifact publishing can now run the generated HTML through a verifier that refuses to publish when rules are violated, rather than shipping it and relying on later checks.</p>
+<p>The per-model reasoning-effort table gains a row for claude-opus-5, so effort levels map to model-specific settings when that model is in effect.</p>
 <div class="blabel">Details</div>
-<ul><li>publishing accepts a new <code>verifyWorkshopHtml</code> option; publishing a plan as an artifact passes <code>verifyWorkshopHtml: "probe"</code> when the gate is on</li><li>refusal reports per-rule violations and emits telemetry under <code>workshop_html_publish</code> and <code>verifier_refused</code> instead of publishing</li><li>verified slugs accumulate into app state under <code>workshopVerifiedSlugs</code></li><li>for workshop surfaces, a redeploy must pass <code>refusedSidecarHistory</code>, sourced from a new AppState key <code>sidecarHistorySlugs</code>, otherwise publishing is refused rather than skipping the sidecar-ordering gate</li><li>sidecar files whose content type is not in the inert text or binary allowlists are flagged as renderable or executable</li><li>the gate falls back to false and additionally requires the surrounding workshop feature check; none of these names exist in 2.1.218</li></ul>
+<ul><li>low reuses the shared low profile; max reuses the shared max</li><li>medium and high both map to a new cell "o5-bmin" with <code>modelEffort: "typed"</code> and no finder budget hint</li><li>xhigh reuses the existing o48-xhigh-v1 profile</li><li>the cell name "o5-bmin" does not appear in 2.1.218, and there is a downstream branch that special-cases it</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>refusing rather than skipping the sidecar-ordering gate</code>, <code>verifyWorkshopHtml</code></p>
-<hr></div>
-    </article>
-    <article class="card folded q2" id="compact-recall-remember-summaries-in-the-transcript" data-f="k-in-development t-soon upcoming">
-      <div class="card-top">
-        <h3>Compact recall/remember summaries in the transcript <a class="anchor" href="#compact-recall-remember-summaries-in-the-transcript">#</a></h3>
-      </div>
-      <p class="glance">Memory recall notes could show as a compact grouped line in normal sessions, but that view is off.</p>
-      <div class="card-actions">
-        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Not switched on</b> &middot; Memory</span>
-      </div>
-      <div class="card-body" hidden><div class="blabel">What</div>
-<p>Memory attachments rendered only in verbose or transcript mode; a compact fallback view exists for normal sessions but is switched off in this build.</p>
-<div class="blabel">Details</div>
-<ul><li>When the gate is on, non-verbose sessions get a compact grouped node built from the attachment's memories</li><li>Labelled "Recalling"/"Recalled" or "Remembering"/"Remembered" depending on whether the group is still active</li><li>Gated on tengu_stone_shell, fallback false</li></ul>
-<div class="blabel">Evidence</div>
-<p><code>isActiveGroup</code></p>
+<p><code>o5-bmin</code></p>
 <hr></div>
     </article>
     <article class="card folded q2" id="subagent-steering-can-be-resolved-per-model" data-f="juicy k-in-development t-soon upcoming x-env">
@@ -540,55 +506,21 @@
 <p><code>counter_steer</code></p>
 <hr></div>
     </article>
-    <article class="card folded q2" id="transcript-sharing-prompt-wired-into-the-session-memory-view" data-f="k-in-development t-soon upcoming x-env x-setting">
+    <article class="card folded q2" id="whiteboard-skill-reworked-with-first-sketch-named-boards-and" data-f="k-in-development t-soon upcoming x-flag">
       <div class="card-top">
-        <h3>Transcript-sharing prompt wired into the session memory viewer, but unreachable in this build <a class="anchor" href="#transcript-sharing-prompt-wired-into-the-session-memory-view">#</a></h3>
+        <h3>Whiteboard skill reworked with first sketch, named boards and up-front send-permission checks, still switched off <a class="anchor" href="#whiteboard-skill-reworked-with-first-sketch-named-boards-and">#</a></h3>
       </div>
-      <p class="glance">A prompt to share your transcript after rating a memory is built but never appears.</p>
+      <p class="glance">The whiteboard skill gained opening sketches, named boards and clearer send-permission errors, but stays switched off.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-<div class="toks"><code class="tok">CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY</code><code class="tok">transcriptShareDismissed</code></div>        <span class="where"><b>Not switched on</b> &middot; Memory</span>
+<div class="toks"><code class="tok">--title</code></div>        <span class="where"><b>Not switched on</b> &middot; Skills</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>The session memory viewer gained a full transcript-share flow that arms when a memory is rated, but the precondition that would show it always returns false here.</p>
+<p>The whiteboard skill and its bundled page were substantially reworked, but registration still gates on a helper that returns false, so none of it is reachable.</p>
 <div class="blabel">Details</div>
-<ul><li>The viewer now takes a <code>messagesRef</code> and renders states <code>transcript_prompt</code>, <code>submitting</code>, <code>submitted</code> and <code>thanks</code>.</li><li>The success panel shows the saved bundle path with the text telling you to send the file to your Anthropic account representative or attach it to a support request.</li><li>Telemetry goes to <code>tengu_session_memory_share_event</code> with <code>transcript_prompt_appeared</code>, <code>transcript_share_yes/no/dont_ask_again</code>, <code>transcript_share_submitted</code> and <code>transcript_share_failed</code>.</li><li>The arming precondition calls a predicate whose body is <code>return !1</code>, so nothing is ever shown.</li><li>Two further suppressors exist regardless: <code>CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY</code> and a <code>transcriptShareDismissed</code> setting.</li></ul>
+<ul><li>Claude is instructed to draw an opening sketch of its read of the design before anything else.</li><li>The page is built through <code>merge-state.mjs</code>, which gains a <code>--title</code> flag naming the board "Whiteboard — &lt;topic&gt;" and refuses to silently rename a board that was already sent.</li><li>Republishing with capabilities re-declared happens only when the user says Send to Claude is unavailable.</li><li>The bundled page restyles onto inlined Claude Design System tokens.</li><li>The Send button is now disabled at load with a specific reason when the permission state is permanently blocked, rather than the block being discovered on first click; permanent and transient permission codes are handled separately.</li><li>Toasts gain a configurable duration.</li><li>Gate: <code>isEnabled</code> returns <code>PQi() &amp;&amp; j2e()</code>, and <code>PQi()</code> returns <code>!1</code>.</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>Send this file to your Anthropic account representative or attach it to your support request.</code></p>
-<hr></div>
-    </article>
-    <article class="card folded q2" id="workshop-artifact-pages-get-a-publish-time-structural-verifi" data-f="k-in-development t-soon upcoming">
-      <div class="card-top">
-        <h3>Workshop artifact pages get a publish-time structural verifier <a class="anchor" href="#workshop-artifact-pages-get-a-publish-time-structural-verifi">#</a></h3>
-      </div>
-      <p class="glance">Publishing a workshop page would run a structural check and refuse instead of shipping violations.</p>
-      <div class="card-actions">
-        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Not switched on</b> &middot; Artifacts</span>
-      </div>
-      <div class="card-body" hidden><div class="blabel">What</div>
-<p>Publishing a workshop page runs a structural check over the rendered HTML and refuses the publish on violation instead of shipping it.</p>
-<div class="blabel">Details</div>
-<ul><li>Verifies against a computed allowlist of blessed inline-script hashes; refusals list rule, where and hint, capped at 12 entries followed by "(and N more)".</li><li>Sidecar files are policed: workshop pages may not ship renderable or executable sidecars, and non-workshop sidecars of renderable types are probe-verified individually.</li><li>New telemetry: <code>workshop_verifier_refused</code>, <code>workshop_sidecar_refused</code>, <code>workshop_sidecar_contract</code>.</li><li>Gated on <code>Xde() = mN() &amp;&amp; Ke("tengu_gable_onyx_sluice", !1)</code>, so off absent a remote value.</li></ul>
-<div class="blabel">Evidence</div>
-<p><code>workshop pages cannot ship renderable or executable sidecar files</code></p>
-<hr></div>
-    </article>
-    <article class="card folded q2" id="workshop-skill-gains-a-direct-html-authoring-lane-and-it-is-" data-f="k-in-development t-soon upcoming">
-      <div class="card-top">
-        <h3>Workshop skill gains a direct-HTML authoring lane, and it is now the default <a class="anchor" href="#workshop-skill-gains-a-direct-html-authoring-lane-and-it-is-">#</a></h3>
-      </div>
-      <p class="glance">The workshop skill would now write HTML documents by default, with a strict publish check, but isn&#39;t offered.</p>
-      <div class="card-actions">
-        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Not switched on</b> &middot; Skills</span>
-      </div>
-      <div class="card-body" hidden><div class="blabel">What</div>
-<p>The bundled <code>workshop</code> skill text was rewritten around two authoring lanes, with HTML promoted over markdown, though the skill is not offered on this build.</p>
-<div class="blabel">Details</div>
-<ul><li>v2.1.218 said flatly that the workshop document is markdown and stays markdown for its whole life.</li><li>A new "Choosing the lane" section tells the model to copy a template to a path ending in <code>.workshop.html</code>, fill it, and publish that file.</li><li>The markdown <code>.workshop.md</code> lane becomes secondary, reserved for when the user asks for markdown or the document will be dominated by quoted external content.</li><li>Publishing runs a structural verifier on the final payload of every publish and refuses out-of-contract pages: fixed scripts, no inline <code>on*</code> handlers, no iframes/forms/base/link, escaped quoted content, island and markup agreement.</li><li>Registration uses <code>isEnabled</code> backed by gate <code>tengu_gable_onyx_sluice</code> with in-source fallback false, so absent a remote value the skill is not offered; it additionally needs the Artifact tool's <code>capabilities</code> and the <code>read_page_data</code> action.</li></ul>
-<div class="blabel">Evidence</div>
-<p><code><strong>Default to the TEMPLATE-HTML lane</strong></code></p>
+<p><code>whiteboard send blocked</code></p>
 <hr></div>
     </article>
   </div>
@@ -888,38 +820,21 @@
 <p><code>tengu_mill_orange</code></p>
 <hr></div>
     </article>
-    <article class="card folded q3" id="pinned-memories-are-injected-into-the-session" data-f="juicy k-in-development t-soon upcoming x-env x-setting">
+    <article class="card folded q3" id="pinned-memory-files" data-f="juicy k-in-development t-soon upcoming x-env x-setting">
       <div class="card-top">
-        <h3>Pinned memories are injected into the session <a class="anchor" href="#pinned-memories-are-injected-into-the-session">#</a></h3>
+        <h3>Pinned memory files <a class="anchor" href="#pinned-memory-files">#</a></h3>
 <div class="tags"><span class="tag key">Juicy</span></div>      </div>
-      <p class="glance">Adding `pinned: true` to a memory file&#39;s frontmatter would apply it to every session automatically.</p>
+      <p class="glance">Memory files marked pinned would be injected into every conversation instead of waiting to be recalled.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-<div class="toks"><code class="tok">pinned: true</code><code class="tok">CLAUDE_COWORK_MEMORY_INDEX_CONTENT</code></div>        <span class="where"><b>Not switched on</b> &middot; Memory</span>
+<div class="toks"><code class="tok">pinned</code><code class="tok">CLAUDE_COWORK_MEMORY_INDEX_CONTENT</code></div>        <span class="where"><b>Not switched on</b> &middot; Memory</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>Memory files whose frontmatter carries <code>pinned: true</code> are injected so they apply to every session rather than only when retrieved.</p>
+<p>Memory files can mark themselves pinned in frontmatter and are then injected as their own prompt section on every conversation rather than listed with ordinary memory files.</p>
 <div class="blabel">Details</div>
-<ul><li>Pinned files are scanned, sorted by mtime, capped in count, and truncated when oversized</li><li>Frontmatter documentation now describes the <code>pinned</code> field</li><li>New one-shot telemetry event <code>tengu_memdir_pinned_injected</code> reports pinned_file_count, pinned_injected_count, pinned_injected_chars, truncated and malformed counts</li><li>New scan-failure paths log "memory_scan_readdir_failed" and "pin_scan_failed"</li><li>Gated on <code>tengu_stone_shell</code> with fallback false, and suppressed entirely when CLAUDE_COWORK_MEMORY_INDEX_CONTENT is set</li></ul>
+<ul><li><code>metadata.pinned</code> is parsed into a <code>pinnedState</code> of true, false or malformed; the most recently modified pinned files are selected up to a cap and read as a new <code>AutoMemPinned</code> entry type.</li><li>Rendered as a dedicated section of <code>&lt;pinned-memory path="…"&gt;</code> blocks with control characters stripped from the path, and excluded from the ordinary memory-file editor list.</li><li>Telemetry: <code>memory_pinned_inject</code> records injected counts, truncation, malformed pins and cap drops; <code>tengu_memdir_pinned_injected</code> records counts plus truncated/malformed; <code>tengu_memdir_pin_write</code> fires on writes to memory files.</li><li>Lives in the cowork memory path, running only when the surrounding index gate passes and the <code>CLAUDE_COWORK_MEMORY_INDEX_CONTENT</code> env var is unset.</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>tengu_memdir_pinned_injected</code></p>
-<hr></div>
-    </article>
-    <article class="card folded q3" id="rewritten-memory-system-prompt" data-f="k-in-development t-soon upcoming">
-      <div class="card-top">
-        <h3>Rewritten memory system prompt <a class="anchor" href="#rewritten-memory-system-prompt">#</a></h3>
-      </div>
-      <p class="glance">Rewritten memory rules would make Claude save corrections and environment quirks immediately, before replying.</p>
-      <div class="card-actions">
-        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Not switched on</b> &middot; Memory</span>
-      </div>
-      <div class="card-body" hidden><div class="blabel">What</div>
-<p>The memory instructions given to Claude were rewritten around three criteria and now specify when a memory must be written rather than leaving it to judgement.</p>
-<div class="blabel">Details</div>
-<ul><li>Criteria are applicable, durable, legible</li><li>Explicit MUST-save triggers: user corrections however phrased, skeptical questions, environment discoveries</li><li>New rule that memory writes happen before the reply that engages the correction, not after the conversation settles</li><li>The frontmatter template now includes a <code>metadata: pinned:</code> field</li><li>Gated on <code>tengu_stone_shell</code>, fallback false</li></ul>
-<div class="blabel">Evidence</div>
-<p><code>A good memory is applicable, durable, and legible</code></p>
+<p><code># Pinned memories (apply to every conversation)</code>, <code>AutoMemPinned</code></p>
 <hr></div>
     </article>
     <article class="card folded q3" id="skill-usage-stats-surface-expanded" data-f="juicy k-in-development t-soon upcoming x-env x-slash">
@@ -937,23 +852,6 @@
 <ul><li>the tab is handed a <code>getSkillStatsInputs</code> callback supplying commands, MCP commands and clients, agent id, main-loop model and permission mode</li><li>rendering the tab without that callback throws "Stats tab rendered without getSkillStatsInputs"</li><li>a second <code>/skill-doctor</code> command variant is registered alongside the existing JSX one, marked <code>supportsNonInteractive</code> and dispatching after text</li><li>still behind <code>tengu_lantern_prism</code> (fallback false) or the <code>CLAUDE_CODE_LANTERN_PRISM</code> environment variable</li></ul>
 <div class="blabel">Evidence</div>
 <p><code>Show which loaded skills are unused and costing context</code></p>
-<hr></div>
-    </article>
-    <article class="card folded q3" id="effort-profile-added-for-claude-opus-5" data-f="juicy k-internal-changes t-internal">
-      <div class="card-top">
-        <h3>Effort profile added for claude-opus-5 <a class="anchor" href="#effort-profile-added-for-claude-opus-5">#</a></h3>
-<div class="tags"><span class="tag key">Juicy</span></div>      </div>
-      <p class="glance">A reasoning-effort table now includes settings for a model named claude-opus-5, with new medium and high profiles.</p>
-      <div class="card-actions">
-        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Under the hood</b> &middot; Model Config</span>
-      </div>
-      <div class="card-body" hidden><div class="blabel">What</div>
-<p>The per-model reasoning-effort table gains a row for claude-opus-5, so effort levels map to model-specific settings when that model is in effect.</p>
-<div class="blabel">Details</div>
-<ul><li>low reuses the shared low profile; max reuses the shared max</li><li>medium and high both map to a new cell "o5-bmin" with <code>modelEffort: "typed"</code> and no finder budget hint</li><li>xhigh reuses the existing o48-xhigh-v1 profile</li><li>the cell name "o5-bmin" does not appear in 2.1.218, and there is a downstream branch that special-cases it</li></ul>
-<div class="blabel">Evidence</div>
-<p><code>o5-bmin</code></p>
 <hr></div>
     </article>
     <article class="card folded q2" id="reserved-keybinding-action-ids-for-a-strip-surface" data-f="juicy k-in-development t-soon upcoming x-setting">
@@ -990,61 +888,10 @@
 <p><code>tengu_gable_onyx_sluice</code></p>
 <hr></div>
     </article>
-    <article class="card folded q2" id="whiteboard-skill-reworked-with-first-sketch-named-boards-and" data-f="k-in-development t-soon upcoming x-flag">
-      <div class="card-top">
-        <h3>Whiteboard skill reworked with first sketch, named boards and up-front send-permission checks, still switched off <a class="anchor" href="#whiteboard-skill-reworked-with-first-sketch-named-boards-and">#</a></h3>
-      </div>
-      <p class="glance">The whiteboard skill gained opening sketches, named boards and clearer send-permission errors, but stays switched off.</p>
-      <div class="card-actions">
-        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-<div class="toks"><code class="tok">--title</code></div>        <span class="where"><b>Not switched on</b> &middot; Skills</span>
-      </div>
-      <div class="card-body" hidden><div class="blabel">What</div>
-<p>The whiteboard skill and its bundled page were substantially reworked, but registration still gates on a helper that returns false, so none of it is reachable.</p>
-<div class="blabel">Details</div>
-<ul><li>Claude is instructed to draw an opening sketch of its read of the design before anything else.</li><li>The page is built through <code>merge-state.mjs</code>, which gains a <code>--title</code> flag naming the board "Whiteboard — &lt;topic&gt;" and refuses to silently rename a board that was already sent.</li><li>Republishing with capabilities re-declared happens only when the user says Send to Claude is unavailable.</li><li>The bundled page restyles onto inlined Claude Design System tokens.</li><li>The Send button is now disabled at load with a specific reason when the permission state is permanently blocked, rather than the block being discovered on first click; permanent and transient permission codes are handled separately.</li><li>Toasts gain a configurable duration.</li><li>Gate: <code>isEnabled</code> returns <code>PQi() &amp;&amp; j2e()</code>, and <code>PQi()</code> returns <code>!1</code>.</li></ul>
-<div class="blabel">Evidence</div>
-<p><code>whiteboard send blocked</code></p>
-<hr></div>
-    </article>
-    <article class="card folded q2" id="workshop-doc-snapshots-plan-mode-writes-and-verified-slugs" data-f="k-in-development t-soon upcoming">
-      <div class="card-top">
-        <h3>Workshop doc: snapshots, plan-mode writes and verified slugs <a class="anchor" href="#workshop-doc-snapshots-plan-mode-writes-and-verified-slugs">#</a></h3>
-      </div>
-      <p class="glance">A per-session workshop document gets snapshotted with your session files and is only writable in plan mode.</p>
-      <div class="card-actions">
-        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Not switched on</b> &middot; Artifacts</span>
-      </div>
-      <div class="card-body" hidden><div class="blabel">What</div>
-<p>The per-session <code>*.workshop.md</code> document is now snapshotted with the rest of the session files and gets explicit read and write permission handling, all behind the workshop gate.</p>
-<div class="blabel">Details</div>
-<ul><li>gated on the workshop feature gate, combining <code>tengu_larch_pavise</code> (fallback false) with <code>tengu_cedar_transom</code> as a kill-switch</li><li>the doc is included in the file-snapshot system entry under the key "workshop"</li><li>it is skipped with a log line when it exceeds the snapshot character cap, and skipped when unchanged</li><li>write permission for <code>&lt;session&gt;.workshop.md</code> is granted via an <code>includeWorkshopDoc</code> option only when the caller's permission mode is <code>plan</code>, with the mode newly threaded into that check</li><li>the read side always includes it, so "Plan files for current session are allowed for reading" covers the workshop doc unconditionally</li><li>publishing a plan records the returned slug in <code>workshopVerifiedSlugs</code> app state</li></ul>
-<div class="blabel">Evidence</div>
-<p><code>Workshop doc over snapshot cap</code>, <code>Plan files for current session are allowed for writing</code></p>
-<hr></div>
-    </article>
-    <article class="card folded q2" id="live-edit-refused-on-workshop-pages" data-f="k-in-development t-soon upcoming">
-      <div class="card-top">
-        <h3>live-edit refused on workshop pages <a class="anchor" href="#live-edit-refused-on-workshop-pages">#</a></h3>
-      </div>
-      <p class="glance">Live-edit would be blocked on workshop pages so changes go through the validating publish path.</p>
-      <div class="card-actions">
-        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Not switched on</b> &middot; Artifacts</span>
-      </div>
-      <div class="card-body" hidden><div class="blabel">What</div>
-<p>The Artifact tool blocks live-edit actions against workshop pages so edits go through the publish path that validates them.</p>
-<div class="blabel">Details</div>
-<ul><li>Target slug is checked against the session's known workshop slugs, then open frame URLs, then a server-side fetch looking for a <code>ws-decisions</code> island.</li><li>A match refuses with <code>workshop_live_edit_refused</code>; a transient read failure refuses with <code>workshop_live_edit_unverifiable</code> and tells you to retry or WebFetch the page.</li><li>Same gate as the verifier: <code>Xde()</code> / <code>tengu_gable_onyx_sluice</code>, fallback off.</li></ul>
-<div class="blabel">Evidence</div>
-<p><code>live-edit is not available on workshop pages \u2014 edit the local workshop file and republish; the publish path is the validation chokepoint live-edit would bypass</code></p>
-<hr></div>
-    </article>
   </div>
   </div>
   <div class="group-divider rest">
-    <div class="gd-title">Everything else &middot; 114</div>
+    <div class="gd-title">Everything else &middot; 123</div>
     <div class="gd-sub">Smaller changes and internals, grouped as the pipeline found them. Nothing is dropped, it is only further down.</div>
   </div>
   <div class="section-head muted">
@@ -2164,9 +2011,26 @@
   </div>
   <div class="section-head muted">
     <h2>In Development</h2><div class="ln"></div>
-<span class="ct">16 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+<span class="ct">25 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
   <div class="card-list">
   <div class="col">
+    <article class="card folded q2" id="workshop-artifact-pages-get-a-publish-time-structural-verifi" data-f="k-in-development t-soon upcoming">
+      <div class="card-top">
+        <h3>Workshop artifact pages get a publish-time structural verifier <a class="anchor" href="#workshop-artifact-pages-get-a-publish-time-structural-verifi">#</a></h3>
+      </div>
+      <p class="glance">Publishing a workshop page would run a structural check and refuse instead of shipping violations.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Publishing a workshop page runs a structural check over the rendered HTML and refuses the publish on violation instead of shipping it.</p>
+<div class="blabel">Details</div>
+<ul><li>Verifies against a computed allowlist of blessed inline-script hashes; refusals list rule, where and hint, capped at 12 entries followed by "(and N more)".</li><li>Sidecar files are policed: workshop pages may not ship renderable or executable sidecars, and non-workshop sidecars of renderable types are probe-verified individually.</li><li>New telemetry: <code>workshop_verifier_refused</code>, <code>workshop_sidecar_refused</code>, <code>workshop_sidecar_contract</code>.</li><li>Gated on <code>Xde() = mN() &amp;&amp; Ke("tengu_gable_onyx_sluice", !1)</code>, so off absent a remote value.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>workshop pages cannot ship renderable or executable sidecar files</code></p>
+<hr></div>
+    </article>
     <article class="card folded q1" id="app-state-tracks-verified-workshop-slugs-and-sidecar-history" data-f="k-in-development t-soon upcoming">
       <div class="card-top">
         <h3>App state tracks verified workshop slugs and sidecar history <a class="anchor" href="#app-state-tracks-verified-workshop-slugs-and-sidecar-history">#</a></h3>
@@ -2184,21 +2048,55 @@
 <p><code>workshop publish contract violation: redeploys must pass refusedSidecarHistory</code></p>
 <hr></div>
     </article>
-    <article class="card folded q1" id="new-bundled-template-file-templates-workshop-page-html" data-f="k-in-development t-soon upcoming">
+    <article class="card folded q3" id="memory-recall-now-triggers-on-cjk-input-with-no-spaces" data-f="k-in-development t-soon upcoming">
       <div class="card-top">
-        <h3>New bundled template file <code>templates/workshop-page.html</code> <a class="anchor" href="#new-bundled-template-file-templates-workshop-page-html">#</a></h3>
+        <h3>Memory recall now triggers on CJK input with no spaces <a class="anchor" href="#memory-recall-now-triggers-on-cjk-input-with-no-spaces">#</a></h3>
       </div>
-      <p class="glance">A second bundled workshop page template ships, showing what the HTML authoring style looks like.</p>
+      <p class="glance">Chinese, Japanese and Korean messages without spaces could trigger memory recall, but that branch is off here.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Memory</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Recall previously required whitespace in the user's message, which excluded Chinese, Japanese and Korean text written without spaces.</p>
+<div class="blabel">Details</div>
+<ul><li>Adds a branch accepting NFKC-normalized text matching CJK and Hangul ranges.</li><li>That branch is gated on <code>eJi() = Ke("tengu_mill_orange", !1)</code>, so off absent a remote value.</li><li>Separately and unconditionally, exhausting the per-session recall byte budget is now reported as a feature error instead of returning silently.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>session_budget_exhausted</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="workshop-skill-gains-a-direct-html-authoring-lane-and-it-is-" data-f="k-in-development t-soon upcoming">
+      <div class="card-top">
+        <h3>Workshop skill gains a direct-HTML authoring lane, and it is now the default <a class="anchor" href="#workshop-skill-gains-a-direct-html-authoring-lane-and-it-is-">#</a></h3>
+      </div>
+      <p class="glance">The workshop skill would now write HTML documents by default, with a strict publish check, but isn&#39;t offered.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
         <span class="where"><b>Not switched on</b> &middot; Skills</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>The workshop skill's file map ships a second template, the blessed starting point for the new direct-HTML lane.</p>
+<p>The bundled <code>workshop</code> skill text was rewritten around two authoring lanes, with HTML promoted over markdown, though the skill is not offered on this build.</p>
 <div class="blabel">Details</div>
-<ul><li>The existing <code>templates/artifact-workshop.html</code> remains the mechanically-filled plan-artifact template with <code>{{TITLE}}</code>, <code>{{TAB_TITLE}}</code>, <code>{{EYEBROW}}</code> and <code>{{SUMMARY}}</code> slots.</li><li><code>templates/workshop-page.html</code> describes itself in a header comment as the blessed template for direct-HTML workshops.</li><li>It ships a filled sample page: a <code>cache-store</code> decision with Spanner and Redis options, a populated <code>ws-decisions</code> island, and hand-drawn inline SVG figures.</li><li>It carries the same vetted decisions script and adds <code>figure</code>/<code>figcaption</code> styling for the inline SVG diagrams the HTML lane prefers over mermaid.</li><li>Reachable only behind the same workshop skill gate, which is off here.</li></ul>
+<ul><li>v2.1.218 said flatly that the workshop document is markdown and stays markdown for its whole life.</li><li>A new "Choosing the lane" section tells the model to copy a template to a path ending in <code>.workshop.html</code>, fill it, and publish that file.</li><li>The markdown <code>.workshop.md</code> lane becomes secondary, reserved for when the user asks for markdown or the document will be dominated by quoted external content.</li><li>Publishing runs a structural verifier on the final payload of every publish and refuses out-of-contract pages: fixed scripts, no inline <code>on*</code> handlers, no iframes/forms/base/link, escaped quoted content, island and markup agreement.</li><li>Registration uses <code>isEnabled</code> backed by gate <code>tengu_gable_onyx_sluice</code> with in-source fallback false, so absent a remote value the skill is not offered; it additionally needs the Artifact tool's <code>capabilities</code> and the <code>read_page_data</code> action.</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>"templates/workshop-page.html"</code></p>
+<p><code><strong>Default to the TEMPLATE-HTML lane</strong></code></p>
+<hr></div>
+    </article>
+    <article class="card folded q1" id="the-decisions-island-s-opening-bytes-are-now-a-named-constan" data-f="k-in-development t-internal upcoming">
+      <div class="card-top">
+        <h3>The decisions island's opening bytes are now a named constant, and reserved page-wide <a class="anchor" href="#the-decisions-island-s-opening-bytes-are-now-a-named-constan">#</a></h3>
+      </div>
+      <p class="glance">Workshop pages would be rejected at publish if they mention the decisions marker more than once.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Skills</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The literal island-open sequence is lifted into a module-level constant next to the templates, and the skill text makes its uniqueness on the page a hard rule.</p>
+<div class="blabel">Details</div>
+<ul><li>Island extraction scans for exactly that byte sequence, so the verifier refuses any page where the scan and the real island could disagree.</li><li>An author page mentioning the island id anywhere else, in a quoted example or an attribute, fails the publish instead of being silently mis-extracted.</li><li>Only reachable behind the workshop skill gate, which is off here.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>id="ws-decisions"&gt;</code></p>
 <hr></div>
     </article>
     <article class="card folded q2" id="memory-subagent-s-delete-permission-narrowed" data-f="k-in-development t-soon upcoming">
@@ -2235,21 +2133,38 @@
 <p><code>transcript_share_dismissed</code></p>
 <hr></div>
     </article>
-    <article class="card folded q3" id="opus-5-carries-an-extra-system-prompt-block-and-suppresses-s" data-f="k-in-development t-internal">
+    <article class="card folded q2" id="category-based-server-side-fallback-beta" data-f="k-in-development t-internal upcoming">
       <div class="card-top">
-        <h3>Opus 5 carries an extra system-prompt block and suppresses subagent nudges <a class="anchor" href="#opus-5-carries-an-extra-system-prompt-block-and-suppresses-s">#</a></h3>
+        <h3>Category-based server-side fallback beta <a class="anchor" href="#category-based-server-side-fallback-beta">#</a></h3>
       </div>
-      <p class="glance">On some models Claude will stop spinning up subagents or research workflows unless you actually ask for it.</p>
+      <p class="glance">The server can now pick a fallback model by category when a request is refused, instead of the app naming one.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Under the hood</b> &middot; System Prompt</span>
+        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>Models advertising a new capability get an appended prompt block telling the model not to reach for subagents or research workflows unprompted, and the matching steering nudge is turned off for them.</p>
+<p>A second server-side-fallback beta lets the server choose the fallback model by category rather than the client naming one, but it only takes effect if the server accepts the new beta header.</p>
 <div class="blabel">Details</div>
-<ul><li>gated on the <code>opus_5_prompt_bundle</code> capability, with a remote kill-flag checked inside the capability test (fallback: not killed)</li><li>the appended block reads "Do not call the AgentTool unless the user requested it" and "Do not use workflows or deep-research unless the user requested it"</li><li>application is logged as <code>tengu_heron_brook_applied</code> with <code>fromClientData: !1</code></li><li>the <code>tengu_heron_brook</code> string flag still overrides</li><li>the same capability check feeds the "thistle grebe" steering resolver with a new "model" source returning "no_nudges", suppressing the delegate-to-subagents steering text</li></ul>
+<ul><li>the descriptor is <code>server_side_fallback_category</code> with header <code>server-side-fallback-2026-07-01</code></li><li>when it applies, the request sends <code>fallbacks: "default"</code> instead of an explicit <code>[{ model: ... }]</code> list, letting the server route, for example, cyber-category refusals to the previous Opus</li><li>fallback-error classification gained <code>category_beta_header</code> (the new header was rejected) and <code>default_unconfigured</code> (from a body containing "has no default fallback configuration")</li><li>the retry path un-arms the category header on those errors and falls back to the existing explicit-list behaviour</li><li>the code path also still requires the existing default-fallback conditions</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>Do not call the AgentTool unless the user requested it</code></p>
+<p><code>"server-side-fallback-2026-07-01"</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="workshop-doc-snapshots-plan-mode-writes-and-verified-slugs" data-f="k-in-development t-soon upcoming">
+      <div class="card-top">
+        <h3>Workshop doc: snapshots, plan-mode writes and verified slugs <a class="anchor" href="#workshop-doc-snapshots-plan-mode-writes-and-verified-slugs">#</a></h3>
+      </div>
+      <p class="glance">A per-session workshop document gets snapshotted with your session files and is only writable in plan mode.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The per-session <code>*.workshop.md</code> document is now snapshotted with the rest of the session files and gets explicit read and write permission handling, all behind the workshop gate.</p>
+<div class="blabel">Details</div>
+<ul><li>gated on the workshop feature gate, combining <code>tengu_larch_pavise</code> (fallback false) with <code>tengu_cedar_transom</code> as a kill-switch</li><li>the doc is included in the file-snapshot system entry under the key "workshop"</li><li>it is skipped with a log line when it exceeds the snapshot character cap, and skipped when unchanged</li><li>write permission for <code>&lt;session&gt;.workshop.md</code> is granted via an <code>includeWorkshopDoc</code> option only when the caller's permission mode is <code>plan</code>, with the mode newly threaded into that check</li><li>the read side always includes it, so "Plan files for current session are allowed for reading" covers the workshop doc unconditionally</li><li>publishing a plan records the returned slug in <code>workshopVerifiedSlugs</code> app state</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Workshop doc over snapshot cap</code>, <code>Plan files for current session are allowed for writing</code></p>
 <hr></div>
     </article>
     <article class="card folded q2" id="org-memory-discovery-telemetry-and-store-picker-copy" data-f="k-in-development t-soon upcoming x-env">
@@ -2286,25 +2201,59 @@
 <p><code>condition cleared — re-adopting the mount dir</code></p>
 <hr></div>
     </article>
-    <article class="card folded q2" id="repo-mismatch-display-disambiguates-by-host" data-f="k-in-development t-internal">
+    <article class="card folded q2" id="compact-recall-remember-summaries-in-the-transcript" data-f="k-in-development t-soon upcoming">
       <div class="card-top">
-        <h3>Repo-mismatch display disambiguates by host <a class="anchor" href="#repo-mismatch-display-disambiguates-by-host">#</a></h3>
+        <h3>Compact recall/remember summaries in the transcript <a class="anchor" href="#compact-recall-remember-summaries-in-the-transcript">#</a></h3>
       </div>
-      <p class="glance">Resuming into a same-named repo from a different host can now be labelled host/repo to tell them apart.</p>
+      <p class="glance">Memory recall notes could show as a compact grouped line in normal sessions, but that view is off.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Under the hood</b> &middot; Sessions</span>
+        <span class="where"><b>Not switched on</b> &middot; Memory</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>Resuming against a same-named repo on a different forge can now show which is which, though the callers of the new helper were not traced.</p>
+<p>Memory attachments rendered only in verbose or transcript mode; a compact fallback view exists for normal sessions but is switched off in this build.</p>
 <div class="blabel">Details</div>
-<ul><li>The port-stripping normalizer moved out of the inline closure into its own helper</li><li>A new function returns <code>sessionDisplay</code> / <code>currentDisplay</code>, prefixing the repo with its host as <code>host/repo</code> only when the two hosts differ after normalization</li></ul>
+<ul><li>When the gate is on, non-verbose sessions get a compact grouped node built from the attachment's memories</li><li>Labelled "Recalling"/"Recalled" or "Remembering"/"Remembered" depending on whether the group is still active</li><li>Gated on tengu_stone_shell, fallback false</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>sessionDisplay</code></p>
+<p><code>isActiveGroup</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q1" id="pr-review-artifact-description-has-an-alternate-wording-that" data-f="k-in-development t-soon upcoming x-slash">
+      <div class="card-top">
+        <h3>PR-review artifact description has an alternate wording that cannot ship in this build <a class="anchor" href="#pr-review-artifact-description-has-an-alternate-wording-that">#</a></h3>
+      </div>
+      <p class="glance">An alternate PR-review description exists but you&#39;ll always see the original one.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">/pr-review</code></div>        <span class="where"><b>Not switched on</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The pr-review command description became a function that picks between two strings, one of which describes republish-only editing of composed review pages. The selector can never choose it here.</p>
+<div class="blabel">Details</div>
+<ul><li>the alternate string ends "a published composed review page is updated ONLY through the acting loop's republish — never by editing its HTML directly."</li><li>the selector combines a hard-coded false with <code>tengu_walnut_sconce</code>, and the helper it bottoms out in returns false unconditionally in this build</li><li>users see the original description</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>never by editing its HTML directly.</code></p>
 <hr></div>
     </article>
   </div>
   <div class="col">
+    <article class="card folded q2" id="live-edit-refused-on-workshop-pages" data-f="k-in-development t-soon upcoming">
+      <div class="card-top">
+        <h3>live-edit refused on workshop pages <a class="anchor" href="#live-edit-refused-on-workshop-pages">#</a></h3>
+      </div>
+      <p class="glance">Live-edit would be blocked on workshop pages so changes go through the validating publish path.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The Artifact tool blocks live-edit actions against workshop pages so edits go through the publish path that validates them.</p>
+<div class="blabel">Details</div>
+<ul><li>Target slug is checked against the session's known workshop slugs, then open frame URLs, then a server-side fetch looking for a <code>ws-decisions</code> island.</li><li>A match refuses with <code>workshop_live_edit_refused</code>; a transient read failure refuses with <code>workshop_live_edit_unverifiable</code> and tells you to retry or WebFetch the page.</li><li>Same gate as the verifier: <code>Xde()</code> / <code>tengu_gable_onyx_sluice</code>, fallback off.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>live-edit is not available on workshop pages \u2014 edit the local workshop file and republish; the publish path is the validation chokepoint live-edit would bypass</code></p>
+<hr></div>
+    </article>
     <article class="card folded q2" id="composed-pr-review-publish-refusal-explains-whether-it-is-a-" data-f="k-in-development t-soon upcoming x-slash">
       <div class="card-top">
         <h3>Composed PR-review publish refusal explains whether it is a live switch <a class="anchor" href="#composed-pr-review-publish-refusal-explains-whether-it-is-a-">#</a></h3>
@@ -2322,21 +2271,55 @@
 <p><code>composed review publishing was turned off by an operator during this session</code></p>
 <hr></div>
     </article>
-    <article class="card folded q1" id="the-decisions-island-s-opening-bytes-are-now-a-named-constan" data-f="k-in-development t-internal upcoming">
+    <article class="card folded q2" id="transcript-sharing-prompt-wired-into-the-session-memory-view" data-f="k-in-development t-soon upcoming x-env x-setting">
       <div class="card-top">
-        <h3>The decisions island's opening bytes are now a named constant, and reserved page-wide <a class="anchor" href="#the-decisions-island-s-opening-bytes-are-now-a-named-constan">#</a></h3>
+        <h3>Transcript-sharing prompt wired into the session memory viewer, but unreachable in this build <a class="anchor" href="#transcript-sharing-prompt-wired-into-the-session-memory-view">#</a></h3>
       </div>
-      <p class="glance">Workshop pages would be rejected at publish if they mention the decisions marker more than once.</p>
+      <p class="glance">A prompt to share your transcript after rating a memory is built but never appears.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Under the hood</b> &middot; Skills</span>
+<div class="toks"><code class="tok">CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY</code><code class="tok">transcriptShareDismissed</code></div>        <span class="where"><b>Not switched on</b> &middot; Memory</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>The literal island-open sequence is lifted into a module-level constant next to the templates, and the skill text makes its uniqueness on the page a hard rule.</p>
+<p>The session memory viewer gained a full transcript-share flow that arms when a memory is rated, but the precondition that would show it always returns false here.</p>
 <div class="blabel">Details</div>
-<ul><li>Island extraction scans for exactly that byte sequence, so the verifier refuses any page where the scan and the real island could disagree.</li><li>An author page mentioning the island id anywhere else, in a quoted example or an attribute, fails the publish instead of being silently mis-extracted.</li><li>Only reachable behind the workshop skill gate, which is off here.</li></ul>
+<ul><li>The viewer now takes a <code>messagesRef</code> and renders states <code>transcript_prompt</code>, <code>submitting</code>, <code>submitted</code> and <code>thanks</code>.</li><li>The success panel shows the saved bundle path with the text telling you to send the file to your Anthropic account representative or attach it to a support request.</li><li>Telemetry goes to <code>tengu_session_memory_share_event</code> with <code>transcript_prompt_appeared</code>, <code>transcript_share_yes/no/dont_ask_again</code>, <code>transcript_share_submitted</code> and <code>transcript_share_failed</code>.</li><li>The arming precondition calls a predicate whose body is <code>return !1</code>, so nothing is ever shown.</li><li>Two further suppressors exist regardless: <code>CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY</code> and a <code>transcriptShareDismissed</code> setting.</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>id="ws-decisions"&gt;</code></p>
+<p><code>Send this file to your Anthropic account representative or attach it to your support request.</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q1" id="new-bundled-template-file-templates-workshop-page-html" data-f="k-in-development t-soon upcoming">
+      <div class="card-top">
+        <h3>New bundled template file <code>templates/workshop-page.html</code> <a class="anchor" href="#new-bundled-template-file-templates-workshop-page-html">#</a></h3>
+      </div>
+      <p class="glance">A second bundled workshop page template ships, showing what the HTML authoring style looks like.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Skills</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The workshop skill's file map ships a second template, the blessed starting point for the new direct-HTML lane.</p>
+<div class="blabel">Details</div>
+<ul><li>The existing <code>templates/artifact-workshop.html</code> remains the mechanically-filled plan-artifact template with <code>{{TITLE}}</code>, <code>{{TAB_TITLE}}</code>, <code>{{EYEBROW}}</code> and <code>{{SUMMARY}}</code> slots.</li><li><code>templates/workshop-page.html</code> describes itself in a header comment as the blessed template for direct-HTML workshops.</li><li>It ships a filled sample page: a <code>cache-store</code> decision with Spanner and Redis options, a populated <code>ws-decisions</code> island, and hand-drawn inline SVG figures.</li><li>It carries the same vetted decisions script and adds <code>figure</code>/<code>figcaption</code> styling for the inline SVG diagrams the HTML lane prefers over mermaid.</li><li>Reachable only behind the same workshop skill gate, which is off here.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>"templates/workshop-page.html"</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q3" id="rewritten-memory-system-prompt" data-f="k-in-development t-soon upcoming">
+      <div class="card-top">
+        <h3>Rewritten memory system prompt <a class="anchor" href="#rewritten-memory-system-prompt">#</a></h3>
+      </div>
+      <p class="glance">Rewritten memory rules would make Claude save corrections and environment quirks immediately, before replying.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Memory</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The memory instructions given to Claude were rewritten around three criteria and now specify when a memory must be written rather than leaving it to judgement.</p>
+<div class="blabel">Details</div>
+<ul><li>Criteria are applicable, durable, legible</li><li>Explicit MUST-save triggers: user corrections however phrased, skeptical questions, environment discoveries</li><li>New rule that memory writes happen before the reply that engages the correction, not after the conversation settles</li><li>The frontmatter template now includes a <code>metadata: pinned:</code> field</li><li>Gated on <code>tengu_stone_shell</code>, fallback false</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>A good memory is applicable, durable, and legible</code></p>
 <hr></div>
     </article>
     <article class="card folded q1" id="memory-truncation-warning-now-covers-ordinary-memory-files" data-f="k-in-development t-soon upcoming">
@@ -2356,21 +2339,38 @@
 <p><code>this memory file is </code></p>
 <hr></div>
     </article>
-    <article class="card folded q2" id="category-based-server-side-fallback-beta" data-f="k-in-development t-internal upcoming">
+    <article class="card folded q3" id="workshop-html-artifact-publishing-gains-a-publish-time-verif" data-f="k-in-development t-soon upcoming">
       <div class="card-top">
-        <h3>Category-based server-side fallback beta <a class="anchor" href="#category-based-server-side-fallback-beta">#</a></h3>
+        <h3>Workshop HTML artifact publishing gains a publish-time verifier <a class="anchor" href="#workshop-html-artifact-publishing-gains-a-publish-time-verif">#</a></h3>
       </div>
-      <p class="glance">The server can now pick a fallback model by category when a request is refused, instead of the app naming one.</p>
+      <p class="glance">Published HTML artifacts can be checked against rules first and refused outright instead of shipping something unsafe.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
+        <span class="where"><b>Not switched on</b> &middot; Artifacts</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>A second server-side-fallback beta lets the server choose the fallback model by category rather than the client naming one, but it only takes effect if the server accepts the new beta header.</p>
+<p>Artifact publishing can now run the generated HTML through a verifier that refuses to publish when rules are violated, rather than shipping it and relying on later checks.</p>
 <div class="blabel">Details</div>
-<ul><li>the descriptor is <code>server_side_fallback_category</code> with header <code>server-side-fallback-2026-07-01</code></li><li>when it applies, the request sends <code>fallbacks: "default"</code> instead of an explicit <code>[{ model: ... }]</code> list, letting the server route, for example, cyber-category refusals to the previous Opus</li><li>fallback-error classification gained <code>category_beta_header</code> (the new header was rejected) and <code>default_unconfigured</code> (from a body containing "has no default fallback configuration")</li><li>the retry path un-arms the category header on those errors and falls back to the existing explicit-list behaviour</li><li>the code path also still requires the existing default-fallback conditions</li></ul>
+<ul><li>publishing accepts a new <code>verifyWorkshopHtml</code> option; publishing a plan as an artifact passes <code>verifyWorkshopHtml: "probe"</code> when the gate is on</li><li>refusal reports per-rule violations and emits telemetry under <code>workshop_html_publish</code> and <code>verifier_refused</code> instead of publishing</li><li>verified slugs accumulate into app state under <code>workshopVerifiedSlugs</code></li><li>for workshop surfaces, a redeploy must pass <code>refusedSidecarHistory</code>, sourced from a new AppState key <code>sidecarHistorySlugs</code>, otherwise publishing is refused rather than skipping the sidecar-ordering gate</li><li>sidecar files whose content type is not in the inert text or binary allowlists are flagged as renderable or executable</li><li>the gate falls back to false and additionally requires the surrounding workshop feature check; none of these names exist in 2.1.218</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>"server-side-fallback-2026-07-01"</code></p>
+<p><code>refusing rather than skipping the sidecar-ordering gate</code>, <code>verifyWorkshopHtml</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q3" id="opus-5-carries-an-extra-system-prompt-block-and-suppresses-s" data-f="k-in-development t-internal">
+      <div class="card-top">
+        <h3>Opus 5 carries an extra system-prompt block and suppresses subagent nudges <a class="anchor" href="#opus-5-carries-an-extra-system-prompt-block-and-suppresses-s">#</a></h3>
+      </div>
+      <p class="glance">On some models Claude will stop spinning up subagents or research workflows unless you actually ask for it.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; System Prompt</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Models advertising a new capability get an appended prompt block telling the model not to reach for subagents or research workflows unprompted, and the matching steering nudge is turned off for them.</p>
+<div class="blabel">Details</div>
+<ul><li>gated on the <code>opus_5_prompt_bundle</code> capability, with a remote kill-flag checked inside the capability test (fallback: not killed)</li><li>the appended block reads "Do not call the AgentTool unless the user requested it" and "Do not use workflows or deep-research unless the user requested it"</li><li>application is logged as <code>tengu_heron_brook_applied</code> with <code>fromClientData: !1</code></li><li>the <code>tengu_heron_brook</code> string flag still overrides</li><li>the same capability check feeds the "thistle grebe" steering resolver with a new "model" source returning "no_nudges", suppressing the delegate-to-subagents steering text</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Do not call the AgentTool unless the user requested it</code></p>
 <hr></div>
     </article>
     <article class="card folded q1" id="admin-workspace-helpers-get-a-random-per-run-token-and-path-" data-f="k-in-development t-internal upcoming">
@@ -2424,21 +2424,21 @@
 <p><code>memory_recall_select</code></p>
 <hr></div>
     </article>
-    <article class="card folded q1" id="pr-review-artifact-description-has-an-alternate-wording-that" data-f="k-in-development t-soon upcoming x-slash">
+    <article class="card folded q2" id="repo-mismatch-display-disambiguates-by-host" data-f="k-in-development t-internal">
       <div class="card-top">
-        <h3>PR-review artifact description has an alternate wording that cannot ship in this build <a class="anchor" href="#pr-review-artifact-description-has-an-alternate-wording-that">#</a></h3>
+        <h3>Repo-mismatch display disambiguates by host <a class="anchor" href="#repo-mismatch-display-disambiguates-by-host">#</a></h3>
       </div>
-      <p class="glance">An alternate PR-review description exists but you&#39;ll always see the original one.</p>
+      <p class="glance">Resuming into a same-named repo from a different host can now be labelled host/repo to tell them apart.</p>
       <div class="card-actions">
         <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
-<div class="toks"><code class="tok">/pr-review</code></div>        <span class="where"><b>Not switched on</b> &middot; Artifacts</span>
+        <span class="where"><b>Under the hood</b> &middot; Sessions</span>
       </div>
       <div class="card-body" hidden><div class="blabel">What</div>
-<p>The pr-review command description became a function that picks between two strings, one of which describes republish-only editing of composed review pages. The selector can never choose it here.</p>
+<p>Resuming against a same-named repo on a different forge can now show which is which, though the callers of the new helper were not traced.</p>
 <div class="blabel">Details</div>
-<ul><li>the alternate string ends "a published composed review page is updated ONLY through the acting loop's republish — never by editing its HTML directly."</li><li>the selector combines a hard-coded false with <code>tengu_walnut_sconce</code>, and the helper it bottoms out in returns false unconditionally in this build</li><li>users see the original description</li></ul>
+<ul><li>The port-stripping normalizer moved out of the inline closure into its own helper</li><li>A new function returns <code>sessionDisplay</code> / <code>currentDisplay</code>, prefixing the repo with its host as <code>host/repo</code> only when the two hosts differ after normalization</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>never by editing its HTML directly.</code></p>
+<p><code>sessionDisplay</code></p>
 <hr></div>
     </article>
   </div>
