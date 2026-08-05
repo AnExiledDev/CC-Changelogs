@@ -132,12 +132,25 @@ main{min-width:0}
 .release:hover{border-color:#5a5040;transform:translateY(-3px);text-decoration:none;
   box-shadow:0 18px 46px -18px rgba(0,0,0,.8)}
 .release.hidden{display:none}
-.release-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.release-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px 16px;flex-wrap:wrap}
 .ver{font-size:21px;font-weight:800;letter-spacing:-.02em;color:var(--ink);font-family:var(--mono);transition:color .15s}
 .release:hover .ver{color:var(--accent-2)}
 .latest-badge{display:inline-flex;align-items:center;background:rgba(217,119,87,.15);
   border:1px solid rgba(217,119,87,.4);color:var(--accent-2);font-size:10px;font-weight:700;
   letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px;margin-left:12px;vertical-align:middle}
+/* Narrow archive columns wrap the badges onto their own line; keeping them in one
+   flex row means they wrap together instead of stacking one per line. */
+.ver-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0}
+.ver-row .latest-badge,.ver-row .deep-badge{margin-left:0}
+.deep-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(176,143,217,.14);
+  border:1px solid rgba(176,143,217,.42);color:var(--violet);font-size:10px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;padding:3px 9px 3px 7px;border-radius:999px;
+  margin-left:8px;vertical-align:middle}
+.deep-badge svg{width:11px;height:11px;flex:none;opacity:.9}
+.release.is-deep{border-color:rgba(176,143,217,.24)}
+.release.is-deep:hover{border-color:rgba(176,143,217,.55)}
+.release.is-deep:hover .ver{color:var(--violet)}
+.release.is-deep:hover .open-link{color:var(--violet)}
 .summary{color:var(--ink-2);font-size:14px;margin:13px 0 0;line-height:1.6}
 .summary code{font-size:.84em}
 .open-link{display:inline-flex;gap:6px;margin-top:15px;font-size:12.5px;font-weight:600;color:var(--ink-3);transition:color .15s}
