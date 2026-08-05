@@ -302,12 +302,16 @@ footer a{color:var(--ink-2)}
    can be taken in at a glance and opened where it matters. Uses the existing
    panel, line and ink tokens; no new palette. */
 
+/* Rows stretch so a short card never leaves a hole beside a tall one, and an
+   opened card takes the full width instead of stranding its neighbour. */
 .card-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-  align-items:start;gap:12px}
-.card-list .card{margin:0;padding:15px 17px}
+  grid-auto-flow:row dense;align-items:stretch;gap:12px}
+.card-list .card{margin:0;padding:15px 17px;display:flex;flex-direction:column}
 .card-list .card:hover{transform:none;border-color:#4c4436;box-shadow:var(--shadow)}
-.card-list .card.open{border-color:rgba(217,119,87,.34)}
-@media (max-width:900px){.card-list{grid-template-columns:1fr}}
+.card-list .card.open{grid-column:1/-1;border-color:rgba(217,119,87,.34)}
+.card-list .card .card-actions{margin-top:auto}
+@media (max-width:900px){.card-list{grid-template-columns:1fr}
+  .card-list .card.open{grid-column:auto}}
 
 .section-head.lead h2{color:var(--accent-2)}
 .section-head.muted h2{color:var(--ink-3);font-weight:600}
@@ -331,10 +335,11 @@ footer a{color:var(--ink-2)}
 .card.highlights ul.official-list li a:hover{color:var(--accent-2);border-bottom-color:rgba(217,119,87,.5)}
 .card.highlights .tok{margin-left:5px;vertical-align:1px}
 
-/* Filter bar */
-.filterbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;
+/* Filter bar. Sits below the sticky nav, never under it. */
+.filterbar{position:sticky;top:48px;z-index:20;display:flex;align-items:center;gap:12px;
   flex-wrap:wrap;margin:30px 0 20px;padding:11px 14px;border-radius:12px;
-  border:1px solid var(--line);background:rgba(29,26,19,.9);backdrop-filter:blur(10px)}
+  border:1px solid var(--line);background:rgba(29,26,19,.94);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .filterbar.filtering{border-color:rgba(217,119,87,.4)}
 .fb-label{font:700 10.5px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
 .fb-chips{display:flex;flex-wrap:wrap;gap:7px;flex:1}
@@ -350,22 +355,25 @@ footer a{color:var(--ink-2)}
 .fchip.tok.on{background:var(--blue);border-color:var(--blue)}
 .fchip.juice.on{background:var(--amber);border-color:var(--amber)}
 
+.card.folded{scroll-margin-top:120px}
 .card.folded .card-top{gap:10px}
 .card.folded h3{font-size:16px;font-weight:650;color:var(--ink-2);line-height:1.35}
 .card.folded.q4 h3,.card.folded.q5 h3{font-size:17.5px;font-weight:700;color:var(--ink)}
 .card.folded.q1 h3,.card.folded.q2 h3{font-size:15px;color:var(--ink-3)}
 .card.open h3{color:var(--ink)}
+.card.folded .tags .tag{font-size:9.5px;padding:3px 7px}
 
-.glance{color:var(--ink);font-size:14.5px;line-height:1.55;margin:8px 0 0}
+.glance{color:var(--ink);font-size:14.5px;line-height:1.55;margin:8px 0 12px}
 .card.folded.q1 .glance,.card.folded.q2 .glance{color:var(--ink-2);font-size:13.8px}
 
-/* Tokens ride the action row instead of claiming one of their own. */
-.card-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:11px 0 0}
-.toks{display:flex;flex-wrap:wrap;gap:5px;min-width:0}
+/* Tokens ride the action row instead of claiming one of their own. A truncated
+   token cannot be typed, so they wrap rather than ellipse. */
+.card-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px;
+  padding-top:2px}
+.toks{display:flex;flex-wrap:wrap;gap:5px;min-width:0;flex:1}
 .tok{font-family:var(--mono);font-size:11px;color:var(--blue);
   background:rgba(127,168,217,.1);border:1px solid rgba(127,168,217,.26);
-  border-radius:6px;padding:2px 7px;white-space:nowrap;max-width:22ch;
-  overflow:hidden;text-overflow:ellipsis}
+  border-radius:6px;padding:2px 7px;word-break:break-all}
 .more{background:var(--panel-2);border:1px solid var(--line);color:var(--ink-2);
   font:600 11.5px/1 var(--sans);padding:6px 11px;border-radius:8px;cursor:pointer;
   display:inline-flex;align-items:center;gap:6px;flex-shrink:0;
@@ -373,16 +381,23 @@ footer a{color:var(--ink-2)}
 .more:hover{border-color:var(--accent);color:var(--accent-2)}
 .more .chev{font-size:8px;transition:transform .18s}
 .card.open .more .chev{transform:rotate(180deg)}
-.where{color:var(--ink-3);font-size:11px;letter-spacing:.04em;margin-left:auto;flex-shrink:0}
+.where{color:var(--ink-3);font-size:11px;letter-spacing:.03em;margin-left:auto;
+  flex-shrink:0;white-space:nowrap}
+.where b{color:var(--ink-2);font-weight:600}
 
 .card-body{margin-top:14px;padding-top:13px;border-top:1px solid var(--line-soft)}
 .card-body>:first-child{margin-top:0}
 .card-list .card-body p{font-size:14px}
+.card-list .card.open .card-body{columns:2;column-gap:34px}
+.card-list .card.open .card-body>*{break-inside:avoid}
+@media (max-width:1000px){.card-list .card.open .card-body{columns:1}}
+.alsoas{margin-top:16px;padding-top:12px;border-top:1px dashed var(--line-soft)}
+.alsoas p{color:var(--ink-3);font-style:italic;margin:0}
 
 @media (max-width:640px){
   .card-list .card{padding:14px 15px}
   .section-head{flex-wrap:wrap}
   .openall{order:3}
-  .filterbar{top:auto;position:static}
+  .filterbar{position:static}
   .where{margin-left:0}
 }
