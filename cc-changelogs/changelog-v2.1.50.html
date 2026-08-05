@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">12 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="diff-command">
       <div class="card-top">
         <h3><code>/diff</code> Command <a class="anchor" href="#diff-command">#</a></h3>
@@ -228,10 +229,12 @@
 <p>Simple mode checks (search for <code>"CLAUDE_CODE_SIMPLE"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed issue where GitHub issue/PR references with fewer than 3 digits (e.g., <code>#12</code>) were incorrectly linkified; now only references with 3+ digits are processed (search for <code>/(?&lt;!\w)#(\d{3,})\b/</code>)</li></ul>
 <ul><li>Fixed duplicate MCP tools when connecting to multiple servers that provide tools with the same name (search for <code>"wG([...Y6.mcp.tools"</code> — deduplication by name)</li></ul>
@@ -241,13 +244,16 @@
 <ul><li>Removed the code diff footer feature flag and setting (<code>codeDiffFooterEnabled</code>) that was behind <code>tengu_code_diff_cli</code> - this functionality is now handled by the new <code>/diff</code> command</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The <code>/diff</code> command replaces the previous code diff footer that was shown at the bottom of the chat. Users who relied on the footer can now use <code>/diff</code> to view the same information on demand.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -309,7 +315,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

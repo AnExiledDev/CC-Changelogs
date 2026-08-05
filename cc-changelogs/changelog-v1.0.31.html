@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">9 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p>Based on my analysis of the diff for Claude Code version 1.0.31, here's the detailed changelog:</p>
 <p># Claude Code v1.0.31 Changelog</p>
@@ -136,18 +137,22 @@
       <ul><li>Added dark theme configuration option for error dialogs</li><li>Better visual consistency across the application</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed issues with transcript summary generation for conversations without summaries</li><li>Improved error handling in configuration file parsing with proper async/await flow</li><li>Fixed race conditions in session file writes</li><li>Better handling of missing or corrupt session files</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <ul><li>Refactored main entry point to use proper async initialization</li><li>Improved process cleanup with dedicated launcher symlink removal</li><li>Enhanced token counting algorithms for more accurate usage metrics</li><li>Better separation of concerns for installation and setup logic</li></ul>
     </article>
@@ -173,6 +178,7 @@ Version: 1.0.31
 Location: ~/.claude/bin/claude
 Next: Run claude --help to get started</code></pre>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -234,7 +240,7 @@ Next: Run claude --help to get started</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

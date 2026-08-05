@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="new-features">
       <p><em>No new features in this release.</em></p>
     </article>
@@ -97,13 +98,16 @@
 <ul><li>In builds without embedded font files (non-Bun builds or Bun builds without embedded assets), users will now see: "Screenshot copying is not available in this build"</li><li>Previously, the feature would attempt to run and potentially fail with a less helpful error message</li><li>The core screenshot functionality remains unchanged for supported builds</li><li><strong>Evidence</strong>: New guard clause in <code>Ib2()</code> at lines 483446-483450 in v2.0.64, calling <code>e5()</code> build check function at lines 17067-17074</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <p>This release includes 9,263 internal variable renames due to bundler regeneration. These do not affect functionality and are not user-visible.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -165,7 +169,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

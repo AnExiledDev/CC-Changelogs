@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">9 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.90 Changelog</p>
     </article>
@@ -141,21 +142,26 @@ claude</code></pre>
       <ul><li><code>qh5()</code>: Finds JetBrains IDE configuration directories</li><li><code>$86()</code>: Locates JetBrains plugin directories</li><li><code>z86()</code>: Extracts plugin version from JAR files</li><li><code>EX1()</code>: Recursively copies directories</li><li><code>RX1()</code>: Recursively removes directories</li><li><code>U86()</code>: Manages JetBrains plugin installation and updates</li><li><code>C86()</code>: Checks if JetBrains plugin is installed</li><li><code>E86()</code>: Unified IDE extension detection</li><li><code>nQ6()</code>: Formats permission prompt results</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential issues with IDE integration when environment flags are not properly set</li><li>Improved error handling in plugin installation processes</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>This version represents a significant expansion in IDE support, moving beyond just VS Code-family editors to include the entire JetBrains ecosystem. The new permission system also provides users with more granular control over tool execution, enhancing security and user confidence when working with Claude Code.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -217,7 +223,7 @@ claude</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">29 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="oidc-federation-authentication">
       <div class="card-top">
         <h3>OIDC Federation Authentication <a class="anchor" href="#oidc-federation-authentication">#</a></h3>
@@ -375,10 +376,12 @@ claude
 <p>Plan handoff message (search for <code>"I'm sending this plan to Ultraplan"</code>) — <code>Gt7</code></p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed markdown blockquote rendering by correcting which variable is split (search for <code>"blockquote"</code>) — <code>dL</code></li><li>Fixed model version detection regex to properly distinguish between base models and versioned models, changing from <code>.includes("claude-opus-4")</code> to a regex pattern like <code>/claude-opus-4-\d/</code> (search for <code>"claude-opus-4"</code> with regex) — <code>Fj</code></li><li>Fixed shift+key input to uppercase single lowercase letters when shift is held (search for <code>"shift"</code> near <code>"a"</code> and <code>"z"</code>) — <code>Fa_</code></li><li>Improved terminal character width calculation for multi-byte and wide characters using <code>Math.max(2, ...)</code> (search for <code>"Math.max(2"</code>) — <code>Y7K</code></li><li>Fixed <code>gh pr view</code> error handling to gracefully return instead of throwing an exception (search for <code>"gh pr view"</code>) — <code>D84</code></li><li>Fixed variable reference in array comparison logic, changing from <code>t</code> to <code>qH</code> for correct length checking — <code>q68</code></li><li>Added state tracking to detect system theme query failures and prevent repeated broken queries — <code>iQ_</code></li><li>Added detailed error logging and schema validation diagnostics for job state file parsing failures — <code>N$8</code></li></ul>
     </article>
@@ -407,13 +410,16 @@ claude
 <p>Removed mobile dialog (search for <code>"mobile-app"</code> in old version) — <code>YG1</code></p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>The HTTP client has been migrated from an axios-based library to native <code>fetch</code> API throughout the transport layer. This is an internal change but may affect proxy configurations that relied on axios-specific behavior.</li><li>The download URL for Claude Code releases changed from a Google Cloud Storage URL to <code>https://downloads.claude.ai/claude-code-releases</code>.</li><li>Connection adapters (Direct Connect, SSH) were refactored from a class-based to a factory pattern. The internal hook names changed from <code>useDirectConnect</code>/<code>useSSHSession</code> to factory labels <code>directConnect</code>/<code>ssh</code>.</li><li>The <code>length limits</code> system prompt instruction ("keep text between tool calls to ≤25 words") was removed, giving the model more flexibility in response length.</li><li>Organizations using AWS credential configuration through the settings UI should migrate to either API key authentication or the new OIDC Federation system.</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -475,7 +481,7 @@ claude
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

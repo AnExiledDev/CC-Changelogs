@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="external-claude-md-file-security">
       <div class="card-top">
         <h3>External CLAUDE.md File Security <a class="anchor" href="#external-claude-md-file-security">#</a></h3>
@@ -120,21 +121,26 @@
       <ul><li><strong>Stricter validation for file edits</strong>: The edit validation now specifically checks for the presence of file edit tools rather than just any tool use, preventing false positives</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li><strong>Fixed parameter order</strong>: Corrected parameter order in <code>collectIncludedPaths</code> function</li><li><strong>Improved error handling</strong>: Better error messages for invalid HTTP headers</li><li><strong>Session file handling</strong>: More robust session file creation and management</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Technical Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-changes">
       <ul><li>Removed several database-related functions (<code>saveMessage</code>, <code>saveConversationChain</code>, <code>getConversationSummaries</code>, <code>saveConversationSummary</code>)</li><li>Replaced SQLite-based history with file-based JSONL storage</li><li>Added new imports for file system operations and stream handling</li><li>Updated version string to "0.2.106"</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -196,7 +202,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

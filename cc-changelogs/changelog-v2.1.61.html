@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="built-in-tools-no-longer-deferred-by-default">
       <div class="card-top">
         <h3>Built-in tools no longer deferred by default <a class="anchor" href="#built-in-tools-no-longer-deferred-by-default">#</a></h3>
@@ -99,6 +100,7 @@
 <div class="blabel">Evidence</div>
 <p>Client data fetch function <code>sQK()</code> (search for <code>"clientDataCache"</code>) — added deep equality check via <code>$Q()</code> before cache write at line ~69394</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -160,7 +162,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

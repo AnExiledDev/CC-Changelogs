@@ -77,9 +77,11 @@
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fix potential crash during tool permission prompts: added optional chaining (<code>?.</code>) when accessing <code>getAppState()</code> and <code>toolPermissionContext.mode</code> in the permission request handler. Previously, if <code>getAppState</code> returned <code>null</code> or <code>undefined</code> (e.g., during teardown or an edge-case race condition), the application could throw a <code>TypeError</code>. The fix changes <code>getAppState().toolPermissionContext.mode</code> to <code>getAppState?.()?.toolPermissionContext.mode</code>, gracefully handling the null case. (search for <code>"tengu_tool_use_show_permission_request"</code> in function <code>Qy</code> at line ~573815)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -141,7 +143,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

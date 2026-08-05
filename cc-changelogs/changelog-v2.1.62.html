@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="optimized-prompt-cache-breakpoint-placement">
       <div class="card-top">
         <h3>Optimized prompt cache breakpoint placement <a class="anchor" href="#optimized-prompt-cache-breakpoint-placement">#</a></h3>
@@ -89,13 +90,16 @@
 <p>Cache breakpoint logic in message preparation (search for <code>"tengu_api_cache_breakpoints"</code>) — <code>K$z()</code> at line ~519758</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>This release contains no new features, no bug fixes, no new CLI flags, no new slash commands, and no new feature flags. The <code>tengu_</code> flag count remains unchanged at 938. Structural similarity between v2.1.61 and v2.1.62 is 99.9%, with the remaining differences being import style changes (default imports converted to named imports) and the single cache breakpoint adjustment described above.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -157,7 +161,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="pr-comments-prompt-optimization">
       <div class="card-top">
         <h3>pr-comments Prompt Optimization <a class="anchor" href="#pr-comments-prompt-optimization">#</a></h3>
@@ -90,30 +91,37 @@ claude pr-comments
 claude pr-comments &quot;focus on security-related feedback&quot;</code></pre>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Internal Improvements</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-improvements">
       <ul><li><strong>Code cleanup</strong>: Removed numerous unused internal functions and variables, reducing bundle size and improving performance</li><li><strong>Dependency updates</strong>: Updated AWS SDK components for better compatibility</li><li><strong>Infrastructure improvements</strong>: Enhanced support for model-specific prompt configurations</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Technical Details</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-details">
       <p>The primary change allows individual prompt features to specify which Claude model they use. The <code>pr-comments</code> feature now explicitly uses <code>claude-3-5-haiku-20241022</code> instead of the default model, optimizing for speed and cost-efficiency when processing pull request comments.</p>
 <p>This update indicates a move toward task-specific model optimization, where different features can leverage the most appropriate Claude model based on their complexity and performance requirements.</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>No breaking changes</li><li>No new CLI commands or flags</li><li>Existing pr-comments functionality remains unchanged from a user perspective</li><li>The model change is automatic and requires no configuration</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -175,7 +183,7 @@ claude pr-comments &quot;focus on security-related feedback&quot;</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

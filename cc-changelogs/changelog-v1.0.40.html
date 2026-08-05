@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v1.0.40 Changelog</p>
     </article>
@@ -101,21 +102,26 @@ claude-code</code></pre>
 <ul><li><code>Additional CA cert(s): /path/to/ca-bundle.crt</code> when NODE_EXTRA_CA_CERTS is set</li><li>Clearer labeling for mTLS client certificates and keys</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Technical Improvements</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-improvements">
       <ul><li>Streamlined import statements for Node.js stream modules</li><li>Added support for data structures related to GitHub issue/PR tracking (internal improvement for future features)</li><li>Improved process working directory handling with explicit imports</li><li>Code restructuring for better modularity</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Removed redundant certificate configuration checks</li><li>Fixed duplicate import statements for stream modules</li><li>Cleaned up unnecessary conditional logic in certificate validation</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -177,7 +183,7 @@ claude-code</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

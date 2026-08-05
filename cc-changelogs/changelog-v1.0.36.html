@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v1.0.36 Changelog</p>
     </article>
@@ -129,29 +130,36 @@
       <ul><li><strong>Text truncation</strong>: Selected text from IDE is now truncated to 2000 characters to prevent overwhelming the context</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed configuration storage issue where fallback storage wasn't properly cleaned up after successful primary storage writes</li><li>Improved resource URL validation logic to handle undefined resources correctly</li><li>Fixed image handling in user prompts to process images before other content</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <ul><li>Replaced several utility functions with more efficient implementations using lodash</li><li>Updated proxy agent initialization to support mTLS configurations</li><li>Improved error handling in fetch operations for OAuth discovery</li><li>Added proper TypeScript imports for Node.js stream and process modules</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Developer Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="developer-notes">
       <p>These changes focus on enterprise security features (mTLS support), improved installation management, and better diagnostic capabilities. The update command now provides a much more informative and user-friendly experience when checking for and installing updates.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -213,7 +221,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">9 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.55 Changelog</p>
     </article>
@@ -132,21 +133,26 @@
       <ul><li>Enhanced <code>Ak5()</code> function (formerly <code>Bb5()</code>) now checks for context limit errors</li><li>Automatically retries requests that fail due to context limits</li><li>Provides better handling of token-related errors</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed memory update notification display to be more concise and user-friendly</li><li>Improved error message clarity for permission-related failures</li><li>Better handling of empty MCP timeout environment variables</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <ul><li>Removed unused variables: <code>RG9</code>, <code>zi2</code>, <code>xZ</code></li><li>Removed redundant import: <code>Rn2</code> from "node:process"</li><li>Added new utility function <code>Yf()</code> for internal operations</li><li>Significant code refactoring with ~4254 function renames for better code organization</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -208,7 +214,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

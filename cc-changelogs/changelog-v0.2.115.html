@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="new-features">
       <div class="card-top">
         <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
@@ -117,6 +118,7 @@
       </div>
       <ul><li>Fixed duplicate session messages in conversation history</li><li>Resolved issues with session file naming and retrieval</li><li>Corrected handling of empty or malformed git command responses</li><li>Fixed edge cases in notification delivery for certain terminal types</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -178,7 +180,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

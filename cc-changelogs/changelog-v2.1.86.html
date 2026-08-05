@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">17 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="trusted-device-enrollment">
       <div class="card-top">
         <h3>Trusted Device Enrollment <a class="anchor" href="#trusted-device-enrollment">#</a></h3>
@@ -238,21 +239,26 @@
 <p>Streaming file read (search for <code>"Skipping raw transcript read: file too large"</code>) — <code>Pm1()</code> at line ~317956</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Directory removal is now more robust — uses a single <code>rmdir</code> call and handles <code>ENOTDIR</code>/<code>ENOENT</code>/<code>ENOTEMPTY</code> errors gracefully instead of manually checking if a directory is empty first (search for <code>"Could not remove directory at"</code>)</li><li>Lock acquisition failure logging simplified — always wraps errors with a <code>cause</code> chain instead of conditionally stringifying (search for <code>"NON-FATAL: Lock acquisition failed"</code>)</li><li>Skill usage tracking now debounces writes with a minimum interval, preventing rapid config updates when a skill is invoked repeatedly (search for <code>"skillUsage"</code> in <code>bI8()</code>)</li><li>SwarmPermissionPoller now validates and drops malformed permission update entries with a warning instead of crashing (search for <code>"[SwarmPermissionPoller] Dropping malformed permissionUpdate"</code>)</li><li>Advisor feedback message wording corrected: "will apply the feedback" (was: "will now apply the feedback.") (search for <code>"Advisor has reviewed the conversation and will apply the feedback"</code>)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>The <code>CLAUDE_CODE_ENABLE_XAA=1</code> environment variable is required to use XAA features. Without it, servers configured with <code>oauth.xaa</code> will error on startup.</li><li>The <code>--xaa</code>, <code>--client-id</code>, and <code>--client-secret</code> flags are only supported for HTTP/SSE MCP transports and will be ignored for stdio.</li><li>The compact line prefix format and trusted device enrollment are behind feature flags and may not be active for all users yet.</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -314,7 +320,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

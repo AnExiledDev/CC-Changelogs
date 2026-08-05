@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v1.0.49 Changelog</p>
     </article>
@@ -105,18 +106,22 @@
       <ul><li><strong>Readdirp integration</strong>: Advanced recursive directory reading with filtering capabilities</li><li><strong>Stream optimization</strong>: High-performance file enumeration with configurable water marks</li><li><strong>Error handling</strong>: Graceful handling of permission errors and inaccessible directories</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Removed duplicate imports and unused functions</li><li>Fixed shell function snapshot generation issues</li><li>Improved error handling for missing directories</li><li>Better handling of special characters in file paths</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <ul><li>Added new utility functions: <code>ls2</code>, <code>TfA</code>, <code>P29</code>, <code>IlA</code>, <code>ZlA</code>, <code>GlA</code>, <code>FlA</code>, <code>R79</code>, <code>YlA</code>, <code>WlA</code></li><li>New classes: <code>HlA</code> (recursive directory reader), <code>hy1</code> (Node.js file system handler), <code>jlA</code> (directory watcher), <code>ylA</code> (watch helper), <code>dy1</code> (main watcher)</li><li>Removed obsolete functions: <code>M3</code>, <code>jQ</code>, <code>F9Q</code>, <code>hK</code>, <code>KuQ</code>, <code>jx6</code>, <code>sx6</code>, <code>Nh2</code>, <code>ox6</code>, <code>tx6</code>, <code>ex6</code></li></ul>
     </article>
@@ -143,6 +148,7 @@
   }
 }</code></pre>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -204,7 +210,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

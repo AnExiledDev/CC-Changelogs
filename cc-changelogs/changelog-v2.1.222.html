@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="fallback-model-scope-local-vs-session">
       <div class="card-top">
         <h3>Fallback Model Scope: Local vs Session <a class="anchor" href="#fallback-model-scope-local-vs-session">#</a></h3>
@@ -110,10 +111,12 @@
 <p>new schema field (search for <code>"Free-form map for the skill author's own use"</code>) at line ~214797; plugin variant (search for <code>"Free-form metadata for the plugin author's own use"</code>) at line ~68668</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">11 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="remote-control-cannot-be-enabled-from-repo-scoped-settings">
       <div class="card-top">
         <h3>Remote Control Cannot Be Enabled from Repo-Scoped Settings <a class="anchor" href="#remote-control-cannot-be-enabled-from-repo-scoped-settings">#</a></h3>
@@ -212,10 +215,12 @@
 <p>(search for <code>"writeMcpTaskMetadata:"</code>) — <code>MHo()</code> at line ~362027</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li><strong>Worktree resume loop on missing binding:</strong> When resuming an agent whose worktree record was cleared (exited or scrubbed), the session now continues in the current directory without isolation rather than looping. Evidence: (search for <code>"resuming a session whose worktree record was cleared"</code>) at line ~950108.</li></ul>
 <ul><li><strong>Git environment variable leakage in worktree checks:</strong> Ambient <code>GIT_DIR</code>, <code>GIT_COMMON_DIR</code>, <code>GIT_WORK_TREE</code>, and <code>GIT_CONFIG_KEY_<em></code> / <code>GIT_CONFIG_VALUE_</em></code> env vars are now scrubbed before running git verification commands, preventing the caller's git environment from polluting isolation identity checks. Evidence: (search for <code>"GIT_COMMON_DIR"</code>) — <code>cf()</code> at line ~64018.</li></ul>
@@ -223,10 +228,12 @@
 <ul><li><strong>Skill import warning updated:</strong> The skill directory import warning now reads "bundled scripts and body instructions become active in Claude Code" instead of "any <code>allowed-tools</code> frontmatter or bundled scripts become active." This is more accurate — scripts in subdirectories and body instructions are also active, not just <code>allowed-tools</code>. Evidence: (search for <code>"bundled scripts and body instructions become active in Claude Code"</code>) at line ~459544.</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled.</p>
     </article>
@@ -251,10 +258,12 @@
 <p>gate (search for <code>"tengu_remote_auto_mode_include_destructive_mcp"</code>) at line ~587335.</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="remote-control-setting-migration">
       <div class="card-top">
         <h3>Remote Control Setting Migration <a class="anchor" href="#remote-control-setting-migration">#</a></h3>
@@ -267,6 +276,7 @@
 <div class="tags"><span class="tag new">New</span></div>      </div>
       <p>The new error taxonomy (<code>AgentResumeTransientError</code> vs <code>AgentResumePermanentlyRefusedError</code>) changes how failed resumes are retried by callers. Transient failures keep the binding and retry on the next <code>--resume</code>. Permanent refusals clear the binding. If you see "Cannot resume this agent: its worktree…" errors, check whether they are transient (network/git unavailable) or permanent (the worktree path is invalid or poisoned) before deciding whether to recreate the worktree.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -330,7 +340,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">15 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="api-based-model-validation">
       <div class="card-top">
         <h3>API-Based Model Validation <a class="anchor" href="#api-based-model-validation">#</a></h3>
@@ -194,14 +195,17 @@
 <ul><li><strong>Evidence</strong>: <code>rn6()</code> at line 396057 with new cases at lines 402372-402381</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <ul><li>Refactored shell parsing to use centralized wrapper functions for consistency</li><li>Renamed and restructured ink rendering class from <code>A$1</code> to <code>xU1</code></li><li>Improved color application in text rendering with transform-based approach</li><li>Enhanced border rendering to use theme-aware color functions</li><li>Removed unused dependencies (onetime, signal-exit, stream imports)</li><li>Cleaned up unused functions and variables (19 removed total)</li></ul>
 <p><strong>Note:</strong> This changelog focuses on user-visible changes and significant improvements. Many internal refactorings and code reorganizations have been omitted for brevity.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -263,7 +267,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="enhanced-session-persistence">
       <div class="card-top">
         <h3>Enhanced Session Persistence <a class="anchor" href="#enhanced-session-persistence">#</a></h3>
@@ -167,6 +168,7 @@ Read(&quot;/path/to/specific/file.txt&quot;)</code></pre>
       <p><strong>Impact:</strong> Session data format may have changed due to remote persistence capabilities <strong>Solution:</strong> Existing local sessions should migrate automatically, but backup important session data before upgrading</p>
     </article>
   </div>
+  </div>
 
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
@@ -227,7 +229,7 @@ Read(&quot;/path/to/specific/file.txt&quot;)</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

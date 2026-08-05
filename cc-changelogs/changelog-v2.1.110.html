@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">26 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="tui-command-switch-terminal-renderers">
       <div class="card-top">
         <h3><code>/tui</code> Command — Switch Terminal Renderers <a class="anchor" href="#tui-command-switch-terminal-renderers">#</a></h3>
@@ -332,10 +333,12 @@
 <p>Session scoping guard (search for <code>"setMode:'bypassPermissions' is session-scoped"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed keybinding code parsing to use the <code>code</code> property from the source event instead of the derived string, improving reliability for key detection (search for <code>"q.code &amp;&amp; q.code[0]"</code>)</li></ul>
 <ul><li>Fixed tmux integration by passing the current working directory (<code>cwd</code>) to tmux subprocess calls, resolving issues when the tmux binary isn't on the default path (search for <code>"cwd: R8()"</code> near <code>"tmux"</code>)</li></ul>
@@ -346,10 +349,12 @@
 <ul><li>Fixed terminal raw mode handling with reference counting to prevent mode conflicts between components</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
     </article>
@@ -393,13 +398,16 @@
 <p>Flag definition (search for <code>"tengu_slate_ribbon"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>The Insights HTML report generator (2200+ lines of HTML/CSS/JS) has been refactored — it was removed and re-added in the same version, suggesting a significant rewrite of the report generation system</li><li>The Yoga layout engine wrapper class and related constants have been removed, replaced by a more direct layout approach. This is an internal rendering change with no user-facing impact</li><li>The update/relaunch mechanism (<code>FdY</code>) that displayed "Switching from X.X.X to latest…" has been removed, suggesting version transitions are now handled by the new daemon system</li><li>The kill ring (Emacs-style clipboard) implementation has been refactored from a factory function to a dispatch-based approach, maintaining the same yank/kill functionality</li><li>The <code>CLAUDE_CODE_ENABLE_BACKGROUND_PLUGIN_REFRESH</code> environment variable enables background refreshing of MCP plugin state — set it to opt in to async plugin reloading</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -461,7 +469,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

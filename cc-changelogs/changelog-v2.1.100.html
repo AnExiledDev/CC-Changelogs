@@ -71,6 +71,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="extended-thinking-status-messages">
       <div class="card-top">
         <h3>Extended Thinking Status Messages <a class="anchor" href="#extended-thinking-status-messages">#</a></h3>
@@ -94,10 +95,12 @@
 <p>Length anchor prompt section (search for <code>"numeric_length_anchors"</code> and <code>"≤25 words"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="relaxed-stall-detection-during-thinking">
       <div class="card-top">
         <h3>Relaxed Stall Detection During Thinking <a class="anchor" href="#relaxed-stall-detection-during-thinking">#</a></h3>
@@ -130,6 +133,7 @@
 <div class="blabel">Evidence</div>
 <p>Both <code>"Communicating with the user"</code> and <code>"Output efficiency"</code> strings are absent from v2.1.100 (confirmed via search)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -191,7 +195,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

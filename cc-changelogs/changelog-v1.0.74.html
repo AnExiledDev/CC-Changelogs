@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">11 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="sonnet-4-with-1m-token-context">
       <div class="card-top">
         <h3>Sonnet 4 with 1M Token Context <a class="anchor" href="#sonnet-4-with-1m-token-context">#</a></h3>
@@ -160,6 +161,7 @@ claude /output-mode Concise</code></pre>
       <ul><li><strong>Issue:</strong> Feature gates were being fetched repeatedly without caching</li><li><strong>Cause:</strong> Missing cache implementation for Statsig gates</li><li><strong>Resolution:</strong> Added <code>cachedStatsigGates</code> to configuration with proper cache management</li></ul>
     </article>
   </div>
+  </div>
 
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
@@ -220,7 +222,7 @@ claude /output-mode Concise</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

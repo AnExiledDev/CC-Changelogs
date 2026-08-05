@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="workshop-artifact-skill">
       <div class="card-top">
         <h3>Workshop Artifact Skill <a class="anchor" href="#workshop-artifact-skill">#</a></h3>
@@ -103,10 +104,12 @@
 <p>JWT masking handler (search for <code>"decode \"jwt\""</code> or <code>"maskClaims"</code>). Fake token generator (search for <code>"pnu = \"c3J0LWZha2U\""</code> which is the fake signature base64).</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">12 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="auto-mode-setup-now-requires-file-hash-before-applying">
       <div class="card-top">
         <h3><code>/auto-mode-setup</code> Now Requires File Hash Before Applying <a class="anchor" href="#auto-mode-setup-now-requires-file-hash-before-applying">#</a></h3>
@@ -246,10 +249,12 @@
 <p>Selective relay log messages (search for <code>"[agent-proxy] selective relay:"</code> or <code>"CCR_AGENT_PROXY_RELAY_MODE=selective but include-host"</code>).</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Permission stream failures now produce distinct, specific error strings instead of a single generic failure: <code>"tool permission stream closed before response received"</code>, <code>"canUseTool returned a schema-invalid permission result"</code>, <code>"tool permission request failed"</code>, <code>"tool permission request aborted"</code>. Evidence: (search for <code>"tool permission stream closed before response received"</code>)</li></ul>
 <ul><li>UTF-8 BOM (byte order mark, <code>﻿</code>) is now stripped from file content at the point it is read, preventing it from appearing in tool results and diff output. Evidence: (search for <code>"charCodeAt(0) === 65279"</code>)</li></ul>
@@ -259,6 +264,7 @@
 <ul><li>Worktree-isolated agent shell commands that redirect git into the shared checkout are now blocked with a clear explanation: "Refusing to run it — a worktree-isolated agent's git operations must target its own worktree." Evidence: (search for <code>"commands from a worktree-isolated agent must run inside its worktree"</code>)</li></ul>
 <ul><li>MCP OAuth token revocation errors (<code>Failed to revoke replaced tokens:</code>) are now caught and logged without blocking the token replacement flow. Evidence: (search for <code>"Failed to revoke replaced tokens:"</code>)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -322,7 +328,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

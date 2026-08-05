@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="push-to-remote-from-plan-mode">
       <div class="card-top">
         <h3>Push to Remote from Plan Mode <a class="anchor" href="#push-to-remote-from-plan-mode">#</a></h3>
@@ -148,10 +149,12 @@
 <p><code>ad()</code> at line 5350 (session title generator, contains <code>B ? "Autonomous session" : ""</code> when <code>firstPrompt?.startsWith("&lt;tick&gt;")</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed plugin hooks skipping when <code>allowManagedHooksOnly</code> is enabled in policy settings (<code>Nh()</code> at line 194862, <code>WW2()</code> at line 314806)</li></ul>
     </article>
@@ -172,6 +175,7 @@ CLAUDE_CODE_PERFETTO_TRACE=/path/to/trace.json claude</code></pre>
 <div class="blabel">Evidence</div>
 <p><code>r_2()</code> at line 356811 (initialization, checks <code>process.env.CLAUDE_CODE_PERFETTO_TRACE</code> but guarded by <code>ix.PERFETTO_TRACING</code> which returns <code>!1</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -233,7 +237,7 @@ CLAUDE_CODE_PERFETTO_TRACE=/path/to/trace.json claude</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.76 Changelog</p>
     </article>
@@ -147,13 +148,16 @@
       <p>Several file system and process-related imports have been consolidated or removed, suggesting improved code organization and reduced redundancy.</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>The configuration system maintains separate project-level and global settings</li><li>Project configurations take precedence over global configurations when both exist</li><li>The new array configuration support enables more complex configuration scenarios</li><li>MCP server integration opens possibilities for extended tool capabilities and integrations</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -215,7 +219,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -71,6 +71,7 @@
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed crash when changelog cache file is corrupted or unreadable. The release notes loader (<code>de2()</code> at line 460474) now catches exceptions during changelog parsing and gracefully returns an empty result instead of crashing. This prevents startup failures when the <code>~/.claude/cache/changelog.md</code> file is malformed.</li></ul>
 <div class="blabel">Evidence</div>
@@ -97,6 +98,7 @@
   ...
 }</code></pre>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -158,7 +160,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

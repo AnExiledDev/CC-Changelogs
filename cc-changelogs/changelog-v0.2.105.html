@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">14 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.105 Changelog</p>
     </article>
@@ -168,6 +169,7 @@
       <ul><li><strong>Version bump</strong>: Updated from 0.40.1 to 0.41.0</li><li><strong>Renamed internal functions</strong>: Various function renames for better code organization</li><li><strong>New configuration constant</strong>: Added <code>Y98 = 5</code> for configuration purposes</li></ul>
     </article>
   </div>
+  </div>
 
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
@@ -228,7 +230,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">22 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="advisor-tool">
       <div class="card-top">
         <h3>Advisor Tool <a class="anchor" href="#advisor-tool">#</a></h3>
@@ -317,29 +318,36 @@ claude mcp xaa clear</code></pre>
 <p>Plugin secrets handling (search for <code>"sensitive)"</code>, <code>"to secure storage"</code>, <code>"saveMcpServerUserConfig: scrubbed"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed atomic file write cleanup: the temp file is now cleaned up even if it doesn't exist at the expected path (search for <code>"Cleaning up temp file"</code>)</li><li>Improved plugin hooks reload: now tracks plugin-affecting settings changes rather than just <code>enabledPlugins</code> to avoid unnecessary reloads (search for <code>"plugin-affecting settings change"</code>)</li><li>Fixed deep link input validation to reject control characters and enforce length limits, preventing potential injection issues (search for <code>"Deep link cwd contains disallowed control characters"</code>)</li><li>Fixed MCP lazy dedup to properly suppress duplicate servers from plugins that overlap with claude.ai connectors (search for <code>"[MCP] Lazy dedup: suppressing"</code>)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <ul><li><strong>Segment.io analytics completely removed</strong>: The <code>@segment/analytics-node</code> library and all associated code (event factory, priority queue, emitter, stats tracking, UUID generation) have been removed. Telemetry is now handled through a lighter-weight internal system (search for <code>"Segment.io"</code> in old version)</li><li><strong>Bootstrap API replaces clientData</strong>: The <code>/api/oauth/claude_cli/client_data</code> endpoint has been replaced by <code>/api/claude_cli/bootstrap</code>, which also returns additional model options alongside client data (search for <code>"/api/claude_cli/bootstrap"</code>)</li><li><strong>Improved debug repainting</strong>: New <code>CLAUDE_CODE_DEBUG_REPAINTS</code> environment variable enables detailed React component owner chain tracking for diagnosing UI repaint issues (search for <code>"CLAUDE_CODE_DEBUG_REPAINTS"</code>)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>The Advisor Tool, Deep Link Protocol, and Companion features are controlled by server-side configuration and feature flags. They may not be immediately available to all users.</li><li>The <code>managed-settings.d</code> directory enables enterprise administrators to manage settings across multiple JSON files. Existing <code>managed-settings.json</code> files continue to work unchanged.</li><li>Ultrareview replaces the "Remote review" terminology from previous versions. The functionality is enhanced with cloud agent-based bug detection.</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -401,7 +409,7 @@ claude mcp xaa clear</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

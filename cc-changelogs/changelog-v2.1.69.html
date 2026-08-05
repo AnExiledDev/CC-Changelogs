@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">26 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="remote-control-server-mode">
       <div class="card-top">
         <h3>Remote Control Server Mode <a class="anchor" href="#remote-control-server-mode">#</a></h3>
@@ -353,10 +354,12 @@ mcpb validate   # Validate a manifest.json</code></pre>
 <p>Managed plugins (search for <code>"Managed by your organization"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed sandbox cleanup: <code>cleanupAfterCommand</code> is now exposed on the sandbox API for proper resource cleanup after command execution (search for <code>"cleanupAfterCommand"</code>)</li></ul>
 <ul><li>Fixed lock file handling: Force-removal of stale lock files now logs the action and handles failures gracefully (search for <code>"Force-removed lock file at"</code>, <code>"Failed to force-remove lock file"</code>)</li></ul>
@@ -365,14 +368,17 @@ mcpb validate   # Validate a manifest.json</code></pre>
 <ul><li>Removed <code>coral_reef_opus2</code> client data check and <code>crystal_beam</code> budget token feature — these were internal feature gates that have been cleaned up</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The Remote Control <code>server</code> subcommand is a significant architectural addition. Previous versions only supported basic remote-control connections — the new server mode enables persistent multi-session hosting with session lifecycle management, making it suitable for team environments and CI/CD integrations. Both <code>--spawn-same-dir-sessions</code> (default) and <code>--spawn-worktree-sessions</code> require the <code>server</code> subcommand; attempting to use them with the base <code>remote-control</code> command will produce an error.</p>
 <p>The memory system overhaul changes the recommended format for memory files. While existing plain-text memories will likely continue to work, adopting the new frontmatter format (<code>name</code>, <code>description</code>, <code>type</code> fields) is recommended for better relevance matching in future conversations.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -434,7 +440,7 @@ mcpb validate   # Validate a manifest.json</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

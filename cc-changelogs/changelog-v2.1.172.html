@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="artifact-tool">
       <div class="card-top">
         <h3>Artifact Tool <a class="anchor" href="#artifact-tool">#</a></h3>
@@ -165,10 +166,12 @@ Artifact(file_path=&quot;notes.md&quot;, favicon=&quot;📝&quot;, label=&quot;v
 <p>Log message (search for <code>"CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS is set"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">13 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="remote-control-status-labels-renamed-to-rc">
       <div class="card-top">
         <h3>Remote Control Status Labels Renamed to /rc <a class="anchor" href="#remote-control-status-labels-renamed-to-rc">#</a></h3>
@@ -302,10 +305,12 @@ Artifact(file_path=&quot;notes.md&quot;, favicon=&quot;📝&quot;, label=&quot;v
 <p>Updated session state function (search for <code>"statusUpdatedAt"</code> alongside <code>"updatedAt"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Deep-link injection guard: <code>--handle-uri</code> invocations with extra arguments after the URI are now rejected with an explanatory message, blocking URI-based argument injection. (search for <code>"claude: rejected deep-link invocation — unexpected arguments after the URI"</code>)</li></ul>
 <ul><li>Artifact upload precondition retry: Uploading an artifact now detects HTTP 412 (create-only precondition failed) and returns a clear message: "upload 412: this version was already written (create-only precondition). Re-run publish to mint a fresh version." (search for <code>"this version was already written (create-only precondition)"</code>)</li></ul>
@@ -314,6 +319,7 @@ Artifact(file_path=&quot;notes.md&quot;, favicon=&quot;📝&quot;, label=&quot;v
 <ul><li>Interactive command detection message updated: The message shown when a command appears blocked on an interactive prompt now says "Stop this task" instead of "Kill this task", matching the updated UI terminology. (search for <code>"The command is likely blocked on an interactive prompt. Stop this task"</code>)</li></ul>
 <ul><li>tmux session cleanup label corrected: The worktree cleanup option now reads "Keep worktree, end tmux session" instead of the previous "Keep worktree, kill tmux session". (search for <code>"Keep worktree, end tmux session"</code>)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -377,7 +383,7 @@ Artifact(file_path=&quot;notes.md&quot;, favicon=&quot;📝&quot;, label=&quot;v
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

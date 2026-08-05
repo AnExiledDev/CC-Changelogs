@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.74 Changelog</p>
     </article>
@@ -117,21 +118,26 @@
       <ul><li>Removed unused functions and variables</li><li>Better error handling in the caching system</li><li>Cleaner separation of concerns in API authentication flow</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential memory leaks from cached API client instances</li><li>Improved error handling for cache refresh failures</li><li>Better handling of edge cases in diff viewer width calculations</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Breaking Changes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="breaking-changes">
       <p>None - This release maintains full backward compatibility with v0.2.73.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -193,7 +199,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

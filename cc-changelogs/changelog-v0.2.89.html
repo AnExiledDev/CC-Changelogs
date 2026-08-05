@@ -71,6 +71,7 @@
     <h2>Overview</h2><div class="ln"></div>
 <span class="ct">9 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="overview">
       <p>This update significantly restructures the internal codebase, removing 1,130 declarations and adding 176 new ones, resulting in a more streamlined implementation with 84.3% structural similarity to v0.2.86.</p>
     </article>
@@ -132,21 +133,26 @@
       <ul><li>Reduced bundle size through removal of unused AWS SDK components</li><li>More efficient credential caching and validation</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Migration Notes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="migration-notes">
       <ul><li>If you were using removed AWS SDK configuration features directly, you'll need to adapt to the new credential chain pattern</li><li>UUID functionality that was removed can be replaced with external UUID libraries if needed</li><li>The new credential chain system provides a more unified approach to managing AWS credentials across different sources</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Improved handling of credential expiration edge cases</li><li>Better error propagation in provider chains</li><li>Fixed potential memory leaks in credential caching</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -208,7 +214,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

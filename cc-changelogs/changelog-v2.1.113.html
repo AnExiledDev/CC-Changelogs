@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">23 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="deep-linking-with-base64url-parameters">
       <div class="card-top">
         <h3>Deep Linking with Base64url Parameters <a class="anchor" href="#deep-linking-with-base64url-parameters">#</a></h3>
@@ -297,18 +298,22 @@ claude --deep-link-repo=&lt;repo&gt; --deep-link-origin=&lt;origin&gt; --deep-li
 <p>Request ID fields (search for <code>"clientRequestId"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed ANSI escape sequence handling to include the CSI alternate sequence (<code>\x9B</code>), resolving potential display issues in some terminals (search for <code>"uwK"</code> in annotations)</li><li>Fixed string truncation returning incorrect length by changing the return to use the length parameter variable instead of a different variable (search for <code>VK</code> in annotations — <code>return z + "…" → return K + "\u2026"</code>)</li><li>Fixed DEL character (<code>\x7F</code>) handling in interactive text input — previously the DEL character was treated as empty string, now it's correctly recognized as a delete action (search for <code>"c4$"</code> in annotations)</li><li>Fixed backspace key handling to recognize the <code>\x7F</code> (DEL) character code alongside <code>\b</code> (search for <code>"c4$"</code> — <code>O === '' || O === '\b' → A === '\x7F' || A === '\b'</code>)</li><li>Fixed Ctrl+U (delete to line start) to use proper <code>deleteToLineStart()</code> method instead of dispatching a raw text replacement (search for <code>"qI"</code> in annotations)</li><li>Improved Unicode normalization throughout the CLI — hundreds of literal Unicode characters (middle dots, em dashes, ellipses, arrows, box-drawing characters) are now consistently represented as escape sequences, preventing rendering issues in terminals that handle raw Unicode differently</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
     </article>
@@ -371,6 +376,7 @@ claude --deep-link-repo=&lt;repo&gt; --deep-link-origin=&lt;origin&gt; --deep-li
 <p>Several older documentation blocks were removed and replaced with updated versions reflecting current API patterns.</p>
     </article>
   </div>
+  </div>
 
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
@@ -431,7 +437,7 @@ claude --deep-link-repo=&lt;repo&gt; --deep-link-origin=&lt;origin&gt; --deep-li
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

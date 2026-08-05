@@ -77,6 +77,7 @@
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="claude-sonnet-5-added-to-model-compatibility-list">
       <div class="card-top">
         <h3>claude-sonnet-5 added to model compatibility list <a class="anchor" href="#claude-sonnet-5-added-to-model-compatibility-list">#</a></h3>
@@ -87,13 +88,16 @@
 <p><code>ALn</code> function in the <code>tw</code> lazy-init block (lines ~162348–162370); <code>BX</code> beta-header constant definition (line ~122337, <code>"mid-conversation-system-2026-04-07"</code>); mid-conv-system rejection handler (lines ~593496–593508); rejection detector <code>zWn</code> (lines ~354273–354280); <code>claude-sonnet-5</code> model capability definition showing <code>mid_conv_system</code> (lines ~113969–113999)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>All other modifications in this release are mechanical version-string propagation: every embedded copy of the package version (<code>VERSION: "2.1.200"</code> → <code>"2.1.201"</code>), build timestamp, and Git SHA was updated across the roughly 35 structural and 72 string-only locations where these constants appear inline. No user-facing behavior, commands, or settings changed as a result of those updates.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -157,7 +161,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

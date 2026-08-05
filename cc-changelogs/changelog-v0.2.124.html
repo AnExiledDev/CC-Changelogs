@@ -71,14 +71,17 @@
     <h2>Changes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.124 Changelog</p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="improved-aws-bedrock-model-discovery">
       <div class="card-top">
         <h3>Improved AWS Bedrock Model Discovery <a class="anchor" href="#improved-aws-bedrock-model-discovery">#</a></h3>
@@ -103,13 +106,16 @@
       <ul><li>Consolidated stream imports to use named imports from the <code>stream</code> module</li><li>Reorganized process-related imports to use named imports from <code>node:process</code></li><li>Minor code cleanup and consistency improvements</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Technical Details</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-details">
       <ul><li>Structural similarity with previous version: 99.9%</li><li>Total changes: 5 additions, 5 deletions, 1 modification</li><li>The core functionality remains unchanged, with improvements focused on reliability and error handling</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -171,7 +177,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

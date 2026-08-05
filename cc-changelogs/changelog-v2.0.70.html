@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">9 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="feature-discovery-system-discover">
       <div class="card-top">
         <h3>Feature Discovery System (<code>/discover</code>) <a class="anchor" href="#feature-discovery-system-discover">#</a></h3>
@@ -156,6 +157,7 @@
 <ul><li>Added exclusions for React/Angular XSS (frameworks handle escaping)</li><li>Added exclusions for client-side permission checking (backend handles this)</li><li>Added exclusions for notebook vulnerabilities without concrete attack paths</li><li><strong>Evidence</strong>: Enhanced filtering rules in <code>ZV5</code> template starting at line 471235</li></ul>
     </article>
   </div>
+  </div>
 
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
@@ -216,7 +218,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

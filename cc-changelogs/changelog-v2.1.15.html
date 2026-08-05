@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="cowork-plugins-directory-support-hidden">
       <div class="card-top">
         <h3>Cowork Plugins Directory Support [Hidden] <a class="anchor" href="#cowork-plugins-directory-support-hidden">#</a></h3>
@@ -129,13 +130,16 @@ CLAUDE_CODE_USE_COWORK_PLUGINS=true claude</code></pre>
 <p><code>k6.isRemoteMode = A</code> at line 2350, usage checks at lines 548372 and 548402</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The <code>--cowork</code> flag and cowork plugins directory are hidden internal features, likely intended for Anthropic development and testing workflows. They are not documented in public help output and should be considered unsupported for general users.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -197,7 +201,7 @@ CLAUDE_CODE_USE_COWORK_PLUGINS=true claude</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

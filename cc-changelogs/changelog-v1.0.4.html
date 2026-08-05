@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v1.0.4 Changelog</p>
     </article>
@@ -154,29 +155,36 @@ curl https://api.example.com</code></pre>
       <ul><li><strong>Concurrent version cleanup</strong>: Old CLI versions are now cleaned up more efficiently with proper locking</li><li><strong>Protected versions</strong>: The system protects currently running versions and symbolic links (latest, known-good) from deletion</li><li><strong>Configurable retention</strong>: Keeps only the 2 most recent versions by default</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Technical Improvements</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-improvements">
       <ul><li><strong>Modular telemetry</strong>: Metrics system is now initialized separately and can be disabled</li><li><strong>Better proxy support</strong>: Consolidated proxy configuration using <code>HTTPS_PROXY</code> or <code>HTTP_PROXY</code> environment variables</li><li><strong>Enhanced MCP approval</strong>: Improved migration of MCP (Model Context Protocol) server approval settings</li><li><strong>React context for feature flags</strong>: New context system for managing feature availability</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed issues with file permission checks in additional working directories</li><li>Improved handling of malformed tool inputs during streaming</li><li>Better error recovery during version installation and cleanup</li><li>Fixed duplicate imports and unused variables</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Breaking Changes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="breaking-changes">
       <p>None - This release maintains backward compatibility with existing workflows and configurations.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -238,7 +246,7 @@ curl https://api.example.com</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

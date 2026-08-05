@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="mcp-server-user-configuration-support">
       <div class="card-top">
         <h3>MCP Server User Configuration Support <a class="anchor" href="#mcp-server-user-configuration-support">#</a></h3>
@@ -194,6 +195,7 @@ claude mcp configure my-plugin server-name</code></pre>
 <p>Removed functions <code>Y7B()</code> at line 279890, <code>vd1()</code> at line 298392, <code>Ya6()</code> at line 298398, <code>Qn()</code> at line 298428, <code>Wa6()</code> at line 298432, <code>qFB()</code> at line 298438, <code>Ja6()</code> at line 298442, <code>EFB()</code> at line 298474, <code>Ia6()</code> at line 298488, <code>wFB()</code> at line 298512 in v2.0.21</p>
     </article>
   </div>
+  </div>
 
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
@@ -254,7 +256,7 @@ claude mcp configure my-plugin server-name</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

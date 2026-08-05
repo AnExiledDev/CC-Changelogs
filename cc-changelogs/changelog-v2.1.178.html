@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="design-login-standalone-design-system-authorization">
       <div class="card-top">
         <h3>/design-login — Standalone Design-System Authorization <a class="anchor" href="#design-login-standalone-design-system-authorization">#</a></h3>
@@ -121,10 +122,12 @@ isolation: &quot;remote&quot;</code></pre>
 <p>Schema update for <code>set_max_thinking_tokens</code> (search for <code>"thinking_display optionally sets the thinking display mode"</code>, <code>"thinking_display"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">15 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="named-teammate-agent-swarms-teamcreate-teamdelete-removed">
       <div class="card-top">
         <h3>Named-Teammate Agent Swarms (TeamCreate/TeamDelete Removed) <a class="anchor" href="#named-teammate-agent-swarms-teamcreate-teamdelete-removed">#</a></h3>
@@ -300,10 +303,12 @@ CLAUDE_CODE_TODO_REMINDER_MODE=baseline claude # default behavior</code></pre>
 <p>New function reading the mode (search for <code>"CLAUDE_CODE_TODO_REMINDER_MODE"</code>, <code>"tengu_soft_slate_nudge"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Bash prompt rule denials are now classified as <code>safetyCheck</code> type (rather than <code>other</code>) with <code>classifierApprovable: false</code>, ensuring auto-mode cannot override safety denials. (search for <code>"Denied by Bash prompt rule"</code>)</li></ul>
 <ul><li>Precomputed compact is now correctly gated: it can activate for non-user-query sources that have a precomputed swap available, fixing cases where compaction would not trigger when it should. (search for <code>"precomputed compact: arm gated"</code>)</li></ul>
@@ -312,22 +317,27 @@ CLAUDE_CODE_TODO_REMINDER_MODE=baseline claude # default behavior</code></pre>
 <ul><li>Design OAuth credential error messages are improved: the <code>expand_failed</code> case now includes guidance to run <code>/design-login</code> as an alternative, rather than only suggesting <code>/login</code>. (search for <code>"Could not add design scopes to the token"</code>, <code>"or run /design-login to authorize design access separately"</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>New Environment Variables</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="new-environment-variables">
       <p>| Variable | Purpose | |---|---| | <code>CLAUDE_CODE_SESSION_ID</code> | Identifies the current session (must start with <code>cse_</code> or <code>session_</code>) | | <code>CLAUDE_CODE_TODO_REMINDER_MODE</code> | Set to <code>off</code> or <code>baseline</code> to control TODO nudges | | <code>CLAUDE_CODE_FABLE_BRIDGE_DIALOG_TIMEOUT_MS</code> | Timeout for the Fable usage-credits consent dialog (default 60000 ms) | | <code>CLAUDE_CODE_DIAGNOSTICS_FILE</code> | Path for writing diagnostics output | | <code>CLAUDE_CODE_REPO_CHECKOUTS</code> | Controls repository checkout behavior for remote agents | | <code>CLAUDE_SESSION_INGRESS_TOKEN_FILE</code> | Path to a session ingress token file | | <code>CLAUDE_CODE_DESIGN_OAUTH_CLIENT_ID</code> | Override the registered Design OAuth client ID | | <code>CLAUDE_CODE_DISABLE_MEMORY_PERIODIC_RESYNC</code> | Set to disable periodic memory store resyncs |</p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The removal of <code>TeamCreate</code> and <code>TeamDelete</code> is a breaking change for any workflow that explicitly called those tools. Update to use the <code>Agent</code> tool's <code>name</code> parameter directly. The <code>team_name</code> field in <code>TeammateIdle</code> hook event payloads is deprecated and will be removed in a future release.</p>
 <p>The Artifact tool's content model changed: files should no longer include <code>&lt;!DOCTYPE html&gt;</code>, <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, or <code>&lt;body&gt;</code> tags — the tool wraps the content in a skeleton automatically. Existing artifact files that include these tags may render with duplicate structure.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -391,7 +401,7 @@ CLAUDE_CODE_TODO_REMINDER_MODE=baseline claude # default behavior</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

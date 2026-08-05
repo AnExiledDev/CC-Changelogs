@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="plugin-marketplace-system">
       <div class="card-top">
         <h3>Plugin Marketplace System <a class="anchor" href="#plugin-marketplace-system">#</a></h3>
@@ -133,10 +134,12 @@ claude settings --set enabledPlugins.formatter@official=true</code></pre>
 <ul><li>Support for <code>homepage</code>, <code>repository</code>, <code>license</code>, and <code>keywords</code> fields</li><li>Plugin name validation enforces kebab-case (no spaces allowed)</li><li>Author information with name, email, and URL</li><li>Marketplace entries support categories and tags for discoverability</li><li>Additional hooks via manifest: inline hook definitions or paths to hook files</li><li>Additional commands/agents via manifest file references</li><li>MCP server configurations can be specified in plugin manifests</li><li>Semantic versioning support following semver.org specification</li><li><strong>Evidence</strong>: Plugin manifest schema at lines 376570-376602, hooks schema at line 376603, commands schema at line 376631</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <ul><li>Refactored notification system architecture from component-local to global state management</li><li>Renamed minified function names as part of routine obfuscation (e.g., <code>BM()</code> → <code>IM()</code>, <code>m7()</code> → <code>u7()</code>)</li><li>Updated URL reference from <code>https://claude.ai/code</code> to <code>https://claude.com/claude-code</code> (line 385020)</li><li>Added synchronized rendering control via ANSI escape sequences: <code>Mt1</code> (start) and <code>Ot1</code> (end) at lines 357199-357200</li><li>Enhanced plugin loading with support for multiple command/agent paths via <code>commandsPaths</code> and <code>agentsPaths</code> arrays</li><li>Added helper functions for git operations, npm package installation, and directory copying</li><li>Improved error handling with specific error types like <code>cC</code> for invalid schemas</li></ul>
     </article>
@@ -181,6 +184,7 @@ claude settings --set enabledPlugins.formatter@official=true</code></pre>
 <div class="tags"><span class="tag new">New</span></div>      </div>
       <p>None - all changes are backward compatible or additive.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -242,7 +246,7 @@ claude settings --set enabledPlugins.formatter@official=true</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

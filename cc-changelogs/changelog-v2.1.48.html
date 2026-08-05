@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">11 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="git-worktree-mode">
       <div class="card-top">
         <h3>Git Worktree Mode <a class="anchor" href="#git-worktree-mode">#</a></h3>
@@ -232,10 +233,12 @@ claude -w --tmux=classic  # Use traditional tmux instead of iTerm2 integration</
 <p>New message handling (search for <code>"Please open the"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed path traversal detection (search for <code>"path traversal detected"</code>)</li><li>Added validation for non-empty strings and patterns (search for <code>"Expected a non-empty string"</code>)</li></ul>
     </article>
@@ -252,13 +255,16 @@ claude -w --tmux=classic  # Use traditional tmux instead of iTerm2 integration</
 <p>Removal of mcp-cli infrastructure (removed strings: <code>"mcp-cli info"</code>, <code>"mcp-cli call"</code>, <code>"ENABLE_EXPERIMENTAL_MCP_CLI"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The worktree feature requires being in a git repository and having git installed. Tmux integration requires tmux to be installed (<code>sudo apt install tmux</code> on Linux). iTerm2 users will get native pane integration when using <code>--tmux</code> without the <code>=classic</code> suffix.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -320,7 +326,7 @@ claude -w --tmux=classic  # Use traditional tmux instead of iTerm2 integration</
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

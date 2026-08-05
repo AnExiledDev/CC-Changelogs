@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="observer-agents-gradual-rollout">
       <div class="card-top">
         <h3>Observer Agents [Gradual Rollout] <a class="anchor" href="#observer-agents-gradual-rollout">#</a></h3>
@@ -154,10 +155,12 @@
 <p>Remote workflow handler (search for <code>"CLAUDE_REMOTE_WORKFLOW_SCRIPT"</code>, <code>"this command only runs inside a remote (CCR) session"</code>, <code>"workflow scripts must be deterministic"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">13 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="claude-design-tool-expanded-operations">
       <div class="card-top">
         <h3>Claude Design Tool — Expanded Operations <a class="anchor" href="#claude-design-tool-expanded-operations">#</a></h3>
@@ -277,18 +280,22 @@
 <p>History event filter (search for <code>"queryWithObserverTap: missing terminal after completion"</code>) — <code>DXm()</code> at ~line 875907</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li><code>isDirEmptySync</code> was replaced with an async <code>opendir</code>-based empty-check, removing a synchronous I/O call from the directory scan path (search for <code>"isDirEmptySync"</code> is now absent)</li><li>TeammateTool member removal now guards against stale removals: if a member re-joined between when a removal was initiated and when it executes, the removal is skipped with a log message <code>"Skipped stale removal"</code> (search for <code>"re-added after removal was initiated"</code>)</li><li>Observer pairing is now retired when a session resumes (<code>lir()</code> called on session start), preventing a stale observer from a previous run from being reused across sessions</li><li><code>plansDirectory</code> validation now correctly handles the case where the configured path resolves to exactly the project root (previously the check <code>!s.startsWith(o + sep)</code> would incorrectly reject root-equal paths)</li><li>The <code>Cd(...)</code> rule check for paths containing control or invisible characters now suppresses the path from the error message to avoid terminal injection (search for <code>"The rule text contains control or invisible characters, so it is not echoed here"</code>)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="remote-control-session-resume-improvements-in-development">
       <div class="card-top">
         <h3>Remote Control Session Resume Improvements [In Development] <a class="anchor" href="#remote-control-session-resume-improvements-in-development">#</a></h3>
@@ -298,6 +305,7 @@
 <div class="blabel">Evidence</div>
 <p>Updated Remote Control error strings (search for <code>"Couldn't reconnect to your Remote Control session"</code>, <code>"its environment has expired. Creating a fresh session instead"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -361,7 +369,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

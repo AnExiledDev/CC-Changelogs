@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="native-grep-and-ripgrep-support">
       <div class="card-top">
         <h3>Native grep and ripgrep Support <a class="anchor" href="#native-grep-and-ripgrep-support">#</a></h3>
@@ -154,13 +155,16 @@ ls &quot;-&quot;la       # Obfuscated flag pattern detected</code></pre>
 <ul><li><strong>Statsig Analytics Integration</strong>: Full analytics infrastructure was already implemented</li><li><strong>OAuth Authentication Core</strong>: Basic OAuth functionality existed, only reliability improvements added</li><li><strong>Command Security Framework</strong>: Core security mechanisms were in place, only obfuscation detection added</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Technical Notes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-notes">
       <ul><li>File structure similarity: 99.1% between versions</li><li>Total changes: 74 additions, 16 deletions, 17 modifications</li><li>Primary focus on security, reliability, and user experience refinements</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -222,7 +226,7 @@ ls &quot;-&quot;la       # Obfuscated flag pattern detected</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

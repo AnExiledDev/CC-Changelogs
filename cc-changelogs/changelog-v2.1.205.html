@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="claude-doctor-terminal-health-check-command">
       <div class="card-top">
         <h3><code>claude doctor</code> — terminal health-check command <a class="anchor" href="#claude-doctor-terminal-health-check-command">#</a></h3>
@@ -139,10 +140,12 @@
 <p>End-of-conversation user message (search for <code>"Claude ended this conversation"</code>) — <code>mP_()</code> at line ~745953 and <code>Nnt()</code> at line ~504796</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">11 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="more-specific-session-restart-messages">
       <div class="card-top">
         <h3>More specific session restart messages <a class="anchor" href="#more-specific-session-restart-messages">#</a></h3>
@@ -244,10 +247,12 @@
 <p>Repo visibility lookup (search for <code>"tengu_auto_mode_repo_visibility_lookup_failed"</code>) — <code>T0u()</code> at line ~416404; <code>yEg()</code> GitHub API call at line ~415701; <code>fKi()</code> JSON format at line ~415951</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed semver comparison errors producing unredacted version strings in logs — invalid semver values are now wrapped with a sanitized error message (search for <code>"Invalid SemVer: &lt;redacted&gt;"</code>)</li></ul>
 <ul><li>Fixed worktree reparse-point cleanup on Windows — the cleanup logic no longer enumerates symlinks outside the worktree root and handles the case where <code>realpath()</code> fails without logging a spurious path (search for <code>"[worktree] refusing to enumerate unremovable entry before removal"</code>)</li></ul>
@@ -256,15 +261,18 @@
 <ul><li>Improved file-read pagination hint: when a file is truncated by token cap and cannot be paginated by line, Claude is now told "this view is incomplete and the file cannot be paginated by line. Do NOT answer from this view alone" rather than silently returning a partial view (search for <code>"this view is incomplete and the file cannot be paginated by line"</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The <code>doctor:fix</code> slash-command shorthand has been removed. Use <code>/doctor</code> instead — it now performs the same comprehensive checks and applies fixes after confirmation.</p>
 <p>The old <code>/doctor</code> description ("Diagnose and verify your Claude Code installation and settings") has been replaced. The command is now a full repair tool, not a passive display.</p>
 <p>References to "run <code>/doctor</code>" in MCP error messages have been replaced with "run <code>claude doctor</code>" (for settings/install issues) or "run <code>/mcp</code>" / "run <code>/plugin</code>" for server-specific problems.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -328,7 +336,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

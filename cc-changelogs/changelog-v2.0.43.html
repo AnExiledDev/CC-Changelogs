@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">14 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="clickable-hyperlinks-in-terminal-output">
       <div class="card-top">
         <h3>Clickable Hyperlinks in Terminal Output <a class="anchor" href="#clickable-hyperlinks-in-terminal-output">#</a></h3>
@@ -189,6 +190,7 @@
 <p><strong>Note on Feature Verification:</strong> All features listed as "new" have been verified to not exist in v2.0.42 by searching both version files. Changes categorized as "improvements" existed in previous versions but have been enhanced or refactored. Line numbers reference the v2.0.43 source file.</p>
     </article>
   </div>
+  </div>
 
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
@@ -249,7 +251,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

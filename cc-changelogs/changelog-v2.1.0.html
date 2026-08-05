@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="paste-content-caching">
       <div class="card-top">
         <h3>Paste Content Caching <a class="anchor" href="#paste-content-caching">#</a></h3>
@@ -178,10 +179,12 @@
 <p><code>mD1()</code> at line 467837 (contains <code>hV.cache.clear?.()</code> and multiple other cache clears)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential memory leak in tree-sitter shell parser by properly deleting AST trees after use (<code>Ww2</code> class at line 370359)</li><li>Fixed terminal focus mode not being properly disabled on exit in some cases (<code>Tt2()</code> at line 457328)</li></ul>
     </article>
@@ -193,6 +196,7 @@
 <div class="blabel">Evidence</div>
 <p>Removed function <code>re2()</code> at line 460646, <code>vw0()</code> at line 460649 (contained <code>"tengu_year_end_2025_campaign_promo"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -254,7 +258,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

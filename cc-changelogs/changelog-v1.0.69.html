@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p>Based on my comprehensive analysis of the diff file, here is the detailed changelog for Claude Code v1.0.69:</p>
 <p># Claude Code v1.0.69 Changelog</p>
@@ -141,10 +142,12 @@ BashOutput bash_1 &quot;error|warning&quot;
       <ul><li>Better handling of closed permission streams</li><li>Improved error messages when permission stream is closed</li><li>More robust pending request management</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed issue where input stream closure could leave pending permission requests hanging</li><li>Improved cleanup of background shells on process termination</li><li>Better handling of shell completion status notifications</li><li>Fixed race conditions in background task management</li></ul>
     </article>
@@ -202,22 +205,27 @@ claude --model claude-opus-4-1-20250805
 export ANTHROPIC_MODEL=claude-opus-4-1-20250805</code></pre>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Performance Improvements</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="performance-improvements">
       <ul><li>Async checkpoint initialization reduces startup time</li><li>Better resource cleanup prevents memory leaks</li><li>Improved background task management reduces CPU usage</li><li>More efficient file search with optimized glob patterns</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Security Enhancements</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="security-enhancements">
       <ul><li>New security review tool helps identify vulnerabilities early</li><li>Better handling of untrusted input in shell commands</li><li>Improved permission management for tool execution</li><li>Enhanced cleanup of sensitive data in background processes</li></ul>
 <p>This release focuses on security, background task management, and overall stability improvements, making Claude Code more powerful for real-world development workflows.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -279,7 +287,7 @@ export ANTHROPIC_MODEL=claude-opus-4-1-20250805</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

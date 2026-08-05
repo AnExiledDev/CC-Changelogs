@@ -77,35 +77,43 @@
     <h2>New Features</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="new-features">
       <p><em>None</em></p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="improvements">
       <p><em>None</em></p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <p><em>None</em></p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p><strong>Build Information:</strong></p>
 <ul><li>Version: 2.1.12</li><li>Build timestamp: 2026-01-17T15:40:09Z</li><li>Structural similarity to v2.1.11: 99.8%</li></ul>
 <p>This release appears to be a routine re-release with updated build artifacts. The 12,420 identifier renames and minor import restructuring are purely internal minification changes that do not affect functionality.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -167,7 +175,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

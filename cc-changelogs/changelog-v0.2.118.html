@@ -71,14 +71,17 @@
     <h2>Changes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.118 Changelog</p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="code-organization-improvements">
       <div class="card-top">
         <h3>Code Organization Improvements <a class="anchor" href="#code-organization-improvements">#</a></h3>
@@ -148,15 +151,18 @@ $6({ content: &quot;&lt;/system-reminder&gt;&quot;, isMeta: !0 })</code></pre>
 <p>These changes suggest preparation for improved streaming capabilities and better unique ID generation.</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>User Impact</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="user-impact">
       <p>For CLI users, these changes are mostly internal improvements that won't affect the command-line interface or interactive experience. However, you may notice:</p>
 <ol><li><strong>Cleaner thinking indicator</strong>: The "✻ Thinking..." indicator now appears with simple indentation rather than a bordered box</li><li><strong>Improved reliability</strong>: The refactored attachment handling should provide more consistent behavior when working with files, directories, and other attachments</li><li><strong>Better GitHub integration</strong>: If using Claude Code with GitHub Actions, you'll need to update to the new action name</li></ol>
 <p>No changes to command-line arguments, flags, or interactive commands were introduced in this version.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -218,7 +224,7 @@ $6({ content: &quot;&lt;/system-reminder&gt;&quot;, isMeta: !0 })</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

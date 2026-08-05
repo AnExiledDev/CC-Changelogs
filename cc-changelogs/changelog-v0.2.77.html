@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.77 Changelog</p>
     </article>
@@ -130,21 +131,26 @@
       <ul><li>New function <code>iR2</code> coordinates both new file extractions and file change detection</li><li>New function <code>v63</code> specifically handles watched file change detection</li><li>Improved separation of concerns between different file handling modes</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential issues with file state management by using more specific property names (<code>readFileState</code> instead of <code>readFileTimestamps</code>)</li><li>Improved error handling for file stat operations when checking for changes</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Breaking Changes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="breaking-changes">
       <p>None - This version maintains backward compatibility with existing workflows.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -206,7 +212,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

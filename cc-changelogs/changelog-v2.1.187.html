@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="pause-memory-replaces-toggle-memory">
       <div class="card-top">
         <h3><code>/pause-memory</code> replaces <code>/toggle-memory</code> <a class="anchor" href="#pause-memory-replaces-toggle-memory">#</a></h3>
@@ -185,10 +186,12 @@ allowed-tools: preset:default, Bash(make test)
 <p>New depth-cap error (search for <code>"Subagent nesting limit reached"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">12 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="skill-token-footprint-in-usage">
       <div class="card-top">
         <h3>Skill token footprint in <code>/usage</code> <a class="anchor" href="#skill-token-footprint-in-usage">#</a></h3>
@@ -306,10 +309,12 @@ allowed-tools: preset:default, Bash(make test)
 <p>New OAuth error classification (search for <code>"Refresh token expired"</code> or <code>"No organization associated with this token"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li><strong>UTF-8 multi-byte characters in keyboard input</strong>: The key parser now correctly reassembles multi-byte UTF-8 sequences delivered as individual escape sequences. Previously, non-ASCII characters entered via the terminal (particularly on some Linux/remote terminals) could be dropped or misinterpreted. A <code>pendingByteEvents</code> buffer accumulates bytes and flushes the complete character once all bytes have arrived. (search for <code>"pendingByteEvents"</code>)</li></ul>
 <ul><li><strong>AbortSignal memory leak in event listeners</strong>: Abort-signal subscriptions created during agent turns now use a <code>FinalizationRegistry</code> to automatically remove the listener when the child object is garbage-collected. Previously, long-running sessions with many tool calls could accumulate a growing number of stale abort listeners. (search for <code>"FinalizationRegistry"</code>)</li></ul>
@@ -319,10 +324,12 @@ allowed-tools: preset:default, Bash(make test)
 <ul><li><strong>MCP schema validation error surfaced as named error</strong>: MCP tool results that fail schema validation now throw a <code>McpResponseSchemaError</code> with the validation message attached, rather than an untyped error. (search for <code>"McpResponseSchemaError"</code> or <code>"MCP server returned a malformed result"</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled for general availability.</p>
     </article>
@@ -365,6 +372,7 @@ allowed-tools: preset:default, Bash(make test)
 <div class="blabel">Evidence</div>
 <p>New slot-keyed cache (search for <code>"clientDataCacheSlots"</code> or <code>"tengu_client_data_cache_key"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -428,7 +436,7 @@ allowed-tools: preset:default, Bash(make test)
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

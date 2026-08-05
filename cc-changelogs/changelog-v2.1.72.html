@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">20 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="sendusermessage-tool">
       <div class="card-top">
         <h3>SendUserMessage Tool <a class="anchor" href="#sendusermessage-tool">#</a></h3>
@@ -283,10 +284,12 @@ claude remote-control --spawn=session</code></pre>
 <p>SDK schema additions (search for <code>"agentProgressSummaries"</code>, <code>"Runtime-resolved values"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Removed <code>python --version</code> and <code>python3 --version</code> from the auto-allowed command list, ensuring these commands go through normal permission checks (search for <code>"docker ps"</code> in the reduced allowlist)</li><li>Fixed voice mode availability check to use a simple boolean state instead of calling an external function, preventing potential errors (search for <code>"voiceEnabled"</code>)</li><li>Fixed carriage return handling in text input to not treat <code>\r</code> preceded by a backslash as a submit trigger (search for <code>"replace(/(?&lt;=[^\\\r\n])\r$/"</code>)</li><li>Improved mouse input handling to filter out raw mouse escape sequences that lack a key name, preventing spurious input events (search for <code>"^\[&lt;\d+;\d+;\d+[Mm]"</code>)</li><li>Fixed tmux clipboard detection — mouse reporting is now disabled in tmux sessions to prevent conflicts (search for <code>"process.env.TMUX"</code> in function <code>o_8</code>)</li><li>Auto mode classifier now checks <code>requiresUserInteraction</code> on tools before sending to classifier, preventing interactive tools from being auto-approved (search for <code>"requiresUserInteraction"</code>)</li><li>TaskOutput tool's <code>block</code> parameter now accepts string booleans (<code>"true"</code>/<code>"false"</code>) in addition to actual booleans, improving compatibility (search for <code>"preprocess"</code> near <code>"block"</code>)</li></ul>
     </article>
@@ -317,15 +320,18 @@ claude remote-control --spawn=session</code></pre>
 <p>Feature flag (search for <code>"tengu_cobalt_frost"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p><strong>Migration: Remote Control flags</strong> — If you use <code>--spawn-worktree-sessions</code> or <code>--spawn-same-dir-sessions</code>, these have been replaced by <code>--spawn=worktree</code> and <code>--spawn=same-dir</code> respectively. The old flags will produce an error directing you to the new syntax.</p>
 <p><strong>Migration: Hooks format</strong> — The hooks matcher format has changed from an object <code>{"tools": ["BashTool"]}</code> to a string <code>"Bash"</code> or pipe-separated list <code>"Edit|Write"</code>. Existing configurations should still work but the error tip now reflects the new format.</p>
 <p><strong>Bundle size reduction</strong> — The RxJS library (Observable, Subscriber, Subscription, and many related classes) has been removed from the bundle, reducing the overall package size. The tree-sitter WASM files and several other large dependencies (lodash templating, spawn-rx internals) have also been cleaned up.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -387,7 +393,7 @@ claude remote-control --spawn=session</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

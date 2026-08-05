@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="claude-in-chrome-revamped-setup-wizard">
       <div class="card-top">
         <h3>Claude in Chrome — Revamped Setup Wizard <a class="anchor" href="#claude-in-chrome-revamped-setup-wizard">#</a></h3>
@@ -135,10 +136,12 @@
 <p>Remote resolution (search for <code>"remote.pushDefault"</code>); dynamic rules (search for <code>"git push -u"</code> alongside <code>"rwn"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="plugin-binary-provisioning-mismatch-detection-and-bare-name-">
       <div class="card-top">
         <h3>Plugin Binary Provisioning — Mismatch Detection and Bare Name Linking <a class="anchor" href="#plugin-binary-provisioning-mismatch-detection-and-bare-name-">#</a></h3>
@@ -228,18 +231,22 @@
 <p>Description string (search for <code>"bloated memory files"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Push permission default rules (<code>Bash(git push origin *)</code>) now correctly add both <code>Bash(...)</code> and <code>PowerShell(...)</code> variants for dynamically resolved remotes, matching the behavior for the static <code>origin</code> entry. (search for <code>"git push -u"</code> in <code>ANd</code>)</li><li>The <code>"scroll to bottom"</code> button in the terminal now truncates its label to fit the available column width rather than overflowing. (search for <code>"wrap: \"truncate-end\""</code>)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled for all users.</p>
     </article>
@@ -270,13 +277,16 @@
 <p>Feature flag name (<code>"tengu_umber_kestrel"</code> in <code>JUi</code>); deferred hint (search for <code>"Load the full guidance via ToolSearch"</code>); end message (search for <code>"Claude has ended this chat"</code>); two-call check (<code>lastAssistantTurnCalledEndConversation</code>); model floor list (search for <code>"Re-read the"</code>); non-interactive exit (search for <code>"gracefulShutdown"</code>); model eligibility list (search for <code>"mythos"</code>).</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The built-in <code>claude_design</code> first-party MCP server (<code>https://api.anthropic.com/v1/design/mcp</code>) has been removed from the auto-provisioned server list. Users relying on Claude Design should ensure it is configured via their MCP settings or the <code>/design login</code> flow, which routes through the updated hub command rather than a built-in server entry.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -340,7 +350,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

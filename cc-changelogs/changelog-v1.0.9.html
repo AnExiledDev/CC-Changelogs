@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v1.0.9 Changelog</p>
     </article>
@@ -105,21 +106,26 @@
       <ul><li>Bumped version from 1.0.8 to 1.0.9</li><li>Updated all version references throughout the codebase</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential race conditions in metrics export by tracking pending exports</li><li>Improved attribute conversion to handle undefined and null values properly</li><li>Enhanced timestamp handling for metric data points</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The internal metrics feature appears to be prepared for future use but is currently disabled (the <code>uB6()</code> function returns <code>false</code>). When enabled, this feature will provide Anthropic with anonymous usage metrics to help improve Claude Code.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -181,7 +187,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

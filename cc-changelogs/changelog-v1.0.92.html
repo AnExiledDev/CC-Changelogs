@@ -71,6 +71,7 @@
     <h2>Version Update Only</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="version-update-only">
       <p>This release updates the version identifier from 1.0.91 to 1.0.92 throughout the codebase. No new features, improvements, or bug fixes are included in this release.</p>
     </article>
@@ -80,6 +81,7 @@
 <div class="tags"><span class="tag new">New</span></div>      </div>
       <p>The diff analysis tool incorrectly reported import statement changes (2 additions and 2 deletions). Investigation confirmed these were false positives - all imports remain unchanged at their original locations in both versions.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -141,7 +143,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

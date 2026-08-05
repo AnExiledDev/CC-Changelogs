@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="simplified-file-open-operations-for-better-symlink-compatibi">
       <div class="card-top">
         <h3>Simplified file open operations for better symlink compatibility <a class="anchor" href="#simplified-file-open-operations-for-better-symlink-compatibi">#</a></h3>
@@ -94,13 +95,16 @@
 <p>Removed charset <code>"0123456789abcdefghijklmnopqrstuvwxyz"</code> (2 of 4 instances removed), replaced with <code>randomUUID</code> substring approach (search for <code>replace(/-/g, "").substring(0, 6)</code>).</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>No new features, CLI flags, slash commands, environment variables, or feature flags were added in this release.</li><li>No breaking changes. All improvements are backward-compatible internal refinements.</li><li>Build number changed from 2160 to 2171.</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -162,7 +166,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

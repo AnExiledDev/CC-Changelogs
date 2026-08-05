@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">11 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="file-descriptor-authentication-for-enhanced-security">
       <div class="card-top">
         <h3>File Descriptor Authentication for Enhanced Security <a class="anchor" href="#file-descriptor-authentication-for-enhanced-security">#</a></h3>
@@ -157,6 +158,7 @@ claude</code></pre>
       <ul><li><strong>Issue:</strong> Model selection didn't properly handle all user access scenarios</li><li><strong>Cause:</strong> Complex conditional logic without proper fallback chain</li><li><strong>Resolution:</strong> Refactored into cleaner function chain with proper override points</li></ul>
     </article>
   </div>
+  </div>
 
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
@@ -217,7 +219,7 @@ claude</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

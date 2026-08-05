@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.119 Changelog</p>
     </article>
@@ -128,13 +129,16 @@
       <p>Fixed potential issues with IDE detection when multiple IDEs are running by improving the workspace folder matching logic and process ID validation.</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes for Users</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes-for-users">
       <p>This update focuses on improving the first-run experience for IDE users and enhancing the reliability of tool operations. The new onboarding screen provides essential information for getting started with Claude Code in your IDE, while the improved error handling ensures more stable operation when working with tools and external resources.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -196,7 +200,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

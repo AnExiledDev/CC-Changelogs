@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="settings-schema-support">
       <div class="card-top">
         <h3>Settings Schema Support <a class="anchor" href="#settings-schema-support">#</a></h3>
@@ -114,29 +115,36 @@
       <ul><li>Enhanced selected lines tracking in IDE integration</li><li>Now tracks line start and end positions for better context preservation</li><li>Improved handling of truncated content in IDE selections</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed shell function capture in Bash and Zsh environments</li><li>Resolved issues with base64 encoding of shell functions containing special characters</li><li>Fixed handling of shell aliases on Windows Git Bash</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Technical Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-changes">
       <ul><li>Removed unused ripgrep wrapper functions</li><li>Consolidated child process execution imports</li><li>Simplified the LRU cache implementation</li><li>Removed redundant diagnostic notification handlers</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Removed Features</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="removed-features">
       <ul><li>Removed the built-in conversation modes (Default, Insights, Learn by Doing)</li><li>These modes previously offered different interaction styles but have been deprecated in favor of a unified experience</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -198,7 +206,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

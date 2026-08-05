@@ -77,12 +77,14 @@
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>No user-facing features, improvements, or bug fixes were identified in this release. The structural similarity between v2.1.86 and v2.1.87 is 99.9%, with only 13 additions, 13 removals, and minor structural adjustments.</p>
 <p>The sole meaningful code change is an internal refactoring of the BriefTool registration: it was previously conditionally included in the tool list via a lazy-loaded variable (<code>...(BHK ? [BHK] : [])</code>), and is now included directly as a module-level reference (<code>os1</code>). The tool's <code>isEnabled()</code> gate remains unchanged, so this has no effect on behavior. The BriefTool itself (renamed internally to "SendUserMessage") continues to function identically — its entitlement check (<code>isBriefEntitled</code>), enablement check (<code>isBriefEnabled</code>), schema, and implementation are all unchanged.</p>
 <div class="blabel">Evidence</div>
 <p>BriefTool direct inclusion (search for <code>BriefTool: () =&gt; os1</code> in new version vs <code>BriefTool: () =&gt; h8z</code> in old version; registration change visible at the <code>KK6()</code> tool list function)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -144,7 +146,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

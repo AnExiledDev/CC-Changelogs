@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">12 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.39 Changelog</p>
     </article>
@@ -147,21 +148,26 @@
       <ul><li>Better separation of concerns between OAuth authentication and API key generation</li><li>Cleaner error handling with more specific error messages in OAuth flows</li><li>Simplified HTTP request handling by switching from fetch to axios for OAuth operations</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential race conditions in state updates for write file allowed directories</li><li>Improved handling of shell exit conditions with better cleanup</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Version</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="version">
       <p>Updated from 0.2.38 to 0.2.39</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -223,7 +229,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

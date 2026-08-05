@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="thinking-display-cli-flag">
       <div class="card-top">
         <h3>--thinking-display CLI Flag <a class="anchor" href="#thinking-display-cli-flag">#</a></h3>
@@ -197,10 +198,12 @@ claude</code></pre>
 <p>Session title hook (search for <code>"Hook sessionTitle applied"</code>, <code>"type\":\"custom-title\""</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">16 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="enhanced-tmux-terminal-detection">
       <div class="card-top">
         <h3>Enhanced tmux Terminal Detection <a class="anchor" href="#enhanced-tmux-terminal-detection">#</a></h3>
@@ -333,18 +336,22 @@ claude</code></pre>
 <p>Task tool help (search for <code>"Launch a new agent to handle complex, multi-step tasks"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed UTF-8 encoding for <code>stream-json</code> input mode to prevent multi-byte character corruption (search for <code>"stream-json"</code> near <code>"utf-8"</code>)</li><li>Fixed escape sequence handling in GNU Screen (STY) terminal multiplexer — properly wraps DCS passthrough sequences with double-escaped embedded escapes (search for <code>process.env.STY</code> in <code>tD</code> function)</li><li>Fixed PATH extraction on Windows to use shell-aware subprocess for correct environment resolution (search for <code>h1Y</code>)</li><li>Added defensive guard in team memory watcher to check identifier existence before processing, preventing potential crashes (search for <code>"team-memory-watcher: suppressing retry"</code>)</li><li>Session title updates now emit events to keep the UI synchronized (search for <code>"rA7.emit()"</code>)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
     </article>
@@ -375,14 +382,17 @@ claude</code></pre>
 <p>Feature flag and directory selection (search for <code>"tengu_billiard_aviary"</code>, <code>"tiny_memory"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The XML/DOM parsing library has been replaced. The previous <code>xmldom</code>-based parser (with error messages like "end tag name: X is not complete", "unclosed xml attribute", etc.) has been swapped for a new implementation with W3C-compliant DOM exceptions (DOMException types like <code>HierarchyRequestError</code>, <code>InvalidCharacterError</code>, <code>NamespaceError</code>, etc.) and stricter validation. This is an internal change but may surface different error messages if XML parsing is used by MCP servers or plugins.</p>
 <p>Several Smithy/AWS SDK utility modules (<code>FetchHttpHandler</code>, <code>buildQueryString</code>, <code>escapeUri</code>, <code>fromBase64</code>, <code>toBase64</code>, etc.) have been removed as standalone CommonJS modules and replaced by native implementations, reducing bundle size.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -444,7 +454,7 @@ claude</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

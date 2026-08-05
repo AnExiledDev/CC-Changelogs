@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">12 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="cloud-replaces-remote-for-cloud-sessions">
       <div class="card-top">
         <h3><code>--cloud</code> replaces <code>--remote</code> for cloud sessions <a class="anchor" href="#cloud-replaces-remote-for-cloud-sessions">#</a></h3>
@@ -223,15 +224,18 @@ claude --fallback-model sonnet,haiku
 <p>Updated auto-mode resolver (search for <code>"modelByMainModel"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li><code>--bg</code> conflict error now correctly says <code>--cloud</code> instead of <code>--remote</code>: "Use <code>claude --cloud '&lt;task&gt;'</code> directly to start a cloud session." (search for <code>"--bg and --cloud are different backends"</code>)</li></ul>
 <ul><li>Policy limits cache telemetry at first prompt now additionally reports <code>cache_age_ms</code> and <code>would_fail_closed</code>, giving Anthropic better visibility into whether rate-limit enforcement would have failed due to a stale cache. (search for <code>"would_fail_closed"</code>)</li></ul>
 <ul><li>Shell allow-rule telemetry is now fired at initialization (<code>tengu_shell_allow_rules_at_init</code>) so rule coverage is captured even when no rules are added interactively during the session. (search for <code>"tengu_shell_allow_rules_at_init"</code>)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -295,7 +299,7 @@ claude --fallback-model sonnet,haiku
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

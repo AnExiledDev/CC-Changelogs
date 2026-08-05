@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">22 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="javascript-repl-tool">
       <div class="card-top">
         <h3>JavaScript REPL Tool <a class="anchor" href="#javascript-repl-tool">#</a></h3>
@@ -288,10 +289,12 @@
 <p>Hook blocking message (search for <code>"Blocked by PreToolUse hook"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed paste handling to normalize CRLF and CR line endings to LF in multiline mode, preventing mixed line endings from confusing editors (search for <code>"\\r\\n|\\r/g"</code>)</li><li>Fixed attribution snapshot handling to clear the map before storing new snapshots, preventing stale data accumulation (search for <code>"D.clear()"</code>)</li><li>Fixed dependency version resolution to check both <code>resolvedVersion</code> and manifest version for more accurate plugin deduplication (search for <code>"resolvedVersion"</code>)</li><li>Fixed ANSI escape sequence parsing to correctly handle CSI sequences, OSC sequences, and other terminal control codes (search for <code>"Tq4"</code>)</li><li>Fixed a variable reference bug in a slice operation where the wrong variable was being used (search for <code>"O6.slice(1)"</code>)</li><li>Improved validation of at-mentions to require content presence alongside title checks, preventing empty mentions from being processed (search for <code>"contentLength"</code>)</li><li>Fixed React component state management by correcting dependency arrays and initial state values (search for <code>"lzA"</code>)</li><li>Improved skill source filtering logic to correctly include builtin sources instead of excluding them (search for <code>"q.source !== 'builtin'"</code>)</li></ul>
     </article>
@@ -335,14 +338,17 @@
 <p>Assistant gate disabled (search for <code>assistant</code> near <code>buildGate</code> — returns <code>!1</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The permission rule wildcard syntax change from <code>:<em></code> to <code> </em></code> is the most impactful change for existing users. If you have custom permission rules in your settings files using the old syntax (e.g., <code>Bash(git:<em>)</code>), the old format continues to work but new autocomplete suggestions and documentation now use the space-asterisk format (e.g., <code>Bash(git </em>)</code>). Consider updating your rules to the new syntax for consistency.</p>
 <p>The removal of the bundled Chalk template library and HTML5 tokenizer (parse5) from the CLI reduces the package size. These were replaced by lighter-weight alternatives or removed where unused.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -404,7 +410,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

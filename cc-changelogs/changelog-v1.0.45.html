@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v1.0.45 Changelog</p>
     </article>
@@ -143,22 +144,27 @@
       <ul><li>Enhanced error reporting for file operations</li><li>Better fallback mechanisms for failed operations</li><li>Improved logging throughout the application</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential file corruption issues during concurrent writes</li><li>Improved handling of symlinks during file operations</li><li>Better error recovery for failed atomic write operations</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Breaking Changes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="breaking-changes">
       <ul><li>The <code>Search</code> tool has been removed - use <code>Grep</code> instead</li><li>File writing now uses atomic operations by default, which may affect custom file watchers</li></ul>
 <p>This release focuses on reliability, performance, and the introduction of the powerful new Agent system for handling complex tasks. The atomic file writing ensures data integrity, while the new agent architecture allows for more sophisticated multi-step operations.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -220,7 +226,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="experimental-reasoning-effort-control">
       <div class="card-top">
         <h3>Experimental Reasoning Effort Control <a class="anchor" href="#experimental-reasoning-effort-control">#</a></h3>
@@ -91,6 +92,7 @@
 <p><strong>Details:</strong></p>
 <ul><li>The module initialization variable was renamed from <code>LQ</code> to <code>Pr</code></li><li>Initialization dependencies were completely reorganized with different function calls</li><li>Usage of the initialization function was reduced from 69 call sites to 6, suggesting more efficient lazy loading or granular initialization</li><li>Import statements were reorganized by the bundler, but no functional changes to imports were made</li><li><strong>Evidence</strong>: <code>variable Pr at line 470923</code> (previously <code>LQ at line 480763</code> in v2.0.43)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -152,7 +154,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

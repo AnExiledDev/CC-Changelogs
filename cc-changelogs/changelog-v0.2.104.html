@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">9 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.104 Changelog</p>
     </article>
@@ -134,21 +135,26 @@
       <ul><li>Better error handling for file system operations</li><li>Improved retry logic for transient failures</li><li>Enhanced process signal handling</li><li>More robust file locking mechanisms</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed duplicate comment issue in generated code</li><li>Improved handling of file system errors (EMFILE, ENFILE)</li><li>Better cleanup on process exit</li><li>Fixed race conditions in token refresh</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Beta Features</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="beta-features">
       <ul><li>Support for custom betas via <code>ANTHROPIC_BETAS</code> environment variable</li><li>Comma-separated list of beta feature flags</li><li>Example: <code>ANTHROPIC_BETAS=feature1,feature2</code></li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -210,7 +216,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

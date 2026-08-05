@@ -77,10 +77,12 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p>The changelog for version 2.1.74 is complete. Key highlights include:</p>
 <ul><li><strong>6 new features</strong>: Context usage analysis system, custom auto-memory directories, AI-generated session titles, <code>/stuck</code> diagnostic skill, session-end hooks timeout config, and assistant-mode auto-backgrounding</li><li><strong>12 improvements</strong>: Flexible agent model IDs, improved auto-mode description, smarter memory selection, bidirectional text rendering, better command parsing, git submodule auto-init, and more</li><li><strong>8 bug fixes</strong>: OAuth error normalization, abort controller leaks, argument parsing edge cases, case-insensitive model matching, team cleanup, and system message preservation</li><li><strong>3 in-development features</strong>: Context collapse (Hawthorn), plugin dependency resolution (Orchid Trellis), and per-message budget persistence</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -142,7 +144,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

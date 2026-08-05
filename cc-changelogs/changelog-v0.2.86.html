@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="new-features">
       <div class="card-top">
         <h3>New Features <a class="anchor" href="#new-features">#</a></h3>
@@ -108,6 +109,7 @@
       <ul><li>Removed database-backed message history storage functions (<code>Kl9</code>, <code>uT1</code>, <code>eu0</code>, <code>Zm0</code>)</li><li>Removed progress message filtering (<code>s91</code>)</li><li>Removed custom error class <code>hp</code> in favor of standardized error handling</li><li>Removed system policies configuration (previously at <code>/etc/claude-code/policies.json</code>)</li></ul>
 <p>This update focuses on improving error handling, adding managed settings support, and cleaning up deprecated functionality while maintaining backward compatibility for core features.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -169,7 +171,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

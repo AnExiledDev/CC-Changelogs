@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="mode-commands-system">
       <div class="card-top">
         <h3>Mode Commands System <a class="anchor" href="#mode-commands-system">#</a></h3>
@@ -145,15 +146,18 @@ Your command content here...</code></pre>
       <ul><li>No new command-line flags or options</li><li>No changes to debug flags (<code>--debug</code>, <code>-d</code>, <code>--debug-to-stderr</code>, <code>-d2e</code> remain identical)</li><li>No ripgrep configuration changes (system vs builtin selection unchanged)</li><li>No dependency upgrades (Axios, Zod, Fuse.js, LRU-cache, Minimatch, Lodash all unchanged)</li><li>No new error handling or validation for end users</li><li>No changes to core CLI functionality</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes for Plugin Developers</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes-for-plugin-developers">
       <p>If you maintain Claude Code plugins, you can now:</p>
 <ol><li>Use <code>mode: true</code> frontmatter to designate workflow commands</li><li>Define simple commands inline in your manifest instead of creating separate <code>.md</code> files</li><li>Override command metadata (description, model, allowed tools) at the manifest level</li><li>Expect better validation errors if your manifest format is incorrect</li></ol>
 <p>The old plugin manifest formats remain fully supported - these are additions, not breaking changes.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -215,7 +219,7 @@ Your command content here...</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

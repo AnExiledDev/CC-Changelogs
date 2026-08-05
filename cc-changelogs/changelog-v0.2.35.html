@@ -71,14 +71,17 @@
     <h2>Changes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.35 Changelog</p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Import Optimizations</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="import-optimizations">
       <p>This version includes minor optimizations to module imports, focusing on more specific imports from Node.js built-in modules:</p>
     </article>
@@ -95,22 +98,27 @@
       <ul><li><strong>Optimized <code>process</code> imports</strong>: Similar optimization for the process module:</li><li>Changed from <code>import gb2 from "node:process"</code> to <code>import { cwd as q00 } from "node:process"</code></li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Technical Details</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-details">
       <p>These changes represent a move towards more efficient imports by using destructured imports rather than default imports. This can lead to:</p>
 <ul><li>Smaller bundle sizes through better tree-shaking</li><li>Clearer code intent by explicitly naming the imported functionality</li><li>Potential performance improvements by avoiding unnecessary module loading</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Impact on Users</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="impact-on-users">
       <p>These are internal implementation changes with no impact on CLI functionality or user-facing features. All commands and interactions remain unchanged.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -172,7 +180,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

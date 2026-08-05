@@ -77,30 +77,37 @@
     <h2>New Features</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="new-features">
       <p><em>None</em></p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="improvements">
       <p><em>None</em></p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <p><em>None</em></p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <p>This release contains only internal changes that do not affect user-facing functionality:</p>
 <ul><li><strong>Version bump</strong>: 2.1.10 → 2.1.11</li><li><strong>Build timestamp</strong>: Updated from <code>2026-01-17T00:11:03Z</code> to <code>2026-01-17T01:19:11Z</code> (approximately 1 hour later)</li><li><strong>Code refactoring</strong>: One OAuth metadata discovery helper function (<code>R42</code>) was refactored/inlined</li><li><strong>Re-minification</strong>: 6,293 variable renames from fresh minification pass (internal identifier changes like <code>FT8</code> → <code>KT8</code>)</li></ul>
@@ -108,13 +115,16 @@
 <p>Diff header shows 99.9% structural similarity with only 17 additions, 18 deletions, and 55 modifications across ~13,000 declarations.</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>This appears to be a quick follow-up release to v2.1.10 released approximately one hour earlier, likely containing minor internal fixes or build adjustments not visible in the minified output.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -176,7 +186,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

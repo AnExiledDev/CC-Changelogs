@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">20 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="batch-command">
       <div class="card-top">
         <h3>/batch Command <a class="anchor" href="#batch-command">#</a></h3>
@@ -295,10 +296,12 @@ claude remote-control --permission-mode bypassPermissions</code></pre>
 <p>Removed functions (search for removed strings <code>"Opus 4.6 is here"</code>, <code>"$50 free extra usage"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed race condition where concurrent config writes could wipe authentication data from <code>~/.claude.json</code> (search for <code>"See GH #3117"</code>)</li><li>Improved OAuth callback handling with better error message when the redirect URL is missing the authorization code (search for <code>"Invalid callback URL: missing authorization code"</code>)</li><li>Fixed <code>"Prompt cancelled by user"</code> error propagation when prompts are cancelled during hook flows (search for <code>"Prompt cancelled by user"</code>)</li><li>Improved orphaned version cleanup with better error handling for <code>stat</code> failures (search for <code>"Failed to stat orphaned marker"</code>)</li><li>MCP server <code>.mcp.json</code> writes now use atomic <code>datasync</code> + <code>rename</code> pattern with proper file permission preservation, replacing the previous simpler write approach</li></ul>
     </article>
@@ -342,13 +345,16 @@ claude remote-control --permission-mode bypassPermissions</code></pre>
 <p>Schema descriptions (search for <code>"Definition for a custom subagent"</code>, <code>"Agent type identifier"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li><strong>Task → Agent migration</strong>: If you have CLAUDE.md files, hooks, or permissions referencing the <code>Task</code> tool by name, they will continue to work — <code>Task</code> is retained as an alias. However, new documentation and tool output will use <code>Agent</code>.</li><li><strong>HTTP hook security</strong>: Organizations deploying HTTP hooks should review the new <code>allowedHttpHookUrls</code> and <code>httpHookAllowedEnvVars</code> managed settings to restrict which URLs hooks can call and which environment variables can be interpolated.</li><li><strong>SSH host key change</strong>: The switch to <code>StrictHostKeyChecking=yes</code> means marketplace plugin installations via SSH may fail if the host key isn't already in <code>known_hosts</code>. Run <code>ssh -T git@&lt;host&gt;</code> once manually to add it, or use HTTPS URLs for public repos.</li><li><strong><code>/todos</code> removed</strong>: The <code>/todos</code> slash command has been removed. The <code>TodoWrite</code> tool for in-session task tracking remains available.</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -410,7 +416,7 @@ claude remote-control --permission-mode bypassPermissions</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

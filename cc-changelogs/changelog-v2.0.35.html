@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="enhanced-unc-path-detection">
       <div class="card-top">
         <h3>Enhanced UNC Path Detection <a class="anchor" href="#enhanced-unc-path-detection">#</a></h3>
@@ -169,14 +170,17 @@ claude
 <ul><li>Passes <code>toolPermissionContext</code> to validation function to check permissions earlier</li><li>Prevents attempting to read files that will be denied by permissions</li><li>More accurate error messages about why files cannot be read</li><li><strong>Evidence</strong>: <code>t4.validateInput(F, B) at line 313355</code> in v2.0.35 (previously missing context parameter)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Internal Improvements</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-improvements">
       <ul><li>Refactored permission checking for read operations to use consistent code paths</li><li>Added IDE selection context filtering to respect file permissions</li><li>Consolidated path normalization helpers using <code>node:path</code> posix/win32 utilities</li><li>Improved stream handling with consistent PassThrough stream usage across modules</li><li>Better separation of initialization logic from runtime functionality</li></ul>
 <p><strong>Note:</strong> This changelog focuses on user-visible changes and security improvements. Many internal function renamings due to code minification are not included unless they represent functional changes.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -238,7 +242,7 @@ claude
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

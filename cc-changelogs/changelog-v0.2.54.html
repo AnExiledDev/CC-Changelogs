@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="memory-system">
       <div class="card-top">
         <h3>Memory System <a class="anchor" href="#memory-system">#</a></h3>
@@ -120,10 +121,12 @@
       <ul><li><strong>File count estimation</strong>: Shows rounded project file count in telemetry</li><li>Provides better context about project size</li><li><strong>Context size tracking</strong>: Improved tracking of memory and context usage</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Performance Improvements</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="performance-improvements">
       <ul><li><strong>Lodash integration</strong>: Added Lodash (v4.17.21) for optimized utility functions</li><li><strong>Better resource cleanup</strong>: Improved handling of memory and cache resources</li><li><strong>Streaming optimizations</strong>: More efficient handling of large responses</li></ul>
     </article>
@@ -148,22 +151,27 @@
       <ul><li><strong>Permission error tracking</strong>: Better telemetry for file access issues</li><li><strong>Improved error messages</strong>: More descriptive error feedback for common issues</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li><strong>Removed duplicate dependencies</strong>: Cleaned up dotenv and related packages</li><li><strong>Fixed command parsing</strong>: Better handling of command input modes</li><li><strong>Improved file path handling</strong>: More robust path resolution for memory files</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <ul><li><strong>Code reorganization</strong>: Significant refactoring of internal modules</li><li><strong>Updated telemetry</strong>: New events for memory usage, Option+Meta configuration, and cache hits</li><li><strong>Dependency updates</strong>: Updated internal dependencies and build process</li></ul>
 <p>This release focuses on improving the development workflow with the new memory system, better streaming capabilities, and enhanced terminal integration, while also providing performance improvements and bug fixes.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -225,7 +233,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

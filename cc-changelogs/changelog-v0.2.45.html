@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.45 Changelog</p>
     </article>
@@ -95,10 +96,12 @@ claude &quot;Your prompt here&quot;</code></pre>
       <ul><li>Switched from default imports to named imports for better tree-shaking:</li><li><code>stream</code> module now uses <code>import { Readable as o$4 }</code></li><li><code>node:process</code> module now uses <code>import { cwd as zw0 }</code></li><li>These changes may result in slightly smaller bundle sizes and improved load times</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Technical Details</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-details">
       <p>The new <code>O41()</code> function handles the environment variable parsing:</p>
 <pre><code>function O41() {
@@ -119,6 +122,7 @@ claude &quot;Your prompt here&quot;</code></pre>
 }</code></pre>
 <p>This function is likely called during API request construction to merge custom parameters with default request bodies.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -180,7 +184,7 @@ claude &quot;Your prompt here&quot;</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

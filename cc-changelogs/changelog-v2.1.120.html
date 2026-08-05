@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">23 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="claude-ultrareview-cli-subcommand">
       <div class="card-top">
         <h3><code>claude ultrareview</code> CLI Subcommand <a class="anchor" href="#claude-ultrareview-cli-subcommand">#</a></h3>
@@ -313,10 +314,12 @@ Install as a service now? [Y/n/never, or &#x27;once&#x27; for this login session
 <p>Username validation with regex test — function <code>xe()</code> at line ~104573</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed Chrome extension <code>ToolCallTimeoutError</code> and <code>ExtensionDisconnectedMidCallError</code> — new error types provide more specific messaging when the Chrome extension disconnects mid-operation or times out (search for <code>"ExtensionDisconnectedMidCallError"</code>)</li><li>Fixed daemon stop on Windows: the error message now correctly advises using <code>taskkill /PID</code> instead of attempting signals that Windows doesn't support (search for <code>"taskkill /PID"</code>)</li><li>Fixed worktree cleanup handling: uncommitted changes in agent worktrees are now preserved with a warning rather than silently lost (search for <code>"changed file(s) would be lost, kept"</code>)</li><li>Fixed autocompact thrashing detection: the thrashing message now properly triggers on repeated rapid re-compactions (search for <code>"Autocompact is thrashing"</code>)</li><li>Fixed auth token refresh: proactive token refresh failures are now logged and retried with a 60-second delay instead of failing silently (search for <code>"auth: proactive refresh failed"</code>)</li><li>Fixed plan-mode blocking: the <code>post_turn_summary</code> now correctly maps <code>"blocked"</code> status to <code>"need_input"</code> for plan mode flows (search for <code>"status_category"</code>)</li></ul>
     </article>
@@ -353,6 +356,7 @@ Install as a service now? [Y/n/never, or &#x27;once&#x27; for this login session
 <div class="blabel">Details</div>
 <ul><li>When the flag is enabled (set to return <code>"ask"</code>), the interactive installation prompt appears</li><li>Can be forced via <code>CLAUDE_CODE_DAEMON_COLD_START=ask</code> environment variable or <code>settings.daemonColdStart</code></li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -414,7 +418,7 @@ Install as a service now? [Y/n/never, or &#x27;once&#x27; for this login session
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

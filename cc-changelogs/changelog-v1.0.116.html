@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">12 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="reverse-search-history-ctrl-r">
       <div class="card-top">
         <h3>Reverse Search History (Ctrl+R) <a class="anchor" href="#reverse-search-history-ctrl-r">#</a></h3>
@@ -181,13 +182,16 @@ export USE_LOCAL_OAUTH=1
       <ul><li>Added <code>OAUTH_FILE_SUFFIX</code> field to all OAuth configs</li><li>Production: <code>OAUTH_FILE_SUFFIX: ""</code></li><li>Local: <code>OAUTH_FILE_SUFFIX: "-local-oauth"</code></li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>The Sessions API integration is implemented but disabled by feature flag</li><li>Sandbox recommended defaults include paths for npm, yarn, pnpm, cargo, rustup, homebrew</li><li>Environment-specific OAuth credentials prevent common development workflow issues</li><li>Reverse search history uses React hooks for state management in the terminal UI</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -249,7 +253,7 @@ export USE_LOCAL_OAUTH=1
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

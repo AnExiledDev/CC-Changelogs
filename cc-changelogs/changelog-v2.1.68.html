@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="ultrathink-keyword-re-enabled-as-effort-boost">
       <div class="card-top">
         <h3>Ultrathink keyword re-enabled as effort boost <a class="anchor" href="#ultrathink-keyword-re-enabled-as-effort-boost">#</a></h3>
@@ -136,6 +137,7 @@
 <div class="blabel">Evidence</div>
 <p>Dialog visibility (search for <code>"effortCalloutV2Dismissed"</code>) — <code>zIq()</code> at line ~588370 checks <code>zb6().enabled</code></p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -197,7 +199,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

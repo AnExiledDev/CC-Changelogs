@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p>Based on my analysis of the diff file for version 0.2.57 of Claude Code CLI, here's the detailed changelog:</p>
 <p># Claude Code CLI v0.2.57 Changelog</p>
@@ -139,22 +140,27 @@
       <ul><li>Version bump to 0.2.57</li><li>Updated changelog constant with current version</li><li>Improved error tracking and telemetry</li><li>Better handling of Git repository detection with <code>vL1</code> function</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed issue where messages without text or Edit tool usage were incorrectly validated</li><li>Improved handling of shell process lifecycle</li><li>Better error recovery in background task management</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Configuration Changes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="configuration-changes">
       <ul><li>New <code>diffTool</code> setting in user configuration (defaults to "terminal")</li><li>Project settings now support permission configurations</li><li>Enhanced settings validation with proper schemas</li></ul>
 <p>This update focuses on improving the developer experience with better project-level configurations, more engaging UI elements, and robust shell handling capabilities. The addition of project-level tool permissions provides better security and flexibility when working across different projects.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -216,7 +222,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

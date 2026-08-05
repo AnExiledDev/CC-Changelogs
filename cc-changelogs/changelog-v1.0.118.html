@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="sandbox-system-temporarily-disabled">
       <div class="card-top">
         <h3>Sandbox System Temporarily Disabled <a class="anchor" href="#sandbox-system-temporarily-disabled">#</a></h3>
@@ -116,6 +117,7 @@
 <ul><li>Approximately 8,498 function names were renamed due to bundler minification changes</li><li>No functional changes to AWS SDK behavior</li><li>Removed variables <code>Hl1</code>, <code>if0</code>, <code>trA</code> and added equivalents <code>Nl1</code>, <code>af0</code>, <code>prA</code></li><li>All AWS Bedrock command classes and serialization functions updated</li><li><strong>Evidence</strong>: Variables at lines 5314-5390 show minified name changes</li></ul>
 <p><strong>Impact:</strong> No user-visible changes; internal dependency maintenance only.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -177,7 +179,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

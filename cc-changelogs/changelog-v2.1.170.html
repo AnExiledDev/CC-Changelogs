@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="claude-fable-5-model-support">
       <div class="card-top">
         <h3>Claude Fable 5 Model Support <a class="anchor" href="#claude-fable-5-model-support">#</a></h3>
@@ -144,10 +145,12 @@ claude</code></pre>
 <p>New schema definition (search for <code>"model_refusal_fallback"</code> and <code>"retracted_message_uuids"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">9 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="xhigh-effort-warning">
       <div class="card-top">
         <h3>xhigh Effort Warning <a class="anchor" href="#xhigh-effort-warning">#</a></h3>
@@ -221,16 +224,19 @@ claude</code></pre>
 <p>Conditional effort passthrough (search for <code>"unpinFable5LaunchEffort"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Server fallback tombstone cancels in-flight tool calls gracefully — when a server-side refusal fallback retracts a tool dispatch mid-flight, tool calls now return a clean cancellation result with message "Tool dispatch was retracted by a server fallback; the input may be truncated." instead of raising an uncaught exception. The abort signal reason <code>"server-fallback-tombstone"</code> is checked at each phase: validate input, permission, pre-call, and post-call. (search for <code>"Tool dispatch was retracted by a server fallback"</code>)</li></ul>
 <ul><li>Fable 5 usage-credit 429 errors handled correctly — the retry-on-overload logic now correctly skips retrying 429 responses that contain "usage credits are required" or "extra usage is required" when the overage-disabled reason is <code>fetch_error</code> or <code>org_level_disabled_until</code>, preventing unnecessary retries in permanent overage states. (search for <code>"usage credits are required"</code>)</li></ul>
 <ul><li>Session prompt history no longer skips when session persistence is forced — the <code>CLAUDE_CODE_FORCE_SESSION_PERSISTENCE</code> env var check was removed from the prompt-history skip condition, fixing a case where history could be skipped unexpectedly when session persistence was forced via env var. (search for <code>"CLAUDE_CODE_FORCE_SESSION_PERSISTENCE"</code>)</li></ul>
 <ul><li>Mantle provider uses Opus 4.7 instead of 4.8 — <code>HT()</code> (the default Opus model resolver) now returns <code>opus47</code> when the provider is <code>"mantle"</code>, matching the correct model availability on that provider. (search for <code>"r6() === \"mantle\""</code>)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -294,7 +300,7 @@ claude</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

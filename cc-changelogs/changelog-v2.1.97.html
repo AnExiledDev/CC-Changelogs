@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="dream-slash-command-gradual-rollout">
       <div class="card-top">
         <h3><code>/dream</code> Slash Command [Gradual Rollout] <a class="anchor" href="#dream-slash-command-gradual-rollout">#</a></h3>
@@ -171,10 +172,12 @@
 <p>Schema property with full description (search for <code>"omit per-user dynamic sections"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">23 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="buddy-companion-feature-removed">
       <div class="card-top">
         <h3>Buddy/Companion Feature Removed <a class="anchor" href="#buddy-companion-feature-removed">#</a></h3>
@@ -362,10 +365,12 @@
 <p>Read tool description change — removed conditional <code>qk6()</code> check, hard-codes <code>"must be an absolute path"</code> (search for <code>"must be an absolute path"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed unguarded promise chains in Chrome onboarding and session reconnection that could cause unhandled rejections (search for <code>.catch(w6)</code> in <code>K4A</code> and <code>ABY</code>)</li></ul>
 <ul><li>Fixed text input handling: replaced regex-based <code>.replace(/\r/g, ...)</code> with <code>.replaceAll("\r", ...)</code> and added proper handling for <code>meta+backspace</code>, <code>super+backspace</code>, <code>ctrl+backspace</code>, <code>meta+delete</code>, and <code>super+delete</code> key combinations (search for <code>".replaceAll"</code> in <code>aQ8</code>)</li></ul>
@@ -376,10 +381,12 @@
 <ul><li>Stale marketplace backup directories (<code>.bak</code>) are now cleaned up alongside the main directory during marketplace refresh (search for <code>".bak"</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
     </article>
@@ -423,15 +430,18 @@
 <p>Function <code>Uz4</code> gated by <code>R8("tengu_pyrite_wren", !1)</code> (search for <code>"tengu_pyrite_wren"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The removal of the Buddy/Companion feature is a clean removal with no migration needed — the feature was experimental and self-contained. Any companion state stored in your configuration will simply be ignored.</p>
 <p>The new <code>/dream</code> command is gated behind a feature flag (<code>tengu_kairos_dream</code>) and may not be available to all users immediately. The existing background auto-dream mechanism continues to work independently.</p>
 <p>The <code>claude-sonnet-4-6</code> model was already present in v2.1.96; this release adds no new model families but refines model capability detection (the <code>max_effort</code> resolver now properly handles version-based capability checks for Opus/Sonnet &gt;= 4.6).</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -493,7 +503,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

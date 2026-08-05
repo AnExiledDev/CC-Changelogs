@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="artifact-runtime-capabilities-mcp">
       <div class="card-top">
         <h3>Artifact Runtime Capabilities (MCP) <a class="anchor" href="#artifact-runtime-capabilities-mcp">#</a></h3>
@@ -93,10 +94,12 @@
 <p>New skill registered as <code>registerArtifactCapabilitiesSkill</code> (search for <code>"Runtime capabilities for published Artifacts"</code>); capabilities schema added (search for <code>"Runtime capabilities this page declares, as {name: config}"</code>); gated by <code>n4y()</code> which checks <code>CLAUDE_CODE_ARTIFACT_MCP ?? Qe("tengu_cloth_snorkel", !1)</code></p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="background-sessions-now-support-login-and-model">
       <div class="card-top">
         <h3>Background Sessions Now Support /login and /model <a class="anchor" href="#background-sessions-now-support-login-and-model">#</a></h3>
@@ -149,13 +152,16 @@
 <p><code>Nkd</code> (<code>capabilitiesFromGatedInput</code>) and <code>Fkd</code> (<code>frameCapabilitiesSummary</code>) added (search for <code>"capabilities" in e ? e.capabilities : void 0</code>); <code>Fkd</code> consumed by <code>i4y()</code> inside <code>ArtifactTool.toAutoClassifierInput</code> (search for <code>frameCapabilitiesSummary</code>); overflow enforced by <code>oSo</code> (non-empty <code>servers</code> guard) and <code>qar</code> helper (8-item cap with <code>[N total]</code> prefix, search for <code>qar</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Refusal fallback state fields (<code>refusalFallbackOccurred</code>, <code>refusalFallbackHeaderArmed</code>, <code>refusalFallbackLatchOriginRequestId</code>) are now correctly reset on both session clear and session start, preventing stale fallback state from bleeding across sessions. (search for <code>"refusalFallbackLatchOriginRequestId = void 0"</code>)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -219,7 +225,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

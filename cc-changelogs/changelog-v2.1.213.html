@@ -71,6 +71,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="claude-platform-on-google-cloud">
       <div class="card-top">
         <h3>Claude Platform on Google Cloud <a class="anchor" href="#claude-platform-on-google-cloud">#</a></h3>
@@ -134,10 +135,12 @@ claude --model claude-opus-4-5 ...</code></pre>
 <p>Tripwire implementation (search for <code>"CLAUDE_CODE_NO_MODEL_FALLBACK tripwire: a model-fallback pivot was attempted"</code>, <code>"CLAUDE_CODE_NO_MODEL_FALLBACK"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">17 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="background-sessions-clearer-no-terminal-error-messages">
       <div class="card-top">
         <h3>Background Sessions: Clearer "No Terminal" Error Messages <a class="anchor" href="#background-sessions-clearer-no-terminal-error-messages">#</a></h3>
@@ -329,18 +332,22 @@ export OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT=4096</code></pre>
 <p>Memory prompt builder (search for <code>"read-only — do not write there"</code> in new memory prompt logic)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Shell redirect parser no longer misses content between children in test commands — the gap-byte accounting check is now applied to <code>test_command</code> nodes (search for <code>"Test command comparison is missing its right-hand side"</code>)</li><li>The <code>set_permission_mode</code> engine control now validates the mode value and returns a descriptive error for unrecognized modes instead of silently failing (search for <code>"[engine] set_permission_mode rejected — unrecognized mode"</code>, <code>"Cannot set permission mode: must be one of"</code>)</li><li>GCP environment variable values containing URL metacharacters (<code>:</code>, <code>/</code>, <code>\</code>, <code>?</code>, <code>#</code>, <code>@</code>, whitespace) now raise a clear error instead of silently corrupting the request path (search for <code>"GCP path-segment env var failed the charset gate"</code>)</li><li>Error codes <code>ENODEV</code>, <code>ENOMEM</code>, <code>EUNKNOWN</code>, <code>UNKNOWN</code>, and <code>Unknown system error *</code> are now treated as retryable I/O errors (previously only <code>EDEADLK</code>, <code>EINTR</code>, <code>ENXIO</code>, <code>ECANCELED</code>, <code>ENEEDAUTH</code>, <code>ESTALE</code> were) (search for <code>"ENODEV"</code> in retryable error check)</li><li>Frontmatter parser now detects ambiguous <code>---</code> closing delimiters (a value containing <code>"---"</code> could cause part of the block to be read as body) and reports a <code>rewriteHazard</code> warning instead of silently truncating (search for <code>"the closing --- is ambiguous"</code>)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Removals</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="morning-brief-feature-removed">
       <div class="card-top">
         <h3>Morning Brief Feature Removed <a class="anchor" href="#morning-brief-feature-removed">#</a></h3>
@@ -349,6 +356,7 @@ export OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT=4096</code></pre>
 <div class="blabel">Evidence</div>
 <p>Removal of <code>CLAUDE_CODE_ENABLE_MORNING_BRIEF</code> and <code>CLAUDE_CODE_MORNING_BRIEF_PROMPT</code> from environment variable registry (confirmed absent in new version, confirmed present in old version via string diff).</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -412,7 +420,7 @@ export OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT=4096</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

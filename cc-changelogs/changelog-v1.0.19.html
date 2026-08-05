@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v1.0.19 Changelog</p>
     </article>
@@ -119,21 +120,26 @@
       <ul><li><strong>Adaptive connection checking</strong>: Connection status polling interval now adjusts based on environment</li><li>Default: 1 second polling interval</li><li>Extended to 30 seconds in certain runtime environments for reduced overhead</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed duplicate comment issue in codebase</li><li>Improved file path handling for agent-specific data storage</li><li>Enhanced error handling for MCP resource fetching</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Technical Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-changes">
       <ul><li>Removed unused stream imports and process-related functions</li><li>Consolidated file storage paths for better organization</li><li>Added UUID generation support for unique identifiers</li><li>Improved sandbox detection (though currently disabled by default)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -195,7 +201,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

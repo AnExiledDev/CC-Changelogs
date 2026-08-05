@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">9 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="epipe-error-handling-for-piped-output">
       <div class="card-top">
         <h3>EPIPE Error Handling for Piped Output <a class="anchor" href="#epipe-error-handling-for-piped-output">#</a></h3>
@@ -173,18 +174,22 @@
 <p><code>sx0()</code> at line 1741 (timeout validator, contains <code>"Invalid value"</code>, <code>"Capped from"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential crash when OAuth tokens expire and keychain has updated credentials (<code>C1B()</code> at line 146443)</li><li>Improved handling of model region prefixes (us, eu, apac, global) for Bedrock deployments (<code>Ad1()</code> at line 139167, <code>MoQ()</code> at line 139171)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <p>The following changes are internal and don't affect user-facing functionality:</p>
     </article>
@@ -206,6 +211,7 @@
 <div class="tags"><span class="tag new">New</span></div>      </div>
       <ul><li>Zod schema validation error messages now use <code>.issues</code> instead of <code>.errors</code> property</li><li>Cache invalidation function <code>fl()</code> added for OAuth credential cache</li><li>Various dependency updates (google-auth-library version string changes)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -267,7 +273,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -77,30 +77,37 @@
     <h2>New Features</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="new-features">
       <p>None.</p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="improvements">
       <p>None.</p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <p>None.</p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Internal Changes (Not User-Facing)</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes-not-user-facing">
       <p>This release refactors how Node.js built-in modules are imported throughout the codebase:</p>
 <ul><li><strong>Import modernization</strong>: Changed from default imports (e.g., <code>import fs from "node:fs"</code>) to named imports (e.g., <code>import { readFileSync, existsSync } from "node:fs"</code>).</li></ul>
@@ -109,13 +116,16 @@
 <p>The diff shows 15 removed import statements and 15 added import statements with restructured named imports. Structural similarity is 99.9% with 8,487 internal variable renames typical of minification differences.</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>Users upgrading from v2.1.4 should experience no behavioral differences. This release appears to be a housekeeping update to improve code consistency and potentially enable tree-shaking optimizations in the bundler.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -177,7 +187,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

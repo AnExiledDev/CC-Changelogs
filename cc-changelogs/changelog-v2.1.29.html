@@ -77,18 +77,22 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p>None. This release contains only:</p>
 <ul><li>Version number increment (2.1.28 → 2.1.29)</li><li>Updated build timestamp (2026-01-31T18:41:01Z → 2026-01-31T20:12:07Z)</li><li>Build path references updated to new build number</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>This appears to be a republish or rebuild of the previous version without any code modifications. The file sizes are identical (16,682,625 bytes) and all differences are limited to version identifiers and build metadata embedded in the source.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -150,7 +154,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

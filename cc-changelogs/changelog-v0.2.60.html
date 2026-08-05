@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.60 Changelog</p>
     </article>
@@ -117,10 +118,12 @@
       <ul><li>Refactored the main entry point to separate concerns:</li><li>Input handling logic extracted to <code>ra5()</code> function</li><li>Main application logic moved to <code>aa5()</code> function</li><li>Better separation between interactive and non-interactive modes</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed issues with non-interactive mode (-p) that were mentioned as resolved in v0.2.59</li><li>Improved error handling in the startup sequence</li></ul>
     </article>
@@ -143,6 +146,7 @@ claude -p --json &quot;Summarize this file&quot; &lt; README.md</code></pre>
 &gt; </code></pre>
 <p>This tip helps users discover that they can use git worktrees to run multiple Claude sessions simultaneously in different directories, which is particularly useful for large refactoring tasks or when working on multiple features.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -204,7 +208,7 @@ claude -p --json &quot;Summarize this file&quot; &lt; README.md</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

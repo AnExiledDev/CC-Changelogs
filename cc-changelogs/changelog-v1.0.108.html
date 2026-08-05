@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="enhanced-error-handling-with-ono-library">
       <div class="card-top">
         <h3>Enhanced Error Handling with ono Library <a class="anchor" href="#enhanced-error-handling-with-ono-library">#</a></h3>
@@ -121,6 +122,7 @@ claude read config.yaml  # Now parses YAML into structured data</code></pre>
       </div>
       <ul><li>Streamlined message filtering logic by removing unused content filtering functions</li><li>Updated version string from "1.0.107" to "1.0.108"</li><li>Enhanced module organization with better separation of parsing utilities</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -182,7 +184,7 @@ claude read config.yaml  # Now parses YAML into structured data</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

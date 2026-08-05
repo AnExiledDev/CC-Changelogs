@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="autocompact-cli-flag">
       <div class="card-top">
         <h3><code>--autocompact</code> CLI Flag <a class="anchor" href="#autocompact-cli-flag">#</a></h3>
@@ -126,10 +127,12 @@ claude --autocompact 200000</code></pre>
 <p>Reply action (search for <code>"post a reply comment on an artifact thread"</code>), auto-reply disclosure (search for <code>"artifact auto-reply"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="enhanced-sandbox-credential-file-masking">
       <div class="card-top">
         <h3>Enhanced Sandbox Credential File Masking <a class="anchor" href="#enhanced-sandbox-credential-file-masking">#</a></h3>
@@ -205,10 +208,12 @@ claude --autocompact 200000</code></pre>
 <p>String change (search for <code>"Available connectors (usable by routines):"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Opus 4.7 removed from the fast mode description. Fast mode now explicitly covers Opus 5 and Opus 4.8 only. The <code>tengu_sunset_penguin_opus47</code> sunset-date logic was removed (search for <code>"Fast mode for Claude Code uses Claude Opus with faster output"</code>)</li></ul>
 <ul><li>Fixed the check that determines whether managed settings should suppress project-level credential deny entries: previously any credential file entry triggered the check; now only <code>mode: "deny"</code> entries do (search for <code>"only deny is supported"</code> — the old description was removed, replaced with the full <code>mask</code>/<code>deny</code> documentation)</li></ul>
@@ -217,10 +222,12 @@ claude --autocompact 200000</code></pre>
 <ul><li><code>srt-win.exe</code> lookup simplified: the fallback binary-search logic that looked in <code>vendor/srt-win-src/target/release/</code> was removed; the path is now resolved via the configured <code>windows.srtWin.path</code> or the packaged executable only (search for <code>"does not exist. Run \</code>npx sandbox-runtime windows-install\<code> first."</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
     </article>
@@ -263,6 +270,7 @@ claude --autocompact 200000</code></pre>
 <div class="blabel">Evidence</div>
 <p>Interval builder <code>dTu()</code> (search for <code>"tengu_gb_refresh_interval_minutes"</code>); refresh loop <code>tuy()</code> showing <code>flagged</code> branch and <code>euy = 5000</code> / <code>Zcy = 60000</code> constants</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -326,7 +334,7 @@ claude --autocompact 200000</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

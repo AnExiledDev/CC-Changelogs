@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">14 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="per-model-prompt-caching-control">
       <div class="card-top">
         <h3>Per-Model Prompt Caching Control <a class="anchor" href="#per-model-prompt-caching-control">#</a></h3>
@@ -187,6 +188,7 @@ export DISABLE_PROMPT_CACHING=true</code></pre>
       <ul><li>Removed unused <code>stream</code> import (line 337903 in v1.0.112)</li><li>Added <code>PassThrough</code> stream import as <code>ip5</code> (line 441307)</li><li>Added <code>cwd</code> import from <code>node:process</code> as <code>ZNA</code> (line 361192)</li><li>Streamlines dependencies and improves code clarity</li></ul>
     </article>
   </div>
+  </div>
 
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
@@ -247,7 +249,7 @@ export DISABLE_PROMPT_CACHING=true</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

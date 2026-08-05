@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.78 Changelog</p>
     </article>
@@ -111,22 +112,27 @@
       <ul><li>Fixed potential issues with expired OAuth tokens by implementing proper refresh logic</li><li>Added validation to ensure refresh tokens are only used when available</li><li>Improved error recovery when token refresh fails</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <ul><li>Added constant <code>LI3 = 60000</code> (60 seconds timeout value)</li><li>Updated MCP protocol version to "2024-11-05"</li><li>Version bump to 0.2.78</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Technical Details</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-details">
       <p>The OAuth token refresh implementation includes:</p>
 <ul><li>Automatic detection of expired tokens based on <code>expiresAt</code> timestamp</li><li>Support for OAuth 2.0 refresh token grant type</li><li>Proper handling of client credentials (client_id and client_secret)</li><li>Telemetry events for tracking refresh success/failure rates</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -188,7 +194,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

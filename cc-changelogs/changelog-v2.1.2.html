@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="permission-explainer-gradual-rollout">
       <div class="card-top">
         <h3>Permission Explainer [Gradual Rollout] <a class="anchor" href="#permission-explainer-gradual-rollout">#</a></h3>
@@ -157,10 +158,12 @@
 <p><code>gK9()</code> at line 512088 (plugin manager, contains <code>"pendingToggle"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Removed experimental bash output summarization feature that could cause inconsistent output handling (<code>j22()</code> at line 299915, contained <code>"bash_output_summarization"</code>)</li><li>Removed <code>tengu_tool_result_persistence</code> feature flag and associated tool result truncation logic that was gated behind it (<code>V71()</code> at line 294547)</li><li>Removed background plan verification agent (<code>VerifyPlanExecution</code>) that ran automatically after plan completion (<code>i39()</code> at line 474724)</li><li>Fixed plan mode tracking to properly count user prompts since plan exit (<code>Zp5()</code> at line 403780)</li></ul>
     </article>
@@ -178,13 +181,16 @@
 <p><code>uC9()</code> at line 530822 (env validator, checks against <code>i9A</code> allowlist)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The bash output summarization feature has been completely removed. If you relied on the automatic summarization of verbose command output, you may see more raw output in tool results. The feature was experimental and gated behind feature flags.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -246,7 +252,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

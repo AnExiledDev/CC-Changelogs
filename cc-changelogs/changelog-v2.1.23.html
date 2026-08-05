@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">16 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="ripgrep-search-timeout-handling">
       <div class="card-top">
         <h3>Ripgrep Search Timeout Handling <a class="anchor" href="#ripgrep-search-timeout-handling">#</a></h3>
@@ -263,10 +264,12 @@
 <p>UI changes at line 416889, 423206 (removes <code>"Agent idle · Task"</code>, <code>"Queued teammate"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed escaped backslash display in terminal setup hints: now correctly shows <code>\\</code> instead of <code>\</code> in messages about multi-line input (<code>p89()</code> at line 188045, <code>"Use backslash (\\\\) + Enter"</code>)</li><li>Fixed prompt caching scope constant to use 2026 date: <code>"prompt-caching-scope-2026-01-05"</code> (constant at line 2882)</li></ul>
     </article>
@@ -286,6 +289,7 @@
 <div class="blabel">Evidence</div>
 <p>Constant at line 550046 (contains <code>"__SYSTEM_PROMPT_DYNAMIC_BOUNDARY__"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -347,7 +351,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

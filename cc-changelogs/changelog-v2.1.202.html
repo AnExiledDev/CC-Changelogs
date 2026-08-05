@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="audio-file-transcription-via-mention">
       <div class="card-top">
         <h3>Audio File Transcription via @-mention <a class="anchor" href="#audio-file-transcription-via-mention">#</a></h3>
@@ -113,10 +114,12 @@
 <p>Loop stop handler (search for <code>"[loop] model called ScheduleWakeup({stop:true})"</code> and <code>"stop the /loop — cancel pending wakeups, schedule nothing"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="agent-proxy-governed-git-and-github-gh-shim">
       <div class="card-top">
         <h3>Agent Proxy: Governed Git and GitHub (gh) Shim <a class="anchor" href="#agent-proxy-governed-git-and-github-gh-shim">#</a></h3>
@@ -219,10 +222,12 @@
 <p>Refusal fallback state (search for <code>"refusalFallbackOccurred"</code>, <code>"x-is-refusal-fallback"</code>, and <code>"convolute_arcades"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Hook async JSON output that fails schema validation now gracefully delivers recognized fields (<code>systemMessage</code>, <code>metrics</code>, <code>hookSpecificOutput</code>) instead of dropping everything. Malformed individual fields are logged and skipped rather than failing the whole hook output. (search for <code>"async hook JSON output failed schema validation"</code>)</li></ul>
 <ul><li><code>VirtualMessageList</code> desync between item keys and messages array now produces specific diagnostic messages distinguishing a length mismatch from an undefined element, improving debuggability. (search for <code>"VirtualMessageList: itemKeys/messages length desync"</code>)</li></ul>
@@ -230,10 +235,12 @@
 <ul><li>Session hook failures during session reset are now caught and logged with <code>[skills] session-reset hook failed:</code> rather than propagating as unhandled errors. (search for <code>"[skills] session-reset hook failed:"</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="teammate-pane-backend-removed">
       <div class="card-top">
         <h3>Teammate Pane Backend Removed <a class="anchor" href="#teammate-pane-backend-removed">#</a></h3>
@@ -241,6 +248,7 @@
       <p>The <code>InProcessBackend</code> and <code>PaneBackendExecutor</code> classes (which backed the teammate/swarm pane UI) have been removed from the codebase. Associated log messages (<code>[InProcessBackend] ...</code>, <code>[PaneBackendExecutor] ...</code>, <code>[BackendRegistry] ...</code>), the <code>--teammate-mode</code> CLI flag, and the <code>ITermBackend</code> pane show/hide/rebalance stubs are gone.</p>
 <p>Users relying on the teammate swarm UI should be aware this infrastructure has been cleaned out. The <code>teammateMode</code> configuration key still exists for compatibility, but the pane-spawning backend is no longer present.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -304,7 +312,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

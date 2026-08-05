@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="new-features-and-improvements">
       <div class="card-top">
         <h3>New Features and Improvements <a class="anchor" href="#new-features-and-improvements">#</a></h3>
@@ -118,6 +119,7 @@
       <ul><li>Added support for endpoint URL resolution with proper protocol handling</li><li>Enhanced XML and JSON parsing with better error recovery</li><li>Improved support for streaming responses and event streams</li><li>Better handling of binary data with proper base64 encoding/decoding</li></ul>
 <p>This version represents a significant enhancement to the AWS SDK integration capabilities, making it easier to work with AWS services through Claude Code's CLI interface.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -179,7 +181,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

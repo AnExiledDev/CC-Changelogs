@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="code-optimization">
       <div class="card-top">
         <h3>Code Optimization <a class="anchor" href="#code-optimization">#</a></h3>
@@ -86,6 +87,7 @@
 <ul><li>Changed <code>import OFQ from "stream"</code> to <code>import { PassThrough as so5 } from "stream"</code> at line 444692</li><li>Changed <code>import $9Q from "node:process"</code> to <code>import { cwd as $7A } from "node:process"</code> at line 357152</li><li>These changes improve bundle optimization and tree-shaking by importing only the specific functions needed rather than entire modules</li><li>No functional changes to the CLI behavior or available commands</li><li><strong>Evidence</strong>: Import refactoring at lines 357152 and 444692</li></ul>
 <p><strong>Impact:</strong> This is purely an internal optimization that may slightly reduce the CLI's memory footprint and startup time, but users will not notice any behavioral differences.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -147,7 +149,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

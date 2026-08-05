@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">12 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="debug-output-filtering">
       <div class="card-top">
         <h3>Debug Output Filtering <a class="anchor" href="#debug-output-filtering">#</a></h3>
@@ -174,6 +175,7 @@ diff file1.txt file2.txt</code></pre>
       <ul><li><strong>Issue:</strong> When users granted "permanent" permissions through the UI, they weren't saved to disk</li><li><strong>Cause:</strong> Missing persistence layer between permission granting and settings files</li><li><strong>Resolution:</strong> Added comprehensive persistence system that writes permissions to appropriate settings files</li><li><strong>Affected versions:</strong> All versions prior to 1.0.89</li></ul>
     </article>
   </div>
+  </div>
 
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
@@ -234,7 +236,7 @@ diff file1.txt file2.txt</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

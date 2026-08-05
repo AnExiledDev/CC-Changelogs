@@ -77,6 +77,7 @@
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="context-aware-safety-refusal-messages">
       <div class="card-top">
         <h3>Context-aware safety refusal messages <a class="anchor" href="#context-aware-safety-refusal-messages">#</a></h3>
@@ -100,13 +101,16 @@
 <p>New fable detector (search for <code>"fable"</code>); response-suffix logic updated (the <code>g7</code> model-name formatter gains a new early-return branch for fable+<code>[1m]</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Sandboxing is now correctly reported as unsupported on Windows. The platform support check for the sandbox subsystem returns <code>false</code> immediately when running on Windows, preventing any attempt to initialise or check sandboxing on a platform where it does not work. (search for <code>if (s$() === "windows") return !1</code> inside the sandbox platform check)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -170,7 +174,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

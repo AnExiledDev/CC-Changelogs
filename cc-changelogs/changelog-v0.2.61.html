@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.61 Changelog</p>
     </article>
@@ -107,14 +108,17 @@
       <ul><li>Removed several internal UI selection components that were replaced by a more unified keyboard navigation system</li><li>Removed the "April Fools" easter egg word list that included pirate-themed terms</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Technical Improvements</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-improvements">
       <ul><li>Consolidated keyboard event handling into a single, more efficient function (<code>fJ0</code>)</li><li>Reduced code duplication by removing multiple similar navigation implementations</li><li>Improved module imports for better tree-shaking and smaller bundle size</li></ul>
 <p>The overall structural similarity between v0.2.60 and v0.2.61 is 99.8%, indicating this is a focused update primarily improving keyboard navigation while cleaning up deprecated code.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -176,7 +180,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

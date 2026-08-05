@@ -71,14 +71,17 @@
     <h2>Changes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.43 Changelog</p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Overview</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="overview">
       <p>This release focuses on internal optimizations and introduces a new domain checking capability for web fetching. The terminal rendering system has been significantly refactored for better performance.</p>
     </article>
@@ -113,10 +116,12 @@
 <ul><li>No longer tracks or strips OSC sequences from output</li><li>Simplified terminal clearing logic</li><li>More direct output writing without intermediate processing</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Import Changes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="import-changes">
       <ul><li><strong>Stream Import Modified</strong>: Changed from default import to named import for better tree-shaking:</li></ul>
 <pre><code>  // Before: import b$4 from &quot;stream&quot;;
@@ -126,33 +131,40 @@
   // After: import { cwd as ww0 } from &quot;node:process&quot;;</code></pre>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Performance Improvements</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="performance-improvements">
       <ol><li><strong>Reduced String Operations</strong>: The removal of regex-based OSC sequence stripping (<code>t59</code> regex) eliminates unnecessary string processing on every render.</li></ol>
 <ol><li><strong>Simplified Render Pipeline</strong>: The output generation is now more direct, reducing the number of intermediate transformations.</li></ol>
 <ol><li><strong>Memory Efficiency</strong>: Removed several string constants and helper functions that were used for OSC sequence handling.</li></ol>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Technical Details</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-details">
       <ul><li><strong>Structural Similarity</strong>: 99.8% - indicating this is primarily an optimization release</li><li><strong>Declaration Changes</strong>: +3 additions, -12 deletions, 3 modifications</li><li><strong>Affected Components</strong>: Terminal rendering, web fetching, import optimization</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Impact for Users</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="impact-for-users">
       <p>This update should be transparent to end users with the following potential improvements:</p>
 <ul><li>Slightly faster terminal rendering, especially for output-heavy operations</li><li>More reliable web fetching with pre-flight domain checks</li><li>Reduced memory footprint due to code removal</li></ul>
 <p>The removal of OSC 133 sequences suggests Claude Code is moving away from shell-specific integrations in favor of a more universal approach to terminal handling.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -214,7 +226,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

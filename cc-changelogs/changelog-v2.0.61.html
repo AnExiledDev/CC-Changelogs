@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="import-statement-modernization">
       <div class="card-top">
         <h3>Import Statement Modernization <a class="anchor" href="#import-statement-modernization">#</a></h3>
@@ -88,6 +89,7 @@
 <ul><li><code>node:child_process</code></li><li><code>node:fs</code></li><li><code>node:os</code></li><li><code>node:path</code></li><li><code>node:process</code></li><li><code>node:util</code></li><li><code>crypto</code></li><li><code>https</code></li><li><code>stream</code></li></ul>
 <p><strong>Note:</strong> Users do not need to take any action for this release. All existing commands, flags, and workflows continue to work identically to v2.0.60.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -149,7 +151,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

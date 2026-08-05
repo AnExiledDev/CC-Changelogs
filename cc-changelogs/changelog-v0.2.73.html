@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.73 Changelog</p>
     </article>
@@ -122,21 +123,26 @@ echo &quot;test&quot; | grep &quot;test&quot; | wc -l</code></pre>
       <p>Added support for specifying custom shells when executing bash commands, providing more flexibility for users with non-standard shell configurations.</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Technical Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-changes">
       <ul><li>Refactored extension detection to use synchronous execution with proper error handling</li><li>Improved bash command parsing for better pipe detection</li><li>Updated import statements for better module organization</li><li>Enhanced shell command execution with custom shell parameter support</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential issues with stdin redirection in piped commands</li><li>Improved error handling for IDE extension detection</li><li>Better handling of edge cases in shell command execution</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -198,7 +204,7 @@ echo &quot;test&quot; | grep &quot;test&quot; | wc -l</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

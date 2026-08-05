@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="effort-selections-are-now-persisted-to-user-settings">
       <div class="card-top">
         <h3><code>/effort</code> selections are now persisted to user settings <a class="anchor" href="#effort-selections-are-now-persisted-to-user-settings">#</a></h3>
@@ -125,13 +126,16 @@
 <p>structural diff in the <code>Wh6</code> initializer adds a duplicate <code>OF()</code> call after the existing <code>OF()</code> call.</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>The release notes / onboarding-version comparators were rewritten as new functions (<code>OK5</code>, <code>N55</code>, <code>MI5</code>) replacing the old (<code>wK5</code>, <code>h55</code>, <code>jI5</code>). This is a pure version-string churn artifact: each function compares the user's last-seen version to the constant <code>2.1.126</code> instead of <code>2.1.124</code>. No behavior change.</li><li>This release does <strong>not</strong> bump any models, change any commands or flags, add any settings, or alter permission rules. If you only care about user-facing surface area, the two notable changes are persistent <code>/effort</code> and the removal of the Read-tool malware reminder.</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -193,7 +197,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

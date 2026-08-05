@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v1.0.29 Changelog</p>
     </article>
@@ -106,21 +107,26 @@
       <ul><li><strong>New Function</strong>: Added ability to detect if Claude Code is running as a VS Code extension and retrieve its version number. This enables better integration when running within VS Code.</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Technical Improvements</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-improvements">
       <ul><li><strong>Process Import Changes</strong>: Switched from importing entire <code>node:process</code> module to importing specific functions (<code>cwd</code>), improving module loading efficiency</li><li><strong>Stream Handling</strong>: Added <code>PassThrough</code> stream import for improved data streaming capabilities</li><li><strong>Code Organization</strong>: Minor refactoring and renaming of internal variables and functions</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential issues with text measurement and wrapping for complex Unicode sequences</li><li>Improved accuracy of cursor positioning in wrapped text containing emoji or other wide characters</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -182,7 +188,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

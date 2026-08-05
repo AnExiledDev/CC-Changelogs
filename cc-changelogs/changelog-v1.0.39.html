@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v1.0.39 Changelog</p>
     </article>
@@ -141,18 +142,22 @@
       <ul><li>Enhanced <code>Kw0</code> class (formerly <code>lz0</code>) to support checkpoints</li><li>Session logs now include checkpoint entries</li><li>Added <code>getAllCheckpoints()</code> method to retrieve checkpoints for a session</li><li>Modified log entry structure to handle checkpoint type</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed duplicate import statements</li><li>Improved error handling in checkpoint operations</li><li>Better process detection on macOS (returns null immediately instead of attempting detection)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Usage Examples</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="usage-examples">
       <p>While the checkpoint system is integrated into the codebase, it would typically be used through CLI commands (exact command syntax would depend on the CLI implementation):</p>
 <pre><code># Save a checkpoint with a custom label
@@ -165,6 +170,7 @@ claude checkpoint list
 claude checkpoint restore &lt;checkpoint-id&gt;</code></pre>
 <p>The activity tracking and interactive mode detection work automatically in the background to provide better analytics and adapt behavior based on the execution context.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -226,7 +232,7 @@ claude checkpoint restore &lt;checkpoint-id&gt;</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v1.0.66 Changelog</p>
     </article>
@@ -107,22 +108,27 @@
       <ul><li>Replaced asynchronous checkpoint loading with synchronous operations for better reliability</li><li>Streamlined import statements to reduce overhead</li><li>Optimized session data structures for faster access</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed an issue where checkpoint data could be loaded incorrectly in certain scenarios</li><li>Resolved duplicate import statements that were causing unnecessary overhead</li><li>Corrected the feedback prompt display logic to properly handle all input states</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Technical Changes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-changes">
       <ul><li>Updated to use more specific Node.js imports (<code>node:process</code>, <code>node:stream</code>)</li><li>Refactored feedback configuration to support model-specific settings and probability controls</li><li>Improved session file format to support the new bookmark feature</li></ul>
 <p>This update focuses on improving the user experience with helpful feedback collection and better session management, while also strengthening security and reliability throughout the codebase.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -184,7 +190,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

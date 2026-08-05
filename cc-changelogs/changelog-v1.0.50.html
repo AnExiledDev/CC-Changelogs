@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v1.0.50 Changelog</p>
     </article>
@@ -111,6 +112,7 @@
       <ul><li>Reduced bundle size by removing 4 redundant imports</li><li>Better code organization with more specific imports</li></ul>
 <p><strong>Note</strong>: This update focuses on improving the user experience when working with Claude's plan mode, particularly when users choose to reject proposed plans and continue iterating. The visual improvements make it clearer what was rejected and why the user is still in plan mode.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -172,7 +174,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

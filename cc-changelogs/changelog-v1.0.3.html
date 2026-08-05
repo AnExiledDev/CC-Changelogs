@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Changelog v1.0.3</p>
     </article>
@@ -111,29 +112,36 @@
       <ul><li>Removed unused imports and variables for cleaner codebase</li><li>Consolidated stream handling with PassThrough import</li><li>Removed deprecated batch operation functionality</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential issues with shell command parsing that could lead to unexpected behavior</li><li>Improved error handling in configuration file operations</li><li>Better validation of command-line arguments containing special characters</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Breaking Changes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="breaking-changes">
       <ul><li>Removed the experimental Batch tool functionality (was using <code>pF1</code> variable)</li><li>This feature was likely not widely used and has been replaced with more reliable alternatives</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Notes for Users</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes-for-users">
       <ul><li>If you use GhostTTY terminal, you'll now have better multi-line input support with Shift+Enter</li><li>Unicode handling is more robust, preventing potential display issues with special characters</li><li>Shell commands with output redirection are now safer and more predictable</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -195,7 +203,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

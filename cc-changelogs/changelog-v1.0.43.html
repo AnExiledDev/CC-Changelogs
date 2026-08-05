@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v1.0.43 Changelog</p>
     </article>
@@ -126,6 +127,7 @@
       <ul><li>Added specific import for <code>cwd</code> (current working directory) from <code>node:process</code></li><li>Removed generic process import, using only what's needed</li></ul>
 <p>These changes represent a focus on improving the user experience around theme customization while also making technical optimizations to the codebase.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -187,7 +189,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

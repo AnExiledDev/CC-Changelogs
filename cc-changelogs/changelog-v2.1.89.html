@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">14 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p>The changelog for version 2.1.89 is complete. Here's a summary of the key changes I identified:</p>
 <p><strong>Major new features:</strong></p>
@@ -84,6 +85,7 @@
 <p><strong>Key improvements:</strong></p>
 <ul><li>Shell security migrated from shell-quote to tree-sitter (more accurate bash analysis)</li><li>Better file edit error messages (stale content, too large, not read yet)</li><li>Improved 1M context messaging and extra usage guidance</li><li>Message rating system</li><li>PowerShell edition detection</li><li>New CLI flags: <code>--include-hook-events</code>, <code>--mcp-config servers</code>, <code>--server-option</code></li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -145,7 +147,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

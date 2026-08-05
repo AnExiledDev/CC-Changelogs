@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v1.0.16 Changelog</p>
     </article>
@@ -111,21 +112,26 @@
       <ul><li><strong>Optimized imports</strong>: Streamlined import statements, using more specific imports like <code>{ cwd as dI0 }</code> and <code>{ PassThrough as uK5 }</code> instead of default imports.</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <ul><li>Added new constant <code>po1 = 3000</code> (likely a timeout or delay value)</li><li>Removed unused <code>KfA()</code> function that checked authentication source</li><li>Removed empty object schema <code>q75</code></li><li>Added <code>HA1</code> variable for internal module management</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Breaking Changes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="breaking-changes">
       <p>None - this version maintains backward compatibility with v1.0.15.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -187,7 +193,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

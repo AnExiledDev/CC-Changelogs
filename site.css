@@ -302,16 +302,15 @@ footer a{color:var(--ink-2)}
    can be taken in at a glance and opened where it matters. Uses the existing
    panel, line and ink tokens; no new palette. */
 
-/* Rows stretch so a short card never leaves a hole beside a tall one, and an
-   opened card takes the full width instead of stranding its neighbour. */
-.card-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-  grid-auto-flow:row dense;align-items:stretch;gap:12px}
-.card-list .card{margin:0;padding:15px 17px;display:flex;flex-direction:column}
+/* Two independent columns, not a grid: a card that opens grows its own column
+   and moves only what is below it. A grid ties height to the row, so opening one
+   card pushes its neighbour. */
+.card-list{display:flex;align-items:flex-start;gap:12px}
+.card-list>.col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:12px}
+.card-list .card{margin:0;padding:15px 17px}
 .card-list .card:hover{transform:none;border-color:#4c4436;box-shadow:var(--shadow)}
-.card-list .card.open{grid-column:1/-1;border-color:rgba(217,119,87,.34)}
-.card-list .card .card-actions{margin-top:auto}
-@media (max-width:900px){.card-list{grid-template-columns:1fr}
-  .card-list .card.open{grid-column:auto}}
+.card-list .card.open{border-color:rgba(217,119,87,.34)}
+@media (max-width:900px){.card-list{flex-direction:column}}
 
 .section-head.lead h2{color:var(--accent-2)}
 .section-head.muted h2{color:var(--ink-3);font-weight:600}
@@ -388,9 +387,6 @@ footer a{color:var(--ink-2)}
 .card-body{margin-top:14px;padding-top:13px;border-top:1px solid var(--line-soft)}
 .card-body>:first-child{margin-top:0}
 .card-list .card-body p{font-size:14px}
-.card-list .card.open .card-body{columns:2;column-gap:34px}
-.card-list .card.open .card-body>*{break-inside:avoid}
-@media (max-width:1000px){.card-list .card.open .card-body{columns:1}}
 
 @media (max-width:640px){
   .card-list .card{padding:14px 15px}

@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">17 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="effort-slash-command">
       <div class="card-top">
         <h3><code>/effort</code> Slash Command <a class="anchor" href="#effort-slash-command">#</a></h3>
@@ -251,10 +252,12 @@
 <p>ExitPlanMode update (search for <code>"present plan for approval and start coding (plan mode only)"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed autocompact circuit breaker to stop retrying after repeated failures: <code>"autocompact: circuit breaker tripped after N consecutive failures — skipping future attempts this session"</code> (search for <code>"circuit breaker tripped"</code>)</li><li>Prompt/memory count now only counts messages after the last compaction boundary, fixing inflated counts in long sessions (search for <code>"compact_boundary"</code> in <code>UFY</code>)</li><li>Tool schema discovery warning now explains why typed parameters fail and how to fix it: <code>"This tool's schema was not sent to the API — it was not in the discovered-tool set"</code> (search for <code>"This tool's schema was not sent to the API"</code>)</li></ul>
     </article>
@@ -310,6 +313,7 @@
 <div class="blabel">Evidence</div>
 <p>Bridge debug command (search for <code>"bridge-kick"</code>, <code>"Inject bridge failure states"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -371,7 +375,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">13 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="agent-swarms-multi-agent-coordination">
       <div class="card-top">
         <h3>Agent Swarms - Multi-Agent Coordination <a class="anchor" href="#agent-swarms-multi-agent-coordination">#</a></h3>
@@ -254,10 +255,12 @@ claude --parent-session-id &lt;id&gt;</code></pre>
 <p><code>"[render] first ink render: ${Math.round(process.uptime() * 1000)}ms since process start"</code></p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential issues with teammate context initialization during session reconnection (<code>[Reconnection] Initialized agent context from session</code>)</li><li>Fixed message marking logic in mailbox system (<code>markMessagesAsRead</code>, <code>markMessageAsReadByIndex</code> with proper lock handling)</li><li>Fixed cleanup of in-process teammate tasks when aborted (<code>[TeammateTool] Aborted controller for in-process teammate</code>)</li><li>Fixed worktree removal when git command fails (falls back to manual rm)</li></ul>
     </article>
@@ -297,6 +300,7 @@ claude --parent-session-id &lt;id&gt;</code></pre>
       <p>Spawned teammates have these environment variables:</p>
 <ul><li><code>CLAUDE_CODE_AGENT_ID</code>: Unique identifier for the agent</li><li><code>CLAUDE_CODE_AGENT_TYPE</code>: Role/type of the agent</li><li><code>CLAUDE_CODE_TEAM_NAME</code>: Name of the team</li><li><code>CLAUDE_CODE_PLAN_MODE_REQUIRED</code>: Whether plan approval is required</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -358,7 +362,7 @@ claude --parent-session-id &lt;id&gt;</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

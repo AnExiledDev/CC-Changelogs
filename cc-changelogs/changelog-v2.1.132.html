@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="custom-linux-sandbox-binary-paths">
       <div class="card-top">
         <h3>Custom Linux Sandbox Binary Paths <a class="anchor" href="#custom-linux-sandbox-binary-paths">#</a></h3>
@@ -173,10 +174,12 @@
 <p>Service messaging (search for <code>"service install not available on this platform"</code> and <code>"service uninstall not available on linux"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>WebFetch now reports HTTP status responses as tool results instead of falling through to less-informative request failures (search for <code>"The server returned HTTP"</code>)</li></ul>
 <ul><li>MCP stdio servers that write too much non-JSON data to stdout are disconnected with a clear overflow error instead of allowing unbounded buffering (search for <code>"wrote &gt;"</code> and <code>"without a JSON-RPC message boundary"</code>)</li></ul>
@@ -184,10 +187,12 @@
 <ul><li>Policy-limit fetches with no restrictions now cache the empty state instead of deleting the cache on the old 404 path (search for <code>"Policy limits: No restrictions (cached empty)"</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
     </article>
@@ -204,6 +209,7 @@
 <div class="blabel">Evidence</div>
 <p>Disabled goal command implementation (search for <code>"Set a goal — keep working until the condition is met"</code> and <code>"No goal set. Usage: </code>/goal &lt;condition&gt;<code>"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -265,7 +271,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">15 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="proactive-rate-limit-warnings">
       <div class="card-top">
         <h3>Proactive Rate Limit Warnings <a class="anchor" href="#proactive-rate-limit-warnings">#</a></h3>
@@ -226,6 +227,7 @@
 <ul><li>Function <code>B89()</code> (was <code>O49</code>) at line 474049 now checks <code>ic</code> context</li><li>Prevents unnecessary <code>jJ()</code> calls when in subagent mode</li><li><strong>Evidence</strong>: <code>B89()</code> at line 474049</li></ul>
     </article>
   </div>
+  </div>
 
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
@@ -286,7 +288,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

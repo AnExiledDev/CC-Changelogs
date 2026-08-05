@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">13 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="settings-sync-for-remote-sessions">
       <div class="card-top">
         <h3>Settings Sync for Remote Sessions <a class="anchor" href="#settings-sync-for-remote-sessions">#</a></h3>
@@ -226,21 +227,26 @@
 <p>Line 158543 (<code>"Inherit (default)"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed session memory and transcript access telemetry tracking (<code>ti2()</code> at line 566939, tracks <code>"tengu_session_memory_accessed"</code>)</li><li>Improved keybinding context validation with clearer error messages for bindings in wrong contexts (contains <code>"must be in \"Chat\" context"</code>)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Internal</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal">
       <ul><li>Deprecated <code>claude-code-plugins</code> marketplace in favor of <code>claude-plugins-official</code> with migration message</li><li>Added telemetry for settings sync operations (download success/failure/empty states)</li><li>Removed legacy async worker initialization code that checked for Node 10-11</li><li>Keybindings schema URL updated to <code>platform.claude.com/docs/schemas/claude-code/keybindings.json</code></li><li>Keybindings documentation URL updated to <code>code.claude.com/docs/en/keybindings</code></li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -302,7 +308,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -77,14 +77,17 @@
     <h2>Changes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.34 Changelog</p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Import Optimizations</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="import-optimizations">
       <p>This release includes minor optimizations to module imports, focusing on more specific named imports rather than default imports. These changes improve code clarity and potentially reduce bundle size.</p>
     </article>
@@ -113,6 +116,7 @@
 <ul><li>Reduces memory footprint by importing only needed functions</li><li>Improves code clarity by explicitly showing which functions are used</li><li>Maintains 99.9% structural similarity with the previous version</li><li>No functional changes to user-facing features</li></ul>
 <p>The addition of <code>PassThrough</code> stream support suggests potential improvements in how the CLI handles data streaming internally, though this doesn't introduce any new user-facing commands or features.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -174,7 +178,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

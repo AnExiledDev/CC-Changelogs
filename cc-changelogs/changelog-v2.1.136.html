@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="enterprise-managed-settings-helper">
       <div class="card-top">
         <h3>Enterprise Managed Settings Helper <a class="anchor" href="#enterprise-managed-settings-helper">#</a></h3>
@@ -188,16 +189,19 @@
 <p>Effort help text (search for <code>"Opus 4.6/4.7, Sonnet 4.6"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed <code>--worktree</code> starting before workspace trust is accepted, replacing a later failure with a direct trust message. Evidence: trust gate added before worktree creation (search for <code>"Workspace trust not yet accepted"</code>)</li></ul>
 <ul><li>Improved PowerShell 5.1 command safety detection for cwd-first command shadowing. Evidence: new warning for commands that create a file which shadows a later command (search for <code>"Windows PowerShell 5.1 cwd-first resolution"</code>)</li></ul>
 <ul><li>Improved PowerShell validation around runtime-resolved Unicode codepoint escapes. Evidence: new classifier message (search for <code>"PowerShell \</code>u{HEX} codepoint escape is runtime-resolved and cannot be statically validated."`)</li></ul>
 <ul><li>Fixed bare Git repository detection to recognize <code>.git</code> files that contain <code>gitdir:</code> and avoid misclassifying linked worktrees or nested repositories. Evidence: updated Git structure detection (search for <code>"gitdir:"</code>)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -261,7 +265,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

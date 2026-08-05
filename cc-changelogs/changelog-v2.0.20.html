@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">11 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="plugin-management-cli-commands">
       <div class="card-top">
         <h3>Plugin Management CLI Commands <a class="anchor" href="#plugin-management-cli-commands">#</a></h3>
@@ -224,13 +225,16 @@ CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=90 claude</code></pre>
 <ul><li>Updated <code>_M()</code> permission checker at line 458051 (previously <code>wM()</code>)</li><li>Added fourth parameter for improved context handling</li><li>More robust permission decision-making</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <ul><li>Removed stub Skill tool implementation (<code>ld0</code> at v2.0.19:410872)</li><li>Removed deprecated hook progress renderer (<code>aO5</code> at v2.0.19:366835, <code>sO5</code> at v2.0.19:366851)</li><li>Removed unused clear terminal function (<code>ji2</code> at v2.0.19:208933)</li><li>Removed empty placeholder functions (<code>RLQ</code>, <code>LRQ</code>, <code>eOQ</code>)</li><li>Added PassThrough stream import for improved stream handling</li><li>Added execSync and spawn imports for child process management</li><li>Refactored Skills loading with enabled state check (function <code>tw8()</code> at line 450050)</li><li>Added helper functions for plugin name parsing and matching (<code>HSQ()</code> at line 465275, <code>ms0()</code> at line 465282, <code>us0()</code> at line 465264)</li><li>Added error handler <code>Ue1()</code> at line 465298 for plugin CLI operations</li><li>Multiple variable initializations refactored for improved lazy loading</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -292,7 +296,7 @@ CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=90 claude</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

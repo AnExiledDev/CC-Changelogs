@@ -77,6 +77,7 @@
     <h2>Analysis</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="analysis">
       <p>After thorough examination of the diff between v2.1.21 and v2.1.22, all changes fall into these categories:</p>
 <ol><li><strong>Version string updates</strong>: All instances of <code>VERSION: "2.1.21"</code> changed to <code>VERSION: "2.1.22"</code></li><li><strong>Build timestamp updates</strong>: <code>BUILD_TIME</code> changed from <code>"2026-01-28T01:36:50Z"</code> to <code>"2026-01-28T06:33:34Z"</code></li><li><strong>Build path updates</strong>: Internal build paths updated from <code>claude-cli-external-build-2146</code> to <code>claude-cli-external-build-2154</code></li></ol>
@@ -92,13 +93,16 @@
 <p>This appears to be an internal state management fix related to the API query handling—specifically ensuring a variable <code>_A</code> is reset and checked during stream event processing. This is an internal implementation detail with no direct user-facing impact.</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>This release was built approximately 5 hours after v2.1.21 (01:36 → 06:33 UTC on 2026-01-28), suggesting it may be a quick follow-up fix or scheduled rebuild. The internal code change to the streaming logic may address an edge case in API response handling, but without additional context (such as a related bug report), the specific issue being addressed cannot be determined from the diff alone.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -160,7 +164,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

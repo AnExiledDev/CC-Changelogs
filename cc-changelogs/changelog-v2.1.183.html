@@ -77,6 +77,7 @@
     <h2>Removed Features</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="migrate-command-and-claude-migrate-cli-removed">
       <div class="card-top">
         <h3>/migrate command and <code>claude migrate</code> CLI removed <a class="anchor" href="#migrate-command-and-claude-migrate-cli-removed">#</a></h3>
@@ -90,10 +91,12 @@
 <p>CLI argument parser entry removed (search for <code>"Which agent to import from (codex, gemini)"</code>); <code>/migrate</code> slash command registration removed; dozens of supporting functions deleted including the Codex scanner, Gemini scanner, MCP import logic, subagent writer, and interactive picker component.</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="init-command-major-guided-setup-overhaul">
       <div class="card-top">
         <h3>/init command — major guided-setup overhaul <a class="anchor" href="#init-command-major-guided-setup-overhaul">#</a></h3>
@@ -118,6 +121,7 @@
 <div class="blabel">Evidence</div>
 <p>New <code>qKp</code> string literal contains the full 8-phase guided setup instructions (search for <code>"Phase 0: Check for an existing CLAUDE.md"</code>). New <code>WKp</code> string literal contains the standalone CLAUDE.md creation instructions for non-interactive contexts (search for <code>"Please analyze this codebase and create a CLAUDE.md file"</code>).</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -181,7 +185,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

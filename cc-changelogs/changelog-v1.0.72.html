@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">9 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="status-line-configuration-command">
       <div class="card-top">
         <h3>Status Line Configuration Command <a class="anchor" href="#status-line-configuration-command">#</a></h3>
@@ -146,6 +147,7 @@ change directories to the allowed working directories for this session: [list]</
       <ul><li><strong>Issue:</strong> Missing or invalid frontmatter fields in agent files produced unclear error messages</li><li><strong>Resolution:</strong> Added specific validation and error reporting for required fields (name, description, model)</li></ul>
     </article>
   </div>
+  </div>
 
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
@@ -206,7 +208,7 @@ change directories to the allowed working directories for this session: [list]</
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

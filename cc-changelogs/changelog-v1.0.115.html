@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="rainbow-color-palette">
       <div class="card-top">
         <h3>Rainbow Color Palette <a class="anchor" href="#rainbow-color-palette">#</a></h3>
@@ -113,6 +114,7 @@
 <p><strong>Details:</strong></p>
 <ul><li>Changed <code>node:process</code> import from default to named import for <code>cwd()</code> function</li><li>Import structure: <code>import { cwd as TNA } from "node:process"</code> at line 361351</li><li>Import structure: <code>import { PassThrough as xi5 } from "stream"</code> at line 442117</li><li>No functional changes, just more efficient bundling</li><li><strong>Evidence</strong>: <code>import { cwd as TNA } at line 361351</code>, <code>import { PassThrough as xi5 } at line 442117</code></li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -174,7 +176,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

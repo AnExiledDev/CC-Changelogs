@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="claude-design-mcp-integration-gradual-rollout">
       <div class="card-top">
         <h3>Claude Design MCP Integration [Gradual Rollout] <a class="anchor" href="#claude-design-mcp-integration-gradual-rollout">#</a></h3>
@@ -167,10 +168,12 @@ CLAUDE_CODE_SUPPRESS_SESSION_ATTRIBUTION=1 claude</code></pre>
 <p>Attribution suppression check (search for <code>"CLAUDE_CODE_SUPPRESS_SESSION_ATTRIBUTION"</code>) and header format (search for <code>"Claude-Session:"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">13 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="better-error-messages-for-json-schema">
       <div class="card-top">
         <h3>Better Error Messages for <code>--json-schema</code> <a class="anchor" href="#better-error-messages-for-json-schema">#</a></h3>
@@ -302,18 +305,22 @@ Consider restarting Claude from an existing directory.</code></pre>
 <p>Fallback error log (search for <code>"getOrCreateMachineID: could not persist machineID:"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Worktree cleanup (<code>process.chdir</code>) now catches and logs errors instead of crashing if the original directory is gone during teardown (search for <code>"Could not chdir to original directory while cleaning up worktree:"</code>)</li><li>Worktree keep (<code>process.chdir</code>) similarly catches errors gracefully (search for <code>"Could not chdir to original directory while keeping worktree:"</code>)</li><li><code>git core.hooksPath</code> resolution now canonicalizes relative paths before writing them back, preventing the wrong path being stored when <code>core.hooksPath</code> is specified as a relative reference</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled for users.</p>
     </article>
@@ -341,6 +348,7 @@ Consider restarting Claude from an existing directory.</code></pre>
 <div class="blabel">Evidence</div>
 <p>Setting description (search for <code>"Precompute the compaction summary in the background"</code>) and setting key (search for <code>"precomputeCompactionEnabled"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -404,7 +412,7 @@ Consider restarting Claude from an existing directory.</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

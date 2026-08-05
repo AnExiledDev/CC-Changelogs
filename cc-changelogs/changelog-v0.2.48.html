@@ -71,14 +71,17 @@
     <h2>Changes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.48 Changelog</p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Import Changes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="import-changes">
       <p>This release contains minor internal refactoring of module imports with no user-facing changes:</p>
     </article>
@@ -95,6 +98,7 @@
 <div class="tags"><span class="tag new">New</span></div>      </div>
       <ul><li>Structural similarity: 100%</li><li>Total changes: 2 additions, 2 deletions</li><li>122 internal renames (no functional impact)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -156,7 +160,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

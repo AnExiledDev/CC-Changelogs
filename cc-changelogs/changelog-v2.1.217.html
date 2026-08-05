@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="emoji-shortcode-typeahead">
       <div class="card-top">
         <h3>Emoji Shortcode Typeahead <a class="anchor" href="#emoji-shortcode-typeahead">#</a></h3>
@@ -151,10 +152,12 @@
 <p>Startup quiet timer (search for <code>"srStartupQuietTimer"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">13 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="mcp-tool-errors-now-throw-typed-exceptions-in-workflow-scrip">
       <div class="card-top">
         <h3>MCP Tool Errors Now Throw Typed Exceptions in Workflow Scripts <a class="anchor" href="#mcp-tool-errors-now-throw-typed-exceptions-in-workflow-scrip">#</a></h3>
@@ -292,10 +295,12 @@
 <p>Auto-compact trigger (search for <code>"requestCompact"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed resume attachment validation: malformed or missing attachment payloads in saved transcripts are now dropped with an error log rather than causing resume to fail (search for <code>"the session transcript appears partially corrupt"</code>)</li></ul>
 <ul><li>Fixed the workflow VM sandbox to properly handle <code>MCP</code>-thrown errors in <code>resolveDeep</code>'s auto-await loop — a script ending on an unawaited MCP call no longer silently swallows the error (search for <code>"mcpToolError: true"</code>)</li></ul>
@@ -309,10 +314,12 @@
 <ul><li>Fixed the workflow VM context builder to use the correct <code>budget_usd</code> registration path, ensuring budget tracking is available in the right VM scope (search for <code>"ab(\"budget_usd\""</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled or gated behind feature flags currently being rolled out.</p>
     </article>
@@ -365,6 +372,7 @@
 <div class="blabel">Evidence</div>
 <p>Schema field (search for <code>"rateLimitGraceActive"</code> or <code>"tengu_lantern_spool"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -428,7 +436,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

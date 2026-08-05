@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="projects-tool-read-and-write-claude-ai-project-docs">
       <div class="card-top">
         <h3>Projects Tool — Read and Write claude.ai Project Docs <a class="anchor" href="#projects-tool-read-and-write-claude-ai-project-docs">#</a></h3>
@@ -106,10 +107,12 @@
 <p>New Zod schema field (search for <code>"Ramp mouse-wheel scroll speed during fast scrolls (fullscreen mode only)"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">13 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="advisor-model-capability-enforcement">
       <div class="card-top">
         <h3>Advisor Model Capability Enforcement <a class="anchor" href="#advisor-model-capability-enforcement">#</a></h3>
@@ -221,10 +224,12 @@
 <p>String literal (search for <code>"GLOBSTAR"</code> in the added strings list)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Shell variable tracking in <code>if</code>/<code>while</code> statements now correctly handles <code>&amp;&amp;</code>-short-circuit and pipeline conditions — variables that might be unset by a short-circuit branch are now flagged as "too-complex" rather than silently treated as safe. Error messages updated to mention <code>&amp;&amp;-short-circuit</code> as a modifier. (search for <code>"but condition may modify it (||/pipeline/unset/&amp;&amp;-short-circuit)"</code>)</li></ul>
 <ul><li>Duplicate <code>Ea$()</code> initialization call removed from settings schema setup. (internal deduplication, no user-visible behavior change)</li></ul>
@@ -232,10 +237,12 @@
 <ul><li><code>--input-format=stream-json</code> now produces a clear error if <code>--print</code> is not also specified. (search for <code>"Error: --input-format=stream-json requires --print."</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Removed</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="claude-code-insights-html-report">
       <div class="card-top">
         <h3>Claude Code Insights HTML Report <a class="anchor" href="#claude-code-insights-html-report">#</a></h3>
@@ -260,6 +267,7 @@
 <div class="blabel">Evidence</div>
 <p>Removed constant (search for <code>"https://json.schemastore.org/claude-code-settings.json"</code> — absent from v2.1.174)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -323,7 +331,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

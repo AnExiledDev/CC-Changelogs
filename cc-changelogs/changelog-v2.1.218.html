@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="whiteboard-bundled-skill">
       <div class="card-top">
         <h3>Whiteboard Bundled Skill <a class="anchor" href="#whiteboard-bundled-skill">#</a></h3>
@@ -162,10 +163,12 @@ MCP_SDK_GENERATION=v1 claude ...   # force SDK v1 (default)</code></pre>
 <p>New env var and generation selector (search for <code>"MCP_SDK_GENERATION"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">12 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="mcp-overflow-protection-for-misbehaving-servers">
       <div class="card-top">
         <h3>MCP: Overflow Protection for Misbehaving Servers <a class="anchor" href="#mcp-overflow-protection-for-misbehaving-servers">#</a></h3>
@@ -282,18 +285,22 @@ MCP_SDK_GENERATION=v1 claude ...   # force SDK v1 (default)</code></pre>
 <p>Note tracking in ultrareview (search for <code>"This review was launched with a note, recorded at launch time"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Observer arm/retire lifecycle fixed: the system now correctly stops observer tasks that are tied to worker subagents when the main agent loop closes, preventing orphaned background observers (search for <code>"agent_observer_stop"</code>)</li><li>API key verification no longer forces <code>thinkingConfig: { type: "disabled" }</code>, fixing verification failures on accounts configured with always-on extended thinking</li><li>org-memory discovery mount-name collision handling improved: when a derived mount name conflicts with an existing entry pointing to a different path, the existing entry is renamed aside with <code>_discovered</code> suffix rather than silently skipped (search for <code>"discovered config squatting the derived mount name"</code>)</li><li>MCP elicitation pending-count tracking corrected: <code>pendingElicitations</code> counter and <code>lastElicitationClosedAt</code> timestamp are now maintained consistently through all elicitation paths including hook-resolved responses</li><li>Windows path handling in WSL: when running under WSL without <code>USERPROFILE</code> set, IDE config paths are now correctly converted from Windows <code>C:\...</code> form to <code>/mnt/c/...</code> WSL paths (search for <code>"Nzr"</code> function handling Windows-to-WSL path conversion)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="mcp-sdk-v2-feature-flagged">
       <div class="card-top">
         <h3>MCP SDK v2 [Feature-Flagged] <a class="anchor" href="#mcp-sdk-v2-feature-flagged">#</a></h3>
@@ -307,6 +314,7 @@ MCP_SDK_GENERATION=v1 claude ...   # force SDK v1 (default)</code></pre>
 <div class="blabel">Evidence</div>
 <p>Generation selector and tripwire (search for <code>"MCP runtime accessor tripwire"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -370,7 +378,7 @@ MCP_SDK_GENERATION=v1 claude ...   # force SDK v1 (default)</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

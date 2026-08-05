@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">19 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="opus-1m-context-window-default">
       <div class="card-top">
         <h3>Opus 1M Context Window Default <a class="anchor" href="#opus-1m-context-window-default">#</a></h3>
@@ -257,27 +258,33 @@
 <p>Error details propagation (search for <code>"errorDetails"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed <code>readFileState</code> being recomputed from messages on every turn — the main session class now caches and reuses it, improving performance (search for <code>"readFileState"</code>)</li><li>Removed redundant <code>existsSync</code> checks before <code>readFileSync</code> and <code>unlinkSync</code> calls, fixing potential race conditions (search for <code>unlinkSync</code>)</li><li>Fixed the tag-clearing behavior: setting an empty tag now correctly clears it (<code>tag || void 0</code>) instead of keeping the empty string (search for <code>"currentSessionTag"</code>)</li><li>Voice-enabled checks now additionally gate on <code>$I()</code>, preventing voice features from activating when conditions aren't fully met (search for <code>voiceEnabled</code>)</li><li>The <code>user:file_upload</code> OAuth scope is now requested for first-party authenticated sessions (search for <code>"user:file_upload"</code>)</li><li>Fixed async hook response rendering: previously only showed for PreToolUse/PostToolUse when tool hooks were enabled; now also shows for SessionStart and other hook types when session hooks are enabled (search for <code>"async_hook_response"</code>)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Removed</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="removed">
       <ul><li><strong>Nested session restriction removed</strong>: The check that prevented launching Claude Code inside another Claude Code session (via the <code>CLAUDECODE=1</code> environment variable) has been removed. Users can now nest sessions freely. (search for <code>"Nested sessions share runtime resources"</code> — present in v2.1.74, absent in v2.1.75)</li></ul>
 <ul><li><strong>Windows ProgramData deprecation warning removed</strong>: The notification warning about migrating <code>C:\ProgramData\ClaudeCode\managed-settings.json</code> to <code>C:\Program Files\ClaudeCode\</code> has been removed, along with the associated detection logic. (search for <code>"programdata-deprecation-warning"</code> — present in v2.1.74, absent in v2.1.75)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled or partially gated.</p>
     </article>
@@ -294,6 +301,7 @@
 <div class="blabel">Evidence</div>
 <p>Feature gate check (search for <code>"tengu_cobalt_compass"</code>) — <code>UH()</code> at line ~532570</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -355,7 +363,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

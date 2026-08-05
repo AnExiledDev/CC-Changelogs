@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="monitor-tool">
       <div class="card-top">
         <h3>Monitor Tool <a class="anchor" href="#monitor-tool">#</a></h3>
@@ -181,10 +182,12 @@ export CLAUDE_CODE_MAX_CONTEXT_TOKENS=500000</code></pre>
 <p>MCP templates (search for <code>"mcp-template"</code> and <code>"Failed to fetch resource templates"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">11 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="subprocess-environment-scrubbing-enhancements">
       <div class="card-top">
         <h3>Subprocess Environment Scrubbing Enhancements <a class="anchor" href="#subprocess-environment-scrubbing-enhancements">#</a></h3>
@@ -280,18 +283,22 @@ export CLAUDE_CODE_MAX_CONTEXT_TOKENS=500000</code></pre>
 <p>String diff shows removal of <code>"Restart Claude Code to apply"</code> from Bedrock setup</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential null reference when trimming text input in internal processing — added optional chaining (<code>text?.trim()</code>) to prevent crashes on undefined text values (search for <code>"text?.trim()"</code>)</li><li>Fixed semantic version prerelease regex pattern by correcting the component order of numeric and non-numeric identifiers (search for <code>"PRERELEASEIDENTIFIER"</code>)</li><li>Improved Bedrock model tier fallback logic by validating environment variable values before applying them as fallback models (search for <code>"[bedrock-fallback]"</code>)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="opus-4-6-communication-style-tuning-gradual-rollout">
       <div class="card-top">
         <h3>Opus 4.6 Communication Style Tuning [Gradual Rollout] <a class="anchor" href="#opus-4-6-communication-style-tuning-gradual-rollout">#</a></h3>
@@ -331,6 +338,7 @@ export CLAUDE_CODE_MAX_CONTEXT_TOKENS=500000</code></pre>
 <div class="blabel">Evidence</div>
 <p>Agent command validation (gated by <code>tengu_amber_sentinel</code>, search for <code>"standalone sleep"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -392,7 +400,7 @@ export CLAUDE_CODE_MAX_CONTEXT_TOKENS=500000</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

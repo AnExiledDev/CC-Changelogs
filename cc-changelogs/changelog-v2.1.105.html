@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">9 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="enter-existing-worktrees">
       <div class="card-top">
         <h3>Enter Existing Worktrees <a class="anchor" href="#enter-existing-worktrees">#</a></h3>
@@ -193,10 +194,12 @@ claude</code></pre>
 <p>Dependency installation (search for <code>"Installing plugin dependencies"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">14 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="proactive-alias-for-loop">
       <div class="card-top">
         <h3>/proactive Alias for /loop <a class="anchor" href="#proactive-alias-for-loop">#</a></h3>
@@ -313,18 +316,22 @@ claude</code></pre>
 <p>Skills dialog toggle states (search for <code>"user-invocable-only"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed worktree safety: prevents removing worktrees that were entered (not created) via <code>EnterWorktree</code>, avoiding accidental deletion of shared worktrees (search for <code>"enteredExisting"</code>)</li><li>Fixed stream handling for socket writes by deferring <code>stream.end()</code> until the write buffer is fully drained, preventing truncated output (search for <code>"endAfterDrain"</code>)</li><li>Added defensive null check for <code>prePlanMode</code> property to prevent crashes when the property is undefined (search for <code>"prePlanMode"</code>)</li><li>Fixed array last-element access using <code>.at(-1)</code> instead of manual indexing, preventing potential off-by-one errors</li><li>Added type safety check for non-Array inputs to token counting function, returning 0 instead of throwing (search for <code>"Array.isArray"</code>)</li><li>Fixed async cleanup race condition in caffeinate (sleep prevention) by capturing the reference before try-finally blocks</li><li>Added optional chaining for <code>querier.onResponse()</code> to prevent null reference crashes</li><li>Fixed UNC path permission checks to allow certain whitelisted UNC paths that pass security validation</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Removals</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="think-back-year-in-review">
       <div class="card-top">
         <h3>Think Back / Year in Review <a class="anchor" href="#think-back-year-in-review">#</a></h3>
@@ -382,10 +389,12 @@ claude</code></pre>
 <p>Removed sets <code>fVz</code> and <code>TVz</code> (search for <code>"slack_search_public"</code> returns 0 results in new version)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
     </article>
@@ -442,6 +451,7 @@ claude</code></pre>
 <div class="blabel">Evidence</div>
 <p>Cache break detection (search for <code>"PROMPT CACHE BREAK"</code> and <code>"tengu_prompt_cache_break"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -503,7 +513,7 @@ claude</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="resume-conversation-command">
       <div class="card-top">
         <h3>Resume Conversation Command <a class="anchor" href="#resume-conversation-command">#</a></h3>
@@ -120,21 +121,26 @@
       <ul><li>Better error reporting for missing plugin directories</li><li>Improved version checking for IDE extensions</li><li>Enhanced validation for JetBrains plugin installations</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed authentication flow for various subscription types</li><li>Resolved issues with mode switching logic</li><li>Corrected plugin installation path detection</li><li>Fixed workspace role permission checks</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>Claude Pro users continue to use Sonnet 4 model (Opus 4 not available for Pro tier)</li><li>The <code>--continue</code> flag is an alias for the new resume functionality</li><li>Extension auto-updates can be controlled via environment variables if needed</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -196,7 +202,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

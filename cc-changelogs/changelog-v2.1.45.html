@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">14 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="askuserquestion-preview-markdown-support">
       <div class="card-top">
         <h3>AskUserQuestion Preview/Markdown Support <a class="anchor" href="#askuserquestion-preview-markdown-support">#</a></h3>
@@ -229,21 +230,26 @@
 <p>Path replacement function now converts backslashes to forward slashes on Windows (search for <code>"win32" ? q.replace(/\\\\/g, "/")"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential issue with semver comparison functions to use Bun's native implementation when available (search for <code>"Bun.semver"</code>)</li><li>Removed dependency on js-yaml library (many YAML-related error strings removed from the codebase)</li><li>Fixed JSON schema validation code paths (removed $ref pointer error handling that was causing issues)</li><li>Improved rate limit event handling in SDK message adapter (search for <code>"Ignoring rate_limit_event message"</code>)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>This release removes several internal dependencies including the full js-yaml library and json-schema-ref-parser, replaced with more streamlined implementations. Users upgrading from versions using Sonnet 4.5 will automatically use Sonnet 4.6 as the default model.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -305,7 +311,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

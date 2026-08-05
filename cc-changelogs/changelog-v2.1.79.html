@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">23 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="memory-consolidation-dreamtask">
       <div class="card-top">
         <h3>Memory Consolidation (DreamTask) <a class="anchor" href="#memory-consolidation-dreamtask">#</a></h3>
@@ -285,10 +286,12 @@
 <p>Proto key rejection (search for <code>"__proto__"</code> near <code>"constructor"</code> near <code>"prototype"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed duplicate entries in plugin hook results by deduplicating the returned array (search for <code>"new Set(q)"</code> in function <code>KuY</code>)</li><li>Fixed clipboard copy not working on SSH sessions by adding tmux passthrough escape sequence wrapping (search for <code>"Ptmux"</code>)</li><li>Fixed a potential issue where non-finite timeout values could cause errors in tool timeout calculation (search for <code>"Number.isFinite(q)"</code> in function <code>Uq4</code>)</li><li>Fixed resume session message being printed multiple times by adding a guard flag (search for <code>"iL4"</code> in function <code>IC1</code>)</li><li>Fixed auth error message format to show login instruction before the error details (search for <code>"Please run /login · "</code>)</li><li>Fixed nested memory attachments being incorrectly inserted into the middle of message groups instead of being prepended (search for <code>"nested_memory"</code>)</li><li>Removed <code>bridge_metadata</code> system message type from the message schema, simplifying the bridge protocol</li></ul>
     </article>
@@ -306,13 +309,16 @@
 <p>Billing mode selection (search for <code>"--claudeai"</code> and <code>"Use Anthropic Console"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>The JWT library bundled within Claude Code has been replaced: the old multi-file <code>jwa</code>/<code>jws</code>/<code>Buffer</code>-based implementation was removed in favor of a leaner inline version with improved error handling for missing HMAC secrets.</li><li>The <code>claude-developer-platform</code> skill content has been significantly updated with new model references (Opus 4.6, Sonnet 4.6), adaptive thinking guidance, compaction documentation, and multi-language SDK support information including Go, Ruby, C#, and PHP.</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -374,7 +380,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

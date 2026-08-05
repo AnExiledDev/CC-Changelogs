@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="subagent-delegation-steering-via-claude-code-thistle-grebe">
       <div class="card-top">
         <h3>Subagent Delegation Steering via <code>CLAUDE_CODE_THISTLE_GREBE</code> <a class="anchor" href="#subagent-delegation-steering-via-claude-code-thistle-grebe">#</a></h3>
@@ -94,10 +95,12 @@ CLAUDE_CODE_THISTLE_GREBE=no_nudges claude
 <p>New steering resolver and mode constant <code>"tengu_thistle_grebe"</code>, counter-steer instruction block (search for <code>"Delegating to subagents"</code> and <code>"Do the work inline when it is a small, bounded sub-task"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="code-review-and-simplify-skip-redundant-model-invocation">
       <div class="card-top">
         <h3><code>/code-review</code> and <code>/simplify</code> Skip Redundant Model Invocation <a class="anchor" href="#code-review-and-simplify-skip-redundant-model-invocation">#</a></h3>
@@ -148,10 +151,12 @@ CLAUDE_CODE_THISTLE_GREBE=no_nudges claude
 <p><code>showConcurrencyNote: oa() !== "pro" &amp;&amp; x3() === "default"</code> in tool event construction</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
     </article>
@@ -181,6 +186,7 @@ CLAUDE_CODE_THISTLE_GREBE=no_nudges claude
 <div class="blabel">Evidence</div>
 <p>Conditional omission of the surface-on-contradiction phrase, gated by <code>Y_c()</code> which checks <code>"tengu_gault_kestrel"</code> (search for <code>"if what you find contradicts how it was described"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -244,7 +250,7 @@ CLAUDE_CODE_THISTLE_GREBE=no_nudges claude
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

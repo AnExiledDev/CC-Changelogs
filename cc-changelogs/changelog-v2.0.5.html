@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="extended-thinking-support-for-sonnet-4-5">
       <div class="card-top">
         <h3>Extended Thinking Support for Sonnet 4.5 <a class="anchor" href="#extended-thinking-support-for-sonnet-4-5">#</a></h3>
@@ -148,6 +149,7 @@ MAX_THINKING_TOKENS=10000 claude
 <p>Stream import removed from line 338164 in v2.0.3; <code>cwd</code> import added at line 12278 in v2.0.5</p>
     </article>
   </div>
+  </div>
 
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
@@ -208,7 +210,7 @@ MAX_THINKING_TOKENS=10000 claude
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

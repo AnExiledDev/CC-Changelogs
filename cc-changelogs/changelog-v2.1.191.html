@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="contextual-tips-system-gradual-rollout">
       <div class="card-top">
         <h3>Contextual Tips System [Gradual Rollout] <a class="anchor" href="#contextual-tips-system-gradual-rollout">#</a></h3>
@@ -139,10 +140,12 @@
 <p>D-Bus ShowItems integration (search for <code>"org.freedesktop.FileManager1.ShowItems"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">13 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="config-corruption-auto-repair-gh-3117">
       <div class="card-top">
         <h3>Config Corruption Auto-Repair (GH #3117) <a class="anchor" href="#config-corruption-auto-repair-gh-3117">#</a></h3>
@@ -268,10 +271,12 @@
 <p>Worktree lock parsing (search for <code>"claude agent .+ \\(pid"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Atomic write error handling improved: if the temp-file close fails after a write error, the original write error is preserved and re-thrown with the close failure attached as context, rather than losing the original error. (search for <code>"atomic write failed first:"</code>)</li></ul>
 <ul><li>Config file read no longer reports <code>"resetting to defaults"</code> when the file is corrupted — it now auto-repairs from cache or reports backup location accurately. (search for <code>"Config file corrupted:"</code>)</li></ul>
@@ -280,10 +285,12 @@
 <ul><li><code>/design-login</code> credential rejection now includes a more specific message for HTTP 403 responses: <code>"token may be missing a scope this server needs — run /design-login"</code>, distinguishing scope issues from full re-auth requirements. (search for <code>"token may be missing a scope this server needs"</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled. Shipped dark and may become available in future versions.</p>
     </article>
@@ -301,13 +308,16 @@
 <p>Draft write/read functions (search for <code>".prompt-draft"</code> or the 262144 byte cap constant)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The file-based memory system (synthesis from separate <code>.md</code> memory files with <code>&lt;synthesis:&gt;</code> parsing, "Recalled from memory" display, memory pruning "dreams") has been removed from the codebase in this version. The <code>/memory</code> command, CLAUDE.md-based memory, and <code># shortcut or /memory saves facts and preferences to CLAUDE.md</code> tip remain in place — memory continues to work via CLAUDE.md files. If you relied on the older per-file memory directory with separate <code>user/</code>, <code>feedback/</code>, and <code>project/</code> typed memory files, those files are no longer read by Claude Code as of this version.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -371,7 +381,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

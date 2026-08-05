@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="sandbox-command-exemptions">
       <div class="card-top">
         <h3>Sandbox Command Exemptions <a class="anchor" href="#sandbox-command-exemptions">#</a></h3>
@@ -154,15 +155,18 @@
 <ul><li>Previous versions allowed <code>sandbox: true</code> parameter to skip all permission validation</li><li>This escape hatch has been removed for security</li><li>All commands now go through proper read-only and permission validation</li><li>Tightens sandbox security by closing potential bypass mechanism</li><li><strong>Evidence</strong>: Code removed from <code>Uj2()</code> at line 380133 in v1.0.124, absent in <code>Lj2()</code> at line 380187 in v1.0.125</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <p>The following changes are primarily internal refactoring with minimal user impact:</p>
 <ul><li>Added <code>cwd</code> import from <code>node:process</code> (line 357186)</li><li>Added <code>Mi4()</code> helper function (line 377386)</li><li>Added context provider <code>fj7</code> for React components (line 402093)</li><li>Multiple module reorganizations and minifier renamings</li><li>Removed unused stream and process imports</li></ul>
 <p><strong>Note</strong>: Line numbers reference the prettified v1.0.125.js source file for verification purposes.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -224,7 +228,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

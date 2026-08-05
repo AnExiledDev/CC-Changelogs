@@ -77,35 +77,43 @@
     <h2>New Features</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="new-features">
       <p><em>None</em></p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="improvements">
       <p><em>None</em></p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <p><em>None</em></p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>This release contains only internal version constant updates:</p>
 <ul><li><strong>VERSION</strong>: Updated from <code>2.1.17</code> to <code>2.1.18</code></li><li><strong>BUILD_TIME</strong>: Updated from <code>2026-01-22T21:01:06Z</code> to <code>2026-01-22T22:43:52Z</code> (approximately 1.5 hours later)</li></ul>
 <p>The structural similarity between versions is 99.9%, with all functional code remaining unchanged. This appears to be a rebuild for internal purposes rather than a feature or fix release.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -167,7 +175,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

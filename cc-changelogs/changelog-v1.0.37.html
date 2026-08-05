@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v1.0.37 Changelog</p>
     </article>
@@ -130,21 +131,26 @@
       <ul><li>Added new permission request structure for tools, including:</li><li>Tool name identification</li><li>Input validation</li><li>Unique tool use request IDs for tracking</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed configuration reading and writing logic to be more robust</li><li>Improved error messages and user guidance for configuration issues</li><li>Enhanced logging throughout the configuration management system</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <ul><li>Refactored configuration file operations with better error handling and recovery</li><li>Added comprehensive logging for debugging configuration issues</li><li>Improved modularization of stream processing components</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -206,7 +212,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

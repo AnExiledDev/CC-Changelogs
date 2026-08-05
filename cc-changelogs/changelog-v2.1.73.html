@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">14 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="remote-control-cli-flag">
       <div class="card-top">
         <h3><code>--remote-control</code> CLI Flag <a class="anchor" href="#remote-control-cli-flag">#</a></h3>
@@ -212,10 +213,12 @@ claude auto-mode config         # print effective config (your settings merged w
 <p>Token tracking (search for <code>"Output tokens — turn"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Orphaned bash tasks from exiting agents are now killed automatically, preventing zombie processes from accumulating (search for <code>"killBashTasksForAgent: killing orphaned bash task"</code>)</li><li>Voice mode now handles early pre-transcript errors gracefully by retrying once, and ignores stale <code>onError</code> callbacks from previous sessions (search for <code>"early voice_stream error (pre-transcript), retrying once"</code>, <code>"ignoring onError from stale session"</code>)</li><li>OAuth token expiration during bridge/REPL sessions now shows a clear message directing users to run <code>/login</code> (search for <code>"OAuth token expired and could not be refreshed. Run /login to re-authenticate."</code>)</li><li>Bridge REPL initialization now tracks consecutive failures and stops retrying after a threshold, preventing infinite retry loops (search for <code>"consecutive init failures, not retrying this session"</code>)</li><li>Hook success content changed from <code>"Success"</code> / <code>"Condition met"</code> to empty string, reducing noise in hook output</li><li>SSL certificate errors now provide actionable guidance: set <code>NODE_EXTRA_CA_CERTS</code> or ask IT to allowlist <code>*.anthropic.com</code> (search for <code>"SSL certificate error"</code>)</li><li>Cron job deletion errors now provide clear messages: <code>"Cannot delete cron job '...'"</code> (search for <code>"Cannot delete cron job"</code>)</li><li>Orphaned cron jobs (for agents that no longer exist) are now automatically cleaned up (search for <code>"gone, removing orphaned cron"</code>)</li><li>Durable cron jobs are now explicitly blocked for teammate sessions with a clear error message (search for <code>"durable crons are not supported for teammates"</code>)</li><li>Environment variables related to <code>ANTHROPIC_UNIX_SOCKET</code> connections are now stripped when applying config-level env overrides, preventing socket connection leaks across configurations (search for <code>"ANTHROPIC_UNIX_SOCKET"</code> in <code>Rr6()</code>)</li><li>Text selection in the terminal now uses word-boundary-aware double-click selection with proper anchor span tracking (search for <code>"anchorSpan"</code> with <code>kind: "word"</code>)</li></ul>
     </article>
@@ -232,6 +235,7 @@ claude auto-mode config         # print effective config (your settings merged w
 <div class="blabel">Evidence</div>
 <p>SSH session manager (search for <code>"[useSSHSession]"</code>, <code>"SSH connection dropped"</code>, <code>"SSH session failed before connecting"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -293,7 +297,7 @@ claude auto-mode config         # print effective config (your settings merged w
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

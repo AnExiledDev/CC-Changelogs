@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="accessibility-screen-reader-mode">
       <div class="card-top">
         <h3>Accessibility Screen Reader Mode <a class="anchor" href="#accessibility-screen-reader-mode">#</a></h3>
@@ -164,10 +165,12 @@ CLAUDE_AX_SCREEN_READER=1 claude
 <p>Setting schema (search for <code>"macOS only: Allow sandboxed commands to send Apple Events"</code>) — <code>allowAppleEvents</code> field at line ~46966</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="file-write-verification-against-silent-truncation">
       <div class="card-top">
         <h3>File Write Verification Against Silent Truncation <a class="anchor" href="#file-write-verification-against-silent-truncation">#</a></h3>
@@ -259,10 +262,12 @@ CLAUDE_AX_SCREEN_READER=1 claude
 <p>Scrub list entry (search for <code>"CLAUDE_CODE_ARTIFACTS_API_BASE_URL"</code>) — env scrub at line ~39753</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed git tilde expansion in bash static analysis: <code>~</code>, <code>~/</code>, <code>~+</code>, <code>~-</code> patterns are now correctly recognized as HOME/PWD/OLDPWD references, preventing false positive security warnings on common shell idioms. (search for <code>"HOME"</code> inside <code>kbd()</code> at line ~253713)</li></ul>
 <ul><li>Fixed a UNC glob pattern defense check on Windows that was incorrectly triggering on valid paths. (search for <code>"UNC glob pattern detected (defense-in-depth check)"</code>)</li></ul>
@@ -272,10 +277,12 @@ CLAUDE_AX_SCREEN_READER=1 claude
 <ul><li>Fixed an edge case in the MCP connected-status indicator: when tools fetch fails after a successful connection, the status now shows "Connected · tools fetch failed" rather than silently appearing connected. (search for <code>"! Connected · tools fetch failed"</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Removed</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="html-sanitizer-library-xss-filterxss-removed">
       <div class="card-top">
         <h3>HTML Sanitizer Library (<code>xss</code>/<code>filterXSS</code>) Removed <a class="anchor" href="#html-sanitizer-library-xss-filterxss-removed">#</a></h3>
@@ -292,6 +299,7 @@ CLAUDE_AX_SCREEN_READER=1 claude
 <div class="blabel">Evidence</div>
 <p>Removed <code>$iK()</code> function (search for <code>"The previous attempt at this response was interrupted"</code> — absent from new version)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -355,7 +363,7 @@ CLAUDE_AX_SCREEN_READER=1 claude
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

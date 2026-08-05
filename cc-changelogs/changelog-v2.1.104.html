@@ -71,6 +71,7 @@
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="byte-level-stream-idle-timeout-detection">
       <div class="card-top">
         <h3>Byte-level stream idle timeout detection <a class="anchor" href="#byte-level-stream-idle-timeout-detection">#</a></h3>
@@ -96,6 +97,7 @@ CLAUDE_STREAM_IDLE_TIMEOUT_MS=60000 claude</code></pre>
 <div class="blabel">Evidence</div>
 <p>Heading change from <code>"# Communication style"</code> to <code>"# Text output (does not apply to tool calls)"</code> (search for <code>"Text output (does not apply to tool calls)"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -157,7 +159,7 @@ CLAUDE_STREAM_IDLE_TIMEOUT_MS=60000 claude</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

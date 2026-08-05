@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">12 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="powerup-interactive-feature-tutorials">
       <div class="card-top">
         <h3>/powerup — Interactive Feature Tutorials <a class="anchor" href="#powerup-interactive-feature-tutorials">#</a></h3>
@@ -193,10 +194,12 @@
 <p>Auto-mode logging (search for <code>"[auto-mode] hasAutoModeOptIn"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed network allowlist hostname matching to correctly reject IP addresses for wildcard domain patterns (e.g., <code>*.github.com</code> no longer incorrectly matches bare IP addresses) (search for <code>"qI_"</code> in the <code>NC1</code> function)</li><li>Removed the FetchHttpHandler polyfill and several duplicate URI encoding/query string builder modules that were dead code from the AWS SDK bundling (removed <code>bc7</code>, <code>rn7</code>, <code>D9q</code>, <code>f9q</code>, <code>N9q</code>, <code>y9q</code>, <code>B9q</code> functions)</li></ul>
     </article>
@@ -227,13 +230,16 @@
 <p>Persistence sync system (search for <code>"[persistence-sync] Uploaded"</code> and <code>"CCR v2 internal event writer"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>The full HTML generation for "Claude Code Insights" reports was removed from the CLI bundle. If you used <code>/insights</code> to generate local HTML reports, this functionality may have moved to the web interface.</li><li>The <code>/resume</code> command now filters out loop sessions and entrypoint-based sessions from the resume picker (search for <code>"filtered from /resume"</code>).</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -295,7 +301,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

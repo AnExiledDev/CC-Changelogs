@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="experimental-tls-termination-for-sandbox-runtime-experimenta">
       <div class="card-top">
         <h3>Experimental TLS Termination for Sandbox Runtime [EXPERIMENTAL] <a class="anchor" href="#experimental-tls-termination-for-sandbox-runtime-experimenta">#</a></h3>
@@ -118,10 +119,12 @@ claude</code></pre>
 <p><code>y58()</code> function (search for <code>"CLAUDE_CODE_RESUME_PROMPT"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">18 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="fast-mode-now-supports-opus-4-7">
       <div class="card-top">
         <h3>Fast Mode Now Supports Opus 4.7 <a class="anchor" href="#fast-mode-now-supports-opus-4-7">#</a></h3>
@@ -321,10 +324,12 @@ claude</code></pre>
 <p><code>KpK()</code> function (search for <code>"Sent SIGTERM to ${$} bridge process"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li><code>mkdir</code> in the internal filesystem class no longer throws when the directory already exists (<code>EEXIST</code> is now silently ignored). (search for <code>"EEXIST"</code> in the <code>vCK</code> class)</li></ul>
 <ul><li><code>Read</code> tool <code>offset</code> parameter now emits a clearer diagnostic when its value cannot be coerced to an integer: <code>"normalizeToolInput Read.offset coercion failed: &lt;detail&gt;"</code>. (search for <code>"normalizeToolInput Read.offset coercion failed:"</code>)</li></ul>
@@ -332,6 +337,7 @@ claude</code></pre>
 <ul><li>The computer use approval dialog is now routed through the standardized <code>requestDialog</code> mechanism rather than the <code>setToolJSX</code> hook, ensuring it participates correctly in abort-signal lifecycle management. (search for <code>"computer_use_approval"</code>)</li></ul>
 <ul><li>Admin request API functions (<code>api_admin_request_create</code>, <code>api_admin_request_list</code>, <code>api_admin_request_eligibility</code>) now use the internal authenticated HTTP client, fixing potential token-refresh failures that could occur when the cached access token expired during a long session. (search for <code>"admin_requests/eligibility:"</code>)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -393,7 +399,7 @@ claude</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

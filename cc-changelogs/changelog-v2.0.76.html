@@ -77,36 +77,44 @@
     <h2>New Features</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="new-features">
       <p><em>None</em></p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="improvements">
       <p><em>None</em></p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <p><em>None</em></p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <p>This release contains only internal refactoring:</p>
 <ul><li><strong>Import consolidation</strong>: Redundant import statements were reorganized to reduce duplication (e.g., consolidating multiple <code>node:fs</code>, <code>node:child_process</code>, and <code>crypto</code> imports)</li><li><strong>Code reorganization</strong>: Internal function and variable names were updated (standard minification variance between builds)</li><li><strong>Build timestamp</strong>: Updated from 2025-12-20T17:18:43Z to 2025-12-22T23:56:12Z</li></ul>
 <div class="blabel">Evidence</div>
 <p>Structural diff shows 99.9% similarity with 8066 renames and only 17 additions (all import statements). Feature flag count (<code>tengu_*</code>), tip count (<code>cooldownSessions</code>), and error message count are all identical between versions.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -168,7 +176,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

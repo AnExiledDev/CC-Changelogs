@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="skills-support-for-plugins">
       <div class="card-top">
         <h3>Skills Support for Plugins <a class="anchor" href="#skills-support-for-plugins">#</a></h3>
@@ -123,13 +124,16 @@
 <ul><li>Affects the timing of when Grove-related notices appear in the CLI</li><li>Allows for more aggressive communication of important announcements after initial grace period</li><li><strong>Evidence</strong>: <code>GBB() at line 407802</code> (previously <code>m2B() at line 407357</code> in v2.0.8), new grace period check at line 407805</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Internal Changes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="internal-changes">
       <ul><li>Updated AWS Bedrock SDK client code with new type definitions</li><li>Refactored helper functions including <code>DFB()</code> (replaces <code>tXB()</code>) for local command message checking</li><li>Function renames: <code>vF()</code> → <code>fF()</code>, <code>m2B()</code> → <code>GBB()</code>, <code>HH5()</code> → <code>AD5()</code></li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -191,7 +195,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

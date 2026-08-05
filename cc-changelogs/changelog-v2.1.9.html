@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">9 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="plans-directory-configuration">
       <div class="card-top">
         <h3>Plans Directory Configuration <a class="anchor" href="#plans-directory-configuration">#</a></h3>
@@ -173,10 +174,12 @@ ENABLE_TOOL_SEARCH=auto:100 # Equivalent to standard/mcp-cli modes</code></pre>
 <p><code>C3B()</code> at line 187260 (resetScreen function, screen buffer management)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed MCP client cleanup to properly handle timeouts during disconnect (<code>bd()</code> at line 296688, 5-second timeout for cleanup)</li><li>Improved screen array handling to prevent resizing issues in edge cases</li></ul>
     </article>
@@ -193,6 +196,7 @@ ENABLE_TOOL_SEARCH=auto:100 # Equivalent to standard/mcp-cli modes</code></pre>
 <div class="blabel">Evidence</div>
 <p><code>eB7</code> at line 437798 (btw command, <code>isEnabled: () =&gt; !1</code>, contains <code>"/btw"</code>, <code>"Answering..."</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -254,7 +258,7 @@ ENABLE_TOOL_SEARCH=auto:100 # Equivalent to standard/mcp-cli modes</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

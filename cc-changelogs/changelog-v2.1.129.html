@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="session-plugins-from-urls">
       <div class="card-top">
         <h3>Session Plugins from URLs <a class="anchor" href="#session-plugins-from-urls">#</a></h3>
@@ -168,10 +169,12 @@ claude --plugin-url https://example.com/a.zip --plugin-url https://example.com/b
 <p>Dynamic Fast Mode copy (search for <code>"Fast mode for Claude Code uses Claude"</code> and <code>"CLAUDE_CODE_ENABLE_OPUS_4_7_FAST_MODE"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Daemon startup failures now fall back to transient spawn with a repair command instead of leaving the user at a dead daemon state. Evidence: search for <code>"daemon service did not become reachable within 5s"</code> and <code>"falling back to transient spawn. Run 'claude daemon install' to repair."</code></li></ul>
 <ul><li>Renaming a non-responsive remote/background session now shows a specific error instead of silently reverting or using only the generic local state-file failure. Evidence: search for <code>"Couldn't rename — that session isn't responding"</code></li></ul>
@@ -179,10 +182,12 @@ claude --plugin-url https://example.com/a.zip --plugin-url https://example.com/b
 <ul><li>Background worktree cleanup now distinguishes a worktree kept because it is on a different branch from one kept because it has uncommitted changes. Evidence: search for <code>"Worktree is on a different branch — kept at"</code></li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet broadly enabled. These are shipped behind environment variables or feature flags and may become available in future versions.</p>
     </article>
@@ -212,6 +217,7 @@ claude --plugin-url https://example.com/a.zip --plugin-url https://example.com/b
 <div class="blabel">Evidence</div>
 <p>Persistent loop gate (search for <code>"CLAUDE_CODE_LOOP_PERSISTENT"</code> and <code>"tengu_kairos_loop_persistent"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -273,7 +279,7 @@ claude --plugin-url https://example.com/a.zip --plugin-url https://example.com/b
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

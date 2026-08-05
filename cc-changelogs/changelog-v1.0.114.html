@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">15 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="filesystem-sandboxing-for-macos">
       <div class="card-top">
         <h3>Filesystem Sandboxing for macOS <a class="anchor" href="#filesystem-sandboxing-for-macos">#</a></h3>
@@ -212,6 +213,7 @@ claude /memory</code></pre>
       <ul><li>Added <code>$j9() at line 366080</code> for checking if text contains thinking triggers</li><li>Added <code>Nw1() at line 366092</code> for extracting trigger word positions</li><li>Added <code>Ew1() at line 365889</code> for splitting text into highlighted/normal segments</li></ul>
     </article>
   </div>
+  </div>
 
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
@@ -272,7 +274,7 @@ claude /memory</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

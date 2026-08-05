@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="token-usage-tracking-enhancements">
       <div class="card-top">
         <h3>Token Usage Tracking Enhancements <a class="anchor" href="#token-usage-tracking-enhancements">#</a></h3>
@@ -114,6 +115,7 @@
       <ul><li><strong>Async Version Retrieval</strong>: Version information is now fetched asynchronously</li><li><strong>Better Error Handling</strong>: Improved error handling in command execution flow</li><li><strong>Stream Processing</strong>: Enhanced stream handling with PassThrough support for better data flow</li></ul>
 <p>The update focuses on improving observability with detailed token tracking, enhancing command execution capabilities, and cleaning up the codebase by removing unused database-related code.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -175,7 +177,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

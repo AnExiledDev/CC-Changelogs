@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">22 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="token-saver-for-bash-output">
       <div class="card-top">
         <h3>Token Saver for Bash Output <a class="anchor" href="#token-saver-for-bash-output">#</a></h3>
@@ -277,10 +278,12 @@
 <p>Initialization reorder in <code>ZFA</code> class (search for <code>"this.initialized"</code> near <code>"this.gitDir"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed clipboard copy on Windows/WSL to suggest PowerShell as an alternative when <code>clip</code>/<code>clip.exe</code> is unavailable (search for <code>"powershell"</code>)</li><li>Fixed <code>AskUserQuestion</code> tool input schema being re-parsed on every render by wrapping in <code>useMemo</code> (search for <code>"inputSchema.safeParse"</code>)</li><li>Fixed remote hook (<code>useRemoteMode</code>) return value not being memoized, causing unnecessary re-renders (search for <code>"useMemo"</code> in <code>vQq</code>)</li><li>Fixed destructive command warning and sandboxing check not being memoized in permission prompts (search for <code>"destructiveWarning"</code>)</li><li>Fixed permission animation timer starting before component is visible by using <code>null</code> initial delay when <code>K</code> is true (search for <code>"lc6"</code>)</li><li>Fixed <code>CLAUDE_CODE_EXTRA_BODY</code> env var to shallow-copy parsed object, preventing mutations to the cached parse result (search for <code>"CLAUDE_CODE_EXTRA_BODY"</code>)</li><li>Fixed WebFetch HTML-to-Markdown converter (<code>Turndown</code>) being loaded eagerly; it's now lazy-loaded via dynamic import (search for <code>"turndown"</code>)</li><li>Fixed Bash command argument parser to use case-insensitive comparison for command names like <code>python</code>/<code>Python3</code> (search for <code>"python3"</code>)</li><li>Fixed early return from <code>onSubmit</code> when bridge reconnection is active, preventing accidental message submission (search for <code>"[onSubmit] early return"</code>)</li><li>Fixed deferred context attachments (tips, changed files) leaking empty arrays when no items are found by adding early-return checks (search for <code>"if (K.length === 0) return []"</code>)</li></ul>
     </article>
@@ -311,13 +314,16 @@
 <p>Feature gate function (search for <code>"tengu_marble_whisper"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>The <code>coral_reef_sonnet</code> client data flag was added, checked via <code>YgA()</code> — this may gate future model-related behavior (search for <code>"coral_reef_sonnet"</code>)</li><li>A <code>kairosActive</code> flag was added to session telemetry, tracked as <code>is_assistant_mode</code> in analytics (search for <code>"kairosActive"</code>)</li><li>The telemetry event <code>tengu_session_quality_classification</code> was replaced by <code>tengu_session_file_read</code> (search for <code>"tengu_session_file_read"</code>)</li><li>The "server" subcommand infrastructure (including WebSocket server, session management, auth tokens, direct-connect protocol, and <code>cc+unix://</code> URL scheme) has been removed, suggesting the standalone server mode has been deprecated in favor of the CCR bridge architecture</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -379,7 +385,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -71,6 +71,7 @@
     <h2>Overview</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="overview">
       <p>This release introduces XML/DOM parsing capabilities and makes minor adjustments to the conversation compacting feature. The structural similarity between versions is 98.9%, with 64 additions, 21 deletions, and 6 modifications.</p>
     </article>
@@ -113,13 +114,16 @@
       <p>While the XML/DOM features are added in this version, they appear to be used internally by Claude Code for processing structured content. There are no new CLI commands or arguments exposed to users for direct XML manipulation.</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Compatibility</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="compatibility">
       <p>This update maintains backward compatibility with existing Claude Code workflows. No changes to command-line arguments or interactive features are required.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -181,7 +185,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

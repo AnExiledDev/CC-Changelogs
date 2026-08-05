@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="footer-link-badges">
       <div class="card-top">
         <h3>Footer Link Badges <a class="anchor" href="#footer-link-badges">#</a></h3>
@@ -100,10 +101,12 @@
 <p>Updated Agent tool description (search for <code>"(except subagent_type: \"fork\")"</code> and <code>"Fork cannot use isolation: \"remote\""</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">11 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="project-tool-file-uploads-now-visible-and-readable">
       <div class="card-top">
         <h3>Project Tool: File Uploads Now Visible and Readable <a class="anchor" href="#project-tool-file-uploads-now-visible-and-readable">#</a></h3>
@@ -204,10 +207,12 @@
 <p>C# and cURL API reference (search for <code>"dotnet add package Anthropic"</code> and <code>"# Claude API — cURL / Raw HTTP"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed <code>project_read</code> not recognizing file uploads — it previously threw "No doc at" for any upload path; it now correctly dispatches to the <code>/extracted</code> endpoint for document-type uploads (PDF, docx) and returns a clear notice for non-document types (search for <code>"/extracted"</code>)</li></ul>
 <ul><li>Fixed daemon roster cleanup incorrectly leaving <code>.sock.err</code> and <code>.sock.late</code> files behind when the corresponding socket no longer existed — now both <code>.err</code> and <code>.late</code> orphan files are removed during roster sweeps (search for <code>"[bg-dispatch] removed non-regular"</code>)</li></ul>
@@ -215,6 +220,7 @@
 <ul><li>The safety classifier unavailability notice is now dynamic — it names the specific classifier that was unavailable rather than using a generic phrase (search for <code>"(the safety classifier)"</code>)</li></ul>
 <ul><li>Remote Control session reconnection handling improved — login-triggered account changes now cleanly disconnect the Remote Control session with a clear log message (search for <code>"Account changed via /login — disconnecting Remote Control session"</code>)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -278,7 +284,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

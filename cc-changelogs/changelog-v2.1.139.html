@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">11 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="plugin-details-command">
       <div class="card-top">
         <h3>Plugin Details Command <a class="anchor" href="#plugin-details-command">#</a></h3>
@@ -209,10 +210,12 @@ claude plugin details my-plugin --json</code></pre>
 <p>Supervised fatal-error handling (search for <code>"Uncaught exception under CLAUDE_CODE_SUPERVISED — exiting"</code>, <code>"Unhandled rejection under CLAUDE_CODE_SUPERVISED — exiting"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">8 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Bash safety analysis now detects ambiguous heredoc terminators, including <code>&lt;&lt;-</code> tab-prefixed delimiters and heredoc body lines that can be mistaken for terminators with shell metacharacters. Evidence: heredoc safety checks (search for <code>"ambiguous heredoc terminator"</code>, <code>"Heredoc uses &lt;&lt;- with a tab-prefixed delimiter"</code>)</li></ul>
 <ul><li>Plugin ZIP loading now handles archives with a wrapper directory instead of failing or choosing the wrong root. Evidence: inline plugin ZIP handling (search for <code>"Inline plugin zip had wrapper directory; using"</code>)</li></ul>
@@ -224,13 +227,16 @@ claude plugin details my-plugin --json</code></pre>
 <ul><li>Proxy and TLS connection setup now has explicit timeout/failure errors for gateway-style connections. Evidence: connection error strings (search for <code>"TLS connection timed out"</code>, <code>"proxy CONNECT failed"</code>, <code>"proxy CONNECT timed out"</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The main migration item is for administrators or wrapper authors: update <code>disableAgentView</code> / <code>CLAUDE_CODE_DISABLE_AGENT_VIEW</code> if you previously depended on the older background-agents fleet setting name. For normal interactive users, this release is backward-compatible.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -294,7 +300,7 @@ claude plugin details my-plugin --json</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

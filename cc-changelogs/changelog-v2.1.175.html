@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="organization-enforced-model-allowlist-enforceavailablemodels">
       <div class="card-top">
         <h3>Organization-Enforced Model Allowlist (<code>enforceAvailableModels</code>) <a class="anchor" href="#organization-enforced-model-allowlist-enforceavailablemodels">#</a></h3>
@@ -122,10 +123,12 @@
 <p>New env variable handler (search for <code>"CLAUDE_CODE_REMOTE_MEMORY_DIR"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="sharper-model-restriction-notifications-for-agents">
       <div class="card-top">
         <h3>Sharper Model Restriction Notifications for Agents <a class="anchor" href="#sharper-model-restriction-notifications-for-agents">#</a></h3>
@@ -159,14 +162,17 @@
 <p>Wording change (search for <code>"has safety measures that flagged something in this session"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed plan-mode model selection not checking the allowlist when upgrading from Haiku or Opus plan model — the upgrade model is now validated and falls back gracefully with a warning rather than attempting to use an unauthorized model. (search for <code>"Plan mode: the haiku plan upgrade model is not in the availableModels allowlist"</code>)</li></ul>
 <ul><li>Fixed a regression where model name matching used an incomplete word-boundary check that could incorrectly match substring model names in the allowlist. The new matcher (<code>ekK</code>) requires non-alphanumeric boundaries on both sides of the match. (search for <code>"ekK"</code> — the new boundary-aware substring matcher)</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -230,7 +236,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

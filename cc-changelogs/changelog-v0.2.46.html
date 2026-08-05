@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="changes">
       <p># Claude Code v0.2.46 Changelog</p>
     </article>
@@ -135,22 +136,27 @@
       <ul><li>Updated various import statements for better module organization</li><li>Added new imports for file system operations and process management</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed duplicate permission checking logic in auto-updater</li><li>Improved error messages when API key helper fails</li><li>Better handling of escape key in MCP wizard (now only works in non-welcome/success screens)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Migration Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="migration-notes">
       <p>If you're experiencing npm permission issues with auto-updates, you can now use the local installation method:</p>
 <ol><li>Run <code>/migrate-installer</code> in Claude Code</li><li>Follow the instructions to set up a shell alias</li><li>Future updates can be done with <code>cd ~/.claude/local &amp;&amp; npm update @anthropic-ai/claude-code</code></li></ol>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -212,7 +218,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

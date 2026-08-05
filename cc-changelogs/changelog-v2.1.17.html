@@ -77,36 +77,44 @@
     <h2>New Features</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="new-features">
       <p>None.</p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="improvements">
       <p>None.</p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <p>None.</p>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>This version was built approximately 2 hours after v2.1.16 (19:02:14Z → 21:01:06Z on 2026-01-22), suggesting it may address an internal build issue or deployment concern that required a rapid follow-up release. The 99.9% structural similarity and lack of any functional code changes indicate this was likely a build pipeline fix or internal tooling update rather than a feature or bug fix release.</p>
 <div class="blabel">Evidence</div>
 <p>The only changes detected were:</p>
 <ul><li>Version constant: <code>VERSION: "2.1.16"</code> → <code>VERSION: "2.1.17"</code> at multiple locations (line 1545 in old, line 3772 in new)</li><li>Build timestamp: <code>BUILD_TIME: "2026-01-22T19:02:14Z"</code> → <code>BUILD_TIME: "2026-01-22T21:01:06Z"</code></li><li>Import statement reorganization (16 removed, 16 added) - purely internal bundler changes with no functional impact</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -168,7 +176,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

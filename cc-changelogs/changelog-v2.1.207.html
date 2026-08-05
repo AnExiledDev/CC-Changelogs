@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="morning-brief-skill-morning">
       <div class="card-top">
         <h3>Morning Brief Skill (<code>/morning</code>) <a class="anchor" href="#morning-brief-skill-morning">#</a></h3>
@@ -135,10 +136,12 @@
 <p>Context-aware delay guidance (search for <code>"1-hour Anthropic prompt-cache TTL"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">16 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="default-model-upgraded-to-claude-opus-4-8">
       <div class="card-top">
         <h3>Default Model Upgraded to Claude Opus 4.8 <a class="anchor" href="#default-model-upgraded-to-claude-opus-4-8">#</a></h3>
@@ -272,10 +275,12 @@
 <p>Local settings autoMode reader (search for <code>"Project \</code>.claude/settings.local.json\<code> — autoMode keys"</code> and <code>"Tracked in git"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed permission hook <code>canUseTool</code> callback: when it returns a schema-invalid result (ZodError), Claude now logs the validation error at the <code>error</code> level and surfaces a clear message ("The canUseTool callback returned an invalid permission result") rather than crashing or passing raw error text. (search for <code>"canUseTool returned a schema-invalid permission result"</code>)</li></ul>
 <ul><li>Fixed worktreeinclude gitignore patterns: patterns that fail to compile are now warned and filtered out rather than causing a crash, with a telemetry event recorded per invalid pattern. (search for <code>"gitignore-style pattern failed to compile"</code>)</li></ul>
@@ -284,10 +289,12 @@
 <ul><li>Improved fs error categorization: additional POSIX error codes (<code>EDEADLK</code>, <code>EINTR</code>, <code>ENXIO</code>, <code>ECANCELED</code>, <code>ENEEDAUTH</code>, <code>ESTALE</code>) are now classified as retryable filesystem errors rather than hard failures. (search for <code>"EDEADLK"</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="morning-brief-for-non-cowork-sessions-in-development">
       <div class="card-top">
         <h3>Morning Brief for Non-Cowork Sessions [In Development] <a class="anchor" href="#morning-brief-for-non-cowork-sessions-in-development">#</a></h3>
@@ -314,6 +321,7 @@
 <div class="blabel">Evidence</div>
 <p>Gate helper <code>mvc()</code> (line 184017) with check <code>if (!mvc()) ms(...)</code> at lines 780193–780194 (eval) and line 780275 (eval init); full command definition lines 780196–780284; partial-results <code>skipped</code> verdict at lines 672882–672889 (search for <code>"CLAUDE_CODE_WALNUT_SPIRE"</code> and <code>"Model evaluation not yet wired up"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -377,7 +385,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -77,17 +77,21 @@
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">1 item</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li><strong>Temperature parameter no longer sent for Opus 4-7 side queries</strong>: Internal side queries (used for background model calls like tool descriptions and context summarization) previously sent the <code>temperature</code> parameter to all models. Opus 4-7 may not support custom temperature, so the parameter is now excluded for that model. This prevents potential API errors or unexpected behavior when Opus 4-7 is used for side queries. The main conversation API call path is unchanged. Evidence: New model check function <code>WV8()</code> (search for <code>"claude-opus-4-7"</code> near the <code>temperature</code> spread in the <code>dR</code> side-query function at line ~593235)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>The Haiku model selector descriptions ("Haiku 3.5" and "Haiku 4.5") appear swapped between two internal functions compared to the prior version, but both strings exist with identical counts in both versions (6 occurrences of "Haiku 3.5", 16 of "Haiku 4.5"). This is internal code reorganization with no user-visible effect.</li><li>Import style was refactored from default imports to named/destructured imports for several Node.js built-in modules (<code>child_process</code>, <code>crypto</code>, <code>node:os</code>, etc.). This is purely internal cleanup with no behavioral change.</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -149,7 +153,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">30 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="fleet-view-claude-agents">
       <div class="card-top">
         <h3>Fleet View (<code>claude agents</code>) <a class="anchor" href="#fleet-view-claude-agents">#</a></h3>
@@ -427,10 +428,12 @@ claude daemon log         # View daemon logs</code></pre>
 <p>JSON schema generation (search for <code>"jsonSchema2019-09"</code>, <code>"OpenAiAnyType"</code>, <code>"Warning: OpenAI may not support"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed handling of <code>EPIPE</code> and <code>EIO</code> errors on stdout/stderr — now properly destroys the stream and triggers a graceful exit callback instead of silently failing (search for <code>"EIO"</code>)</li><li>Improved handling of failed daemon connections: "Couldn't reach the daemon — it may be restarting. Press Enter to retry" instead of silent failure (search for <code>"Couldn't reach the daemon"</code>)</li><li>Added protection against recursive Zod schema references: "Recursive reference detected at" (search for <code>"Recursive reference detected"</code>)</li><li>Fixed regex pattern conversion failures with descriptive error: "Could not convert regex pattern at" (search for <code>"Could not convert regex pattern"</code>)</li><li>Added validation for <code>--permission-mode</code> flag values: "must be one of" (search for <code>"--permission-mode must be one of"</code>)</li><li>Added guard against duplicate task IDs: "task ids must be unique" (search for <code>"task ids must be unique"</code>)</li><li>Fixed transcript mirroring with bounded retry (3 attempts with short backoff; timeouts are not retried) to prevent silent data loss (search for <code>"TranscriptMirrorBatcher"</code>)</li><li>Added timeout handling for <code>SessionStore</code> operations: <code>append()</code>, <code>load()</code>, <code>listSessions()</code>, <code>listSubkeys()</code> all now have explicit timeout errors (search for <code>"SessionStore.append() timed out"</code>)</li><li>Fixed speculation pausing for backgrounded shells: "Speculation paused: backgrounded shell" (search for <code>"Speculation paused: backgrounded shell"</code>)</li></ul>
     </article>
@@ -459,13 +462,16 @@ claude daemon log         # View daemon logs</code></pre>
 <p>Removed init prompt (the <code>cN1</code> string at old line ~492860 covering Phases 1-8 is gone)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>The daemon installation (<code>claude daemon install</code>) creates a system service — users should run <code>claude daemon uninstall</code> before major upgrades if they experience issues with the service</li><li>The <code>daemon.json</code> configuration format is new; there is no migration from previous daemon configurations since the daemon infrastructure was previously minimal</li><li>Scheduled routines (morning-checkin, catch-up, pre-meeting-checkin) are installed when creating a daemon assistant via the <code>/daemon</code> command — they are not automatically enabled for existing setups</li><li>The fleet view (<code>claude agents</code>) replaces the previous "List configured agents" description with "Manage background and configured agents", reflecting its expanded interactive capabilities</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -527,7 +533,7 @@ claude daemon log         # View daemon logs</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

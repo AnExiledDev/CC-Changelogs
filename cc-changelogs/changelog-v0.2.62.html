@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">5 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="ide-integration-enhancement">
       <div class="card-top">
         <h3>IDE Integration Enhancement <a class="anchor" href="#ide-integration-enhancement">#</a></h3>
@@ -102,21 +103,26 @@
       <ul><li><strong>Optimized output handling</strong>: Large outputs are now written in chunks to prevent buffer overflow</li><li>Processes output in 2000-character chunks for better terminal performance</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Technical Changes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="technical-changes">
       <ul><li>Removed unused stream import and process import redundancies</li><li>Consolidated MCP server connection handling</li><li>Improved notification processing for IDE integrations</li><li>Better separation of concerns for changelog and release notes display</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed potential issues with undefined IDE selection states</li><li>Improved error handling for selection change notifications</li><li>Better handling of edge cases in streaming responses</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -178,7 +184,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

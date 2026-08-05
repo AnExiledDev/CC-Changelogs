@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="sendfeedback-tool-and-feedback-command">
       <div class="card-top">
         <h3>SendFeedback Tool and /feedback Command <a class="anchor" href="#sendfeedback-tool-and-feedback-command">#</a></h3>
@@ -192,10 +193,12 @@
 <p>"GrowthBook eval-authed fetch threw; falling back to /api/eval" (search for <code>"/api/eval-authed/"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">13 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="ultrareview-auto-fetches-missing-branches">
       <div class="card-top">
         <h3>Ultrareview Auto-Fetches Missing Branches <a class="anchor" href="#ultrareview-auto-fetches-missing-branches">#</a></h3>
@@ -311,10 +314,12 @@
 <p><code>function cf() { return qt(process.env.CLAUDE_CODE_SIMPLE) || fsi("--bare"); }</code> and the <code>Ffg</code> feature-disable map at <code>ZT</code> initialization (search for <code>"CLAUDE_CODE_SIMPLE"</code> and <code>"Ffg"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed OTLP telemetry requests failing with missing <code>Content-Length</code> header when the request body was written in chunks rather than all at once. (search for <code>"OTLP request body chunk conversion failed"</code>)</li></ul>
 <ul><li>Fixed proxy auth helper TTL parsing to accept <code>0</code> as a valid value (previously <code>0</code> was silently ignored and defaulted to the built-in TTL). (search for <code>"CLAUDE_CODE_PROXY_AUTH_HELPER_TTL_MS"</code>)</li></ul>
@@ -322,10 +327,12 @@
 <ul><li>Fixed cache_control being rejected by some proxies when sent on the api_system message tail; Claude now gracefully demotes the breakpoint and continues the conversation without interruption. (search for <code>"retry:api-system-cache-demote"</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Removed</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="context-tips-system-removed">
       <div class="card-top">
         <h3>Context Tips System Removed <a class="anchor" href="#context-tips-system-removed">#</a></h3>
@@ -344,14 +351,17 @@
 <p>"Agentic search found", "Agentic search response:", "agenticSessionSearch: query loop failed" — all removed (search for <code>"C4o"</code> — absent in new version)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The context-tips removal is the largest behavioral change in this release. If you relied on proactive tips appearing during conversations to discover features, those will no longer show. The feature infrastructure (tip catalog, classifier prompt) has been fully removed rather than just disabled.</p>
 <p>The Windows sandbox (<code>/sandbox install</code>) requires administrator rights for the one-time setup. If your machine is managed and the elevation prompt doesn't appear or is blocked, contact your administrator and point them to <code>https://code.claude.com/docs/en/sandboxing</code>.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -415,7 +425,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

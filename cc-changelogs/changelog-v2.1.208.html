@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="vim-insert-mode-key-sequence-remaps">
       <div class="card-top">
         <h3>Vim INSERT-mode key sequence remaps <a class="anchor" href="#vim-insert-mode-key-sequence-remaps">#</a></h3>
@@ -162,10 +163,12 @@ export CLAUDE_CODE_PROCESS_WRAPPER=&#x27;[&quot;/usr/local/bin/my-launcher&quot;
 <p>New <code>--label</code> flag (search for <code>"--label &lt;prefix&gt;"</code> and <code>"Show only rules whose label starts with this prefix"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">10 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="windows-sandbox-binshell-now-accepts-object-form-and-custom-">
       <div class="card-top">
         <h3>Windows sandbox: binShell now accepts object form and custom srt-win path <a class="anchor" href="#windows-sandbox-binshell-now-accepts-object-form-and-custom-">#</a></h3>
@@ -274,10 +277,12 @@ export CLAUDE_CODE_PROCESS_WRAPPER=&#x27;[&quot;/usr/local/bin/my-launcher&quot;
 <p>Prefix rename (removed: <code>"[shoji-engine]"</code>, added: <code>"[engine]"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">4 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>File deny rules now block edits, not just reads. A new clear error message is shown when a file is covered by a Read deny rule and the user attempts to edit it: "File is covered by a Read deny rule in your permission settings and cannot be edited." (search for <code>"File is covered by a Read deny rule"</code>)</li></ul>
 <ul><li>Ripgrep usage errors (invalid patterns, unsupported glob syntax, unknown file types) are now caught and reported as <code>RipgrepUsageError</code> rather than surfacing as raw subprocess failures. The error message includes the rejection reason: "Search failed — ripgrep rejected the pattern, glob, or file type without searching" (search for <code>"Search failed — ripgrep rejected the pattern"</code>)</li></ul>
@@ -285,10 +290,12 @@ export CLAUDE_CODE_PROCESS_WRAPPER=&#x27;[&quot;/usr/local/bin/my-launcher&quot;
 <ul><li>Symlink resolution in the Linux sandbox deny-path logic was improved: deny paths are now resolved through symlinks before enforcement to avoid false positives when a deny path target is accessed via a symlink (search for <code>"[Sandbox Linux] Resolve symlinked deny path"</code>)</li></ul>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Removed</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="mcp-archive-skill-distribution-removed">
       <div class="card-top">
         <h3>MCP archive skill distribution removed <a class="anchor" href="#mcp-archive-skill-distribution-removed">#</a></h3>
@@ -314,6 +321,7 @@ export CLAUDE_CODE_PROCESS_WRAPPER=&#x27;[&quot;/usr/local/bin/my-launcher&quot;
 <div class="blabel">Evidence</div>
 <p>Large CDS token block and <code>u0s</code> / <code>Jvd</code> template variables removed from bundle</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -377,7 +385,7 @@ export CLAUDE_CODE_PROCESS_WRAPPER=&#x27;[&quot;/usr/local/bin/my-launcher&quot;
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

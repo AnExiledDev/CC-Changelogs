@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">14 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="commit-push-pr-command">
       <div class="card-top">
         <h3><code>/commit-push-pr</code> Command <a class="anchor" href="#commit-push-pr-command">#</a></h3>
@@ -217,10 +218,12 @@ config/local.json</code></pre>
 <p><code>"Ignoring duplicate control_response for already-resolved toolUseID="</code> (search for <code>"Ignoring duplicate control_response"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed notification content rendering crash when <code>content</code> is not a string — now returns <code>null</code> gracefully instead of attempting to render non-string content (search for <code>"typeof $ !== \"string\""</code>)</li><li>Removed the "Denied by auto mode classifier" banner that previously displayed when permissions were auto-denied, reducing UI noise</li><li>Permission rule normalization now properly trims and normalizes stored rules when checking against new requests, preventing duplicate or stale rules (search for <code>"r5(nX(j))"</code>)</li><li>HTTP hooks now properly skip when conditions aren't met instead of potentially erroring (search for <code>"Skipping HTTP hook"</code>)</li></ul>
     </article>
@@ -257,6 +260,7 @@ config/local.json</code></pre>
 <div class="blabel">Evidence</div>
 <p>Large string literal beginning with <code>"# Building LLM-Powered Applications with Claude"</code> (search for <code>"Building LLM-Powered Applications with Claude"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -318,7 +322,7 @@ config/local.json</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

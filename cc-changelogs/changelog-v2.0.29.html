@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="enhanced-trust-validation-logic">
       <div class="card-top">
         <h3>Enhanced Trust Validation Logic <a class="anchor" href="#enhanced-trust-validation-logic">#</a></h3>
@@ -95,6 +96,7 @@ claude --allow-dangerously-skip-permissions</code></pre>
 <ul><li><code>stream</code> module: Changed to named import of <code>PassThrough</code></li><li><code>node:child_process</code>: Changed to named imports of <code>execSync</code> and <code>spawn</code></li><li><code>node:os</code>: Changed to named import of <code>homedir</code></li><li><code>node:process</code>: Changed to named import of <code>cwd</code></li></ul>
 <p>These changes have no user-visible impact but improve code maintainability and bundle optimization.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -156,7 +158,7 @@ claude --allow-dangerously-skip-permissions</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

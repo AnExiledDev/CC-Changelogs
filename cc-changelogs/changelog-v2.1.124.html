@@ -71,6 +71,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">33 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="claude-project-purge-command">
       <div class="card-top">
         <h3><code>claude project purge</code> command <a class="anchor" href="#claude-project-purge-command">#</a></h3>
@@ -408,10 +409,12 @@ claude project purge --all</code></pre>
 <p>Attribution serialization (search for <code>"from-name=\""</code>).</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fix a race in OAuth token refresh that could write a stale token after a parallel refresh succeeded; the lock now compares <code>accessToken</code> against the value held at lock acquisition time.</li><li>Token-refresh HTTP timeout raised from 15s to 30s — long-tail refreshes no longer fail when the IDP is slow.</li><li>The <code>enter</code> chord is no longer suggested in the task-picker hint row for <code>mcp_task</code> items, where viewing isn't supported.</li><li>Fixed a sort instability in the prompt-completion suggester — scores are now bucketed by tenths before falling back to recent-usage tiebreak, removing a flicker on every keystroke.</li><li>Background spare-claim failures now propagate the inner error to the caller (previously only the outer "Background service unreachable" message survived).</li><li>The history-picker's last-match search now case-folds the query before scanning entries.</li><li>The <code>prompt-caching-scope-2026-01-05</code> plus other betas dropped only the <code>tengu_slate_reef</code> gating; no functional change.</li><li>Web search results no longer enable prompt caching (caching was forced off for that path), avoiding wasted cache reads on per-call ephemeral tool schemas.</li></ul>
 <p>(Search for <code>"tengu_oauth_token_refresh_race_resolved"</code>, <code>"tengu_oauth_token_refresh_starting"</code>, <code>"\"mcp_task\""</code>, and <code>"enablePromptCaching: !1"</code> to verify each.)</p>
@@ -446,13 +449,16 @@ claude project purge --all</code></pre>
 <p>Enum expansion only (search for <code>"oauth_org_not_allowed"</code> in the enum but not in the in-flight refresh paths).</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <ul><li>If you have any tooling or log-analysis scripts that match <code>[upstreamproxy]</code> log lines or <code>/v1/code/upstreamproxy/...</code> URLs, update them to <code>[egress-gateway]</code> / <code>/v1/code/egress/gateway</code>.</li><li>The <code>isolatePeerMachines</code> setting is opt-in and defaults to off, so existing Remote Control workflows are unchanged unless you set it.</li><li>Per-project state purges via <code>claude project purge</code> are irreversible (<code>This cannot be undone.</code>); always preview with <code>--dry-run</code> first.</li></ul>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -514,7 +520,7 @@ claude project purge --all</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

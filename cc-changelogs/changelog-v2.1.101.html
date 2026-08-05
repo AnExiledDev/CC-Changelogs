@@ -77,6 +77,7 @@
     <h2>New Features</h2><div class="ln"></div>
 <span class="ct">9 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="mcp-oauth-completion-tool">
       <div class="card-top">
         <h3>MCP OAuth Completion Tool <a class="anchor" href="#mcp-oauth-completion-tool">#</a></h3>
@@ -197,10 +198,12 @@ claude -p --resume &quot;my session title&quot;</code></pre>
 <p>Dialog protocol (search for <code>"request_user_dialog"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
 <span class="ct">14 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="keybinding-customization-now-enabled-by-default">
       <div class="card-top">
         <h3>Keybinding Customization Now Enabled by Default <a class="anchor" href="#keybinding-customization-now-enabled-by-default">#</a></h3>
@@ -315,18 +318,22 @@ claude -p --resume &quot;my session title&quot;</code></pre>
 <p>Version check message (search for <code>"essential-traffic-only mode"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed worktree removal to include fallback directory cleanup when <code>git worktree remove</code> fails, preventing orphaned directories from accumulating (search for <code>"git worktree remove failed"</code>)</li><li>Fixed settings mutation bug where remote managed settings could be modified in-place; now uses <code>structuredClone</code> before validation (search for <code>"structuredClone"</code>)</li><li>Fixed null safety issue in file path handling that could cause crashes when <code>filePath</code> is undefined (search for <code>"filePath: q = ''"</code>)</li><li>Fixed OAuth callback abort handling to use proper <code>AbortController</code>-based cleanup, preventing resource leaks (search for <code>"AbortController"</code>)</li><li>Fixed retention cleanup to skip when userSettings source is disabled via <code>--setting-sources</code>, preventing unintended data deletion (search for <code>"Skipping retention cleanup"</code>)</li><li>Fixed terminal output sanitization to filter ANSI escape sequences more aggressively, preventing garbled output (search for <code>"charCodeAt(0) === 27"</code>)</li></ul>
     </article>
+  </div>
   </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
 <span class="ct">6 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="in-development">
       <p>Features with infrastructure added but not yet enabled. These are shipped "dark" and may become available in future versions.</p>
     </article>
@@ -409,14 +416,17 @@ claude -p --resume &quot;my session title&quot;</code></pre>
 <p>MCP directory BFF (gated by <code>tengu_mcp_directory_bff</code>, search for <code>"api/directory/servers"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Notes</h2><div class="ln"></div>
   </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="notes">
       <p>The <code>/loop</code> command continues to work in its existing fixed-interval mode (e.g., <code>/loop 5m /babysit-prs</code>). The new dynamic self-pacing mode is behind feature flags and will be gradually rolled out. When enabled, running <code>/loop</code> without an interval will activate dynamic mode where the model picks its own delay between iterations.</p>
 <p>The <code>CLAUDE_CODE_CERT_STORE</code> environment variable supersedes the <code>--use-system-ca</code> CLI flag for controlling certificate store behavior. Users on enterprise networks with custom CA certificates should consider switching to this env var for more explicit control.</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -478,7 +488,7 @@ claude -p --resume &quot;my session title&quot;</code></pre>
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;

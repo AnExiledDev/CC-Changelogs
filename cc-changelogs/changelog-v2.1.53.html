@@ -77,6 +77,7 @@
     <h2>Changes</h2><div class="ln"></div>
 <span class="ct">23 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bash-command-security-checks-unicode-whitespace-and-mid-word">
       <div class="card-top">
         <h3>Bash Command Security Checks: Unicode Whitespace and Mid-Word Hash <a class="anchor" href="#bash-command-security-checks-unicode-whitespace-and-mid-word">#</a></h3>
@@ -287,10 +288,12 @@
 <p>Removed <code>bypassPermissions</code> check in trust dialog gate (search for <code>"bypassPermissions"</code>)</p>
     </article>
   </div>
+  </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
 <span class="ct">3 items</span>  </div>
   <div class="card-grid">
+  <div class="col">
     <article class="card" id="bug-fixes">
       <ul><li>Fixed Remote Control initialization to preserve the first error message rather than overwriting it with a generic "initialization failed" message (search for <code>"replBridgeError"</code>)</li><li>Fixed file index <code>.gitignore</code> loading to use async <code>readFile</code> instead of sync <code>readFileSync</code> with <code>existsSync</code>, preventing potential blocking I/O during file picker operations (search for <code>"[FileIndex] loaded ignore patterns"</code>)</li><li>Fixed the glob base path extraction on Windows to consider both <code>/</code> and <code>\\</code> as path separators (search for <code>"lastIndexOf"</code>)</li><li>Fixed conversation rewind to properly reset state by calling <code>Ft()</code> after rewind (search for <code>"tengu_conversation_rewind"</code>)</li><li>Fixed atomic file write error logging to use <code>level: "error"</code> instead of the default level (search for <code>"Failed to write file atomically"</code>)</li><li>Removed extraneous blank line before <code>&lt;fast_mode_info&gt;</code> in the environment info system prompt</li></ul>
     </article>
@@ -331,6 +334,7 @@
 <div class="blabel">Evidence</div>
 <p>Env var registration (search for <code>"DISABLE_FEEDBACK_COMMAND"</code>)</p>
     </article>
+  </div>
   </div>
 
   <footer>
@@ -392,7 +396,7 @@
       });
       // A heading over nothing is worse than no heading.
       document.querySelectorAll('.card-list').forEach(function(list){
-        var any=[].some.call(list.children,function(c){return !c.hidden}),
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
             head=list.previousElementSibling;
         list.hidden=!any;
         while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;
