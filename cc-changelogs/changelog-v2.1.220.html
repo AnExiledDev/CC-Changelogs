@@ -25,20 +25,20 @@
   <a class="back" href="../archive.html">&larr; All changelogs</a>
   <span class="mv">v<span class="v">2.1.220</span></span>
   <span class="spacer"></span>
-<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+<span class="mini-meta">claude &middot; claude-opus-5 (effort medium)</span></div></div></div>
 
 <header class="hero detail">
   <div class="wrap wide">
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.220</span></h1>
-<p class="sub">This is a small patch release with 100% structural similarity to v2.1.219. The substantive changes are limited to two items: an auto-mode classifier API header now being sent for eligible first-party users, and infrastructure added for a future claude-opus-5 model that is not yet reachable by users.</p>    <div class="meta-row">
+<p class="sub">Version 2.1.220 adds a new beta header to auto-mode classifier requests. Model selection is now more conservative when entitlements cannot be read: Opus 5 is skipped entirely if the client cannot see model entitlements, and refusal fallback will no longer select Opus 5 when entitlement state is unknown. The classifier beta-rejection latch still keys off a null placeholder and remains in development, though its warning text has been reworded. The rest of the release is internal, covering the version and build stamp bump to 2.1.220 and a bundle-wide reformatting pass that leaves behavior unchanged, with prompt text for /code-review, /simplify, skill-saving, and credential paths byte-identical to the prior release.</p>    <div class="meta-row">
 <span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
-<span class="chip"><span class="k">Diff</span> <b>v2.1.219 → v2.1.220</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.219 → v2.1.220</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-opus-5 (effort medium)</b></span>    </div>
     <div class="stats">
-  <div class="stat f"><div class="n">1</div><div class="l">Features &amp;amp; Changes</div></div>
-  <div class="stat b zero"><div class="n">0</div><div class="l">Bug Fixes</div></div>
-  <div class="stat d"><div class="n">2</div><div class="l">In Development</div></div>
-  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+  <div class="stat f zero"><div class="n">0</div><div class="l">Use it now</div></div>
+  <div class="stat b"><div class="n">2</div><div class="l">You&#39;ll notice</div></div>
+  <div class="stat d"><div class="n">1</div><div class="l">Not switched on</div></div>
+  <div class="stat s"><div class="n">1</div><div class="l">Env Vars / Flags</div></div>
 </div>
   </div>
 </header>
@@ -73,56 +73,226 @@
     <div class="gd-title">Source-Level Analysis</div>
     <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
   </div>
-  <div class="section-head">
+  <div class="section-head soon-head">
+    <h2>Present but switched off</h2><div class="ln"></div>
+    <span class="ct">1 of 1</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card soonblock">
+      <ul class="official-list">
+        <li><a href="#classifier-beta-rejection-latch-still-keys-off-a-null-placeh">The drop-on-400 latch for the auto-mode classifier beta is keyed on a constant that is null, so the branch and its telemetry are unreachable.</a><span class="ar">Permissions</span></li>
+      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        Shipped inside the bundle with its gate off, its guard hardcoded false, or nothing calling it. What the code shows, not a roadmap: no claim about what is released, announced or planned.
+      </div>
+    </article>
+  </div>
+  <div class="filterbar" id="filterbar">
+    <span class="fb-label">Filter</span>
+    <div class="fb-chips">
+      <button class="fchip all on" type="button" data-key="">Everything<span class="fn">9</span></button>
+      <button class="fchip kind" type="button" data-key="k-in-development">In Development<span class="fn">1</span></button>
+      <button class="fchip kind" type="button" data-key="k-new-features">New Features<span class="fn">1</span></button>
+      <button class="fchip kind" type="button" data-key="k-improvements">Improvements<span class="fn">2</span></button>
+      <button class="fchip kind" type="button" data-key="k-internal-changes">Internal Changes<span class="fn">5</span></button>
+      <button class="fchip tok" type="button" data-key="x-slash">Slash commands<span class="fn">2</span></button>
+      <button class="fchip tok" type="button" data-key="x-env">Env vars<span class="fn">1</span></button>
+      <button class="fchip tok" type="button" data-key="x-setting">Settings<span class="fn">1</span></button>
+      <button class="fchip juice" type="button" data-key="juicy">Juicy<span class="fn">1</span></button>
+      <button class="fchip soon" type="button" data-key="upcoming">Coming soon<span class="fn">1</span></button>
+    </div>
+    <span class="fb-count" id="fbcount"></span>
+  </div>
+  <div class="section-head lead">
+    <h2>What probably matters to you</h2><div class="ln"></div>
+<span class="ct">1 item</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+<p class="section-note">Anything you can use today, anything that visibly changes, and anything worth poking at. One line each, open for detail.</p>  <div class="card-list">
+  <div class="col">
+    <article class="card folded q2" id="classifier-beta-rejection-latch-still-keys-off-a-null-placeh" data-f="juicy k-in-development t-soon upcoming">
+      <div class="card-top">
+        <h3>Classifier beta-rejection latch still keys off a null placeholder <a class="anchor" href="#classifier-beta-rejection-latch-still-keys-off-a-null-placeh">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">The automatic retry that would drop a rejected classifier beta can never trigger in this build.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Permissions</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The path that drops a classifier beta after an HTTP 400 followed by a successful bare retry is keyed on a beta constant that is <code>null</code> in both builds, so it never fires.</p>
+<div class="blabel">Details</div>
+<ul><li>The latch bails out early when the constant is null, and the constant is declared as <code>null</code> in 2.1.219 and 2.1.220 alike.</li><li>The newly-sent auto-mode-classifier beta therefore has no automatic drop-on-400 path in this build.</li><li>The telemetry it would emit, <code>tengu_auto_mode_beta_latch</code> and <code>permission_auto_mode_classifier</code>, is present but unreachable.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>tengu_auto_mode_beta_latch</code></p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+  </div>
+  </div>
+  <div class="group-divider rest">
+    <div class="gd-title">Everything else &middot; 8</div>
+    <div class="gd-sub">Smaller changes and internals, grouped as the pipeline found them. Nothing is dropped, it is only further down.</div>
+  </div>
+  <div class="section-head muted">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">1 item</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
+  <div class="col">
+    <article class="card folded q2" id="auto-mode-classifier-requests-now-send-a-new-beta-header" data-f="k-new-features t-internal x-env">
+      <div class="card-top">
+        <h3>Auto-mode classifier requests now send a new beta header <a class="anchor" href="#auto-mode-classifier-requests-now-send-a-new-beta-header">#</a></h3>
+      </div>
+      <p class="glance">Auto mode&#39;s permission classifier now tags its requests with a beta marker on Anthropic-hosted sessions.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS</code></div>        <span class="where"><b>Under the hood</b> &middot; Permissions</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The permission classifier used by auto mode attaches a beta descriptor to its API requests, where the previous build sent none. Both classifier stages now carry it.</p>
+<div class="blabel">Details</div>
+<ul><li>Registers <code>WA("auto_mode_classifier", "auto-mode-classifier-2026-07-16")</code> and adds it to the frozen known-betas list, so it is also reachable through the header lookup map.</li><li>In 2.1.219 the classifier's request builder was a stub that unconditionally returned an empty <code>extraBetas</code> array; it now returns this beta.</li><li>Gated on provider being "firstParty" and the base URL being api.anthropic.com. Suppressed by <code>CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS</code> or hipaa mode, in which case the list stays empty.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>auto-mode-classifier-2026-07-16</code></p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+  </div>
+  </div>
+  <div class="section-head muted">
     <h2>Improvements</h2><div class="ln"></div>
-<span class="ct">1 item</span>  </div>
-  <div class="card-grid">
+<span class="ct">2 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
   <div class="col">
-    <article class="card" id="clearer-beta-header-retry-log-message">
+    <article class="card folded q3" id="opus-5-is-skipped-when-the-client-cannot-see-model-entitleme" data-f="k-improvements t-notice">
       <div class="card-top">
-        <h3>Clearer beta-header retry log message <a class="anchor" href="#clearer-beta-header-retry-log-message">#</a></h3>
-<div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>When Claude Code sends a beta API header and the server rejects it with HTTP 400, it retries without that header and logs a debug message. The wording of that message was tightened for clarity.</p>
-<p>Before: "beta rejected (HTTP 400) and the bare retry succeeded — dropping the beta for the rest of the session" After: "beta rejected (HTTP 400) and the retry without it succeeded — dropping the beta for the rest of the session"</p>
-<p>This only appears in debug output and has no effect on behaviour.</p>
+        <h3>Opus 5 is skipped when the client cannot see model entitlements <a class="anchor" href="#opus-5-is-skipped-when-the-client-cannot-see-model-entitleme">#</a></h3>
+      </div>
+      <p class="glance">If your session has no model access info cached, Claude won&#39;t fall back to Opus 5.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Model Fallback</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>A new predicate detects sessions where Claude Code has no entitlement data at all, and the Opus lineup walk used for refusal fallback filters Opus 5 out in that state.</p>
+<div class="blabel">Details</div>
+<ul><li><code>isEntitlementOverlayUnavailable</code> returns true when the provider is first-party, an OAuth token is stored, the profile scope is absent, no Anthropic API key is set, and the cached model-access list is empty.</li><li>A helper combines that predicate with a canonical-name check against "claude-opus-5"; the candidate scan becomes <code>.find((n) =&gt; N1e(lo(n)) &amp;&amp; !u2c(n) &amp;&amp; r(n))</code>, and a sibling helper substitutes "claude-opus-4-8" in its place.</li><li>No remote flag is involved. It is driven purely by runtime auth and cache state, so a first-party OAuth session with an empty entitlement cache will not auto-pick Opus 5 as a fallback target.</li></ul>
 <div class="blabel">Evidence</div>
-<p>string diff shows removal of <code>"bare retry"</code> wording and addition of <code>"retry without it"</code> phrasing (search for <code>"beta rejected (HTTP 400)"</code>)</p>
+<p><code>isEntitlementOverlayUnavailable</code></p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q3" id="refusal-fallback-no-longer-picks-opus-5-when-entitlements-ar" data-f="k-improvements t-notice">
+      <div class="card-top">
+        <h3>Refusal fallback no longer picks Opus 5 when entitlements are unknown <a class="anchor" href="#refusal-fallback-no-longer-picks-opus-5-when-entitlements-ar">#</a></h3>
+      </div>
+      <p class="glance">When a refusal triggers a model switch and entitlements are unknown, you get Opus 4.8 instead of Opus 5.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Model Fallback</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The refusal and model-fallback picker gained a normalization step that rewrites any model whose canonical id is "claude-opus-5" to "claude-opus-4-8" before it is used as a fallback target. A refusal that used to fall back to Claude Opus 5 on affected setups now falls back to Claude Opus 4.8.</p>
+<div class="blabel">Details</div>
+<ul><li>The first-party branch went from <code>if (!rm()) return s2c("claude-opus-4-8"); let r = EE();</code> in 2.1.219 to <code>if (!rm()) return l2c(c2c); let r = d2c(EE());</code>, where <code>c2c</code> is the constant "claude-opus-4-8" and <code>d2c</code> performs the mapping.</li><li>The next-fallback-model resolver applies the same mapping: <code>l2c(rm() ? r.id : s2c(r.id), "exact")</code> becomes <code>f2c(rm() ? d2c(r.id) : l2c(r.id), "exact")</code>.</li><li>The non-exact candidate scan skips the same models: <code>Gji().find((n) =&gt; N1e(lo(n)) &amp;&amp; !u2c(n) &amp;&amp; r(n))</code> versus the old <code>Uji().find((n) =&gt; N1e(lo(n)) &amp;&amp; r(n))</code>.</li><li>The gate is a runtime condition, not a remote flag. The substitution only applies when the helper body <code>Hn() === "firstParty" &amp;&amp; zA() &amp;&amp; !bH() &amp;&amp; eZ() === null &amp;&amp; ZJt().length === 0</code> holds, the same predicate the build reports elsewhere as <code>entitlement_blind</code>. Otherwise behaviour is unchanged.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>claude-opus-4-8</code></p>
+<hr></div>
     </article>
   </div>
   </div>
-  <div class="section-head">
-    <h2>In Development</h2><div class="ln"></div>
-<span class="ct">2 items</span>  </div>
-  <div class="card-grid">
+  <div class="section-head muted">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
   <div class="col">
-    <article class="card" id="in-development">
-      <p>Features with infrastructure added but not yet enabled for general use.</p>
-    </article>
-    <article class="card" id="auto-mode-classifier-api-header-in-development">
+    <article class="card folded q2" id="version-bumped-to-2-1-220" data-f="k-internal-changes t-internal x-slash">
       <div class="card-top">
-        <h3>Auto-mode classifier API header [In Development] <a class="anchor" href="#auto-mode-classifier-api-header-in-development">#</a></h3>
-<div class="tags"><span class="tag dev">Dev</span></div>      </div>
-      <div class="blabel">What</div>
-<p>A new API beta header <code>auto-mode-classifier-2026-07-16</code> is now conditionally sent with requests. This header likely enables a server-side routing or response-mode classification feature.</p>
-<div class="blabel">Status</div>
-<p>Feature-flagged — only sent for first-party Anthropic users who pass two additional internal checks (<code>HP()</code> and <code>Yd()</code>). Not active for standard users.</p>
+        <h3>Version bumped to 2.1.220 <a class="anchor" href="#version-bumped-to-2-1-220">#</a></h3>
+      </div>
+      <p class="glance">The version shown in /status, bug reports and update checks is now 2.1.220.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">/status</code></div>        <span class="where"><b>Under the hood</b> &middot; Build Metadata</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The build-time constant block embedded throughout the bundle carries a new version, timestamp and commit hash, rethreaded through roughly 55 call sites.</p>
 <div class="blabel">Details</div>
-<ul><li><code>ROd(e)</code> is called exclusively inside the <strong>two-stage auto-mode classifier</strong> pipeline, once for Stage 1 ("xml_s1" — a fast yes/no call capped at 256 output tokens) and once for Stage 2 ("xml_s2" — a deeper analysis call capped at 8192 output tokens). Regular chat, agent, and tool-use API calls never receive this header via this path.</li><li>Three conditions must all be true for the header to be appended: (1) the provider type of the classifier's model (resolved via <code>ny(o)</code>) must be exactly <code>"firstParty"</code>; (2) <code>HP()</code> must return true — the session auth type is firstParty, anthropicAws, anthropicGoogleCloud, or foundry, AND <code>CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS</code> is not set, AND the session is not in HIPAA mode; (3) <code>Yd()</code> must return true — either the internal env var <code>_CLAUDE_CODE_ASSUME_FIRST_PARTY_BASE_URL</code> is set, or <code>ANTHROPIC_BASE_URL</code> is unset or resolves to exactly <code>api.anthropic.com</code>.</li><li>When all conditions pass, <code>ROd</code> returns <code>[Sji]</code>. This single-element array is spread into <code>extraBetas</code> on the classifier request, causing the <code>anthropic-beta: auto-mode-classifier-2026-07-16</code> header to be included alongside any other beta headers for that call.</li><li>Users on third-party providers (bedrock, vertex, foundry, mantle), on a custom <code>ANTHROPIC_BASE_URL</code>, in HIPAA mode, or with <code>CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS</code> set will never have this header sent, even when the auto-mode classifier is active.</li><li>The header value follows the same dated-slug convention used by other active beta headers in the registry (e.g. <code>mcp-servers-2025-12-04</code>, <code>per-turn-control-2026-07-01</code>).</li></ul>
+<ul><li>VERSION 2.1.219 -&gt; 2.1.220, with a new BUILD_TIME of 2026-07-24T22:17:45Z and a new GIT_SHA.</li><li>Surfaces in the /status version line, the bug-report template's Environment Info, the <code>claude-code/&lt;version&gt;</code> user agent, update-check output (<code>Current version: </code>), telemetry and analytics payloads, and the npm install/view commands targeting <code>@anthropic-ai/claude-code</code>.</li><li>The <code>BUILD_REF_NAME</code> suffix helper still returns the empty string, and the JOSE <code>compactDecrypt</code> calls in the OIDC JWE path were re-minified with no behaviour change.</li></ul>
 <div class="blabel">Evidence</div>
-<p>new header constant <code>Sji = WA("auto_mode_classifier", "auto-mode-classifier-2026-07-16")</code> added to the request-header registry (search for <code>"auto-mode-classifier-2026-07-16"</code>); <code>ROd</code> (line 515658) passes the header as <code>extraBetas</code> in the Stage-1 (<code>xml_s1</code>) and Stage-2 (<code>xml_s2</code>) classifier API calls at lines 515302 and 515419 respectively</p>
+<p><code>VERSION: "2.1.220"</code>, <code>BUILD_TIME: "2026-07-24T22:17:45Z"</code></p>
+<hr></div>
     </article>
-    <article class="card" id="claude-opus-5-model-constant-in-development">
+    <article class="card folded q1" id="reworded-the-classifier-beta-rejection-warning" data-f="k-internal-changes t-internal">
       <div class="card-top">
-        <h3>Claude Opus 5 model constant [In Development] <a class="anchor" href="#claude-opus-5-model-constant-in-development">#</a></h3>
-<div class="tags"><span class="tag dev">Dev</span></div>      </div>
-      <div class="blabel">What</div>
-<p>A new model identifier <code>claude-opus-5</code> has been registered internally, along with gating logic that deliberately excludes it from normal model resolution and fallback paths.</p>
-<div class="blabel">Status</div>
-<p>Stubbed — the constant exists and detection functions are wired up, but the model is explicitly filtered out of all fallback resolution so users cannot reach it through any current code path.</p>
+        <h3>Reworded the classifier beta-rejection warning <a class="anchor" href="#reworded-the-classifier-beta-rejection-warning">#</a></h3>
+      </div>
+      <p class="glance">A warning message about a rejected classifier beta was reworded, though you can&#39;t reach it.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Permissions</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The warn-level log emitted when the auto-mode classifier's beta is rejected changes from "the bare retry succeeded" to "the retry without it succeeded".</p>
 <div class="blabel">Details</div>
-<ul><li><code>claude-opus-5</code> is <strong>fully registered</strong> in the model registry — not a bare stub. The entry includes: <code>family: "opus"</code>, <code>display_name: "Opus 5"</code>, <code>knowledge_cutoff: "May 2026"</code>, a 1 million-token native context window (<code>native_1m: true</code>, no beta suffix required), <code>max_output_tokens: { default: 64000, upper: 128000 }</code>, <code>pricing: "tier_5_25"</code>, <code>advisor_rank: 4</code>, and the capability set <code>[effort, max_effort, xhigh_effort, adaptive_thinking, mid_conv_system, context_management, fast_mode, lean_prompt]</code>.</li><li>Provider IDs are populated for every platform: <code>first_party: "claude-opus-5"</code>, <code>bedrock: "us.anthropic.claude-opus-5"</code>, <code>vertex: "claude-opus-5"</code>, <code>foundry: "claude-opus-5"</code>, <code>anthropic_aws: "claude-opus-5"</code>, <code>anthropic_google_cloud: "claude-opus-5"</code>, <code>mantle: "anthropic.claude-opus-5"</code>, <code>gateway: "claude-opus-5"</code>. Both bedrock and vertex have <code>eager_input_streaming: true</code>. The model declares <code>fallback_3p: "claude-opus-4-8"</code> for third-party fallback chains.</li><li>The model is the <strong>default resolution target for the <code>opus</code> alias</strong> on first_party, bedrock, vertex, mantle, and anthropic_aws providers, and is recorded as <code>latest_per_family.opus</code>. It also receives the internal short-name mapping <code>"claude-opus-5" → "opus5"</code> used in telemetry and the model-options UI.</li><li><code>Xkt()</code> — exported as <code>isEntitlementOverlayUnavailable</code> — returns <code>true</code> when the client is in an <strong>entitlement-blind</strong> state: <code>Hn() === "firstParty"</code> (provider is first-party), <code>zA()</code> is true (an OAuth accessToken is present, i.e. the user is logged in via claude.ai), <code>!bH()</code> is true (user is NOT in a scope that includes the restricted-access flag <code>q0e</code>), <code>eZ() === null</code> (no API key is configured), and <code>ZJt().length === 0</code> (the server-side model access cache is empty — entitlements have not yet been fetched).</li><li>During this entitlement-blind state, <code>u2c(e)</code> (<code>Xkt() &amp;&amp; Ooe(e) === rdg</code>) is true for any request targeting claude-opus-5. <code>d2c(e)</code> then silently redirects the model to <code>c2c = "claude-opus-4-8"</code>, and the fallback-walk function <code>f2c()</code> skips any candidate where <code>u2c(n)</code> is true. Once the entitlement cache populates (<code>ZJt().length &gt; 0</code>), <code>Xkt()</code> returns false and all redirect/skip logic is bypassed, making the model accessible normally.</li><li>The <code>Xkt()</code> state is recorded in telemetry as <code>entitlement_blind: true</code> on both <code>tengu_rotunda_pennant_applied</code> (server-fallback) and <code>tengu_refusal_fallback_route_declined</code> events, allowing Anthropic to correlate model-switching behaviour with the entitlement-loading phase.</li><li><code>XMu = "claude-opus-4-8"</code> is a separate constant defined in the auto-compact section (line 275969). It is used only by <code>Bds(e)</code>, a function that looks up a compact-token threshold for that specific model; it is not related to the <code>c2c = "claude-opus-4-8"</code> constant used in the entitlement redirect path.</li></ul>
+<ul><li>Log text only, the surrounding logic is unchanged.</li><li>The branch is currently unreachable because the latch it belongs to is keyed on a null constant.</li></ul>
 <div class="blabel">Evidence</div>
-<p><code>rdg = "claude-opus-5"</code> at line 141255 alongside <code>c2c = "claude-opus-4-8"</code> in the refusal-fallback section; full model definition at lines 15872–15913 (search for <code>id: "claude-opus-5"</code>); <code>Xkt</code> / <code>isEntitlementOverlayUnavailable</code> at line 128500; <code>u2c</code> redirect and <code>f2c</code> skip at lines 140889–140918; <code>entitlement_blind</code> telemetry at lines 394612 and 394859; <code>XMu</code> at line 275969</p>
+<p><code>beta rejected (HTTP 400) and the retry without it succeeded</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q1" id="bundle-wide-reformatting-with-no-behaviour-change" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Bundle-wide reformatting with no behaviour change <a class="anchor" href="#bundle-wide-reformatting-with-no-behaviour-change">#</a></h3>
+      </div>
+      <p class="glance">Assorted internal code was reformatted and renamed with nothing you can perceive changing.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Build Metadata</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Several unrelated areas were reflowed or had their module-init closures renamed, with no semantic difference found in any of them.</p>
+<div class="blabel">Details</div>
+<ul><li>Method-chain reflows in JWT verification, PEM fingerprinting via <code>createHash("sha1")</code> and <code>createHash("sha256")</code>, MCP server-config mapping, the SDK <code>set_model</code> control request, QR-code rendering and several string-splitting sites.</li><li>Renamed module-init closures for the test and typecheck command regexes and for the git worktree path constants <code>/worktrees/</code> and <code>config.worktree.lock</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>failed to validate JWT signature</code></p></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q1" id="build-stamp-moved-to-2-1-220" data-f="k-internal-changes t-internal x-setting">
+      <div class="card-top">
+        <h3>Build stamp moved to 2.1.220 <a class="anchor" href="#build-stamp-moved-to-2-1-220">#</a></h3>
+      </div>
+      <p class="glance">Version strings in update messages, doctor output and daemon logs were re-stamped to 2.1.220.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">claude update</code></div>        <span class="where"><b>Under the hood</b> &middot; Build Metadata</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The inlined build constants appearing in around 40 user-visible and log strings were re-stamped, with no surrounding logic touched.</p>
+<div class="blabel">Details</div>
+<ul><li>VERSION 2.1.219 -&gt; 2.1.220, BUILD_TIME 2026-07-24T03:24:19Z -&gt; 2026-07-24T22:17:45Z, GIT_SHA 7006c4c3acac98e554d3997baeda6a7fa4d1ff7c -&gt; 4073f59596e272f39393db4f96abc5f4b10eff21.</li><li>Affected strings include version output, <code>claude update</code> messages, user agents, doctor output and daemon logs.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>GIT_SHA: "4073f59596e272f39393db4f96abc5f4b10eff21"</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q1" id="prompt-text-for-code-review-simplify-skill-saving-and-creden" data-f="k-internal-changes t-internal x-slash">
+      <div class="card-top">
+        <h3>Prompt text for /code-review, /simplify, skill-saving and credential paths is byte-identical <a class="anchor" href="#prompt-text-for-code-review-simplify-skill-saving-and-creden">#</a></h3>
+      </div>
+      <p class="glance">Code review, simplify and skill-saving instructions are unchanged despite looking rewritten in the bundle.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">/code-review</code><code class="tok">/simplify</code></div>        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>A large group of apparently new and removed code is pure bundler renaming, with prompt wording unchanged from 2.1.219.</p>
+<div class="blabel">Details</div>
+<ul><li>Covers the code-review phase prompts including "## Phase 2 \u2014 Verify (1-vote, 3-state)", "## Phase 3 \u2014 Sweep for gaps" and the Artifact publishing block.</li><li>Also covers the /simplify 4-agent and single-pass prompts, the "# Saving skills" system prompt variants, the background-session shipping policy text, the workflow status strings and the credential file paths.</li><li>Only the surrounding minified identifiers and the interpolated tool and skill symbols differ. No user-visible behaviour change.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>## Phase 3 \u2014 Sweep for gaps</code></p>
+<hr></div>
     </article>
   </div>
   </div>
@@ -130,7 +300,7 @@
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
     <div class="gen">
-<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.220.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.220.txt</div></div>    </div>
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-opus-5 (effort medium)</div></div><div><div class="k">Primary diff</div><div class="val">archive/claude-code/changes/changes-v2.1.220.md</div></div>    </div>
   </footer>
 </main>
 </div>
