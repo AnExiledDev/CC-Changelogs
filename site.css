@@ -296,3 +296,55 @@ footer a{color:var(--ink-2)}
 .chip.chip-official.available,.chip.chip-official.pending{border-color:rgba(217,177,90,.4);background:rgba(217,177,90,.08)}
 .chip.chip-official.available b,.chip.chip-official.pending b{color:var(--amber)}
 .chip.chip-official.gap b{color:var(--ink-3)}
+
+/* --- Reader-priority layout ------------------------------------------------
+   Folded cards read as one line each, so a release with hundreds of findings
+   can be taken in at a glance and opened where it matters. Uses the existing
+   panel, line and ink tokens; no new palette. */
+
+.card-list{display:flex;flex-direction:column;gap:12px}
+.card-list .card{margin:0;padding:18px 22px}
+.card-list .card:hover{transform:none;box-shadow:var(--shadow)}
+
+.section-head.lead h2{color:var(--accent-2)}
+.section-head.muted h2{color:var(--ink-3);font-weight:600}
+.section-note{color:var(--ink-3);font-size:13px;margin:-8px 0 18px;max-width:70ch;line-height:1.6}
+.group-divider.rest{border-left-color:var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.02),transparent)}
+
+.openall{background:none;border:1px solid var(--line);color:var(--ink-3);
+  font:600 11px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;
+  padding:6px 11px;border-radius:7px;cursor:pointer;transition:border-color .15s,color .15s}
+.openall:hover{border-color:var(--accent);color:var(--accent-2)}
+
+.card.folded .card-top{gap:12px}
+.card.folded h3{font-size:16.5px;font-weight:650;color:var(--ink-2)}
+.card.folded.q4 h3,.card.folded.q5 h3{font-size:18px;font-weight:700;color:var(--ink)}
+.card.folded.q1 h3,.card.folded.q2 h3{font-size:15.5px;color:var(--ink-3)}
+.card.open h3{color:var(--ink)}
+
+.glance{color:var(--ink);font-size:15px;line-height:1.6;margin:9px 0 0}
+.card.folded.q1 .glance,.card.folded.q2 .glance{color:var(--ink-2);font-size:14.3px}
+
+.toks{display:flex;flex-wrap:wrap;gap:6px;margin:11px 0 0}
+.tok{font-family:var(--mono);font-size:11.5px;color:var(--blue);
+  background:rgba(127,168,217,.1);border:1px solid rgba(127,168,217,.26);
+  border-radius:6px;padding:3px 8px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+
+.card-actions{display:flex;align-items:center;gap:12px;margin:13px 0 0}
+.more{background:var(--panel-2);border:1px solid var(--line);color:var(--ink-2);
+  font:600 12px/1 var(--sans);padding:7px 13px;border-radius:8px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px;transition:border-color .15s,color .15s}
+.more:hover{border-color:var(--accent);color:var(--accent-2)}
+.more .chev{font-size:9px;transition:transform .18s}
+.card.open .more .chev{transform:rotate(180deg)}
+.where{color:var(--ink-3);font-size:11.5px;letter-spacing:.04em}
+
+.card-body{margin-top:16px;padding-top:15px;border-top:1px solid var(--line-soft)}
+.card-body>:first-child{margin-top:0}
+
+@media (max-width:640px){
+  .card-list .card{padding:16px 17px}
+  .section-head{flex-wrap:wrap}
+  .openall{order:3}
+}

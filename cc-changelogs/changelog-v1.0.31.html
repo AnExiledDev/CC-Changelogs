@@ -187,6 +187,36 @@ Next: Run claude --help to get started</code></pre>
   var t=document.querySelector('.totop');
   t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
   addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+
+  function setOpen(card,open){
+    var b=card.querySelector('.more'),body=card.querySelector('.card-body');
+    if(!b||!body)return;
+    body.hidden=!open;
+    card.classList.toggle('open',open);
+    b.setAttribute('aria-expanded',open);
+    b.firstChild.nodeValue=open?'Hide':'Details';
+  }
+
+  document.addEventListener('click',function(ev){
+    var b=ev.target.closest('.more');
+    if(b){setOpen(b.closest('.card'),b.getAttribute('aria-expanded')!=='true');return;}
+
+    var all=ev.target.closest('.openall');
+    if(!all)return;
+    var open=all.dataset.open!=='1';
+    all.dataset.open=open?'1':'0';
+    all.textContent=open?'Close all':'Open all';
+    var list=all.closest('.section-head').nextElementSibling;
+    while(list&&!list.classList.contains('card-list'))list=list.nextElementSibling;
+    if(list)list.querySelectorAll('.card').forEach(function(c){setOpen(c,open)});
+  });
+
+  // A link to a folded card is useless if it lands on a closed one.
+  function openHash(){
+    var el=location.hash&&document.querySelector(location.hash);
+    if(el&&el.classList.contains('folded'))setOpen(el,true);
+  }
+  addEventListener('hashchange',openHash);openHash();
 </script>
 </body>
 </html>
