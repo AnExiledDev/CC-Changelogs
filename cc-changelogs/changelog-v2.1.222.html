@@ -25,19 +25,19 @@
   <a class="back" href="../archive.html">&larr; All changelogs</a>
   <span class="mv">v<span class="v">2.1.222</span></span>
   <span class="spacer"></span>
-<span class="mini-meta">claude &middot; claude-sonnet-4-6</span></div></div></div>
+<span class="mini-meta">claude &middot; claude-opus-5` (effort medium)</span></div></div></div>
 
 <header class="hero detail">
   <div class="wrap wide">
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.222</span></h1>
-<p class="sub">This release delivers a comprehensive rewrite of worktree isolation verification with much more precise git identity checks, a new "local" vs "session" scope for model fallback events (so subagent refusals no longer appear to affect your whole session), and remote bridge self-healing on heartbeat loss. Remote Control can no longer be enabled from repo-scoped settings, closing a security gap. Skill and plugin manifests gain a new open <code>metadata</code> field for authors.</p>    <div class="meta-row">
+<p class="sub">This release focuses on permission correctness and worktree safety. Permission responses are now matched against the tool they were issued for, mismatched replies are logged and dropped, and forked or background agent queries require canUseTool by default. Worktree handling was reworked so that git commands run with a scrubbed environment, new worktree roots are validated before use, sessions record a launch anchor for when they exit, and resuming into a missing or unverifiable worktree explains itself instead of failing silently. The remote-control bridge can now self-heal when heartbeats fail while SSE is still alive, with a rebuild budget and better failure telemetry, and shutdown waits for in-flight remote-control work. Artifact comments track which ones were sent to Claude, and commands, skills and plugin manifests accept a free-form metadata object, with warnings on malformed entries.</p>    <div class="meta-row">
 <span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
-<span class="chip"><span class="k">Diff</span> <b>v2.1.221 → v2.1.222</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-sonnet-4-6</b></span>    </div>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.221 → v2.1.222</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-opus-5` (effort medium)</b></span>    </div>
     <div class="stats">
-  <div class="stat f"><div class="n">16</div><div class="l">Features &amp;amp; Changes</div></div>
-  <div class="stat b"><div class="n">4</div><div class="l">Bug Fixes</div></div>
-  <div class="stat d"><div class="n">2</div><div class="l">In Development</div></div>
+  <div class="stat f"><div class="n">89</div><div class="l">Features &amp;amp; Changes</div></div>
+  <div class="stat b"><div class="n">19</div><div class="l">Bug Fixes</div></div>
+  <div class="stat d"><div class="n">13</div><div class="l">In Development</div></div>
   <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
 </div>
   </div>
@@ -75,206 +75,1498 @@
   </div>
   <div class="section-head">
     <h2>New Features</h2><div class="ln"></div>
-<span class="ct">3 items</span>  </div>
+<span class="ct">10 items</span>  </div>
   <div class="card-grid">
   <div class="col">
-    <article class="card" id="fallback-model-scope-local-vs-session">
+    <article class="card" id="artifact-comment-auto-reply-understands-sent-to-claude-lanes">
       <div class="card-top">
-        <h3>Fallback Model Scope: Local vs Session <a class="anchor" href="#fallback-model-scope-local-vs-session">#</a></h3>
+        <h3>Artifact comment auto-reply understands "sent to Claude" lanes <a class="anchor" href="#artifact-comment-auto-reply-understands-sent-to-claude-lanes">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>When a refusal triggers a fallback to a different model, Claude Code now distinguishes two scopes:</p>
-<ul><li><strong><code>session</code></strong> — the main thread was flagged; the session model is swapped for the rest of the conversation. The <code>/model</code> display now reads "(automatically switched from X after a message was flagged — run /model to switch back)" to make this visible.</li><li><strong><code>local</code></strong> — a subagent, <code>/btw</code> side-question, or background fork was flagged; only that single response came from the fallback model and the session model is unchanged. A footnote "Your session model is unchanged." appears with the fallback notice.</li></ul>
-<p>This distinction is also surfaced in the SDK event stream via the new <code>scope</code> field on <code>model_refusal_fallback</code> events (<code>"session"</code> | <code>"local"</code>). Older CLIs that do not emit this field should be treated as <code>"session"</code>.</p>
-<div class="blabel">Evidence</div>
-<p>new <code>scope</code> field in <code>model_refusal_fallback</code> events (search for <code>"Your session model is unchanged."</code>) — <code>zPo</code> / <code>dkd</code> at line ~653125</p>
-    </article>
-    <article class="card" id="worktree-isolation-full-git-identity-verification">
-      <div class="card-top">
-        <h3>Worktree Isolation: Full Git Identity Verification <a class="anchor" href="#worktree-isolation-full-git-identity-verification">#</a></h3>
-<div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>Agent and session worktree resume now performs a thorough multi-step git identity check before entering or resuming a worktree. The previous approach only resolved paths; the new approach runs <code>git rev-parse --absolute-git-dir --show-toplevel --git-common-dir</code>, then cross-checks:</p>
-<ul><li>Whether the <code>.git</code> entry is a symlink (disqualifies the tree)</li><li>Whether the common dir is the same as the git dir (linked worktree vs main checkout)</li><li>Whether the gitdir back-pointer matches the expected location</li><li>Whether any symbolic links exist in the ref storage directories</li><li>Whether the working tree top-level resolves to the expected path (detects <code>core.worktree</code> redirects)</li><li>Whether the tree is or contains the session's own launch directory (prevents forged resumes)</li></ul>
-<p>New error classes <code>AgentResumePermanentlyRefusedError</code> and <code>AgentResumeTransientError</code> let callers distinguish recoverable failures (retry; binding kept) from permanent ones (rebind required). Worktree-related rejection reasons are now reported as <code>tengu_worktree_resume_root_rejected</code> analytics events.</p>
+      <div class="blabel">What</div>
+<p>Comment threads are now classified per comment into human, agent and unknown lanes, and sending or re-sending a comment to Claude is itself a trigger for auto-reply rather than only a new comment being one.</p>
 <div class="blabel">Details</div>
-<ul><li>GIT environment variables (<code>GIT_DIR</code>, <code>GIT_COMMON_DIR</code>, <code>GIT_WORK_TREE</code>, <code>GIT_CONFIG_KEY_*</code>, etc.) are now scrubbed from the environment before verification runs, so ambient git state cannot pollute the identity check.</li><li>If a worktree cannot be verified this attempt, the binding is kept and the next <code>--resume</code> will retry automatically.</li><li>If a worktree is confirmed invalid (poisoned record, wrong repository, own launch tree), the binding is cleared and the session falls back to the current directory.</li></ul>
+<ul><li>each comment carries a lane; a <code>toClaudeAt</code> timestamp marks it as sent to Claude</li><li>new trigger kind <code>redesignated</code> covers existing comments newly toggled to Claude, tracked through a per-thread <code>sentToClaudeAt</code> map</li><li>the composed prompt now explains the row heads <code>[human]</code>, <code>[assistant]</code>, <code>[human, sent to you]</code> and <code>[unverified lane]</code></li></ul>
 <div class="blabel">Evidence</div>
-<p>git verification infrastructure (search for <code>"Refusing to use"</code> + <code>"as an isolation worktree"</code>) — <code>ebo()</code> at line ~216466</p>
+<p><code>A human sent an EXISTING comment in the thread to you on an artifact you published</code></p>
+<hr>
     </article>
-    <article class="card" id="skill-and-plugin-metadata-frontmatter-field">
+    <article class="card" id="artifact-tool-output-exposes-sent-to-claude-and-awaiting-rep">
       <div class="card-top">
-        <h3>Skill and Plugin <code>metadata</code> Frontmatter Field <a class="anchor" href="#skill-and-plugin-metadata-frontmatter-field">#</a></h3>
+        <h3>Artifact tool output exposes sent-to-Claude and awaiting-reply flags <a class="anchor" href="#artifact-tool-output-exposes-sent-to-claude-and-awaiting-rep">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>Both skill SKILL.md frontmatter and plugin manifests now accept a <code>metadata</code> field — a free-form map for the skill or plugin author's own use (for example, entitlement flags or catalog fields).</p>
-<ul><li>For skills: the value is preserved on the loaded skill object. Claude Code does not read or act on it.</li><li>For plugins: the value is preserved on the parsed manifest but not read by Claude Code.</li></ul>
-<p>This allows skill/plugin authors to attach arbitrary structured data that survives load without Claude Code imposing any schema on it.</p>
+      <div class="blabel">What</div>
+<p>Thread listings sort threads with comments addressed to Claude first, and individual comments now report whether they were sent to Claude and whether they are still waiting on a reply.</p>
+<div class="blabel">Details</div>
+<ul><li>per-comment fields <code>sent_to_claude</code>, <code>sent_to_claude_degraded</code> and <code>awaiting_reply</code></li><li>size-capped elisions state how many hidden comments were sent to Claude, including a count for those whose addressed status could not be read</li></ul>
 <div class="blabel">Evidence</div>
-<p>new schema field (search for <code>"Free-form map for the skill author's own use"</code>) at line ~214797; plugin variant (search for <code>"Free-form metadata for the plugin author's own use"</code>) at line ~68668</p>
+<p><code>addressed-status-unreadable</code></p>
+<hr>
+    </article>
+    <article class="card" id="skill-import-from-other-agents-refuses-unsafe-copies">
+      <div class="card-top">
+        <h3>Skill import from other agents refuses unsafe copies <a class="anchor" href="#skill-import-from-other-agents-refuses-unsafe-copies">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Importing a skill from another agent now inspects the source directory and skips the copy with an explanation instead of producing a skill Claude Code cannot load.</p>
+<div class="blabel">Details</div>
+<ul><li>Skips when SKILL.md is larger than the size Claude Code loads.</li><li>Skips when SKILL.md starts with <code>---</code> YAML frontmatter, which Codex treats as plain text.</li><li>Skips when the directory contains subdirectories that Claude Code would adopt as plugin components.</li><li>Skips when several case or encoding variants of SKILL.md exist in the same directory, and tells you to copy it manually.</li><li>A copy that proceeds rewrites SKILL.md and removes the destination if the copy fails part way.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>skill directory has multiple SKILL.md case/encoding variants \u2014 copy the skill manually</code></p>
+<hr>
+    </article>
+    <article class="card" id="btw-side-questions-show-a-fallback-model-notice">
+      <div class="card-top">
+        <h3>/btw side questions show a fallback-model notice <a class="anchor" href="#btw-side-questions-show-a-fallback-model-notice">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a side question falls back to a different model, the answer is now preceded by a warning banner naming the original and fallback models instead of silently switching.</p>
+<div class="blabel">Details</div>
+<ul><li>The side-question flow returns a <code>refusalFallback</code> object carrying the original model, the fallback model and the notice content alongside the response.</li><li>The UI renders the banner above the answer only when a fallback is present.</li><li>The control-request response carries the same information as <code>refusal_fallback</code> with <code>original_model</code>, <code>fallback_model</code> and <code>content</code> fields.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>fallbackNotice</code></p>
+<hr>
+    </article>
+    <article class="card" id="artifact-comments-now-mark-which-comments-were-sent-to-claud">
+      <div class="card-top">
+        <h3>Artifact comments now mark which comments were sent to Claude <a class="anchor" href="#artifact-comments-now-mark-which-comments-were-sent-to-claud">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Comment rows carry an explicit label when the comment was addressed to Claude, so it is clear which parts of a thread are a request to you and which are other people talking to each other.</p>
+<div class="blabel">Details</div>
+<ul><li>Rows can show a ", sent to you" label, with an "awaiting reply" variant and a variant for when the status cannot be read.</li><li>Threads containing such comments are sorted to the top of the list, and the header count mentions them.</li><li>The tool description now states that only labelled comments are addressed to Claude.</li><li>The anti-injection preamble gained explicit rules that the attribution bracket only ever appears at the start of a row.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code> Threads with comments sent to you are listed first; list order is not chronological.</code></p>
+<hr>
+    </article>
+    <article class="card" id="commands-skills-and-plugin-manifests-accept-a-free-form-meta">
+      <div class="card-top">
+        <h3>Commands, skills and plugin manifests accept a free-form metadata object <a class="anchor" href="#commands-skills-and-plugin-manifests-accept-a-free-form-meta">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Authors can attach an arbitrary <code>metadata</code> object to command and skill frontmatter and to plugin manifests; it is preserved through parsing but never interpreted by Claude Code.</p>
+<div class="blabel">Details</div>
+<ul><li>Frontmatter parsing keeps <code>metadata</code> when the value is an object; the parsed command shape and its serialization allowlist both include "metadata".</li><li>Plugin manifest validation warns with the fragment "'metadata' must be a free-form object" and states the value will be ignored at load time when it is not an object.</li><li>Both the plugin manifest schema and the skill schema document the field as a free-form map for the author's own use, for example entitlement or catalog fields.</li><li>Metadata keys are no longer folded into the computed <code>declaredFields</code> set.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Free-form metadata for the plugin author's own use (e.g. entitlement or catalog fields). Preserved on the parsed manifest but not read by Claude Code.</code>, <code>'metadata' must be a free-form object</code></p>
+<hr>
+    </article>
+    <article class="card" id="remote-bridge-presence-heartbeats-can-self-heal-the-transpor">
+      <div class="card-top">
+        <h3>Remote-bridge presence heartbeats can self-heal the transport <a class="anchor" href="#remote-bridge-presence-heartbeats-can-self-heal-the-transpor">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The v2 remote-control transport now counts consecutive presence heartbeat failures and, when heartbeats keep failing while the SSE read stream still looks alive, closes with a new code 4093 and rebuilds the transport rather than sitting on a dead connection.</p>
+<div class="blabel">Details</div>
+<ul><li>New close code 4093 with human-readable reason text explaining that presence heartbeats to the server kept failing.</li><li>New internals: resetHeartbeatStreak, onHeartbeatLost, and isReadStreamRecentlyAlive, which is what distinguishes a stalled heartbeat from a genuinely dead read stream.</li><li>Gated on tengu_bridge_selfheal_heartbeats; the fallback value in source is true, with the real value coming from remote config.</li><li>Skipped entirely when the session is outboundOnly.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>presence heartbeats to the server kept failing (code 4093)</code></p>
+<hr>
+    </article>
+    <article class="card" id="artifacts-dialog-can-dismiss-frames-with-x">
+      <div class="card-top">
+        <h3>Artifacts dialog can dismiss frames with <code>x</code> <a class="anchor" href="#artifacts-dialog-can-dismiss-frames-with-x">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The frames dialog now takes attachedSlugs and an onDetach callback, marks each row with isAttached, and adds an <code>x</code> chord that removes the highlighted frame from the session's list, followed by a confirmation line.</p>
+<div class="blabel">Details</div>
+<ul><li>Each frame row renders with an attached indicator so it is clear which frames are currently in play.</li><li>Pressing <code>x</code> on the highlighted row detaches it from the session rather than deleting the artifact.</li><li>Dismissal is confirmed inline in the dialog.</li></ul>
+<div class="blabel">Usage</div>
+<pre><code>/artifacts</code></pre>
+<div class="blabel">Evidence</div>
+<p><code>frame_link_dismiss_dialog</code></p>
+<hr>
+    </article>
+    <article class="card" id="remote-bridge-self-heals-when-heartbeats-fail-but-sse-is-ali">
+      <div class="card-top">
+        <h3>Remote bridge self-heals when heartbeats fail but SSE is alive <a class="anchor" href="#remote-bridge-self-heals-when-heartbeats-fail-but-sse-is-ali">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The v2 remote bridge can now detect the case where heartbeats keep failing while the SSE read stream is still delivering data, and tears the session down so the transport is rebuilt instead of sitting in a half-dead state.</p>
+<div class="blabel">Details</div>
+<ul><li>Session state tracks <code>consecutiveHeartbeatFailures</code> and <code>heartbeatStreakStartedAtMs</code>, plus a new <code>onHeartbeatLost</code> callback.</li><li>Liveness is judged by a new <code>isReadStreamRecentlyAlive()</code> helper backed by <code>lastLivenessEvidenceAtMs</code>.</li><li>On trigger the session closes with code 4093 and logs "[bridge:repl] CCR v2: heartbeats failing while SSE healthy — closing for transport rebuild".</li><li>Wired through a <code>selfHealHeartbeats</code> option read from the <code>tengu_bridge_selfheal_heartbeats</code> gate, whose fallback is true; the real value comes from remote config.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>tengu_bridge_selfheal_heartbeats</code></p>
+<hr>
+    </article>
+    <article class="card" id="host-managed-provider-sessions-take-model-policy-from-the-pa">
+      <div class="card-top">
+        <h3>Host-managed provider sessions take model policy from the parent process <a class="anchor" href="#host-managed-provider-sessions-take-model-policy-from-the-pa">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When Claude Code runs under a host that manages the provider, settings-file model configuration is ignored in favour of policy handed down by the parent process.</p>
+<div class="blabel">Details</div>
+<ul><li>Settings resolution gained <code>hostManagedProvider: te.CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST</code>.</li><li>With that env var set, <code>model</code>, <code>fallbackModel</code>, <code>modelOverrides</code> and provider env vars are stripped from the policy view.</li><li>A <code>hostModelOverlay</code> built from parent-managed settings is applied in their place; admin <code>modelOverrides</code> are stashed and re-applied to enforcement.</li><li>The managed-settings source enum gained a "parent" value, returned when a parent slice or host model overlay exists.</li><li>Inactive unless <code>CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST</code> is set.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>hostManagedProvider</code></p>
+<hr>
     </article>
   </div>
   </div>
   <div class="section-head">
     <h2>Improvements</h2><div class="ln"></div>
-<span class="ct">11 items</span>  </div>
+<span class="ct">54 items</span>  </div>
   <div class="card-grid">
   <div class="col">
-    <article class="card" id="remote-control-cannot-be-enabled-from-repo-scoped-settings">
+    <article class="card" id="bridge-recovery-has-a-rebuild-budget-and-richer-failure-tele">
       <div class="card-top">
-        <h3>Remote Control Cannot Be Enabled from Repo-Scoped Settings <a class="anchor" href="#remote-control-cannot-be-enabled-from-repo-scoped-settings">#</a></h3>
+        <h3>Bridge recovery has a rebuild budget and richer failure telemetry <a class="anchor" href="#bridge-recovery-has-a-rebuild-budget-and-richer-failure-tele">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>Setting <code>remoteControlAtStartup: true</code> in project or local settings (<code>settings.json</code>, <code>.claude/settings.json</code>) is now ignored with a logged warning. Remote Control is a security-sensitive capability that can only be enabled at user scope (via <code>/config</code> or user <code>settings.json</code>).</p>
-<p>A value of <code>false</code> in repo-scoped settings is still honoured and acts as a hard off-switch. Only the <code>true</code> direction requires user scope.</p>
-<p>The warning reads: <code>"remoteControlAtStartup: true in project and local settings ignored — repo-scoped settings cannot enable Remote Control; set it at user scope (/config)"</code></p>
+      <div class="blabel">What</div>
+<p>Recovery from 401, 4091 and 4093 transport closes is now table-driven, and repeated transport rebuilds are capped so a bridge that cannot heal stops retrying and says why.</p>
+<div class="blabel">Details</div>
+<ul><li>each close code maps to its own reconnect detail, cause, diagnostic, terminal-vs-retry fetch failure classification and recovered code</li><li>4093 rebuilds within a one hour window are budgeted; exceeding the budget stops recovery with an explicit message</li><li>new presence telemetry codes: recovery_exhausted, heartbeat_budget_exhausted, recovery_no_oauth_token, recovery_reauth_required, recovery_credentials_fetch_failed, recovery_credentials_rejected, recovery_abandoned_at_teardown, bridge_connect_died_before_presence</li></ul>
 <div class="blabel">Evidence</div>
-<p>security gate (search for <code>"repo-scoped settings cannot enable Remote Control"</code>) — <code>Y_t()</code> at line ~681628</p>
+<p><code>presence heartbeats to the server kept failing after repeated reconnects</code></p>
+<hr>
     </article>
-    <article class="card" id="remote-bridge-heartbeat-self-healing-gradual-rollout">
+    <article class="card" id="remote-control-bridge-heals-a-socket-whose-heartbeats-keep-f">
       <div class="card-top">
-        <h3>Remote Bridge Heartbeat Self-Healing [Gradual Rollout] <a class="anchor" href="#remote-bridge-heartbeat-self-healing-gradual-rollout">#</a></h3>
+        <h3>Remote-control bridge heals a socket whose heartbeats keep failing <a class="anchor" href="#remote-control-bridge-heals-a-socket-whose-heartbeats-keep-f">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>Controlled by <code>tengu_bridge_selfheal_heartbeats</code>, which defaults to <code>true</code> (on for everyone unless Anthropic rolls it back server-side).</p>
-<p>When CCR v2 detects that presence heartbeats are failing while the SSE channel is still healthy, the bridge now proactively closes the transport (with code 4093) and rebuilds it rather than leaving the connection in a degraded state. This is visible in logs as <code>"[bridge:repl] CCR v2: heartbeats failing while SSE healthy — closing for transport rebuild"</code>.</p>
-<p>Recovery attempts are budget-limited: if the bridge rebuilds too many times within one hour, it gives up and shows <code>"presence heartbeats to the server kept failing after repeated reconnects"</code> as a terminal error.</p>
+      <div class="blabel">What</div>
+<p>The CCR v2 transport now spots heartbeats failing repeatedly while the SSE read stream still looks healthy, and closes the socket with code 4093 so the bridge rebuilds the transport instead of sitting on a half-dead connection.</p>
+<div class="blabel">Details</div>
+<ul><li>close code 4093 has its own recovery entry reporting <code>reconnectingDetail: "presence heartbeats failing — reconnecting"</code></li><li>a successful rebuild emits the presence code <code>recovered_heartbeat_4093</code></li><li>gated on tengu_bridge_selfheal_heartbeats whose in-source fallback is true, so absent a remote value it runs</li><li>additionally requires !outboundOnly</li></ul>
 <div class="blabel">Evidence</div>
-<p>heartbeat recovery (search for <code>"selfHealHeartbeats"</code>) at line ~615026; flag default (search for <code>"tengu_bridge_selfheal_heartbeats"</code>) at line ~615379</p>
+<p><code>[bridge:repl] CCR v2: heartbeats failing while SSE healthy — closing for transport rebuild</code></p>
+<hr>
     </article>
-    <article class="card" id="subagent-model-allowlist-family-based-fallback">
+    <article class="card" id="claude-ai-mcp-proxy-surfaces-a-rejected-session-token">
       <div class="card-top">
-        <h3>Subagent Model Allowlist: Family-Based Fallback <a class="anchor" href="#subagent-model-allowlist-family-based-fallback">#</a></h3>
+        <h3>claude.ai MCP proxy surfaces a rejected session token <a class="anchor" href="#claude-ai-mcp-proxy-surfaces-a-rejected-session-token">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>When a subagent requests a model not in the <code>availableModels</code> allowlist, Claude Code now tries to find the newest allowed model in the same model family before falling back to the parent model. The log warning distinguishes the two outcomes:</p>
-<ul><li><code>"using the newest allowed model in its family"</code> — a same-family substitute was found</li><li><code>"inheriting the parent model"</code> — no same-family substitute; parent model is used</li></ul>
+      <div class="blabel">What</div>
+<p>A 401 from the claude.ai proxy that a token refresh cannot fix now becomes a typed error telling you to run /login, instead of silently returning the original failed response.</p>
+<div class="blabel">Details</div>
+<ul><li>error code CLAUDEAI_BEARER_REJECTED, recognised by connect, tools/list, prompts/get and skills/list</li><li>sets <code>discoveryBearerRejected</code> on the client and skips the usual "degraded" telemetry</li><li>emits mcp_connect_claudeai_bearer_rejected and mcp_reconnect_bearer_rejected</li><li>the failed entry is evicted from the connection cache so a later attempt retries</li></ul>
 <div class="blabel">Evidence</div>
-<p>revised warning (search for <code>"using the newest allowed model in its family"</code>) — <code>keb()</code> at line ~534187</p>
+<p><code>claude.ai rejected the session token — it may lack connector scopes or be invalid. Run /login.</code></p>
+<hr>
     </article>
-    <article class="card" id="disable-model-invocation-error-message">
+    <article class="card" id="mcp-server-list-shows-a-token-rejected-state">
       <div class="card-top">
-        <h3><code>disable-model-invocation</code> Error Message <a class="anchor" href="#disable-model-invocation-error-message">#</a></h3>
+        <h3>MCP server list shows a token-rejected state <a class="anchor" href="#mcp-server-list-shows-a-token-rejected-state">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>When a skill with <code>disable-model-invocation: true</code> is invoked by the model (rather than a user slash command), the error message now includes: "Do not replicate this skill's workflow by other means — it is reserved for explicit user invocation."</p>
+      <div class="blabel">What</div>
+<p>In the MCP status UI, a server that is connected but whose discovery failed because the claude.ai session token was rejected gets its own line rather than the generic tools-fetch-failure line.</p>
+<div class="blabel">Details</div>
+<ul><li>rendered only for the bearer-rejected case; other discovery failures keep the existing wording</li></ul>
 <div class="blabel">Evidence</div>
-<p>(search for <code>"Do not replicate this skill's workflow by other means"</code>) at line ~590482</p>
+<p><code>connected · session token rejected</code></p>
+<hr>
     </article>
-    <article class="card" id="claude-import-yes-description-updated">
+    <article class="card" id="thread-rendering-keeps-summoning-comments-and-marks-new-trun">
       <div class="card-top">
-        <h3><code>claude import --yes</code> Description Updated <a class="anchor" href="#claude-import-yes-description-updated">#</a></h3>
+        <h3>Thread rendering keeps summoning comments and marks new truncation kinds <a class="anchor" href="#thread-rendering-keeps-summoning-comments-and-marks-new-trun">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>The <code>--yes</code> flag for <code>claude import</code> now reads: "Skip the interactive picker. On headless surfaces, pass --yes=&lt;digest&gt; from the <code>/import</code> preview."</p>
-<p>This clarifies the intended headless workflow: run the import preview first to see the digest, then pass <code>--yes=&lt;digest&gt;</code> to confirm deterministically.</p>
+      <div class="blabel">What</div>
+<p>The thread renderer was replaced so the comments that actually caused this turn are never dropped to fit the budget.</p>
+<div class="blabel">Details</div>
+<ul><li>always keeps the newest comment plus every comment that summoned this turn, budgeting characters across them</li><li>new markers <code>[summoning comment truncated]</code> alongside <code>[newest comment truncated]</code> and <code>[N comment(s) elided]</code></li><li><code>summoning_truncated</code> added to the compose_thread_elided telemetry</li></ul>
 <div class="blabel">Evidence</div>
-<p>(search for <code>"Skip the interactive picker. On headless surfaces"</code>) at line ~1071802</p>
+<p><code>[summoning comment truncated]</code></p>
+<hr>
     </article>
-    <article class="card" id="artifact-comment-attribution-sent-to-you-label">
+    <article class="card" id="auto-reply-stands-down-when-lane-or-send-status-data-is-unre">
       <div class="card-top">
-        <h3>Artifact Comment Attribution: "sent to you" Label <a class="anchor" href="#artifact-comment-attribution-sent-to-you-label">#</a></h3>
+        <h3>Auto-reply stands down when lane or send-status data is unreadable <a class="anchor" href="#auto-reply-stands-down-when-lane-or-send-status-data-is-unre">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>The Artifact tool's comment renderer now labels each comment with one of:</p>
-<ul><li><code>[human, sent to you]</code> — a comment that was explicitly directed at Claude this turn</li><li><code>[human]</code> — a viewer comment not directed at Claude</li><li><code>[assistant]</code> — Claude's own reply</li></ul>
-<p>This makes it unambiguous which comments you are expected to answer, especially on threads with mixed viewer chatter and direct summons.</p>
+      <div class="blabel">What</div>
+<p>Rather than guessing, auto-reply now defers when it cannot read who wrote a comment or whether it was sent to Claude.</p>
+<div class="blabel">Details</div>
+<ul><li>new defer notices: <code>activation_read_absent</code> (thread no longer shows as activated), <code>newest_lane_unknown</code> (newest comment's author lane unreadable, or an unknown-lane comment follows a sent-to-Claude human comment), and <code>fresh_trigger_degraded</code></li><li>each reported once per thread through the existing artifact_comments_autoreact telemetry</li></ul>
 <div class="blabel">Evidence</div>
-<p>(search for <code>"human, sent to you"</code>) at line ~620425</p>
+<p><code>artifact_comments_autoreact</code></p>
+<hr>
     </article>
-    <article class="card" id="config-corruption-recovery-message">
+    <article class="card" id="artifact-auto-reply-failure-notices-no-longer-say-claude">
       <div class="card-top">
-        <h3>Config Corruption Recovery Message <a class="anchor" href="#config-corruption-recovery-message">#</a></h3>
+        <h3>Artifact auto-reply failure notices no longer say "@claude" <a class="anchor" href="#artifact-auto-reply-failure-notices-no-longer-say-claude">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>A new error message appears if Claude Code cannot parse its config file at startup: "Could not read Claude Code config — run <code>claude</code> with no arguments to recover it."</p>
-<p>Previously this case could fail silently or produce a generic error. The new message guides users toward the interactive startup flow that can rebuild the config.</p>
+      <div class="blabel">What</div>
+<p>The canned edit-failure replies were reworded to match the send-to-Claude mechanism instead of telling viewers to mention @claude.</p>
+<div class="blabel">Details</div>
+<ul><li>affects the replies posted when an auto-reply edit fails</li></ul>
 <div class="blabel">Evidence</div>
-<p>(search for <code>"Could not read Claude Code config"</code>) — <code>xjd</code> at line ~460696</p>
+<p><code>send a comment to Claude again later to retry.</code></p>
+<hr>
     </article>
-    <article class="card" id="artifact-browser-shows-artifacts-to-see-all">
+    <article class="card" id="worktree-git-commands-run-with-a-scrubbed-git-environment">
       <div class="card-top">
-        <h3>Artifact Browser Shows "/artifacts to see all" <a class="anchor" href="#artifact-browser-shows-artifacts-to-see-all">#</a></h3>
+        <h3>Worktree git commands run with a scrubbed git environment <a class="anchor" href="#worktree-git-commands-run-with-a-scrubbed-git-environment">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>When the artifact panel's name list is truncated because more artifacts exist than can be shown in the column width, the panel now appends a <code>"/artifacts to see all"</code> hint text.</p>
+      <div class="blabel">What</div>
+<p>Worktree plumbing no longer inherits ambient git environment variables, so a stray GIT_DIR or a repo fsmonitor cannot redirect worktree operations.</p>
+<div class="blabel">Details</div>
+<ul><li>covers create, remove, lock, status, reset, rev-parse and sparse-checkout</li><li>blanks GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE, GIT_CONFIG_COUNT, GIT_CONFIG_PARAMETERS, the per-index GIT_CONFIG_KEY_n and GIT_CONFIG_VALUE_n pairs, and more</li><li>all calls go through the shared <code>-c core.hooksPath=/dev/null -c core.fsmonitor=</code> prefix</li></ul>
 <div class="blabel">Evidence</div>
-<p>(search for <code>"/artifacts to see all"</code>) — <code>p4a</code> at line ~824685</p>
+<p><code>GIT_ALTERNATE_OBJECT_DIRECTORIES: void 0</code></p>
+<hr>
     </article>
-    <article class="card" id="peer-session-message-header-refined">
+    <article class="card" id="worktree-creation-validates-the-resulting-root-before-use">
       <div class="card-top">
-        <h3>Peer Session Message Header Refined <a class="anchor" href="#peer-session-message-header-refined">#</a></h3>
+        <h3>Worktree creation validates the resulting root before use <a class="anchor" href="#worktree-creation-validates-the-resulting-root-before-use">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>When another Claude session sends a mid-turn message, the header label is now <code>"A peer session sent a message while you were working:"</code> rather than <code>"Another Claude session sent a message while you were working:"</code>. The security guidance boilerplate inside the message is unchanged.</p>
+      <div class="blabel">What</div>
+<p>After creating a worktree, Claude Code checks that the new directory is acceptable as an isolation root and fails loudly if it is not.</p>
+<div class="blabel">Details</div>
+<ul><li>applies to every creation path: interactive, agent, hook-based and resumed</li><li>throws on rejection and records telemetry <code>git_worktree_create_root_rejected</code></li></ul>
 <div class="blabel">Evidence</div>
-<p>(search for <code>"A peer session sent a message while you were working:"</code>) — <code>gA_</code> at line ~429462</p>
+<p><code>git_worktree_create_root_rejected</code></p>
+<hr>
     </article>
-    <article class="card" id="worktree-notification-text-clearer">
+    <article class="card" id="resuming-into-a-missing-or-unverifiable-worktree-is-now-expl">
       <div class="card-top">
-        <h3>Worktree Notification Text Clearer <a class="anchor" href="#worktree-notification-text-clearer">#</a></h3>
+        <h3>Resuming into a missing or unverifiable worktree is now explained <a class="anchor" href="#resuming-into-a-missing-or-unverifiable-worktree-is-now-expl">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>The artifact comment notification for activated threads changed from "New human comments are arriving on activated threads of artifact…" to "Human comments sent to Claude are waiting on activated threads of artifact…" This phrasing makes it clear these are comments that specifically summoned Claude, not general viewer activity.</p>
+      <div class="blabel">What</div>
+<p>Worktree re-entry on resume returns a structured outcome that the session reports, instead of quietly continuing without isolation.</p>
+<div class="blabel">Details</div>
+<ul><li>a vanished worktree clears the binding and continues without isolation</li><li>an unverifiable or rejected pin keeps the binding</li><li>interactive sessions show a warning message; headless and print paths write an error to stderr and exit non-zero rather than continuing unisolated</li><li>telemetry <code>tengu_worktree_resume_root_rejected</code> carries the reason and a poisoned flag</li></ul>
 <div class="blabel">Evidence</div>
-<p>(search for <code>"Human comments sent to Claude are waiting on activated threads of artifact"</code>) — <code>Eaa()</code> at line ~619804</p>
+<p><code>The worktree binding has been cleared.</code></p>
+<hr>
     </article>
-    <article class="card" id="mcp-task-metadata-storage-via-v5-backend">
+    <article class="card" id="isolation-refusal-messages-distinguish-session-from-agent">
       <div class="card-top">
-        <h3>MCP Task Metadata Storage via v5 Backend <a class="anchor" href="#mcp-task-metadata-storage-via-v5-backend">#</a></h3>
+        <h3>Isolation refusal messages distinguish session from agent <a class="anchor" href="#isolation-refusal-messages-distinguish-session-from-agent">#</a></h3>
 <div class="tags"><span class="tag new">New</span></div>      </div>
-      <p><code>writeMcpTaskMetadata</code>, <code>deleteMcpTaskMetadata</code>, and <code>listMcpTaskMetadata</code> now support writing to the v5 sidecar storage backend when available, in addition to the legacy filesystem path. This enables task metadata to follow the same storage abstraction as other session data.</p>
+      <div class="blabel">What</div>
+<p>The refusals you get when a shell cwd or file edit escapes a worktree now name the right subject.</p>
+<div class="blabel">Details</div>
+<ul><li>picks between "This session is isolated…" and "This agent is isolated…" based on whether the pin is the session's own worktree, with a matching possessive</li><li>shell cwd and file edit paths now share one escape-detection routine</li></ul>
 <div class="blabel">Evidence</div>
-<p>(search for <code>"writeMcpTaskMetadata:"</code>) — <code>MHo()</code> at line ~362027</p>
+<p><code>possessive: "a worktree-isolated agent's"</code></p>
+<hr>
+    </article>
+    <article class="card" id="parked-agents-refuse-to-resume-into-a-worktree-that-vanished">
+      <div class="card-top">
+        <h3>Parked agents refuse to resume into a worktree that vanished <a class="anchor" href="#parked-agents-refuse-to-resume-into-a-worktree-that-vanished">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Resuming a parked or isolated agent verifies the recorded worktree first and refuses rather than silently landing somewhere else.</p>
+<div class="blabel">Details</div>
+<ul><li>stats and verifies the recorded worktree and touches it</li><li>falls back to a covered directory only when the session's fences cover it</li><li>otherwise raises a terminal error saying the agent cannot be resumed</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>This agent cannot be resumed: its worktree</code></p>
+<hr>
+    </article>
+    <article class="card" id="plugin-and-skill-search-now-degrade-to-empty-on-403">
+      <div class="card-top">
+        <h3>Plugin and skill search now degrade to empty on 403 <a class="anchor" href="#plugin-and-skill-search-now-degrade-to-empty-on-403">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A 403 from the plugin and skill search or list routes returns an empty result instead of surfacing an error, so an unentitled account sees nothing rather than a failure.</p>
+<div class="blabel">Details</div>
+<ul><li>The degraded path logs the route and status and records a <code>not_entitled</code> telemetry code.</li><li>Other 4xx responses still throw.</li><li>The error envelope parser now tolerates a response missing <code>type</code> or <code>message</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>[plugin-skill-list] degraded to empty: list-plugins 403</code></p>
+<hr>
+    </article>
+    <article class="card" id="model-refusal-fallback-no-longer-claims-your-session-model-c">
+      <div class="card-top">
+        <h3>Model refusal fallback no longer claims your session model changed <a class="anchor" href="#model-refusal-fallback-no-longer-claims-your-session-model-c">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a request falls back to another model, the notice explains that only that response came from the other model, and the session model display marks the switch as automatic.</p>
+<div class="blabel">Details</div>
+<ul><li>The old "Switched to X" wording is gone; the notice now says the response was generated or completed by the other model and that the session model is unchanged.</li><li><code>/status</code> and the model display append a note that the model was automatically switched.</li><li>The fallback notice is carried into the extracted last-assistant-response text with a ⚠ prefix.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>This response was generated by ${n} instead. Your session model is unchanged.</code></p>
+<hr>
+    </article>
+    <article class="card" id="subagent-models-outside-the-allowlist-step-down-within-their">
+      <div class="card-top">
+        <h3>Subagent models outside the allowlist step down within their family <a class="anchor" href="#subagent-models-outside-the-allowlist-step-down-within-their">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A subagent or teammate asking for a model that is not in <code>availableModels</code> now falls to the newest allowed model in the same family rather than straight to the parent or default model.</p>
+<div class="blabel">Details</div>
+<ul><li>Only applies when a same-family allowed model exists; otherwise the old parent/default fallback still runs.</li><li>Emits telemetry code <code>family_alias_stepped_down</code> and a matching warning log.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>family_alias_stepped_down</code></p>
+<hr>
+    </article>
+    <article class="card" id="shutdown-waits-for-in-flight-remote-control-work">
+      <div class="card-top">
+        <h3>Shutdown waits for in-flight remote-control work <a class="anchor" href="#shutdown-waits-for-in-flight-remote-control-work">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Teardown now gives a pending remote-control operation time to finish before tearing down the rest of the session.</p>
+<div class="blabel">Details</div>
+<ul><li>Waits up to 30 seconds and swallows the timeout rather than failing shutdown.</li><li>Runs before MCP client cleanup and session state clearing.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>remote_control operation still pending at teardown</code></p>
+<hr>
+    </article>
+    <article class="card" id="messages-from-other-sessions-get-a-sanitized-sender-label">
+      <div class="card-top">
+        <h3>Messages from other sessions get a sanitized sender label <a class="anchor" href="#messages-from-other-sessions-get-a-sanitized-sender-label">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Transcript rows for messages arriving from another session render through a shared component that names the sender and offers an expand chord.</p>
+<div class="blabel">Details</div>
+<ul><li>Shows "Message" or "N messages" followed by "from @&lt;name&gt;" plus the expand chord.</li><li>The name is restricted to letters, digits, dot, underscore and hyphen, and truncated with an ellipsis.</li><li>SendMessage tool labels and teammate summaries use the same sanitizer.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>from @</code></p>
+<hr>
+    </article>
+    <article class="card" id="bad-metadata-in-frontmatter-and-manifests-now-warns">
+      <div class="card-top">
+        <h3>Bad <code>metadata</code> in frontmatter and manifests now warns <a class="anchor" href="#bad-metadata-in-frontmatter-and-manifests-now-warns">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Authoring a skill, command, plugin manifest or marketplace entry with a non-object <code>metadata</code> value produces a validation warning instead of silent loss.</p>
+<div class="blabel">Details</div>
+<ul><li>The warning names the type actually found and states that the value is dropped or ignored at load time.</li><li>Applies to skill and command frontmatter, plugin manifests, and marketplace plugin entries.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>'metadata' must be a mapping (key: value pairs); got </code></p>
+<hr>
+    </article>
+    <article class="card" id="deferred-pr-existence-checks-retry-on-later-git-commands">
+      <div class="card-top">
+        <h3>Deferred PR-existence checks retry on later git commands <a class="anchor" href="#deferred-pr-existence-checks-retry-on-later-git-commands">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Detection of a newly created pull or merge request no longer depends on a single check right after the create command.</p>
+<div class="blabel">Details</div>
+<ul><li>Pending checks are tracked per cwd plus branch with an attempt counter, in a bounded map.</li><li>A successful <code>gh pr create</code> or <code>glab mr create</code> clears the entries for that cwd.</li><li>Later matching git commands re-check pending branches until the attempt cap is reached.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>tengu_git_operation</code></p>
+<hr>
+    </article>
+    <article class="card" id="agent-proxy-tunnel-now-times-out-waiting-for-hello-ack">
+      <div class="card-top">
+        <h3>Agent-proxy tunnel now times out waiting for HELLO_ACK <a class="anchor" href="#agent-proxy-tunnel-now-times-out-waiting-for-hello-ack">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A WebSocket tunnel that never gets its protocol v2 negotiation acknowledged now fails fast instead of continuing in an undefined state.</p>
+<div class="blabel">Details</div>
+<ul><li>Connecting arms a <code>helloAckDeadline</code>; if the server does not acknowledge protocol v2 within the open timeout, negotiation fails with "tunnel protocol v2 negotiation failed" and a reason built from the fragment "no HELLO_ACK within" plus the elapsed limit.</li><li>An ack carrying an unexpected version is rejected, and the connection is closed with a 502 "Bad Gateway".</li><li>The deadline is cleared both on receiving HELLO_ACK and on teardown.</li><li>A new telemetry event <code>agent_proxy_request_v2_not_acked</code> fires on the failure path.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>requires tunnel protocol v2; the server did not acknowledge the negotiation (</code>, <code>agent_proxy_request_v2_not_acked</code></p>
+<hr>
+    </article>
+    <article class="card" id="remotecontrolatstartup-can-no-longer-be-turned-on-by-repo-sc">
+      <div class="card-top">
+        <h3>remoteControlAtStartup can no longer be turned on by repo-scoped settings <a class="anchor" href="#remotecontrolatstartup-can-no-longer-be-turned-on-by-repo-sc">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A checked-in project or local settings file can no longer enable Remote Control at startup, closing off a path where cloning a repo changed your startup behaviour.</p>
+<div class="blabel">Details</div>
+<ul><li>The setting is read through the security-sensitive settings path, so only user, policy or flag scope can enable it.</li><li>Project and local settings can still disable it: a false value wins.</li><li>A true value at repo scope is ignored and logged.</li><li><code>projectSettings</code> is ignored entirely when it aliases user settings.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>repo-scoped settings cannot enable Remote Control; set it at user scope (/config)</code></p>
+<hr>
+    </article>
+    <article class="card" id="connectivity-check-rewritten-on-fetch-with-a-timeout-and-pro">
+      <div class="card-top">
+        <h3>Connectivity check rewritten on fetch, with a timeout and proxy awareness <a class="anchor" href="#connectivity-check-rewritten-on-fetch-with-a-timeout-and-pro">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The hello-endpoint probe used by the connection diagnostics now runs on fetch with an explicit timeout and reports whether a proxy was involved.</p>
+<div class="blabel">Details</div>
+<ul><li>Uses <code>AbortSignal.timeout</code> rather than the previous HTTP client, and cancels the response body.</li><li>A timed-out probe is reported as a distinct error rather than a generic failure.</li><li>The result records <code>usedProxy</code> so the failure UI can tell whether a configured proxy was actually in play.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>usedProxy</code></p>
+<hr>
+    </article>
+    <article class="card" id="proxy-hint-in-the-connection-failure-screen">
+      <div class="card-top">
+        <h3>Proxy hint in the connection-failure screen <a class="anchor" href="#proxy-hint-in-the-connection-failure-screen">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a connectivity check fails and the request went through a configured proxy, the error panel now points at the proxy rather than leaving you to guess.</p>
+<div class="blabel">Details</div>
+<ul><li>The panel names the environment variable the proxy is configured through and asks you to check that it allows the host.</li><li>A docs link is appended alongside the hint.</li><li>The extra line only appears when a proxy is configured and was actually used.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>See https://code.claude.com/docs/en/network-config</code></p>
+<hr>
+    </article>
+    <article class="card" id="model-refusal-fallback-events-gain-a-scope-field">
+      <div class="card-top">
+        <h3>model_refusal_fallback events gain a scope field <a class="anchor" href="#model-refusal-fallback-events-gain-a-scope-field">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Fallback events now distinguish a session-wide model swap from a one-off fallback in a subagent or side question, so consumers can tell how far the change reaches.</p>
+<div class="blabel">Details</div>
+<ul><li>The SDK schema adds an optional <code>scope</code> enum with values "session" and "local".</li><li>"session" means the main thread swapped models for the rest of the session; "local" means only a subagent, a /btw side question or a background fork fell back.</li><li>The field is absent from older CLIs and should be treated as "session" when missing.</li><li>The event builder sets <code>scope</code> and selects different wording for local fallbacks.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>'local': a subagent / side-question (/btw) / background fork fell back</code></p>
+<hr>
+    </article>
+    <article class="card" id="agent-to-agent-messaging-gets-a-classifier-review-path">
+      <div class="card-top">
+        <h3>Agent-to-agent messaging gets a classifier review path <a class="anchor" href="#agent-to-agent-messaging-gets-a-classifier-review-path">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The tool for messaging another agent no longer auto-allows in every permission mode; in some modes it defers to classifier review.</p>
+<div class="blabel">Details</div>
+<ul><li>The permission check can now return a passthrough behavior with a message stating that classifier review is required.</li><li>Recipient names must match a single-line pattern.</li><li>Over-long summaries are truncated rather than rejected outright.</li><li>The classifier input string now carries the summary, shutdown reason, request id and plan feedback.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Message to another agent requires classifier review.</code></p>
+<hr>
+    </article>
+    <article class="card" id="mcp-server-panel-explains-a-rejected-claude-ai-session-token">
+      <div class="card-top">
+        <h3>MCP server panel explains a rejected claude.ai session token <a class="anchor" href="#mcp-server-panel-explains-a-rejected-claude-ai-session-token">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A connected MCP server whose discovery bearer token was rejected now tells you to re-login instead of showing a generic tools-list failure.</p>
+<div class="blabel">Details</div>
+<ul><li>A dedicated Issue line instructs you to run /login and then reconnect.</li><li>The generic tools-list error is suppressed in that specific case.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>claude.ai rejected the session token. Run /login, then reconnect.</code></p>
+<hr>
+    </article>
+    <article class="card" id="skill-import-warning-reworded">
+      <div class="card-top">
+        <h3>Skill import warning reworded <a class="anchor" href="#skill-import-warning-reworded">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The confirmation shown before importing a plugin or skill no longer talks about allowed-tools frontmatter, and instead spells out that bundled scripts and body instructions become active once imported.</p>
+<div class="blabel">Details</div>
+<ul><li>Warning now asks you to review SKILL.md and its directory, not just the file.</li><li>States that the import is unchecked by default.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>bundled scripts and body instructions become active in Claude Code. Unchecked by default; review SKILL.md and its directory before importing.</code></p>
+<hr>
+    </article>
+    <article class="card" id="subagent-model-fallback-says-why-it-fell-back">
+      <div class="card-top">
+        <h3>Subagent model fallback says why it fell back <a class="anchor" href="#subagent-model-fallback-says-why-it-fell-back">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a subagent cannot get the model it asked for, the notify callback now carries a reason distinguishing a same-family step-down from inheriting the parent's model, and the message shown downstream differs accordingly.</p>
+<div class="blabel">Details</div>
+<ul><li>Reason is either family_step_down, meaning a fallback within the same model family was picked, or parent_inherit, meaning the subagent fell back to the parent session's model.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>family_step_down</code></p>
+<hr>
+    </article>
+    <article class="card" id="remote-control-enable-disable-runs-as-a-tracked-async-task">
+      <div class="card-top">
+        <h3>Remote control enable/disable runs as a tracked async task <a class="anchor" href="#remote-control-enable-disable-runs-as-a-tracked-async-task">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Handling of the remote_control control request is now wrapped in a single async operation with its own error handling, and it hands off state to the newly created remote session instead of dropping it.</p>
+<div class="blabel">Details</div>
+<ul><li>Old session is torn down only after its callbacks are cleared.</li><li>Pending permission requests and pending user-dialog requests are replayed to the new remote session.</li><li>The initial name supplied in the request is preserved across the swap.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>getPendingUserDialogRequests()</code></p>
+<hr>
+    </article>
+    <article class="card" id="worktree-git-guard-message-adapts-its-wording">
+      <div class="card-top">
+        <h3>Worktree git guard message adapts its wording <a class="anchor" href="#worktree-git-guard-message-adapts-its-wording">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The refusal shown when a git command would escape a worktree now derives the noun and possessive it uses rather than always saying "This agent" and "a worktree-isolated agent's".</p>
+<div class="blabel">Details</div>
+<ul><li>Same refusal behaviour, only the phrasing is now computed from context.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Refusing to run it — </code></p>
+<hr>
+    </article>
+    <article class="card" id="git-invocations-hardened-with-sanitized-args-and-environment">
+      <div class="card-top">
+        <h3>Git invocations hardened with sanitized args and environment <a class="anchor" href="#git-invocations-hardened-with-sanitized-args-and-environment">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Many more git call sites now prepend the frozen safety arguments and run with an environment scrubbed of git overrides, closing off paths where inherited env vars could redirect a git command.</p>
+<div class="blabel">Details</div>
+<ul><li>Newly covered call sites include rev-list, ls-files --others --ignored, worktree remove --force, and config core.hooksPath.</li><li>Sanitized environment strips GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE, and the GIT_CONFIG_KEY_n / GIT_CONFIG_VALUE_n family, among others.</li><li>Two additional <code>git diff</code> call sites now also pass --no-ext-diff and --no-textconv.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>core.hooksPath=/dev/null</code></p>
+<hr>
+    </article>
+    <article class="card" id="mcp-rejected-claude-ai-session-token-is-now-visible">
+      <div class="card-top">
+        <h3>MCP: rejected claude.ai session token is now visible <a class="anchor" href="#mcp-rejected-claude-ai-session-token-is-now-visible">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A connected MCP server whose discovery bearer token was rejected now says so in the server list and in the reconnect result, rather than the state being tracked only internally.</p>
+<div class="blabel">Details</div>
+<ul><li>Message directs you to run /login and then reconnect.</li><li>A successful tools/list now clears discoveryAuthFailure in both MCP client implementations, so a recovered server stops showing the warning.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>but your claude.ai session token was rejected. Run /login, then reconnect.</code></p>
+<hr>
+    </article>
+    <article class="card" id="skill-refusal-message-tells-the-model-not-to-work-around-it">
+      <div class="card-top">
+        <h3>Skill refusal message tells the model not to work around it <a class="anchor" href="#skill-refusal-message-tells-the-model-not-to-work-around-it">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When the model tries to invoke a skill marked as user-only, the returned error now appends an explicit instruction against achieving the same thing another way.</p>
+<div class="blabel">Details</div>
+<ul><li>Applies to skills with disable-model-invocation set.</li><li>The added sentence closes the loophole of the model reading the skill and re-implementing its steps by hand.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Do not replicate this skill's workflow by other means</code></p>
+<hr>
+    </article>
+    <article class="card" id="frame-strip-points-to-artifacts-when-frames-overflow">
+      <div class="card-top">
+        <h3>Frame strip points to <code>/artifacts</code> when frames overflow <a class="anchor" href="#frame-strip-points-to-artifacts-when-frames-overflow">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The frame row layout now reserves space for a browse hint instead of showing a bare "+N" counter when there are more frames than fit.</p>
+<div class="blabel">Details</div>
+<ul><li>The hint names the command that lists everything, so overflow is actionable rather than just a count.</li><li>Layout reserves the room up front, so the hint does not push frames off the row.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>/artifacts to see all</code></p>
+<hr>
+    </article>
+    <article class="card" id="artifact-comments-use-server-delivery-timestamps">
+      <div class="card-top">
+        <h3>Artifact comments use server delivery timestamps <a class="anchor" href="#artifact-comments-use-server-delivery-timestamps">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Comment state now records when the server actually handed a comment to Claude, and the client uses that instead of local bookkeeping to decide what has already been shown.</p>
+<div class="blabel">Details</div>
+<ul><li>The comment schema gained sent_to_claude, sent_to_claude_degraded and awaiting_reply.</li><li>The client maps the server's to_claude_at into toClaudeAt and toClaudeAtDegraded.</li><li>A helper parses the timestamp and returns null when it cannot be parsed, so an unreadable value is treated as not-yet-delivered rather than crashing.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>to_claude_at</code></p>
+<hr>
+    </article>
+    <article class="card" id="teammate-summaries-are-trimmed-truncated-and-colour-checked">
+      <div class="card-top">
+        <h3>Teammate summaries are trimmed, truncated and colour-checked <a class="anchor" href="#teammate-summaries-are-trimmed-truncated-and-colour-checked">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Summary and failureReason text from teammates now passes through a trim-and-truncate helper before it reaches the teammate XML tag or the status line.</p>
+<div class="blabel">Details</div>
+<ul><li>The tag's color attribute is validated against the known colour list rather than escaped and passed through.</li><li>SendMessage input repair gained a case that truncates an over-long summary instead of rejecting the call.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>truncate_summary</code></p>
+<hr>
+    </article>
+    <article class="card" id="model-refusal-fallback-updates-the-shown-model">
+      <div class="card-top">
+        <h3>Model refusal fallback updates the shown model <a class="anchor" href="#model-refusal-fallback-updates-the-shown-model">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a turn falls back after a model refusal, the agent's displayed model is rewritten to the model actually used, and the fallback message now carries a scope.</p>
+<div class="blabel">Details</div>
+<ul><li>A new agent event kind propagates turn effort together with the turn model.</li><li>The async-agent reader applies system/model_refusal_fallback by rewriting the agent's model rather than leaving the old one on screen.</li><li>The optional scope field was added at three emit sites and in the parser.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>agent-turn-effort</code></p>
+<hr>
+    </article>
+    <article class="card" id="codex-import-rejects-oversized-skills-and-risky-command-bodi">
+      <div class="card-top">
+        <h3>Codex import rejects oversized skills and risky command bodies earlier <a class="anchor" href="#codex-import-rejects-oversized-skills-and-risky-command-bodi">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The Codex importer now refuses more source files before conversion instead of producing entries Claude Code would not load.</p>
+<div class="blabel">Details</div>
+<ul><li>SKILL.md files above the size Claude Code will load are rejected, checked both raw and after utf-8 re-encoding.</li><li>A new dangling-shell-exec-marker check runs over command bodies.</li><li>The [features] block goes through a shared helper before being listed as unmappable.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Claude Code skips skills over</code></p>
+<hr>
+    </article>
+    <article class="card" id="codex-import-explains-shell-exec-marker-refusals">
+      <div class="card-top">
+        <h3>Codex import explains shell-exec marker refusals <a class="anchor" href="#codex-import-explains-shell-exec-marker-refusals">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Three new refusal strings spell out why a command was not imported when its body mixes shell execution markers with argument placeholders.</p>
+<div class="blabel">Details</div>
+<ul><li>Covers dangling markers, placeholders combined with backticks or <code>!</code>, and shell blocks containing <code>!</code> next to argument placeholders.</li><li>Each reason tells the user to port the command manually rather than silently dropping it.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Contains a dangling shell-exec marker that argument substitution could complete into a live command at invocation time. Port it manually.</code></p>
+<hr>
+    </article>
+    <article class="card" id="resume-snapshots-carry-user-settings-without-plugin-keys">
+      <div class="card-top">
+        <h3>Resume snapshots carry user settings without plugin keys <a class="anchor" href="#resume-snapshots-carry-user-settings-without-plugin-keys">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The temp directory built to resume a stored session now copies settings.json and cowork_settings.json next to .claude.json, with plugin registration stripped.</p>
+<div class="blabel">Details</div>
+<ul><li>enabledPlugins and extraKnownMarketplaces are deleted from the copied settings.</li><li>The projects directory inside the snapshot is created with mode 448.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>cowork_settings.json</code></p>
+<hr>
+    </article>
+    <article class="card" id="byte-watchdog-covers-first-party-gateway-and-bedrock-streams">
+      <div class="card-top">
+        <h3>Byte watchdog covers first-party, gateway and Bedrock streams <a class="anchor" href="#byte-watchdog-covers-first-party-gateway-and-bedrock-streams">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The rule for wrapping a text/event-stream body in the stall watchdog was widened from a single caller-supplied boolean to name the providers explicitly.</p>
+<div class="blabel">Details</div>
+<ul><li>Now instruments firstParty, gateway and anthropicAws responses.</li><li>Gated on tengu_stream_watchdog_default_on, which falls back to true when the flag is unavailable.</li><li>CLAUDE_ENABLE_BYTE_WATCHDOG overrides the decision, and CLAUDE_ENABLE_BYTE_WATCHDOG_BEDROCK covers Bedrock specifically.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>tengu_stream_watchdog_default_on</code></p>
+<hr>
+    </article>
+    <article class="card" id="bridge-attestation-warnings-are-reported-once-per-event">
+      <div class="card-top">
+        <h3>Bridge attestation warnings are reported once per event <a class="anchor" href="#bridge-attestation-warnings-are-reported-once-per-event">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The attestation notice emitter now keys on event_id and skips events it has already reported, so a single bad event no longer produces repeated warnings.</p>
+<div class="blabel">Details</div>
+<ul><li>The set of seen event ids is bounded.</li><li>The hint about re-pairing a device is no longer restricted to control_request payloads and now shows for any attestation failure.</li><li>A drop-sender notice writer is registered on the remote-io transport and unregistered when it closes.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Re-pair the sending device in Trusted Devices.</code></p>
+<hr>
+    </article>
+    <article class="card" id="git-diffs-ignore-external-diff-drivers-and-textconv-filters">
+      <div class="card-top">
+        <h3>Git diffs ignore external diff drivers and textconv filters <a class="anchor" href="#git-diffs-ignore-external-diff-drivers-and-textconv-filters">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Diff reads now pass <code>--no-ext-diff</code> and <code>--no-textconv</code>, so a repo's own git configuration cannot change the content Claude sees when computing patches.</p>
+<div class="blabel">Details</div>
+<ul><li>New exported constant <code>RAW_BLOB_DIFF_FLAGS = ["--no-ext-diff", "--no-textconv"]</code>.</li><li>Spread into the <code>git diff</code> invocations used for whole patches and per-file hunks.</li><li>Includes the <code>--no-optional-locks diff</code> calls, which previously passed no such flags.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>RAW_BLOB_DIFF_FLAGS</code></p>
+<hr>
+    </article>
+    <article class="card" id="shell-tools-get-an-explicit-worktree-isolation-root">
+      <div class="card-top">
+        <h3>Shell tools get an explicit worktree isolation root <a class="anchor" href="#shell-tools-get-an-explicit-worktree-isolation-root">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Bash and shell execution paths now take an <code>isolationRoot</code> so the checks that keep agent commands inside their worktree have a concrete boundary to compare against.</p>
+<div class="blabel">Details</div>
+<ul><li><code>isolationRoot</code> is resolved from the agent worktree, falling back to the session worktree path.</li><li>Used by the checks that block commands whose cwd escapes the isolation worktree, and those that redirect git into the shared checkout.</li><li>Blocked commands log with <code>isolationRoot=</code> in the message and report <code>tengu_agent_worktree_cwd_escape_blocked</code>.</li><li>The field itself is new in this build.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>isolationRoot</code></p>
+<hr>
+    </article>
+    <article class="card" id="dedicated-error-when-claude-ai-rejects-a-session-bearer-toke">
+      <div class="card-top">
+        <h3>Dedicated error when claude.ai rejects a session bearer token <a class="anchor" href="#dedicated-error-when-claude-ai-rejects-a-session-bearer-toke">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>MCP connections proxied through the claude.ai connector now surface a specific error telling you to re-login, instead of a generic auth failure that gets retried.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>ClaudeAiProxyBearerRejectedError</code> class with code <code>CLAUDEAI_BEARER_REJECTED</code>.</li><li>Message: "claude.ai rejected the session token — it may lack connector scopes or be invalid. Run /login."</li><li>Two retry classifiers return false for it, so it is neither retried nor treated as a generic auth failure.</li><li>Added to the known-error name allowlists, alongside <code>McpAuthError</code> and <code>McpError</code>.</li><li>Connection failures report <code>errorCode: "CLAUDEAI_BEARER_REJECTED"</code> on <code>tengu_mcp_server_connection_failed</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>CLAUDEAI_BEARER_REJECTED</code></p>
+<hr>
+    </article>
+    <article class="card" id="design-oauth-refresh-lock-holds-longer-and-reports-compromis">
+      <div class="card-top">
+        <h3>Design OAuth refresh lock holds longer and reports compromise <a class="anchor" href="#design-oauth-refresh-lock-holds-longer-and-reports-compromis">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The lock guarding OAuth token refresh tolerates slower refreshes and lets the holder find out if its lock was taken away mid-flight.</p>
+<div class="blabel">Details</div>
+<ul><li>Stale window raised from 10s to 60s, with a 5s update interval.</li><li>The callback now receives an object exposing <code>isCompromised()</code>.</li><li>Lock contention throws a dedicated error class rather than a bare <code>Error</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Design OAuth refresh lock compromised</code></p>
+<hr>
+    </article>
+    <article class="card" id="screen-reader-rendering-erases-trailing-characters-in-place">
+      <div class="card-top">
+        <h3>Screen-reader rendering erases trailing characters in place <a class="anchor" href="#screen-reader-rendering-erases-trailing-characters-in-place">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>In screen-reader mode the renderer can now erase trailing characters instead of repainting the line, cutting redundant output for assistive tech.</p>
+<div class="blabel">Details</div>
+<ul><li>Diffing tracks a new <code>prevScreenReaderParkDeclared</code> flag.</li><li>The flag guards a new branch taken when the previous frame had an explicitly declared cursor park.</li><li>Only active in screen-reader mode, under <code>INK_SCREEN_READER</code> / <code>CLAUDE_CODE_ACCESSIBILITY</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>prevScreenReaderParkDeclared</code></p>
+<hr>
+    </article>
+    <article class="card" id="ultraplan-notification-text-shortened">
+      <div class="card-top">
+        <h3>Ultraplan notification text shortened <a class="anchor" href="#ultraplan-notification-text-shortened">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The web-ultraplan banner now says the plan is ready and tells you which key to press, replacing the older "Monitor progress in Claude Code on the web" wording.</p>
+<div class="blabel">Details</div>
+<ul><li>Old text was retired rather than kept alongside the new form.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>ultraplan ready</code></p>
+<hr>
+    </article>
+    <article class="card" id="teammate-count-falls-back-to-a-generic-label">
+      <div class="card-top">
+        <h3>Teammate count falls back to a generic label <a class="anchor" href="#teammate-count-falls-back-to-a-generic-label">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Collapsed teammate status panels now show a generic label when no specific one is available, instead of rendering an empty descriptor.</p>
+<div class="blabel">Details</div>
+<ul><li>Two collapsed-panel renderers pass <code>fallbackLabel: "teammate"</code> to the count component.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>fallbackLabel: "teammate"</code></p>
+<hr>
+    </article>
+    <article class="card" id="turn-effort-display-now-tracks-the-model-the-turn-is-running">
+      <div class="card-top">
+        <h3>Turn effort display now tracks the model the turn is running on <a class="anchor" href="#turn-effort-display-now-tracks-the-model-the-turn-is-running">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The effort label in the status line is computed against the model actually running the turn, so it stays correct after a mid-turn model change or a fallback.</p>
+<div class="blabel">Details</div>
+<ul><li>The agent status store gained <code>turnModel</code> alongside <code>turnEffort</code></li><li><code>setTurnEffort(effort, model)</code> is called at turn start with the resolved agent model, and again on <code>query_model_change</code> and on fallback-model events</li><li>Cleared with <code>setTurnEffort(null, null)</code> at turn end</li><li>The spinner/status component takes the new <code>turnModel</code> prop and uses it when computing the label</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>setTurnEffort</code></p>
+<hr>
+    </article>
+    <article class="card" id="btw-answers-can-now-show-a-refusal-fallback-notice">
+      <div class="card-top">
+        <h3>/btw answers can now show a refusal-fallback notice <a class="anchor" href="#btw-answers-can-now-show-a-refusal-fallback-notice">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When a /btw question is answered by a fallback model after a refusal, the panel shows a warning notice above the answer naming the swap.</p>
+<div class="blabel">Details</div>
+<ul><li>The panel accepts <code>initialFallbackNotice</code> and stores a <code>fallbackNotice</code> alongside each question/response pair in its history</li><li>The notice renders prefixed with a warning sign, above the answer</li><li>Text comes from a <code>refusal_fallback</code> payload returned with the response, carrying <code>original_model</code>, <code>fallback_model</code> and <code>content</code> (truncated)</li></ul>
+<div class="blabel">Usage</div>
+<pre><code>/btw what does this repo use for tests?</code></pre>
+<div class="blabel">Evidence</div>
+<p><code>initialFallbackNotice</code></p>
+<hr>
+    </article>
+    <article class="card" id="model-refusal-fallback-banner-now-also-shown-in-non-main-thr">
+      <div class="card-top">
+        <h3>Model refusal fallback banner now also shown in non-main threads <a class="anchor" href="#model-refusal-fallback-banner-now-also-shown-in-non-main-thr">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A refusal-driven model swap that happens inside a subagent or other non-main thread now surfaces a banner, where previously only main-thread swaps did.</p>
+<div class="blabel">Details</div>
+<ul><li>The refusal-fallback result gained <code>bannerScope</code>, set to "session" for main-thread swaps and "local" otherwise</li><li>Non-main-thread turns emitting local scope now show the banner</li><li>The emitted <code>model_refusal_fallback</code> system message uses different wording depending on the scope</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>bannerScope</code></p>
+<hr>
+    </article>
+    <article class="card" id="plugin-sync-list-failures-carry-http-status-and-403-is-not-r">
+      <div class="card-top">
+        <h3>Plugin sync list failures carry HTTP status and 403 is not retried <a class="anchor" href="#plugin-sync-list-failures-carry-http-status-and-403-is-not-r">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A forbidden response when listing plugins fails fast instead of burning through the retry schedule, and the failure now reports which HTTP status caused it.</p>
+<div class="blabel">Details</div>
+<ul><li>The list-plugins error envelope returns <code>status</code> along with <code>success: !1</code>, and the status is included in the <code>plugins_sync_list_error</code> warning</li><li>The retry wrapper returns immediately when <code>t.status === 403</code> rather than sleeping and retrying</li><li>A sibling retry helper was simplified to test <code>t.ok</code> only</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>plugins_sync_list_error</code></p>
+<hr>
+    </article>
+    <article class="card" id="telemetry-model-name-sanitizer-accepts-a-bracketed-context-s">
+      <div class="card-top">
+        <h3>Telemetry model-name sanitizer accepts a bracketed context suffix <a class="anchor" href="#telemetry-model-name-sanitizer-accepts-a-bracketed-context-s">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Dated model ids that carry a 1m-context suffix are now reported verbatim in telemetry instead of being replaced with "nonconforming".</p>
+<div class="blabel">Details</div>
+<ul><li>The gate regex widened from <code>^[A-Za-z0-9._:[\]-]{1,91}@\d{8}$</code> to allow an optional trailing <code>[&lt;digits&gt;m]</code> group</li><li>Model identifiers that still fail the pattern continue to report as "nonconforming"</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>nonconforming</code></p>
+<hr>
     </article>
   </div>
   </div>
   <div class="section-head">
     <h2>Bug Fixes</h2><div class="ln"></div>
-<span class="ct">4 items</span>  </div>
+<span class="ct">19 items</span>  </div>
   <div class="card-grid">
   <div class="col">
-    <article class="card" id="bug-fixes">
-      <ul><li><strong>Worktree resume loop on missing binding:</strong> When resuming an agent whose worktree record was cleared (exited or scrubbed), the session now continues in the current directory without isolation rather than looping. Evidence: (search for <code>"resuming a session whose worktree record was cleared"</code>) at line ~950108.</li></ul>
-<ul><li><strong>Git environment variable leakage in worktree checks:</strong> Ambient <code>GIT_DIR</code>, <code>GIT_COMMON_DIR</code>, <code>GIT_WORK_TREE</code>, and <code>GIT_CONFIG_KEY_<em></code> / <code>GIT_CONFIG_VALUE_</em></code> env vars are now scrubbed before running git verification commands, preventing the caller's git environment from polluting isolation identity checks. Evidence: (search for <code>"GIT_COMMON_DIR"</code>) — <code>cf()</code> at line ~64018.</li></ul>
-<ul><li><strong>ClaudeAI proxy bearer rejection now a typed error:</strong> MCP connections to <code>claudeai-proxy</code> transports that receive a session-token rejection now raise <code>ClaudeAiProxyBearerRejectedError</code> with code <code>CLAUDEAI_BEARER_REJECTED</code> and the message "claude.ai rejected the session token — it may lack connector scopes or be invalid. Run /login." Previously this was an untyped catch path. Evidence: (search for <code>"ClaudeAiProxyBearerRejectedError"</code>) at line ~352532.</li></ul>
-<ul><li><strong>Skill import warning updated:</strong> The skill directory import warning now reads "bundled scripts and body instructions become active in Claude Code" instead of "any <code>allowed-tools</code> frontmatter or bundled scripts become active." This is more accurate — scripts in subdirectories and body instructions are also active, not just <code>allowed-tools</code>. Evidence: (search for <code>"bundled scripts and body instructions become active in Claude Code"</code>) at line ~459544.</li></ul>
+    <article class="card" id="permission-responses-are-checked-against-the-tool-they-were-">
+      <div class="card-top">
+        <h3>Permission responses are checked against the tool they were issued for <a class="anchor" href="#permission-responses-are-checked-against-the-tool-they-were-">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A can_use_tool answer that names a different tool than the one being asked about is now ignored, so a stale or crossed response cannot approve the wrong call.</p>
+<div class="blabel">Details</div>
+<ul><li>both the SDK control-protocol client and the remote permission bridge record the pending tool name</li><li>the hook and permission response schema gained an optional toolName field</li><li>telemetry distinguishes a match from a mismatch</li><li>in the remote session manager, a mismatch is logged and the local prompt stays up rather than being dismissed, since the worker would drop the answer anyway</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>bridge_permission_toolname_check</code>, <code>worker will drop it, keeping prompt</code></p>
+<hr>
+    </article>
+    <article class="card" id="exiting-a-worktree-no-longer-widens-the-permission-anchor">
+      <div class="card-top">
+        <h3>Exiting a worktree no longer widens the permission anchor <a class="anchor" href="#exiting-a-worktree-no-longer-widens-the-permission-anchor">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>ExitWorktree and the session-exit path only move the permission anchor when the target is already covered, so leaving a worktree cannot broaden what the session is allowed to touch.</p>
+<div class="blabel">Details</div>
+<ul><li>the move requires coverage by the session's live launch anchor and witnesses</li><li>a record-derived widening is refused and logged instead of applied</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>ExitWorktree: not moving the permission anchor to</code></p>
+<hr>
+    </article>
+    <article class="card" id="design-oauth-refresh-distinguishes-lock-contention-from-fail">
+      <div class="card-top">
+        <h3>Design OAuth refresh distinguishes lock contention from failure <a class="anchor" href="#design-oauth-refresh-distinguishes-lock-contention-from-fail">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A refresh that loses the cross-process lock race is now reported as contention rather than as a failed refresh, and a compromised lock can still succeed.</p>
+<div class="blabel">Details</div>
+<ul><li>New <code>DesignOauthLockContendedError</code> marks the case where another process holds the refresh lock.</li><li>On a compromised lock the stored token is re-read and accepted if it is still fresh.</li><li>New telemetry codes: <code>design_oauth_refresh_lock_contention</code>, <code>_lock_compromised</code>, <code>_lock_error</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Design OAuth lock contention: another process is holding the refresh lock</code></p>
+<hr>
+    </article>
+    <article class="card" id="file-watcher-teardown-no-longer-assumes-a-watcher-exists">
+      <div class="card-top">
+        <h3>File watcher teardown no longer assumes a watcher exists <a class="anchor" href="#file-watcher-teardown-no-longer-assumes-a-watcher-exists">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Removing the last listener for a watched entry whose watcher never started no longer throws.</p>
+<div class="blabel">Details</div>
+<ul><li>Both unsubscribe paths check for a watcher object before calling close or unwatch.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>mku(a.listeners) &amp;&amp; a.watcher</code></p>
+<hr>
+    </article>
+    <article class="card" id="resume-no-longer-inherits-a-stale-config-directory-or-a-half">
+      <div class="card-top">
+        <h3>Resume no longer inherits a stale config directory or a half-copied file <a class="anchor" href="#resume-no-longer-inherits-a-stale-config-directory-or-a-half">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Session-store resume tolerates copy failures and strips configuration environment variables from copied data.</p>
+<div class="blabel">Details</div>
+<ul><li>A failed file copy removes the partial destination and logs a skip instead of aborting resume.</li><li>A JSON transformer removes a set of keys plus <code>CLAUDE_CONFIG_DIR</code> from any copied <code>env</code> object, so the resumed session does not pick up the recorded config directory.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>sessionStore resume: skipping </code></p>
+<hr>
+    </article>
+    <article class="card" id="duplicate-comment-ids-are-dropped-when-building-thread-views">
+      <div class="card-top">
+        <h3>Duplicate comment ids are dropped when building thread views <a class="anchor" href="#duplicate-comment-ids-are-dropped-when-building-thread-views">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A thread that returns the same comment id twice no longer renders that comment twice.</p>
+<div class="blabel">Details</div>
+<ul><li>The comment-collection loop keeps a set of already-seen ids and adds each id as it is collected.</li><li>Repeats are skipped rather than appended.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>g.add(v.id)</code></p>
+<hr>
+    </article>
+    <article class="card" id="pending-permission-cleanup-respects-a-preserved-park-at-shut">
+      <div class="card-top">
+        <h3>Pending-permission cleanup respects a preserved park at shutdown <a class="anchor" href="#pending-permission-cleanup-respects-a-preserved-park-at-shut">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Resolving the last pending permission or dialog request no longer unconditionally flips the session back to "running" when a park was preserved at shutdown.</p>
+<div class="blabel">Details</div>
+<ul><li>If a park was preserved, the session re-tees waiting-on-user and republishes the surviving pending action instead of reporting running.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>hasPreservedParkAtShutdown</code></p>
+<hr>
+    </article>
+    <article class="card" id="file-watcher-no-longer-emits-errors-nobody-is-listening-for">
+      <div class="card-top">
+        <h3>File watcher no longer emits errors nobody is listening for <a class="anchor" href="#file-watcher-no-longer-emits-errors-nobody-is-listening-for">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The watcher checks the error listener count before emitting, so a watch error or an error during a pending write can no longer surface as an unhandled 'error' event.</p>
+<div class="blabel">Details</div>
+<ul><li>Check sits alongside the existing ENOENT/ENOTDIR filtering and the <code>ignorePermissionErrors</code> option.</li><li>In the pending-write path, when no error listeners are registered the pending write is discarded rather than emitting an ERROR event.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>_pendingWrites</code>, <code>ignorePermissionErrors</code></p>
+<hr>
+    </article>
+    <article class="card" id="mismatched-permission-replies-are-logged-and-dropped">
+      <div class="card-top">
+        <h3>Mismatched permission replies are logged and dropped <a class="anchor" href="#mismatched-permission-replies-are-logged-and-dropped">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A permission response whose tool name does not match the pending request is now rejected with a warning instead of resolving the wrong tool call.</p>
+<div class="blabel">Details</div>
+<ul><li>New helper hasCanUseToolNameMismatch guards three paths: injectControlResponse, the resolve path, and the transcript-side matcher.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>does not match pending</code></p>
+<hr>
+    </article>
+    <article class="card" id="forked-and-background-agent-queries-require-canusetool-by-de">
+      <div class="card-top">
+        <h3>Forked and background agent queries require canUseTool by default <a class="anchor" href="#forked-and-background-agent-queries-require-canusetool-by-de">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Forked query tool contexts now default requireCanUseTool to true, so a hook returning "allow" no longer bypasses the permission callback there, and deny rules can now beat a hook allow.</p>
+<div class="blabel">Details</div>
+<ul><li>requireCanUseTool is set to true when the caller does not specify it.</li><li>The hook decision path was reordered so deny and ask rules are evaluated before the "hook allowed but canUseTool is required" fallback, letting a deny rule override the hook even when canUseTool is required.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>requireCanUseTool</code></p>
+<hr>
+    </article>
+    <article class="card" id="permanently-refused-agent-resumes-stop-retrying">
+      <div class="card-top">
+        <h3>Permanently refused agent resumes stop retrying <a class="anchor" href="#permanently-refused-agent-resumes-stop-retrying">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new error class marks a resume that will never succeed, so the retry machinery gives up instead of looping.</p>
+<div class="blabel">Details</div>
+<ul><li>AgentResumePermanentlyRefusedError sits alongside AgentResumeTransientError.</li><li>The observer restarts fresh on it and logs the error name.</li><li>The wake router drops queued events for the affected agent.</li><li>The resume subscriber no longer swallows the error silently.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>AgentResumePermanentlyRefusedError</code></p>
+<hr>
+    </article>
+    <article class="card" id="tunnel-sockets-are-destroyed-on-protocol-violations">
+      <div class="card-top">
+        <h3>Tunnel sockets are destroyed on protocol violations <a class="anchor" href="#tunnel-sockets-are-destroyed-on-protocol-violations">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The local tunnel now treats data arriving before HELLO_ACK as a protocol error and tears the socket down.</p>
+<div class="blabel">Details</div>
+<ul><li>Error and close paths destroy the socket rather than half-closing it.</li><li>This applies whether or not the connection negotiated v2, so a stuck half-open socket is no longer left behind.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>server sent data before HELLO_ACK</code></p>
+<hr>
+    </article>
+    <article class="card" id="worktree-cleanup-will-not-chdir-into-a-network-path">
+      <div class="card-top">
+        <h3>Worktree cleanup will not chdir into a network path <a class="anchor" href="#worktree-cleanup-will-not-chdir-into-a-network-path">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The keep/restore-cwd path now detects a UNC or network-spelled original working directory and throws instead of changing into it.</p>
+<div class="blabel">Details</div>
+<ul><li>The recovery loop falls back to the home directory when the original cwd is network-spelled.</li><li>The path is screened and never touched.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>network-spelled original cwd (screened, never touched)</code></p>
+<hr>
+    </article>
+    <article class="card" id="dismissed-usage-credit-requests-no-longer-block-the-flow">
+      <div class="card-top">
+        <h3>Dismissed usage credit requests no longer block the flow <a class="anchor" href="#dismissed-usage-credit-requests-no-longer-block-the-flow">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The check for an outstanding admin request now looks only at pending requests.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously a request that had already been dismissed also triggered the "already sent" notice, leaving no way to ask again.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>You've already sent a usage credit request to your admin.</code></p>
+<hr>
+    </article>
+    <article class="card" id="agent-records-remember-that-their-worktree-was-cleanly-remov">
+      <div class="card-top">
+        <h3>Agent records remember that their worktree was cleanly removed <a class="anchor" href="#agent-records-remember-that-their-worktree-was-cleanly-remov">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>An isolated agent whose worktree was deliberately removed no longer warns on resume that the worktree "is not recorded for this isolated agent". The removal is recorded in the agent's metadata instead of looking like missing state.</p>
+<div class="blabel">Details</div>
+<ul><li>Agent metadata gained <code>worktreeCleanlyRemoved: !0</code>, written at the point the worktree is removed</li><li>The flag is inherited from the parent agent record, so child agents do not re-trigger the warning</li><li>Consulted on resume, and suppresses the <code>git_worktree_resume_binding_missing</code> telemetry event</li><li>Applies to everyone, no gate</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>worktreeCleanlyRemoved</code></p>
+<hr>
+    </article>
+    <article class="card" id="worktree-sessions-record-a-launch-anchor-and-use-it-when-lea">
+      <div class="card-top">
+        <h3>Worktree sessions record a launch anchor and use it when leaving <a class="anchor" href="#worktree-sessions-record-a-launch-anchor-and-use-it-when-lea">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Leaving or cleaning up a worktree session now returns you to a directory resolved from a recorded anchor, rather than potentially failing when the original cwd is gone or unsafe.</p>
+<div class="blabel">Details</div>
+<ul><li>Active worktree sessions carry <code>liveLaunchAnchor</code>, stripped out before the session is persisted into app state</li><li>On leave/cleanup, a new helper resolves the chdir target; when the original cwd is unsafe it falls back to a repo root inferred from a <code>.claude</code>/<code>worktrees</code> path shape, and failing that to the home directory</li><li>The anchor is also part of the accepted path set when validating changed files</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>liveLaunchAnchor</code></p>
+<hr>
+    </article>
+    <article class="card" id="blank-message-summaries-are-ignored">
+      <div class="card-top">
+        <h3>Blank message summaries are ignored <a class="anchor" href="#blank-message-summaries-are-ignored">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A message whose summary is only whitespace is no longer treated as having a summary, so it renders in full instead of collapsing to an empty summarized form.</p>
+<div class="blabel">Details</div>
+<ul><li>Message rendering and filtering now pass <code>summary</code> through a trim/normalize helper rather than testing truthiness</li><li>A whitespace-only value no longer counts as present and no longer forces the summarized render path</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>summary</code></p>
+<hr>
+    </article>
+    <article class="card" id="tunnel-sockets-are-always-destroyed-on-close">
+      <div class="card-top">
+        <h3>Tunnel sockets are always destroyed on close <a class="anchor" href="#tunnel-sockets-are-always-destroyed-on-close">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>When an agent-proxy tunnel closes before a response arrives, the socket is now destroyed in all cases, removing a path where non-v2 connections could linger after a graceful end.</p>
+<div class="blabel">Details</div>
+<ul><li>The branch that ended the socket gracefully for non-v2 connections was removed from the teardown path</li><li>The socket is destroyed unconditionally after "tunnel closed before response"</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>tunnel closed before response</code></p>
+<hr>
+    </article>
+    <article class="card" id="active-mcp-server-tool-markers-are-cleared-on-conversation-r">
+      <div class="card-top">
+        <h3>Active MCP server/tool markers are cleared on conversation reset <a class="anchor" href="#active-mcp-server-tool-markers-are-cleared-on-conversation-r">#</a></h3>
+<div class="tags"><span class="tag fix">Fix</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Stale MCP attribution no longer survives a conversation reset, so a later error or event is not tagged with the server and tool from a previous turn.</p>
+<div class="blabel">Details</div>
+<ul><li>The query loop's tool-state object gained an <code>onReset</code> hook</li><li>The hook calls a new helper that clears <code>activeMcpServer</code> and <code>activeMcpTool</code> on the options object, guarded by try/catch</li><li>The same helper is also invoked at the start of the API loop</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>activeMcpServer</code></p>
+<hr>
     </article>
   </div>
   </div>
   <div class="section-head">
     <h2>In Development</h2><div class="ln"></div>
-<span class="ct">2 items</span>  </div>
+<span class="ct">11 items</span>  </div>
   <div class="card-grid">
   <div class="col">
-    <article class="card" id="in-development">
-      <p>Features with infrastructure added but not yet enabled.</p>
-    </article>
-    <article class="card" id="auq-park-preservation-across-shutdown-in-development">
+    <article class="card" id="parked-askuserquestion-prompts-can-survive-stream-shutdown">
       <div class="card-top">
-        <h3>AUQ Park Preservation Across Shutdown [In Development] <a class="anchor" href="#auq-park-preservation-across-shutdown-in-development">#</a></h3>
+        <h3>Parked AskUserQuestion prompts can survive stream shutdown <a class="anchor" href="#parked-askuserquestion-prompts-can-survive-stream-shutdown">#</a></h3>
 <div class="tags"><span class="tag dev">Dev</span></div>      </div>
-      <div class="blabel">Status</div>
-<p>Feature-flagged — <code>tengu_cinder_heron</code> controls whether "park" (AskUserQuestion requests that paused for user input) are preserved when the session shuts down. The flag reads <code>Qe("tengu_cinder_heron", "off") === "preserve"</code> — it is <code>"off"</code> unless Anthropic sets it to <code>"preserve"</code> server-side.</p>
-<p>When enabled, parked AUQ requests that are still open at shutdown are not cancelled or denied. They remain answerable after the session restarts, allowing the user to respond even after reconnecting. Two telemetry events (<code>tengu_auq_park_preserve_reverted</code>, <code>tengu_auq_park_preserved_at_shutdown</code>) track when this path is taken.</p>
+      <div class="blabel">What</div>
+<p>When the SDK control stream closes with an AskUserQuestion permission request still parked, the request can now be kept answerable instead of being cancelled and denied.</p>
+<div class="blabel">Details</div>
+<ul><li>preserved requests are added to <code>preservedParkRequestIds</code></li><li>telemetry <code>tengu_auq_park_preserved_at_shutdown</code>, plus <code>tengu_auq_park_preserve_reverted</code> when a hook decision retracts a preserved park</li><li>gated on tengu_cinder_heron with fallback "off"; the helper returns true only when the value resolves to the string "preserve"</li><li>absent a remote value, the old cancel-and-deny behaviour is what you get</li></ul>
 <div class="blabel">Evidence</div>
-<p>gate check (search for <code>"tengu_cinder_heron"</code>) at line ~1037733; preservation path (search for <code>"park stays answerable"</code>) at line ~1038381.</p>
+<p><code>Preserving parked AskUserQuestion request_id=</code>, <code>tengu_cinder_heron</code></p>
+<hr>
     </article>
-    <article class="card" id="destructive-mcp-tools-in-remote-auto-mode-in-development">
+    <article class="card" id="claude-import-is-stubbed-out-in-this-build">
       <div class="card-top">
-        <h3>Destructive MCP Tools in Remote Auto Mode [In Development] <a class="anchor" href="#destructive-mcp-tools-in-remote-auto-mode-in-development">#</a></h3>
+        <h3><code>claude import</code> is stubbed out in this build <a class="anchor" href="#claude-import-is-stubbed-out-in-this-build">#</a></h3>
 <div class="tags"><span class="tag dev">Dev</span></div>      </div>
-      <div class="blabel">Status</div>
-<p>Feature-flagged off — <code>tengu_remote_auto_mode_include_destructive_mcp</code> defaults to <code>false</code>.</p>
-<p>When enabled, tools whose <code>isDestructive()</code> check returns true would be allowed through Remote auto-mode classification. Currently blocked even if the auto-classifier would approve them.</p>
+      <div class="blabel">What</div>
+<p>The import argument handling was rewritten into a parser plus a rewrite decision, but the command itself is not wired up here and prints a message instead of starting a session.</p>
+<div class="blabel">Details</div>
+<ul><li>Gated on a config-derived availability flag; when unavailable it prints the message below and exits.</li><li>If the config cannot be read at all it prints a recovery message instead.</li><li>The <code>--yes</code> help text now mentions a digest taken from the <code>/import</code> preview.</li></ul>
 <div class="blabel">Evidence</div>
-<p>gate (search for <code>"tengu_remote_auto_mode_include_destructive_mcp"</code>) at line ~587335.</p>
+<p><code>claude import</code> is not yet available in this build. Run <code>claude</code> and use /mcp or edit ~/.claude/settings.json directly.</p>
+<hr>
+    </article>
+    <article class="card" id="telemetry-retry-batches-can-persist-as-v5-streams">
+      <div class="card-top">
+        <h3>Telemetry retry batches can persist as v5 streams <a class="anchor" href="#telemetry-retry-batches-can-persist-as-v5-streams">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The first-party event exporter gained a path that stores failed-event batches as append-only v5 streams keyed by run id and retries earlier runs in the background.</p>
+<div class="blabel">Details</div>
+<ul><li>Leftover flat JSON batches are migrated into streams using deterministic record ids of the form <code>flat-migration.&lt;index&gt;.&lt;hash&gt;</code>, and the flat file is deleted afterwards.</li><li>Only taken when a storageV5 backend is passed to the exporter; what enables that backend could not be determined.</li><li>Without a v5 backend the existing flat-file path is unchanged.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>1P event logging: failed to persist failed-event queue to v5 stream</code></p>
+<hr>
+    </article>
+    <article class="card" id="more-state-gains-v5-backed-code-paths">
+      <div class="card-top">
+        <h3>More state gains v5-backed code paths <a class="anchor" href="#more-state-gains-v5-backed-code-paths">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Several stores now have a v5 backend path sitting alongside the existing file path, taken only when a backend is supplied.</p>
+<div class="blabel">Details</div>
+<ul><li>Covers theme listing and saving, MCP task metadata (write, delete and list under an <code>mcp-tasks</code> sidecar), scheduled-task status, user settings writes, and ranged transcript reads.</li><li>Settings write failures now raise a distinct error naming the failure class.</li><li>Each path is inert unless a v5 backend is passed in; what supplies it could not be determined.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>settings storageV5 write failed</code></p>
+<hr>
+    </article>
+    <article class="card" id="server-driven-footer-indicator">
+      <div class="card-top">
+        <h3>Server-driven footer indicator <a class="anchor" href="#server-driven-footer-indicator">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The status footer can show a short indicator whose text arrives from the server in the client-data payload.</p>
+<div class="blabel">Details</div>
+<ul><li>Read from the client-data field <code>footer_indicator</code>.</li><li>Text is stripped of control characters, trimmed, truncated to 32 characters and clamped before display.</li><li>Resolves to null when the server sends nothing parseable, in which case nothing renders.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>footer_indicator</code></p>
+<hr>
+    </article>
+    <article class="card" id="transcript-writes-and-head-tail-reads-can-go-through-the-v5-">
+      <div class="card-top">
+        <h3>Transcript writes and head/tail reads can go through the v5 storage backend <a class="anchor" href="#transcript-writes-and-head-tail-reads-can-go-through-the-v5-">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Transcript append, truncate and read helpers can now be pointed at a v5 storage backend instead of the filesystem, but only when a backend handle is passed in.</p>
+<div class="blabel">Details</div>
+<ul><li>The helpers take an optional backend handle; when present they call <code>backend.append</code>, <code>backend.delete</code>, <code>backend.readText</code> and <code>backend.stat</code> with a key rather than touching files.</li><li>Failures throw Error("transcript stream append failed") or Error("transcript stream delete failed").</li><li>The exporter class gained a <code>storageV5</code> field.</li><li>storageV5 existed in the previous build but only on the read path; the write path is new here and inert without a handle.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>transcript stream append failed</code></p>
+<hr>
+    </article>
+    <article class="card" id="footer-can-show-an-ide-indicator">
+      <div class="card-top">
+        <h3>Footer can show an IDE indicator <a class="anchor" href="#footer-can-show-an-ide-indicator">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The status footer computes an indicator element rendered in the "ide" color with a lozenge glyph, and the compact-footer width maths now reserves space for it. Whether it renders in this build could not be resolved.</p>
+<div class="blabel">Details</div>
+<ul><li>Thresholds deciding whether the compact footer fits add the indicator's width plus five.</li><li>An extra check hides content below 48 columns when the indicator is present.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>"footer-indicator"</code></p>
+<hr>
+    </article>
+    <article class="card" id="sdk-stream-shutdown-can-preserve-parked-permission-requests">
+      <div class="card-top">
+        <h3>SDK stream shutdown can preserve parked permission requests <a class="anchor" href="#sdk-stream-shutdown-can-preserve-parked-permission-requests">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The control client can remember pending can_use_tool requests for a parked tool when the input stream closes, so they survive shutdown instead of being dropped.</p>
+<div class="blabel">Details</div>
+<ul><li>Preserved ids live in a preservedParkRequestIds set.</li><li>While any are preserved the session is not flipped back to "running".</li><li>Ids are cleared as responses arrive or when the park is retracted.</li><li>Guarded by two internal predicates evaluated at shutdown time that could not be resolved to a flag name.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>preservedParkRequestIds</code></p>
+<hr>
+    </article>
+    <article class="card" id="destructive-mcp-tools-can-be-included-in-remote-auto-mode">
+      <div class="card-top">
+        <h3>Destructive MCP tools can be included in remote auto-mode <a class="anchor" href="#destructive-mcp-tools-can-be-included-in-remote-auto-mode">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A new predicate combines the auto/plan remote mode check with a tool's isDestructive result, so destructive MCP tools still get a permission prompt. It is off in this build.</p>
+<div class="blabel">Details</div>
+<ul><li>When on, an MCP ask-override no longer exempts destructive tools from the prompt.</li><li>Gated on tengu_remote_auto_mode_include_destructive_mcp, fallback value in source is false.</li><li>A new mcpServerAskOverride field was added to four permission telemetry payloads.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>tengu_remote_auto_mode_include_destructive_mcp</code></p>
+<hr>
+    </article>
+    <article class="card" id="unsafe-path-command-resolution-guard-off-in-this-build">
+      <div class="card-top">
+        <h3>Unsafe-PATH command resolution guard, off in this build <a class="anchor" href="#unsafe-path-command-resolution-guard-off-in-this-build">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A third spawn wrapper picked up the same guard as the other two: resolve the command and refuse it if it only resolves inside the current directory.</p>
+<div class="blabel">Details</div>
+<ul><li>The predicate that controls all three call paths is a function that returns false in this build, so no command is refused at runtime.</li><li>If enabled, a command found only in the current directory would be rejected as being in an unsafe location.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>not found or is in an unsafe location (current directory)</code></p>
+<hr>
+    </article>
+    <article class="card" id="codex-config-import-parses-toml-with-bun-s-built-in-parser">
+      <div class="card-top">
+        <h3>Codex config import parses TOML with Bun's built-in parser <a class="anchor" href="#codex-config-import-parses-toml-with-bun-s-built-in-parser">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Reading a foreign agent's Codex config during import now uses Bun's native TOML parser through a one-line wrapper, before the config is mapped.</p>
+<div class="blabel">Details</div>
+<ul><li>The wrapper calls <code>Bun.TOML.parse(e)</code> on the config file contents</li><li>Reachable only via the import path, which is behind <code>tengu_import</code></li><li>A filename/label normalizer was added alongside it: NFKC normalize, lowercase, strip trailing dots and spaces</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Bun.TOML.parse</code></p>
+<hr>
     </article>
   </div>
   </div>
   <div class="section-head">
-    <h2>Notes</h2><div class="ln"></div>
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">25 items</span>  </div>
+  <div class="card-grid">
+  <div class="col">
+    <article class="card" id="heartbeat-failure-streak-detection-in-the-ccr-client">
+      <div class="card-top">
+        <h3>Heartbeat-failure streak detection in the CCR client <a class="anchor" href="#heartbeat-failure-streak-detection-in-the-ccr-client">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Failed heartbeat POSTs are no longer fire-and-forget; the client tracks a failure streak and reports it upward once it is long enough to matter.</p>
+<div class="blabel">Details</div>
+<ul><li>a set of statuses is ignored outright</li><li>checks <code>isReadStreamRecentlyAlive()</code> before counting, then increments <code>consecutiveHeartbeatFailures</code></li><li>fires <code>onHeartbeatLost</code> only once the streak passes both a count and a duration threshold</li><li>a successful heartbeat calls <code>resetHeartbeatStreak()</code></li><li>the onHeartbeatLost handler is only installed when selfHealHeartbeats is on</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>this.onHeartbeatLost?.()</code></p>
+<hr>
+    </article>
+    <article class="card" id="tool-input-string-extraction-hardened-against-hostile-object">
+      <div class="card-top">
+        <h3>Tool-input string extraction hardened against hostile objects <a class="anchor" href="#tool-input-string-extraction-hardened-against-hostile-object">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The helper that pulls values like command, file_path, prompt and args out of tool input no longer trusts the shape of the object it is given.</p>
+<div class="blabel">Details</div>
+<ul><li>Rejects Proxy objects outright.</li><li>Reads own property descriptors rather than invoking getters, so extraction cannot run attacker code.</li><li>Bails on array-like values whose length is not a safe integer or exceeds the cap.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>OYa.types.isProxy(e)</code></p>
+<hr>
+    </article>
+    <article class="card" id="peer-message-envelope-text-moved-into-constants">
+      <div class="card-top">
+        <h3>Peer-message envelope text moved into constants <a class="anchor" href="#peer-message-envelope-text-moved-into-constants">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The wrapper text applied to messages from peer and coordinator sessions, including the permission-laundering warning, now lives in a module of constants rather than inline.</p>
+<div class="blabel">Details</div>
+<ul><li>The wording of the guidance itself is unchanged.</li><li>The list of legacy prefixes stripped before re-wrapping now also matches an alternate "A peer session sent a message…" header.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>A peer session sent a message while you were working:</code></p>
+<hr>
+    </article>
+    <article class="card" id="shell-output-handoff-can-be-re-rooted-for-adoption">
+      <div class="card-top">
+        <h3>Shell output handoff can be re-rooted for adoption <a class="anchor" href="#shell-output-handoff-can-be-re-rooted-for-adoption">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Detached shell handoff accepts a root to re-anchor output files, so an adopting process can read outputs that would otherwise sit outside its tree.</p>
+<div class="blabel">Details</div>
+<ul><li>Takes a <code>rerootOutputsTo</code> root; outputs resolving outside the task-output tree are dropped and the shell is killed.</li><li>Escaping but known outputs are hardlinked, or copied when linking fails, into <code>&lt;root&gt;/rerooted/&lt;id&gt;.output</code>, with inode identity checks.</li><li>Task output paths and the handoff payload gained an adopt root plus <code>mergeShellOutputReadRoots</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>mergeShellOutputReadRoots</code></p>
+<hr>
+    </article>
+    <article class="card" id="version-bumped-to-2-1-222">
+      <div class="card-top">
+        <h3>Version bumped to 2.1.222 <a class="anchor" href="#version-bumped-to-2-1-222">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The embedded build-metadata blocks move to 2.1.222 with a fresh build time and git sha.</p>
+<div class="blabel">Details</div>
+<ul><li>VERSION goes from 2.1.221 to 2.1.222 across all four embedded copies of the version banner.</li><li>BUILD_TIME is 2026-08-04T01:24:05Z, with a new GIT_SHA.</li><li>This accounts for the bulk of changed strings in this area: user-agent strings, /status, --version, updater messages and telemetry payloads.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>BUILD_TIME: "2026-08-04T01:24:05Z"</code>, <code>"2.1.222"</code></p>
+<hr>
+    </article>
+    <article class="card" id="code-review-simplify-and-batch-orchestration-prompts-moved-b">
+      <div class="card-top">
+        <h3>Code-review, /simplify and batch orchestration prompts moved between modules <a class="anchor" href="#code-review-simplify-and-batch-orchestration-prompts-moved-b">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Three prompt bodies were relocated into different lazily-initialised modules with no visible change to their wording.</p>
+<div class="blabel">Details</div>
+<ul><li>The multi-agent code-review angle text, the /simplify cleanup prompt and the Batch parallel-work orchestration prompt all moved.</li><li>One call site now returns a short bullet line rather than the full batch prompt.</li><li>Prompt wording itself appears unchanged; only placement and one call site differ.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code># Batch: Parallel Work Orchestration</code></p>
+<hr>
+    </article>
+    <article class="card" id="new-telemetry-when-a-remote-session-renders-a-tool-result">
+      <div class="card-top">
+        <h3>New telemetry when a remote session renders a tool result <a class="anchor" href="#new-telemetry-when-a-remote-session-renders-a-tool-result">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The first user message containing a tool_result in a remote session now emits a dedicated event.</p>
+<div class="blabel">Details</div>
+<ul><li>Fires once, on the first such message, per remote session.</li><li>Tagged with whether the session is viewer-only.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>tengu_remote_tool_result_rendered</code></p>
+<hr>
+    </article>
+    <article class="card" id="status-line-notices-moved-from-jsx-to-a-segments-array">
+      <div class="card-top">
+        <h3>Status-line notices moved from JSX to a segments array <a class="anchor" href="#status-line-notices-moved-from-jsx-to-a-segments-array">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Notification producers now hand back plain data instead of React elements, so the notification layer owns rendering.</p>
+<div class="blabel">Details</div>
+<ul><li>Each producer emits a list of <code>{text, color, dim, bold}</code> segments.</li><li>Affected producers: the option-as-Meta hint, the idle /clear hint, the Remote Control disconnect and unsigned-attestation warnings, the closed-issue notice and the prefilled-prompt warning.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>idle-return-hint</code></p>
+<hr>
+    </article>
+    <article class="card" id="marketplace-schema-loosened-for-features-and-doc-fallbacks">
+      <div class="card-top">
+        <h3>Marketplace schema loosened for features and doc fallbacks <a class="anchor" href="#marketplace-schema-loosened-for-features-and-doc-fallbacks">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Two marketplace entry fields no longer validate their shape, so malformed values now pass parsing instead of being coerced away.</p>
+<div class="blabel">Details</div>
+<ul><li><code>features</code> moved from a typed record with <code>.catch(void 0)</code> to <code>w.unknown().optional()</code>.</li><li><code>project_doc_fallback_filenames</code> moved from a string array with <code>.catch(void 0)</code> to <code>w.unknown().optional()</code>.</li><li>Consumers no longer get a guaranteed shape from the parser for either field.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>project_doc_fallback_filenames: w.unknown().optional()</code></p>
+<hr>
+    </article>
+    <article class="card" id="bridge-connect-timeouts-are-classified-for-recovery-reportin">
+      <div class="card-top">
+        <h3>Bridge connect timeouts are classified for recovery reporting <a class="anchor" href="#bridge-connect-timeouts-are-classified-for-recovery-reportin">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A repl-bridge connect timeout now records which path triggered the attempt, so timeouts during recovery can be told apart from those during a token refresh.</p>
+<div class="blabel">Details</div>
+<ul><li>recovery_connect_timeout is used for the auth-401, init-4091, and heartbeat-4093 recovery paths.</li><li>refresh_connect_timeout is used for a proactive token refresh.</li><li>The existing tengu_bridge_repl_connect_timeout event still fires.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>recovery_connect_timeout</code></p>
+<hr>
+    </article>
+    <article class="card" id="artifact-comment-auto-scan-tracks-its-in-flight-promise">
+      <div class="card-top">
+        <h3>Artifact comment auto-scan tracks its in-flight promise <a class="anchor" href="#artifact-comment-auto-scan-tracks-its-in-flight-promise">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The debounced comment scan stores its running promise and clears it on completion, so overlapping scans can be detected rather than the scan being fire-and-forget.</p>
+<div class="blabel">Details</div>
+<ul><li>Promise is held in inFlightScan for the duration of the scan.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>inFlightScan</code></p>
+<hr>
+    </article>
+    <article class="card" id="workflow-prompt-interpolates-the-parallel-pipeline-item-cap">
+      <div class="card-top">
+        <h3>Workflow prompt interpolates the parallel/pipeline item cap <a class="anchor" href="#workflow-prompt-interpolates-the-parallel-pipeline-item-cap">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The agent-workflow system prompt now substitutes the cap constant into the sentence describing how many items one parallel() or pipeline() call accepts, instead of hardcoding the number in prose.</p>
+<div class="blabel">Details</div>
+<ul><li>Keeps the prompt text and the enforced limit from drifting apart.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>A single parallel()/pipeline() call accepts at most ${soe} items</code></p>
+<hr>
+    </article>
+    <article class="card" id="skill-frontmatter-metadata-is-kept-on-the-loaded-record">
+      <div class="card-top">
+        <h3>Skill frontmatter metadata is kept on the loaded record <a class="anchor" href="#skill-frontmatter-metadata-is-kept-on-the-loaded-record">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Plugin skill loading now carries an object-valued <code>metadata</code> frontmatter field through into the loaded skill record.</p>
+<div class="blabel">Details</div>
+<ul><li>Stored alongside declaredFields rather than being dropped during parse.</li><li>No user-visible behaviour attaches to the field in this build.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>declaredFields</code></p>
+<hr>
+    </article>
+    <article class="card" id="atomic-writer-can-publish-without-clobbering">
+      <div class="card-top">
+        <h3>Atomic writer can publish without clobbering <a class="anchor" href="#atomic-writer-can-publish-without-clobbering">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The temp-file writer gained a create-only mode that publishes via link plus unlink instead of rename.</p>
+<div class="blabel">Details</div>
+<ul><li>In this mode an existing destination file is left intact and the write fails rather than overwriting.</li><li>Rename remains the default publish path.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>create_only</code></p>
+<hr>
+    </article>
+    <article class="card" id="remote-io-warns-when-the-drop-sender-notice-cannot-be-writte">
+      <div class="card-top">
+        <h3>Remote-io warns when the drop sender notice cannot be written <a class="anchor" href="#remote-io-warns-when-the-drop-sender-notice-cannot-be-writte">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The remote-io transport writes an attestation drop notice through the CCR client and now logs a warning if that write fails, rather than dropping the failure silently.</p>
+<div class="blabel">Details</div>
+<ul><li>New handler on the transport; the warning text is "[remote-io] drop sender-notice write failed".</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>[remote-io] drop sender-notice write failed</code></p>
+<hr>
+    </article>
+    <article class="card" id="transcript-conversion-dropped-its-vieweronly-converttoolresu">
+      <div class="card-top">
+        <h3>Transcript conversion dropped its viewerOnly/convertToolResults mode <a class="anchor" href="#transcript-conversion-dropped-its-vieweronly-converttoolresu">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The message converter no longer branches on a viewer-only mode, so tool-result behaviour is consistent for every caller.</p>
+<div class="blabel">Details</div>
+<ul><li>It now always converts user messages carrying <code>tool_result</code>, and always honours <code>convertUserTextMessages</code>.</li><li>The several callers that passed <code>viewerOnly</code> or <code>convertToolResults</code> were simplified to drop the option.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>convertUserTextMessages</code></p>
+<hr>
+    </article>
+    <article class="card" id="session-state-tracks-pending-branch-links">
+      <div class="card-top">
+        <h3>Session state tracks pending branch links <a class="anchor" href="#session-state-tracks-pending-branch-links">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Session state carries pending branch links alongside pending PR links, with the PR-created path folded into one helper.</p>
+<div class="blabel">Details</div>
+<ul><li>A <code>pendingBranchLinks</code> Map was added to the session state object and to both reset paths.</li><li>Sits next to the existing <code>pendingPrLinks</code> set.</li><li>A new regex matches git, gh, glab and curl in commands.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>pendingBranchLinks</code></p>
+<hr>
+    </article>
+    <article class="card" id="agent-state-writes-preserve-worktree-provenance">
+      <div class="card-top">
+        <h3>Agent state writes preserve worktree provenance <a class="anchor" href="#agent-state-writes-preserve-worktree-provenance">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Persisting an agent record no longer loses the worktree lineage fields that were set by an earlier write.</p>
+<div class="blabel">Details</div>
+<ul><li>A new persistence wrapper reloads the previous agent record before writing.</li><li>It carries over <code>parentAgentId</code>, <code>inheritedWorktreePath</code>, <code>spawnedWithWorktree</code> and <code>worktreeCleanlyRemoved</code>.</li><li><code>worktreePath</code> and <code>worktreeBranch</code> are deleted when the prior record had none.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>inheritedWorktreePath</code></p>
+<hr>
+    </article>
+    <article class="card" id="shell-adoption-accepts-an-extra-output-root">
+      <div class="card-top">
+        <h3>Shell adoption accepts an extra output root <a class="anchor" href="#shell-adoption-accepts-an-extra-output-root">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Shell adoption picks its schema based on a new option, and exit handoff now works with multiple merge roots.</p>
+<div class="blabel">Details</div>
+<ul><li>The adoption schema is chosen from an <code>extraShellOutputRoot</code> option.</li><li>Exit handoff passes a list of merge roots rather than a single one.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>extraShellOutputRoot</code></p>
+<hr>
+    </article>
+    <article class="card" id="settings-reader-computes-a-host-model-overlay">
+      <div class="card-top">
+        <h3>Settings reader computes a host model overlay <a class="anchor" href="#settings-reader-computes-a-host-model-overlay">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The parent-slice settings reader also derives a model overlay from the host-managed provider, and reports it as a source of truth.</p>
+<div class="blabel">Details</div>
+<ul><li>The source-of-truth lookup returns "parent" when either the parent slice or the <code>hostModelOverlay</code> is present.</li><li>Only reachable when a host-managed provider is configured; state otherwise unresolved.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>hostModelOverlay</code></p>
+<hr>
+    </article>
+    <article class="card" id="model-enforcement-stays-inactive-for-the-parent-settings-sou">
+      <div class="card-top">
+        <h3>Model enforcement stays inactive for the parent settings source <a class="anchor" href="#model-enforcement-stays-inactive-for-the-parent-settings-sou">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>A policy view with no model keys sourced from "parent" is treated as cascade-trusted instead of triggering enforcement.</p>
+<div class="blabel">Details</div>
+<ul><li>The <code>availableModels</code> enforcement check previously accepted only the "hkcu" source in this case.</li><li>It now also accepts "parent", returning <code>{ state: "inactive", cascadeTrusted: !0 }</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>cascadeTrusted</code></p>
+<hr>
+    </article>
+    <article class="card" id="named-ansi-colors-backed-by-an-object-literal">
+      <div class="card-top">
+        <h3>Named ANSI colors backed by an object literal <a class="anchor" href="#named-ansi-colors-backed-by-an-object-literal">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The terminal color name list is now an object literal, with the lookup Set derived from its keys.</p>
+<div class="blabel">Details</div>
+<ul><li>Moved into a separate module init.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>magentaBright</code></p>
+<hr>
+    </article>
+    <article class="card" id="turn-effort-updates-can-skip-creating-an-entry">
+      <div class="card-top">
+        <h3>Turn-effort updates can skip creating an entry <a class="anchor" href="#turn-effort-updates-can-skip-creating-an-entry">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The per-agent UI state updater no longer materializes a store entry for a no-op write.</p>
+<div class="blabel">Details</div>
+<ul><li>The updater takes a <code>materialize</code> option.</li><li>It skips creating an entry when both the effort and the model being set are null.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>materialize</code></p>
+<hr>
+    </article>
+    <article class="card" id="task-output-files-use-a-memoized-path-and-lazy-directory-cre">
+      <div class="card-top">
+        <h3>Task output files use a memoized path and lazy directory creation <a class="anchor" href="#task-output-files-use-a-memoized-path-and-lazy-directory-cre">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Task output writing resolves its file path once per task and creates the containing directory only when the file is opened, replacing an upfront directory-creation step.</p>
+<div class="blabel">Details</div>
+<ul><li><code>&lt;taskId&gt;.output</code> is resolved through a per-task path cache</li><li>The parent directory is created at open time with <code>mkdir(dirname, { recursive: true })</code></li><li>The previous upfront directory creation helper was removed</li><li>The cache entry is dropped when the task output is flushed, cleared or cleaned up</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>.output</code></p>
+<hr>
+    </article>
+    <article class="card" id="prefilled-prompt-warning-notification-rendered-from-text-seg">
+      <div class="card-top">
+        <h3>Prefilled-prompt warning notification rendered from text segments <a class="anchor" href="#prefilled-prompt-warning-notification-rendered-from-text-seg">#</a></h3>
+<div class="tags"><span class="tag new">New</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The pinned warning shown for pre-filled and deep-link prompts is now built as plain text segments rather than a rendered element. Nothing visible changed.</p>
+<div class="blabel">Details</div>
+<ul><li>The notification is pushed as <code>segments</code> produced by a small helper instead of a JSX element</li><li>A JSX segment-list component was removed</li><li>User-visible strings are unchanged, including "Prompt from an external link" and the scroll/review suffixes</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Prompt from an external link</code></p>
+<hr>
+    </article>
+  </div>
+  </div>
+  <div class="section-head">
+    <h2>Removed</h2><div class="ln"></div>
 <span class="ct">2 items</span>  </div>
   <div class="card-grid">
   <div class="col">
-    <article class="card" id="remote-control-setting-migration">
+    <article class="card" id="permission-denied-system-messages-are-no-longer-surfaced">
       <div class="card-top">
-        <h3>Remote Control Setting Migration <a class="anchor" href="#remote-control-setting-migration">#</a></h3>
-<div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>If your <code>settings.json</code> (project or local scope) has <code>"remoteControlAtStartup": true</code>, it will now be silently ignored with a log warning. Move the setting to your user-level <code>settings.json</code> or toggle it via <code>/config</code> to preserve the behaviour.</p>
+        <h3>"Permission denied" system messages are no longer surfaced <a class="anchor" href="#permission-denied-system-messages-are-no-longer-surfaced">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>The stream converter no longer emits a visible system message when a permission_denied event arrives, so that line disappears from output.</p>
+<div class="blabel">Details</div>
+<ul><li>Previously the event became a warning-level system message naming the tool and the reason.</li><li>The handler now returns an ignored result unconditionally, with no mode or flag that restores the old line.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Permission denied: </code></p>
+<hr>
     </article>
-    <article class="card" id="worktree-resume-transient-vs-permanent-failures">
+    <article class="card" id="resume-no-longer-validates-or-touches-the-worktree-directory">
       <div class="card-top">
-        <h3>Worktree Resume: Transient vs Permanent Failures <a class="anchor" href="#worktree-resume-transient-vs-permanent-failures">#</a></h3>
-<div class="tags"><span class="tag new">New</span></div>      </div>
-      <p>The new error taxonomy (<code>AgentResumeTransientError</code> vs <code>AgentResumePermanentlyRefusedError</code>) changes how failed resumes are retried by callers. Transient failures keep the binding and retry on the next <code>--resume</code>. Permanent refusals clear the binding. If you see "Cannot resume this agent: its worktree…" errors, check whether they are transient (network/git unavailable) or permanent (the worktree path is invalid or poisoned) before deciding whether to recreate the worktree.</p>
+        <h3>Resume no longer validates or touches the worktree directory <a class="anchor" href="#resume-no-longer-validates-or-touches-the-worktree-directory">#</a></h3>
+<div class="tags"><span class="tag dev">Dev</span></div>      </div>
+      <div class="blabel">What</div>
+<p>Resuming a session no longer stats the recorded worktree, no longer falls back to the parent cwd with a log line when it is missing, and no longer bumps the directory's mtime.</p>
+<div class="blabel">Details</div>
+<ul><li>The fallback block and the associated worktree chdir and restore helpers are gone from this build.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>no longer exists; falling back to parent cwd</code></p>
     </article>
   </div>
   </div>
@@ -282,7 +1574,7 @@
   <footer>
     <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
     <div class="gen">
-<div><div class="k">Provider · Model</div><div class="val">claude · claude-sonnet-4-6</div></div><div><div class="k">Primary diff</div><div class="val">archive\claude-code\changes\changes-v2.1.222.md` (filtered astdiff)</div></div><div><div class="k">String diff</div><div class="val">archive\claude-code\changes\string-diff-v2.1.222.txt</div></div>    </div>
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-opus-5` (effort medium)</div></div><div><div class="k">Primary diff</div><div class="val">archive/claude-code/changes/changes-v2.1.222.md</div></div>    </div>
   </footer>
 </main>
 </div>
