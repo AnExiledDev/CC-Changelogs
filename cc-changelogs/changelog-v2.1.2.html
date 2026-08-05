@@ -226,9 +226,51 @@
   // A link to a folded card is useless if it lands on a closed one.
   function openHash(){
     var el=location.hash&&document.querySelector(location.hash);
-    if(el&&el.classList.contains('folded'))setOpen(el,true);
+    if(el&&el.classList.contains('folded')){setOpen(el,true);el.scrollIntoView({block:'center'})}
   }
   addEventListener('hashchange',openHash);openHash();
+
+  var bar=document.getElementById('filterbar');
+  if(bar){
+    var active=new Set(),
+        cards=[].slice.call(document.querySelectorAll('.card[data-f]')),
+        out=document.getElementById('fbcount');
+
+    function apply(){
+      var shown=0;
+      cards.forEach(function(c){
+        var f=c.dataset.f.split(' '),
+            ok=!active.size||f.some(function(k){return active.has(k)});
+        c.hidden=!ok;
+        if(ok)shown++;
+      });
+      // A heading over nothing is worse than no heading.
+      document.querySelectorAll('.card-list').forEach(function(list){
+        var any=[].some.call(list.children,function(c){return !c.hidden}),
+            head=list.previousElementSibling;
+        list.hidden=!any;
+        while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;
+        if(head)head.hidden=!any;
+        var note=list.previousElementSibling;
+        if(note&&note.classList.contains('section-note'))note.hidden=!any;
+      });
+      out.textContent=active.size?shown+' of '+cards.length+' shown':'';
+      bar.classList.toggle('filtering',active.size>0);
+    }
+
+    bar.addEventListener('click',function(ev){
+      var b=ev.target.closest('.fchip');
+      if(!b)return;
+      var key=b.dataset.key;
+      if(!key){active.clear()}
+      else if(active.has(key)){active.delete(key)}
+      else{active.add(key)}
+      bar.querySelectorAll('.fchip').forEach(function(c){
+        c.classList.toggle('on',c.dataset.key?active.has(c.dataset.key):!active.size);
+      });
+      apply();
+    });
+  }
 </script>
 </body>
 </html>
