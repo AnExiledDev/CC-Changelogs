@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.225</span></h1>
 <p class="sub">This release centers on Remote Control reliability: the bridge now refuses to mint a new session when reattach is required, retries token re-mints with auth-specific error messages, recovers expired worker credentials, re-arms itself after a re-login, and surfaces a login prompt when token refresh is exhausted. Artifact tooling gained pagination and single-thread filtering for comments, retries on 429 and 503 responses with a visible progress line, and detection of summons another session has already answered. Cross-session messaging is more predictable, with held peer messages that supersede, re-arm, expire in headless sessions, and settle as expired at shutdown, plus clearer text about why a message is held and whether a peer is cloud or Remote Control. Auto mode now falls back when the primary classifier refuses, denies safeguard-refused calls without recording a verdict, and its nudge dialog actually switches the running session or explains why it cannot. Fixes include a streaming read index that skipped messages, gateway 429s without rate-limit headers driving the usage indicator, and child processes inheriting an IDE entrypoint identity.</p>    <div class="meta-row">
-<span class="chip chip-official pending"><span class="k">Official notes</span> <b>pending</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.224 → v2.1.225</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-opus-5 (effort medium)</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">15</div><div class="l">Use it now</div></div>
@@ -45,21 +45,27 @@
 
 <div class="wrap wide">
 <main>
-  <div class="section-head official-head pending">
+  <div class="section-head official-head available">
     <h2>Official Changelog</h2><div class="ln"></div>
-    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Awaiting notes</span>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
   </div>
   <div class="official-wrap">
-    <article class="card official pending">
+    <article class="card official available">
       <div class="ob">
         <div class="ob-left">
-          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
           <div>
-            <div class="ob-title">Official release notes pending</div>
-            <div class="ob-sub">Anthropic has not published official notes for v2.1.225 yet. This section updates automatically when the entry appears in the upstream changelog.</div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.225 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
           </div>
         </div>
-        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Official changelog &#8599;</a>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21225" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Added gateway spend-limit support to Claude Code's usage warning; the limit-reached message now names the cap, its reset time, and the operator's message (requires the gateway on 2.1.225)</li><li>Added a workspace trust prompt to <code>claude agents</code> for untrusted directories, matching the behavior of <code>claude</code></li><li>Fixed a transient 401 replacing a long-lived <code>CLAUDE_CODE_OAUTH_TOKEN</code> with a stored login's short-lived token, breaking headless sessions until restart</li><li>Fixed MCP OAuth servers on macOS intermittently failing with a burst of 401 errors, as if never authenticated, after a keychain read timed out</li><li>Fixed auto mode counting a safety-filter refusal of its own permission check toward the consecutive-block limit; the action is still denied, but the model is now told to move on rather than retry</li><li>Fixed cross-session messages staying parked without a notice or expiry in headless sessions and during startup</li><li>Fixed conversation history breaking on Remote Control session resume after very large conversations were compacted</li><li>Fixed hovering over a session in another project in the agents list changing the directory the next agent starts in</li><li>Fixed <code>claude self-hosted-runner</code> registering and then failing every session when <code>--base-dir</code> cannot be created or written; it now exits at startup with a clear error</li><li>Fixed Claude Code on the web sessions being misreported as stuck, re-sending a growing event backlog on every reconnect</li><li>Improved Remote Control: photos attached from the Claude app are now shown to Claude directly instead of being read from disk with a separate tool call</li><li>[VSCode] Fixed Focus view folding away the latest to-do list, a pending question's context, and settled answers; thinking-only folds show "Thought for Ns" and re-collapse when their turn completes</li><li>SendMessage can now start a conversation with your Remote Control sessions on other machines by name (<code>ListAgents</code> shows them as <code>name [ref]</code>), instead of only replying after they message you first</li><li>SendMessage: a Remote Control recipient you already confirmed is never swapped for a same-named session on this machine when its own list couldn't be checked</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 14 entries &middot; synced automatically when Anthropic publishes official notes for a version.
       </div>
     </article>
   </div>
