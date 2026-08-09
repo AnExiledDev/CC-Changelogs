@@ -178,9 +178,9 @@ cat file &gt; /etc/$(whoami)/config        # Command substitution in path</code>
 <span class="ct">7 items</span>  </div>
   <div class="card-grid">
   <div class="col">
-    <article class="card" id="segment-analytics-telemetry">
+    <article class="card" id="segment-analytics-telemetry-2">
       <div class="card-top">
-        <h3>Segment Analytics Telemetry <a class="anchor" href="#segment-analytics-telemetry">#</a></h3>
+        <h3>Segment Analytics Telemetry <a class="anchor" href="#segment-analytics-telemetry-2">#</a></h3>
       </div>
       <p><strong>What:</strong> Dual telemetry system that sends all events to both Statsig and Segment analytics platforms</p>
 <p><strong>How to use:</strong></p>
@@ -190,9 +190,9 @@ export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1  # Also disables both</code></
 <p><strong>Details:</strong></p>
 <ul><li>All existing telemetry events (tool usage, file operations, security checks, etc.) now tracked to Segment in addition to Statsig</li><li>Uses anonymous IDs by default (<code>claudecode.v1.{uuid}</code>), adds user IDs when authenticated with Claude.ai</li><li>Feature-gated behind <code>tengu_log_segment_events</code> Statsig flag for controlled rollout</li><li>Events batched (15 per flush) and auto-flushed every 10 seconds</li><li>Graceful shutdown ensures no data loss on exit</li><li><strong>Evidence</strong>: <code>j1()</code> at line 475648, <code>Os2()</code> at line 475587, <code>Ms2</code> at line 475622</li></ul>
     </article>
-    <article class="card" id="homebrew-installation-support">
+    <article class="card" id="homebrew-installation-support-2">
       <div class="card-top">
-        <h3>Homebrew Installation Support <a class="anchor" href="#homebrew-installation-support">#</a></h3>
+        <h3>Homebrew Installation Support <a class="anchor" href="#homebrew-installation-support-2">#</a></h3>
       </div>
       <p><strong>What:</strong> Native detection and handling of Homebrew-managed installations</p>
 <p><strong>How to use:</strong></p>
@@ -206,17 +206,17 @@ claude update
 <p><strong>Details:</strong></p>
 <ul><li>Detects Homebrew installations by checking for <code>/Caskroom/</code> in executable path</li><li>Prevents self-update attempts that could conflict with Homebrew management</li><li>Shows in-session update notifications with correct "brew upgrade" command</li><li>Polls npm registry every 30 minutes to check for updates</li><li>Configuration tracking automatically skipped for package-manager installations</li><li><strong>Evidence</strong>: <code>bnA()</code> at line 318415, <code>HN()</code> at line 318435, <code>Pe2</code> at line 488357, <code>P22</code> at line 377347</li></ul>
     </article>
-    <article class="card" id="lsp-file-lifecycle-management">
+    <article class="card" id="lsp-file-lifecycle-management-2">
       <div class="card-top">
-        <h3>LSP File Lifecycle Management <a class="anchor" href="#lsp-file-lifecycle-management">#</a></h3>
+        <h3>LSP File Lifecycle Management <a class="anchor" href="#lsp-file-lifecycle-management-2">#</a></h3>
       </div>
       <p><strong>What:</strong> Four new methods for synchronizing file state with Language Server Protocol servers</p>
 <p><strong>Details:</strong></p>
 <ul><li><code>getAllServers()</code> - Returns Map of all initialized LSP servers for monitoring</li><li><code>openFile(path, content)</code> - Sends <code>textDocument/didOpen</code> with proper languageId mapping</li><li><code>changeFile(path, content)</code> - Sends <code>textDocument/didChange</code>, falls back to openFile if server not running</li><li><code>closeFile(path)</code> - Sends <code>textDocument/didClose</code> for cleanup</li><li>Configuration changed from <code>fileExtensions</code> array to <code>extensionToLanguage</code> object for proper language ID support</li><li><strong>Evidence</strong>: <code>ym2()</code> at line 446307, methods at lines 446405-446454</li></ul>
     </article>
-    <article class="card" id="enhanced-security-path-resolution-bypass-protection">
+    <article class="card" id="enhanced-security-path-resolution-bypass-protection-2">
       <div class="card-top">
-        <h3>Enhanced Security: Path Resolution Bypass Protection <a class="anchor" href="#enhanced-security-path-resolution-bypass-protection">#</a></h3>
+        <h3>Enhanced Security: Path Resolution Bypass Protection <a class="anchor" href="#enhanced-security-path-resolution-bypass-protection-2">#</a></h3>
       </div>
       <p><strong>What:</strong> Three new security checks to prevent attacks using shell expansion and directory changes</p>
 <p><strong>Examples that now require approval:</strong></p>
@@ -226,21 +226,21 @@ cat file &gt; /etc/$(whoami)/config        # Command substitution in path</code>
 <p><strong>Details:</strong></p>
 <ul><li>Shell expansion detection: Regex <code>/(?:&gt;&gt;?)\s<em>\S</em>\$/</code> catches variable expansion with redirections</li><li>Dollar sign in paths: Any file path containing <code>$</code> character requires approval</li><li>CD with write operations: Compound commands using <code>cd</code> + write operations require approval</li><li>All checks use <code>"ask"</code> behavior (require approval) rather than <code>"deny"</code></li><li><strong>Evidence</strong>: <code>tP1()</code> at line 254131, <code>TYQ()</code> at line 253932, <code>Fe8()</code> at line 253997</li></ul>
     </article>
-    <article class="card" id="better-update-experience">
+    <article class="card" id="better-update-experience-2">
       <div class="card-top">
-        <h3>Better Update Experience <a class="anchor" href="#better-update-experience">#</a></h3>
+        <h3>Better Update Experience <a class="anchor" href="#better-update-experience-2">#</a></h3>
       </div>
       <ul><li>Update notifications now appear during active sessions</li><li>Installation type detection improved with specific handling for development, native, npm-local, npm-global, and package-manager types</li><li>Configuration mismatch warnings help identify unexpected installation locations</li><li><strong>Evidence</strong>: <code>_22</code> at line 377584</li></ul>
     </article>
-    <article class="card" id="lsp-configuration-structure">
+    <article class="card" id="lsp-configuration-structure-2">
       <div class="card-top">
-        <h3>LSP Configuration Structure <a class="anchor" href="#lsp-configuration-structure">#</a></h3>
+        <h3>LSP Configuration Structure <a class="anchor" href="#lsp-configuration-structure-2">#</a></h3>
       </div>
       <ul><li>Server configurations now use <code>extensionToLanguage</code> mapping instead of <code>fileExtensions</code> array</li><li>Enables proper LSP <code>languageId</code> specification (e.g., <code>.js</code> → <code>"javascript"</code>)</li><li><strong>Evidence</strong>: Configuration validation at line 5140 in diff</li></ul>
     </article>
-    <article class="card" id="error-reporting">
+    <article class="card" id="error-reporting-2">
       <div class="card-top">
-        <h3>Error Reporting <a class="anchor" href="#error-reporting">#</a></h3>
+        <h3>Error Reporting <a class="anchor" href="#error-reporting-2">#</a></h3>
       </div>
       <ul><li>LSP shutdown errors now include all failure messages in exception text instead of generic "check logs" message</li><li><strong>Evidence</strong>: Error handling at line 5173 in diff</li></ul>
     </article>
