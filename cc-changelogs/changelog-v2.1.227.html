@@ -32,7 +32,7 @@
     <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
     <h1 class="title">Version <span class="v">2.1.227</span></h1>
 <p class="sub"><code>/ultrareview</code> and <code>/code-review ultra</code> now take <code>--post</code> and <code>--no-post</code>, posting a finished cloud review to a GitHub pull request as a plain comment from your own account, on by default unless remote config turns it off. Remote worker sessions now sync the working directory both ways around every turn rather than copying once at startup, a PermissionRequest hook can interrupt the whole turn by setting <code>interrupt</code> true on a denial, MCP connect timeouts are retried and can no longer be shortened below the global timeout by a small per-server value, workflow scripts can lock a subagent's shell to a fixed list of <code>Bash(...)</code> rules with <code>bashCommandClamp</code>, enterprise OIDC gains <code>use_proxy</code> for routing identity provider requests through <code>HTTPS_PROXY</code>, and <code>CLAUDE_CODE_DISABLE_PRECOMPACT_SKIP</code> forces full transcript reads after a compaction boundary. The new <code>modelProposedGoals</code> setting is visible in the config panel as "Claude-proposed goals" with <code>auto</code>, <code>alwaysAsk</code> and <code>disabled</code>, and is read only from user, policy and command-line settings, but the tool that proposes goals is behind the <code>tengu_propose_goal</code> flag and off in this build. Also present but switched off: <code>device_bash</code>, which lets a cloud session run a shell command on your own machine inside its OS sandbox, along with the per-repository sync prompt and device binding that go with it, all gated on <code>tengu_violin_wood</code>; the file-sending tool, moved from hard-off to the <code>tengu_send_file</code> flag; and the routines <code>list_runs</code> and <code>get_run_log</code> actions, which need <code>tengu_surreal_dali</code> plus the <code>allow_remote_sessions</code> and <code>allow_routines</code> policies.</p>    <div class="meta-row">
-<span class="chip chip-official pending"><span class="k">Official notes</span> <b>pending</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.226 → v2.1.227</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-opus-5 (effort medium)</b></span>    </div>
     <div class="stats">
   <div class="stat f"><div class="n">35</div><div class="l">Use it now</div></div>
@@ -45,21 +45,27 @@
 
 <div class="wrap wide">
 <main>
-  <div class="section-head official-head pending">
+  <div class="section-head official-head available">
     <h2>Official Changelog</h2><div class="ln"></div>
-    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Awaiting notes</span>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
   </div>
   <div class="official-wrap">
-    <article class="card official pending">
+    <article class="card official available">
       <div class="ob">
         <div class="ob-left">
-          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
           <div>
-            <div class="ob-title">Official release notes pending</div>
-            <div class="ob-sub">Anthropic has not published official notes for v2.1.227 yet. This section updates automatically when the entry appears in the upstream changelog.</div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.227 — shown here alongside the source-level analysis below. Text is unmodified from the upstream changelog.</div>
           </div>
         </div>
-        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Official changelog &#8599;</a>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21227" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Fixed feature flags being evaluated without the user's subscription tier when a session started with an expired login token, which could wrongly prompt Max plan users to enable usage credits for Fable</li><li>Fixed every Bash command failing under <code>claude-code-action</code> with <code>allowed_non_write_users</code> on GitHub-hosted runners</li><li>Fixed <code>/tui</code> bringing back a conversation that had been rewound to before its first message</li><li>Improved slash-command menu: blue now marks only the selected row, matched characters are bolded instead of recolored, and emoji or accented names keep their glyphs</li><li>Improved performance: fewer event-loop stalls on file-not-found suggestions and at-mention size checks</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 5 entries &middot; synced automatically when Anthropic publishes official notes for a version.
       </div>
     </article>
   </div>
