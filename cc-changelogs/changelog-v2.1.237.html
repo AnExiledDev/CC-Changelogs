@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.237 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.237."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="oldsite"><div class="wrap wide"><div class="oldsite-row">
+  <p class="oldsite-text">This one's being retired. The changelogs live at
+    <a href="https://changelogs.core-directive.com/">changelogs.core-directive.com</a> now,
+    with search, the documentation diffs and the prompt captures.</p>
+  <a class="oldsite-go" href="https://changelogs.core-directive.com/v/2.1.237">Read v2.1.237 over there &rarr;</a>
+</div></div></div>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.237</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-opus-5 (effort medium)</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.237</span></h1>
+<div class="sub"><p>This build carries six pieces of a system for letting a session receive events pushed in from outside, none of them switched on. A new Poll tool drains queued harness events and reports how many arrived and how many wake signals remain, but it exists only when <code>CLAUDE_CODE_POLL_EVENTS</code> is true and the session is in remote mode; behind that same gate, each event's recorded sender decides how it speaks back into the conversation, with human-principal text becoming a real user turn, peer-agent text wrapped as coming from another session, and world events dropped. The harness also now checks that any sender text an event claims really appears in the event body, stripping it and logging a warning if not. Separately, faster pickup of a summon the first time Claude sees an artifact comment thread runs only under <code>CLAUDE_CODE_ARTIFACT_COMMENT_FAST_ACK</code> or the remote gate <code>tengu_gorse_pylon</code>, which defaults to false, and a marker for Slack turns whose sender the server verified as human is emitted only when the entrypoint is Slack.</p>
+<p>Output styles gain a fifth built-in, Concise, which tells the model to lead with the result, skip preamble and narration, and answer simple questions in one to three sentences without trading away correctness. Nothing gates it, so it appears in the style list for anyone on this build. Caching of the system prompt block now also requires a recognised endpoint: Bedrock, Vertex and Mantle qualify only with their respective base URL variables unset, and Foundry only when <code>ANTHROPIC_FOUNDRY_BASE_URL</code> is unset or points at <code>.services.ai.azure.com</code>, so a proxy or custom gateway loses that caching. Resuming a saved conversation, or loading one by agent ID, now strips authority markers from the replayed messages, resetting recorded origins to unclassified and downgrading a stored "human principal" sender to "other human".</p></div>    <div class="meta-row">
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.236 → v2.1.237</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-opus-5 (effort medium)</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">2</div><div class="l">Use it now</div></div>
+  <div class="stat b"><div class="n">3</div><div class="l">You&#39;ll notice</div></div>
+  <div class="stat d"><div class="n">4</div><div class="l">Not switched on</div></div>
+  <div class="stat s"><div class="n">10</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head official-head available">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official available">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.237. Text is unmodified from the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21237" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Fixed prompt caching for sessions using an LLM gateway or custom base URL</li><li>Added a built-in "Concise" output style: Claude leads with results and skips preamble and narration, while doing the work just as thoroughly. Select it under Output style in /config.</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 2 entries &middot; synced automatically when Anthropic publishes official notes for a version.
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
+  <div class="section-head">
+    <h2>Highlights</h2><div class="ln"></div>
+    <span class="ct">2 of 16</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card highlights">
+      <ul class="official-list">
+        <li><a href="#new-built-in-output-style-concise">You can now pick a &#34;Concise&#34; output style so Claude leads with results and skips narration.</a> <code class="tok">/output-style</code></li>
+        <li><a href="#system-prompt-caching-now-requires-a-recognised-endpoint">If you point Claude at a proxy or custom gateway, the system prompt is no longer cached.</a> <code class="tok">ANTHROPIC_BEDROCK_BASE_URL</code><code class="tok">ANTHROPIC_VERTEX_BASE_URL</code><code class="tok">ANTHROPIC_BEDROCK_MANTLE_BASE_URL</code></li>
+      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        The rest of the release is below, all 16 findings. Filter it, or open any card for the full detail and source evidence.
+      </div>
+    </article>
+  </div>
+  <div class="section-head soon-head">
+    <h2>Present but switched off</h2><div class="ln"></div>
+    <span class="ct">3 of 4</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card soonblock">
+      <ul class="official-list">
+        <li><a href="#poll-tool-drains-queued-harness-events-and-reports-who-sent-">A Poll tool that drains queued harness events with sender provenance exists only when CLAUDE_CODE_POLL_EVENTS is true and the session is in remote mode.</a> <code class="tok">CLAUDE_CODE_POLL_EVENTS</code><code class="tok">CLAUDE_CODE_REMOTE</code><code class="tok">CLAUDE_CODE_ENVIRONMENT_KIND</code><span class="ar">Sessions</span></li>
+        <li><a href="#provenance-decides-how-a-relayed-event-is-spoken-back-into-t">Sender provenance stored on delivered events, capped at 20 entries, decides delivery framing; reachable only under the poll-events gate.</a><span class="ar">Sessions</span></li>
+        <li><a href="#first-sight-summon-pickup-for-artifact-comments-off-by-defau">First-sight summon pickup sits behind CLAUDE_CODE_ARTIFACT_COMMENT_FAST_ACK or a remote gate that falls back to false.</a> <code class="tok">CLAUDE_CODE_ARTIFACT_COMMENT_FAST_ACK</code><span class="ar">Artifacts</span></li>
+      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        Shipped inside the bundle with its gate off, its guard hardcoded false, or nothing calling it. What the code shows, not a roadmap: no claim about what is released, announced or planned.
+      </div>
+    </article>
+  </div>
+  <div class="filterbar" id="filterbar">
+    <span class="fb-label">Filter</span>
+    <div class="fb-chips">
+      <button class="fchip all on" type="button" data-key="">Everything<span class="fn">16</span></button>
+      <button class="fchip kind" type="button" data-key="k-new-features">New Features<span class="fn">1</span></button>
+      <button class="fchip kind" type="button" data-key="k-improvements">Improvements<span class="fn">2</span></button>
+      <button class="fchip kind" type="button" data-key="k-internal-changes">Internal Changes<span class="fn">7</span></button>
+      <button class="fchip kind" type="button" data-key="k-in-development">In Development<span class="fn">6</span></button>
+      <button class="fchip tok" type="button" data-key="x-slash">Slash commands<span class="fn">1</span></button>
+      <button class="fchip tok" type="button" data-key="x-flag">CLI flags<span class="fn">1</span></button>
+      <button class="fchip tok" type="button" data-key="x-env">Env vars<span class="fn">5</span></button>
+      <button class="fchip tok" type="button" data-key="x-setting">Settings<span class="fn">1</span></button>
+      <button class="fchip juice" type="button" data-key="juicy">Juicy<span class="fn">5</span></button>
+      <button class="fchip soon" type="button" data-key="upcoming">Coming soon<span class="fn">4</span></button>
+    </div>
+    <span class="fb-count" id="fbcount"></span>
+  </div>
+  <div class="section-head lead">
+    <h2>What probably matters to you</h2><div class="ln"></div>
+<span class="ct">10 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+<p class="section-note">Anything you can use today, anything that visibly changes, and anything worth poking at. One line each, open for detail.</p>  <div class="card-list">
+  <div class="col">
+    <article class="card folded q4" id="new-built-in-output-style-concise" data-f="k-new-features t-use x-slash">
+      <div class="card-top">
+        <h3>New built-in output style "Concise" <a class="anchor" href="#new-built-in-output-style-concise">#</a></h3>
+      </div>
+      <p class="glance">You can now pick a "Concise" output style so Claude leads with results and skips narration.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">/output-style</code></div>        <span class="where"><b>Use it now</b> &middot; Output Styles</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>A fifth built-in style joins Proactive, Explanatory and Learning. Described as "Claude responds tersely, leading with results and skipping preamble and narration", it tells the model to lead with the result, cut narration, answer simple questions in 1-3 sentences and never trade correctness for brevity. Nothing gates its registration, so anyone on this build can pick it from the output-style list unless output styles are turned off entirely.</p>
+<div class="blabel">Details</div>
+<ul><li>Registered as a built-in style with coding instructions retained, so normal engineering guidance still applies.</li><li>Its system prompt is headed "# Concise Style Active" and states explicitly that it overrides more general communication guidance, backed by six rules plus a short reminder re-injected each turn.</li><li>Reported in prompt telemetry under its own key rather than collapsing into the generic one.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Claude responds tersely, leading with results and skipping preamble and narration</code>, <code>The user chose brevity over narration. You should:</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q3" id="poll-events-switch-cannot-be-set-from-settings" data-f="juicy k-internal-changes t-use x-env x-setting">
+      <div class="card-top">
+        <h3>Poll-events switch cannot be set from settings <a class="anchor" href="#poll-events-switch-cannot-be-set-from-settings">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">You can set CLAUDE_CODE_POLL_EVENTS in your shell, but settings files can no longer supply it.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">CLAUDE_CODE_POLL_EVENTS</code><code class="tok">env</code></div>        <span class="where"><b>Use it now</b> &middot; Environment Variables</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p><code>CLAUDE_CODE_POLL_EVENTS</code> is added to the typed environment registry as a boolean and, more usefully, to the list of names filtered out of <code>env</code> blocks supplied by settings files. It can only be set by the process that launches Claude Code, not by a project or user setting.</p>
+<div class="blabel">Evidence</div>
+<p><code>"CLAUDE_CODE_POLL_EVENTS"</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q3" id="verified-human-marker-for-slack-relayed-turns-plus-a-stubbed" data-f="k-in-development t-notice x-env">
+      <div class="card-top">
+        <h3>Verified-human marker for Slack-relayed turns, plus a stubbed third relay surface <a class="anchor" href="#verified-human-marker-for-slack-relayed-turns-plus-a-stubbed">#</a></h3>
+      </div>
+      <p class="glance">Slack turns from a server-verified human get a marker so Claude treats them as you without extra confirmation.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">CLAUDE_CODE_ENTRYPOINT</code></div>        <span class="where"><b>You&#39;ll notice</b> &middot; Slack Integration</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Turns relayed from a bound Slack thread whose sender the server verified as human are now prefixed with a fixed marker, and a new prompt paragraph tells the model that a turn opening with exactly that marker is its own user and does not need extra confirmation, while <code>bot</code>-attributed messages inside a Slack message block never establish user intent. Both are emitted only when <code>CLAUDE_CODE_ENTRYPOINT</code> is <code>claude_in_slack</code> or <code>claude-in-slack</code>; otherwise the paragraph is empty.</p>
+<div class="blabel">Details</div>
+<ul><li>The paragraph replaces the previous cross-session messages rule in the prompt.</li><li>The escaping helper for non-verified relayed text now also engages for Teams (<code>claude-in-teams</code>) and for a third surface whose check unconditionally returns false, a placeholder with no way to be enabled in this build.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>[Verified human message relayed from the bound Slack thread]:</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="auto-mode-classifier-reads-poll-events-by-sender" data-f="k-in-development t-soon upcoming">
+      <div class="card-top">
+        <h3>Auto-mode classifier reads poll events by sender <a class="anchor" href="#auto-mode-classifier-reads-poll-events-by-sender">#</a></h3>
+      </div>
+      <p class="glance">The turn-handling classifier now splits queued events into separate turns depending on whether a human or another agent sent them.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Sessions</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The context handed to the classifier that decides how to handle a turn now expands queued harness events into individual user turns according to who sent them. World events and entries with no sender text are dropped, human-principal text is rendered as a verified human turn, peer-agent text is wrapped as coming from another agent, and anything else is prefixed as a non-user source. Previously the whole attachment contributed no per-sender turns at all.</p>
+<div class="blabel">Details</div>
+<ul><li>Part of the poll-events path, so it is inert unless that gate is on.</li><li>The verified-human marker it can emit is itself only produced under the Slack entrypoint.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>y.authority === "world-event"</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="poll-tool-drains-queued-harness-events-and-reports-who-sent-" data-f="juicy k-in-development t-soon upcoming x-env">
+      <div class="card-top">
+        <h3>Poll tool drains queued harness events and reports who sent them <a class="anchor" href="#poll-tool-drains-queued-harness-events-and-reports-who-sent-">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">Claude can pull in queued messages from other sessions, stamped with who sent them, but only behind an env var.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">CLAUDE_CODE_POLL_EVENTS</code><code class="tok">CLAUDE_CODE_REMOTE</code><code class="tok">CLAUDE_CODE_ENVIRONMENT_KIND</code></div>        <span class="where"><b>Not switched on</b> &middot; Sessions</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>A new Poll tool lets the model pull in events that the surrounding harness has queued for the session, returning the rendered messages along with how many events arrived and how many wake signals are still outstanding. Each queued event can now carry provenance saying who it came from, so a notice relayed from another Claude session arrives stamped as coming from a peer agent with that session's ID and text. None of this is reachable in a normal local run: the tool and the fields appear only when the <code>CLAUDE_CODE_POLL_EVENTS</code> environment variable is true and the session is in remote mode, meaning <code>CLAUDE_CODE_REMOTE</code> set to true with <code>CLAUDE_CODE_ENVIRONMENT_KIND</code> unset. Without that combination the tool is absent entirely and the session behaves as in previous builds, where it did not exist at all.</p>
+<div class="blabel">Details</div>
+<ul><li>Poll is registered both in the main tool list and in the reduced list used for simple mode, is read-only, is safe to run concurrently with other tools, and refuses to run inside a subagent with the message <code>Poll is available on the main thread only</code>.</li><li>The <code>poll_event</code> request that feeds the queue accepts optional <code>authority</code>, <code>sender_id</code> and <code>sender_text</code> alongside its existing fields, validated as <code>poll_event: kind and event must be strings; wake, when present, a boolean; authority, when present, one of human-principal|human-other|peer-agent|world-event; sender_id and sender_text, when present, strings</code>.</li><li>Sender text is capped at 49152 bytes and sender ID at 1024.</li><li>Accepted provenance travels from the event queue through the turn options into the Poll tool's output schema as an optional <code>provenance</code> array, and onto the poll-event attachment, so the model sees the origin of each event it drains.</li><li>A relayed cross-session notice is tagged <code>authority: "peer-agent"</code> carrying the originating session's identifier and text.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>poll_event: kind and event must be strings; wake, when present, a boolean; authority, when present, one of human-principal|human-other|peer-agent|world-event; sender_id and sender_text, when present, strings</code>, <code>authority: "peer-agent"</code>, <code>Poll is available on the main thread only</code></p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q4" id="system-prompt-caching-now-requires-a-recognised-endpoint" data-f="juicy k-improvements t-notice x-env">
+      <div class="card-top">
+        <h3>System prompt caching now requires a recognised endpoint <a class="anchor" href="#system-prompt-caching-now-requires-a-recognised-endpoint">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">If you point Claude at a proxy or custom gateway, the system prompt is no longer cached.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">ANTHROPIC_BEDROCK_BASE_URL</code><code class="tok">ANTHROPIC_VERTEX_BASE_URL</code><code class="tok">ANTHROPIC_BEDROCK_MANTLE_BASE_URL</code><code class="tok">ANTHROPIC_FOUNDRY_BASE_URL</code></div>        <span class="where"><b>You&#39;ll notice</b> &middot; Prompt Caching</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The check deciding whether the system prompt block may be marked cacheable used to only require that experimental betas were not disabled. It now also requires a known provider and endpoint: Bedrock, Vertex and Mantle qualify only when <code>ANTHROPIC_BEDROCK_BASE_URL</code>, <code>ANTHROPIC_VERTEX_BASE_URL</code> and <code>ANTHROPIC_BEDROCK_MANTLE_BASE_URL</code> are unset, and Foundry only when <code>ANTHROPIC_FOUNDRY_BASE_URL</code> is unset or its hostname ends in <code>.services.ai.azure.com</code>. Behind a proxy or custom gateway, the system block stops being cached.</p>
+<div class="blabel">Details</div>
+<ul><li>First-party and Anthropic-on-AWS paths still have to pass the existing beta and base-URL checks.</li><li>No feature flag; the outcome is decided entirely by the provider and those environment variables, and it is live for everyone on this build.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>.services.ai.azure.com</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q3" id="resumed-sessions-can-no-longer-inherit-verified-human-status" data-f="k-improvements t-notice">
+      <div class="card-top">
+        <h3>Resumed sessions can no longer inherit "verified human" status <a class="anchor" href="#resumed-sessions-can-no-longer-inherit-verified-human-status">#</a></h3>
+      </div>
+      <p class="glance">Resuming a saved conversation no longer carries over "verified human" trust from the earlier live session.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Sessions</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Loading a saved conversation, both when resuming normally and when loading by agent ID, now strips authority markers from the replayed messages. Verified-Slack-human flags and classifier metadata lines are deleted, message origins recorded as human or auto-continuation are reset to unclassified, and any stored sender authority of "human principal" is downgraded to "other human". A replayed transcript can never re-assert authority that was established in an earlier live session.</p>
+<div class="blabel">Details</div>
+<ul><li>Runs on every transcript load; there is no flag to disable it.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>authority: "human-other"</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q3" id="shared-authority-values-for-message-provenance" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Shared authority values for message provenance <a class="anchor" href="#shared-authority-values-for-message-provenance">#</a></h3>
+      </div>
+      <p class="glance">Relayed messages are labelled from one shared list: you, another person, another agent, or an event.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Message Provenance</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>A single four-value list of sender authorities (human principal, other human, peer agent, world event) now backs both the Poll tool's output shape and the prompt text that frames a relayed message, so the two cannot drift apart.</p>
+<div class="blabel">Evidence</div>
+<p><code>["human-principal", "human-other", "peer-agent", "world-event"]</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="first-sight-summon-pickup-for-artifact-comments-off-by-defau" data-f="juicy k-in-development t-soon upcoming x-env">
+      <div class="card-top">
+        <h3>First-sight summon pickup for artifact comments, off by default <a class="anchor" href="#first-sight-summon-pickup-for-artifact-comments-off-by-defau">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">Claude could answer an artifact summon the first time it sees a thread, but the switch is off.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">CLAUDE_CODE_ARTIFACT_COMMENT_FAST_ACK</code></div>        <span class="where"><b>Not switched on</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>When Claude auto-reacts to comments on an artifact, it can now pick up a recent summon the first time it sees a thread, not only on later sightings. The branch runs when <code>CLAUDE_CODE_ARTIFACT_COMMENT_FAST_ACK</code> is set, otherwise it consults the remote gate <code>tengu_gorse_pylon</code>, whose fallback is false. With no server value, the new branch never runs and only the previous pickup path applies.</p>
+<div class="blabel">Details</div>
+<ul><li>Telemetry reports the outcome: an <code>artifact_comments_autoreact</code> event flags <code>first_sight_summon</code> when summons were found, or gives the rejection reason <code>first_sight_summon_stale</code> when candidates existed but all were too old.</li><li>Covers both the branch that baselines a newly seen thread and the re-sighted branch.</li><li>The gate helper itself already existed; only this use of it is new.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>first_sight_summon_stale</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="provenance-decides-how-a-relayed-event-is-spoken-back-into-t" data-f="juicy k-in-development t-soon upcoming">
+      <div class="card-top">
+        <h3>Provenance decides how a relayed event is spoken back into the conversation <a class="anchor" href="#provenance-decides-how-a-relayed-event-is-spoken-back-into-t">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">Relayed messages are spoken back differently by source: verified humans as you, other agents as cross-session, world events dropped.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Sessions</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Once accepted, sender provenance is stored on the delivered event, up to the first 20 entries, and controls how each entry re-enters the conversation. Text marked human-principal is emitted as a genuine user turn; peer-agent and anything else is wrapped in cross-session framing that does not read as your own instruction; world-event, or a missing or blank sender text, drops the delivery entirely. Reachable only under the same poll-events gate.</p>
+<div class="blabel">Details</div>
+<ul><li>The validation error message was widened to spell out the full set of accepted authority values.</li><li>None of these four authority values existed in the previous build.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>poll_event: sender_text dropped from provenance</code></p>
+<hr></div>
+    </article>
+  </div>
+  </div>
+  <div class="group-divider rest">
+    <div class="gd-title">Everything else &middot; 6</div>
+    <div class="gd-sub">Smaller changes and internals, grouped as the pipeline found them. Nothing is dropped, it is only further down.</div>
+  </div>
+  <div class="section-head muted">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">1 item</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
+  <div class="col">
+    <article class="card folded q2" id="claimed-sender-text-must-actually-appear-in-the-event" data-f="k-in-development t-internal">
+      <div class="card-top">
+        <h3>Claimed sender text must actually appear in the event <a class="anchor" href="#claimed-sender-text-must-actually-appear-in-the-event">#</a></h3>
+      </div>
+      <p class="glance">A pushed message can no longer claim words it never actually delivered; mismatched sender text gets stripped.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Sessions</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>If a pushed event says who sent it and quotes their text, the harness checks that the escaped form of that text really appears inside the event body. If it does not, the sender text is stripped from the recorded provenance and a warning is logged, so provenance cannot claim a sender string the delivered event never contained.</p>
+<div class="blabel">Details</div>
+<ul><li>Same poll-events gating as the rest of this path; the event itself is still delivered, only the unverifiable sender text is removed.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>poll_event: sender_text dropped from provenance \u2014 its escaped form is not embedded in the event element (derivation contract violated)</code></p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+  </div>
+  </div>
+  <div class="section-head muted">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
+  <div class="col">
+    <article class="card folded q2" id="build-metadata-bumped-to-2-1-237" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Build metadata bumped to 2.1.237 <a class="anchor" href="#build-metadata-bumped-to-2-1-237">#</a></h3>
+      </div>
+      <p class="glance">The reported version and build stamp move to 2.1.237 everywhere they appear.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Build Metadata</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The inlined build constants move to version 2.1.237, build time 2026-08-19T22:15:38Z and a new commit SHA, across roughly 60 places including version output, updater messages, user-agent strings, remote-control minimum-version errors and daemon logs.</p>
+<div class="blabel">Evidence</div>
+<p><code>45590910f0b746ddad3fe7d8135c5c29b33ccf88</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q1" id="two-apparent-edits-are-renaming-only" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Two apparent edits are renaming only <a class="anchor" href="#two-apparent-edits-are-renaming-only">#</a></h3>
+      </div>
+      <p class="glance">Two changes in hook spawning and MCP state are renames only, with identical behaviour.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>In the code that spawns hook commands, including the Windows branch that errors when neither <code>pwsh</code> nor <code>powershell</code> is on PATH, only local variable and module alias names changed; the spawn options are identical. In the MCP client state update, a line that looks dropped is a rename artifact, and all four empty-list fallbacks for disabled or failed servers (tools, commands, resources, resource templates) are still computed.</p>
+<div class="blabel">Evidence</div>
+<p><code>replaceOnly: te,</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q1" id="bulk-version-stamp-and-cosmetic-re-minification" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Bulk version stamp and cosmetic re-minification <a class="anchor" href="#bulk-version-stamp-and-cosmetic-re-minification">#</a></h3>
+      </div>
+      <p class="glance">Bundled code was reformatted and restamped with the new version; nothing behaves differently.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Build Metadata</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Around 70 embedded metadata objects carry the new version, build time and commit, and the rest is formatting reflow and renamed identifiers in bundled code such as the schema validator, glob matcher, QR renderer and worktree helpers, with no behaviour difference.</p>
+<div class="blabel">Evidence</div>
+<p><code>BUILD_TIME: "2026-08-19T22:15:38Z"</code></p></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q2" id="version-stamp-moved-from-2-1-236-to-2-1-237" data-f="k-internal-changes t-internal x-flag">
+      <div class="card-top">
+        <h3>Version stamp moved from 2.1.236 to 2.1.237 <a class="anchor" href="#version-stamp-moved-from-2-1-236-to-2-1-237">#</a></h3>
+      </div>
+      <p class="glance">Version output and telemetry now say 2.1.237 instead of 2.1.236; nothing else changes.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">--version</code></div>        <span class="where"><b>Under the hood</b> &middot; Build Metadata</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The same build constants object drives the reported CLI version, telemetry version fields, update checks and <code>--version</code> output; the roughly 91 changes in this group are that one literal appearing at different call sites. Nothing changes but the reported version.</p>
+<div class="blabel">Evidence</div>
+<p><code>GIT_SHA: "45590910f0b746ddad3fe7d8135c5c29b33ccf88"</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="concise-reported-separately-in-prompt-telemetry" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Concise reported separately in prompt telemetry <a class="anchor" href="#concise-reported-separately-in-prompt-telemetry">#</a></h3>
+      </div>
+      <p class="glance">Sessions using the Concise output style are now counted separately from other styles.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Telemetry</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The list of prompt identities that may be reported gains a key for the new Concise style, alongside the custom, Proactive, Explanatory and Learning keys, so sessions using it are distinguishable instead of collapsing into the generic key.</p>
+<div class="blabel">Evidence</div>
+<p><code>"repl_main_thread:outputStyle:Concise": !0</code></p>
+<hr></div>
+    </article>
+  </div>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-opus-5 (effort medium)</div></div><div><div class="k">Primary diff</div><div class="val">&lt;data root&gt;/claude-code/changes/changes-v2.1.237.md</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+
+  function setOpen(card,open){
+    var b=card.querySelector('.more'),body=card.querySelector('.card-body');
+    if(!b||!body)return;
+    body.hidden=!open;
+    card.classList.toggle('open',open);
+    b.setAttribute('aria-expanded',open);
+    b.firstChild.nodeValue=open?'Hide':'Details';
+  }
+
+  document.addEventListener('click',function(ev){
+    var b=ev.target.closest('.more');
+    if(b){setOpen(b.closest('.card'),b.getAttribute('aria-expanded')!=='true');return;}
+
+    var all=ev.target.closest('.openall');
+    if(!all)return;
+    var open=all.dataset.open!=='1';
+    all.dataset.open=open?'1':'0';
+    all.textContent=open?'Close all':'Open all';
+    var list=all.closest('.section-head').nextElementSibling;
+    while(list&&!list.classList.contains('card-list'))list=list.nextElementSibling;
+    if(list)list.querySelectorAll('.card').forEach(function(c){setOpen(c,open)});
+  });
+
+  // A link to a folded card is useless if it lands on a closed one.
+  function openHash(){
+    var el=location.hash&&document.querySelector(location.hash);
+    if(el&&el.classList.contains('folded')){setOpen(el,true);el.scrollIntoView({block:'center'})}
+  }
+  addEventListener('hashchange',openHash);openHash();
+
+  var bar=document.getElementById('filterbar');
+  if(bar){
+    var active=new Set(),
+        cards=[].slice.call(document.querySelectorAll('.card[data-f]')),
+        out=document.getElementById('fbcount');
+
+    function apply(){
+      var shown=0;
+      cards.forEach(function(c){
+        var f=c.dataset.f.split(' '),
+            ok=!active.size||f.some(function(k){return active.has(k)});
+        c.hidden=!ok;
+        if(ok)shown++;
+      });
+      // A heading over nothing is worse than no heading.
+      document.querySelectorAll('.card-list').forEach(function(list){
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
+            head=list.previousElementSibling;
+        list.hidden=!any;
+        while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;
+        if(head)head.hidden=!any;
+        var note=list.previousElementSibling;
+        if(note&&note.classList.contains('section-note'))note.hidden=!any;
+      });
+      out.textContent=active.size?shown+' of '+cards.length+' shown':'';
+      bar.classList.toggle('filtering',active.size>0);
+    }
+
+    bar.addEventListener('click',function(ev){
+      var b=ev.target.closest('.fchip');
+      if(!b)return;
+      var key=b.dataset.key;
+      if(!key){active.clear()}
+      else if(active.has(key)){active.delete(key)}
+      else{active.add(key)}
+      bar.querySelectorAll('.fchip').forEach(function(c){
+        c.classList.toggle('on',c.dataset.key?active.has(c.dataset.key):!active.size);
+      });
+      apply();
+    });
+  }
+</script>
+</body>
+</html>
