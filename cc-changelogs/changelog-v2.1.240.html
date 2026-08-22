@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.240 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.240."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="oldsite"><div class="wrap wide"><div class="oldsite-row">
+  <p class="oldsite-text">This one's being retired. The changelogs live at
+    <a href="https://changelogs.core-directive.com/">changelogs.core-directive.com</a> now,
+    with search, the documentation diffs and the prompt captures.</p>
+  <a class="oldsite-go" href="https://changelogs.core-directive.com/v/2.1.240">Read v2.1.240 over there &rarr;</a>
+</div></div></div>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.240</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-opus-5 (effort medium)</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.240</span></h1>
+<div class="sub"><p>This build carries seven pieces of unreleased work, most of it about how the model's thinking is shown. The machinery to pick a thinking display mode is present, but the one path that does anything new, connector text only, needs a server-supplied model capability plus an internal gate before it sends the <code>thinking-display-updates-2026-08-18</code> API beta, so nothing changes on a stock build; the new three-state <code>CLAUDE_CODE_THINKING_DISPLAY_UPDATES</code> setting lets you force it on or off, and left unset it defers to the remote gate, which is off. Claude Code also now detects thinking blocks the server tagged as narration by reading the block's signature, and counts them for everyone, though hiding them from the live thinking preview and marking them "(summarized)" both sit behind an off-by-default gate. A one-time dialog offering to drop your saved default effort from high to medium is fully wired up, telemetry included, but takes all its wording from the remote config key <code>tengu_radiant_island</code>, which ships empty, so it never renders. Separately, saving a default effort can be scoped to just the model you are using rather than globally, gated off by default.</p></div>    <div class="meta-row">
+<span class="chip chip-official pending"><span class="k">Official notes</span> <b>pending</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.239 → v2.1.240</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-opus-5 (effort medium)</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">1</div><div class="l">Use it now</div></div>
+  <div class="stat b zero"><div class="n">0</div><div class="l">You&#39;ll notice</div></div>
+  <div class="stat d"><div class="n">6</div><div class="l">Not switched on</div></div>
+  <div class="stat s"><div class="n">2</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head official-head pending">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Awaiting notes</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official pending">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div>
+            <div class="ob-title">Official release notes pending</div>
+            <div class="ob-sub">Anthropic has not published official notes for v2.1.240 yet. This section updates automatically when the entry appears in the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Official changelog &#8599;</a>
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
+  <div class="section-head">
+    <h2>Highlights</h2><div class="ln"></div>
+    <span class="ct">1 of 10</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card highlights">
+      <ul class="official-list">
+        <li><a href="#claude-code-thinking-display-updates-environment-variable">Set CLAUDE_CODE_THINKING_DISPLAY_UPDATES to force the new thinking display on or off yourself.</a> <code class="tok">CLAUDE_CODE_THINKING_DISPLAY_UPDATES</code></li>
+      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        The rest of the release is below, all 10 findings. Filter it, or open any card for the full detail and source evidence.
+      </div>
+    </article>
+  </div>
+  <div class="section-head soon-head">
+    <h2>Present but switched off</h2><div class="ln"></div>
+    <span class="ct">4 of 6</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card soonblock">
+      <ul class="official-list">
+        <li><a href="#thinking-display-modes-gated-behind-a-server-side-model-capa">Three thinking display modes and an API beta id are built in, but need a server-supplied capability plus an internal gate, and the mode selector is never called.</a> <code class="tok">CLAUDE_CODE_THINKING_DISPLAY_UPDATES</code><span class="ar">Thinking Display</span></li>
+        <li><a href="#switch-your-default-effort-to-medium-prompt-complete-but-wit">The effort-medium dialog is fully wired into the prompt sequence but its required wording comes from a remote config key that ships empty.</a><span class="ar">Effort Levels</span></li>
+        <li><a href="#saving-a-default-effort-level-can-now-scope-it-to-one-model">Per-model effort defaults are implemented behind the tengu_russet_plover gate; with it off you still get one global setting.</a><span class="ar">Effort Levels</span></li>
+        <li><a href="#server-tagged-narration-thinking-blocks-counted-now-and-rend">Narration detection and per-request counting run for everyone; the &#34;(summarized)&#34; rendering sits behind a gate that is off by default.</a> <code class="tok">CLAUDE_CODE_SABLE_THRUSH</code><span class="ar">Thinking Display</span></li>
+      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        Shipped inside the bundle with its gate off, its guard hardcoded false, or nothing calling it. What the code shows, not a roadmap: no claim about what is released, announced or planned.
+      </div>
+    </article>
+  </div>
+  <div class="filterbar" id="filterbar">
+    <span class="fb-label">Filter</span>
+    <div class="fb-chips">
+      <button class="fchip all on" type="button" data-key="">Everything<span class="fn">10</span></button>
+      <button class="fchip kind" type="button" data-key="k-in-development">In Development<span class="fn">7</span></button>
+      <button class="fchip kind" type="button" data-key="k-internal-changes">Internal Changes<span class="fn">3</span></button>
+      <button class="fchip tok" type="button" data-key="x-env">Env vars<span class="fn">3</span></button>
+      <button class="fchip tok" type="button" data-key="x-setting">Settings<span class="fn">1</span></button>
+      <button class="fchip juice" type="button" data-key="juicy">Juicy<span class="fn">4</span></button>
+      <button class="fchip soon" type="button" data-key="upcoming">Coming soon<span class="fn">6</span></button>
+    </div>
+    <span class="fb-count" id="fbcount"></span>
+  </div>
+  <div class="section-head lead">
+    <h2>What probably matters to you</h2><div class="ln"></div>
+<span class="ct">5 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+<p class="section-note">Anything you can use today, anything that visibly changes, and anything worth poking at. One line each, open for detail.</p>  <div class="card-list">
+  <div class="col">
+    <article class="card folded q4" id="claude-code-thinking-display-updates-environment-variable" data-f="juicy k-in-development t-use x-env">
+      <div class="card-top">
+        <h3>CLAUDE_CODE_THINKING_DISPLAY_UPDATES environment variable <a class="anchor" href="#claude-code-thinking-display-updates-environment-variable">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">Set CLAUDE_CODE_THINKING_DISPLAY_UPDATES to force the new thinking display on or off yourself.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">CLAUDE_CODE_THINKING_DISPLAY_UPDATES</code></div>        <span class="where"><b>Use it now</b> &middot; Thinking Display</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>A new three-state environment variable in the settings schema. Set it true to force the new thinking display on, false to force it off; leave it unset and the remote gate decides, which is off by default.</p>
+<div class="blabel">Evidence</div>
+<p><code>CLAUDE_CODE_THINKING_DISPLAY_UPDATES</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q3" id="saving-a-default-effort-level-can-now-scope-it-to-one-model" data-f="juicy k-in-development t-soon upcoming">
+      <div class="card-top">
+        <h3>Saving a default effort level can now scope it to one model <a class="anchor" href="#saving-a-default-effort-level-can-now-scope-it-to-one-model">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">Your saved default effort could apply per model instead of everywhere, but that is off.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Effort Levels</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Previously, saving a default effort wrote both a global setting and a per-model one. With the <code>tengu_russet_plover</code> gate on, it now writes only the per-model entry, so the default applies to the model you are using rather than everything. With the gate off, which is the built-in default, it writes only the global setting.</p>
+<div class="blabel">Details</div>
+<ul><li>The gate is remote, <code>tengu_russet_plover</code>, fallback off.</li><li>Model names that would collide with built-in JavaScript object property names also fall back to the global-only write.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>{ effortLevel: t, modelSettings: { [r]: { effortLevel: t } } }</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="thinking-display-modes-gated-behind-a-server-side-model-capa" data-f="juicy k-in-development t-soon upcoming x-env">
+      <div class="card-top">
+        <h3>Thinking display modes gated behind a server-side model capability <a class="anchor" href="#thinking-display-modes-gated-behind-a-server-side-model-capa">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">Claude Code can present thinking as connector text only, but nothing enables it here.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">CLAUDE_CODE_THINKING_DISPLAY_UPDATES</code></div>        <span class="where"><b>Not switched on</b> &middot; Thinking Display</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Claude Code gains machinery to choose how a model's thinking is presented: thinking plus the short connector text that bridges to the next action, connector text only, or nothing at all. Only the connector-text-only path does anything new, asking the model for streaming thinking updates and attaching the new API beta id <code>thinking-display-updates-2026-08-18</code> to the request. Reaching that path needs a model capability the server has to supply plus an internal gate, so with no server configuration the beta is never sent, and the selector helper that maps a requested mode onto a display is not called anywhere in this build.</p>
+<div class="blabel">Details</div>
+<ul><li>Resolution order is: an explicit <code>summarized</code> request wins and shows thinking plus connector text, then <code>omitted</code> shows nothing, then non-interactive sessions show nothing, then the <code>showThinkingSummaries</code> setting gives thinking plus connector text, and last the capability-plus-gate path gives connector text only.</li><li>The helper's own fallback branch shows connector text only when both the thinking-display-updates gate and the <code>tengu_sable_thrush</code> gate are on, and otherwise shows nothing.</li><li>Setting the <code>CLAUDE_CODE_THINKING_DISPLAY_UPDATES</code> environment variable short-circuits the check and is returned directly; otherwise the server-supplied model capability or the remote <code>tengu_thinking_display_updates</code> gate decides, with the value compiled into the binary defaulting to off.</li><li>The outgoing request is only rewritten to carry the beta when the endpoint is first-party and streaming-capable and the <code>CLAUDE_CODE_SIMULATE_PROXY_USAGE</code> environment variable is not set.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>if (e === "summarized") return "thinking_and_connector_text";</code>, <code>thinking-display-updates-2026-08-18</code></p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q3" id="switch-your-default-effort-to-medium-prompt-complete-but-wit" data-f="juicy k-in-development t-soon upcoming">
+      <div class="card-top">
+        <h3>"Switch your default effort to medium?" prompt, complete but with no text to show <a class="anchor" href="#switch-your-default-effort-to-medium-prompt-complete-but-wit">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">A one-time prompt offering to switch your default effort to medium exists but has no text.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Effort Levels</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>A one-time dialog offering to change your saved default effort from high to medium, confirming with <code>Effort set to medium and saved as your default</code> or a warning if the write fails. It is fully reachable in the prompt sequence, ahead of the LSP and plugin hints, and marks itself seen so it appears at most once. But its wording comes entirely from the remote config key <code>tengu_radiant_island</code>, whose in-binary value is an empty object and whose body text is required, so with no server value the dialog never appears.</p>
+<div class="blabel">Details</div>
+<ul><li>Only the body text is required; title, confirm label and cancel label have in-code defaults.</li><li>You are only eligible if you have no effort pinned anywhere, or have pinned high in your user settings. Any other configuration disqualifies.</li><li>The parent picks it as <code>effort-medium-nudge</code> in the same chain as the fullscreen upsell and remote callouts.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Switch your default effort to medium?</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="server-tagged-narration-thinking-blocks-counted-now-and-rend" data-f="k-in-development t-soon upcoming x-env">
+      <div class="card-top">
+        <h3>Server-tagged "narration" thinking blocks, counted now and rendered as "(summarized)" later <a class="anchor" href="#server-tagged-narration-thinking-blocks-counted-now-and-rend">#</a></h3>
+      </div>
+      <p class="glance">Claude Code now spots server-tagged narration thinking, but the display change stays off by default.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">CLAUDE_CODE_SABLE_THRUSH</code></div>        <span class="where"><b>Not switched on</b> &middot; Thinking Display</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Claude Code can now tell whether the model's thinking block was tagged by the server as narration, by decoding the block's cryptographic signature and looking for the literal string <code>narration</code> inside it. The count of such blocks per request is reported for everyone on this build. The display changes that depend on it are held behind a gate that is off by default, so on a stock build thinking still renders exactly as before.</p>
+<div class="blabel">Details</div>
+<ul><li>The classifier caches its result per block, so each block is decoded once.</li><li>Decode failures are swallowed silently and reported once as <code>narration_classifier_error</code>.</li><li>The telemetry field counting narration blocks per request existed in 2.1.239 but was wired to a check hardcoded to return nothing, so it never reported; it is now wired to the real check and has no gate.</li><li>The display-side check additionally requires <code>CLAUDE_CODE_SABLE_THRUSH</code> set true or the remote <code>tengu_sable_thrush</code> gate to be on, with the in-binary fallback off, and it also requires the server to actually be tagging blocks.</li><li>With the gate on, the main message renderer prints a dimmed, italic <code>(summarized)</code> label above the trimmed thinking text instead of the reasoning itself, the live thinking pane blanks out for such blocks, and a reply whose first block is narration counts as having visible content.</li><li>Screen readers get a dot column labelled <code>summarized:</code> in place of the visual label.</li><li>Each of the three display sites checks the classifier helper is present before calling it, so those paths stay inert if it is absent.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>narration_classifier_error</code>, <code>"aria-label": "summarized:"</code>, <code>(summarized)</code></p>
+<hr></div>
+    </article>
+  </div>
+  </div>
+  <div class="group-divider rest">
+    <div class="gd-title">Everything else &middot; 5</div>
+    <div class="gd-sub">Smaller changes and internals, grouped as the pipeline found them. Nothing is dropped, it is only further down.</div>
+  </div>
+  <div class="section-head muted">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">2 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
+  <div class="col">
+    <article class="card folded q2" id="narration-thinking-is-kept-out-of-the-live-thinking-preview" data-f="k-in-development t-soon upcoming">
+      <div class="card-top">
+        <h3>Narration thinking is kept out of the live thinking preview <a class="anchor" href="#narration-thinking-is-kept-out-of-the-live-thinking-preview">#</a></h3>
+      </div>
+      <p class="glance">Narration thinking would be hidden from the live thinking preview, but that path is switched off.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Thinking Display</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The streaming path used to always show the first thinking block of a reply as the in-progress thinking preview. It now checks whether that block is narration first and shows nothing if so. Only reachable with the sable-thrush gate on, which is off by default.</p>
+<div class="blabel">Details</div>
+<ul><li>The call site also checks that the narration helper is present before using it, so builds without it behave as before.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>isNarrationSummaryBlock</code></p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q1" id="telemetry-for-the-effort-nudge" data-f="k-in-development t-soon upcoming">
+      <div class="card-top">
+        <h3>Telemetry for the effort nudge <a class="anchor" href="#telemetry-for-the-effort-nudge">#</a></h3>
+      </div>
+      <p class="glance">Two events would record the effort prompt and your answer, but it never shows.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Effort Levels</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Two events fire only when the effort-medium prompt actually renders, which requires the remote <code>tengu_radiant_island</code> config to supply its text. One records the display and which group you fell into, the other records your choice and the outcome: switched, declined, write_failed or unavailable.</p>
+<div class="blabel">Details</div>
+<ul><li>Failure paths also record a reason, either <code>unavailable_at_accept</code> or <code>settings_write_failed</code>.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>tengu_effort_medium_nudge_resolved</code></p>
+<hr></div>
+    </article>
+  </div>
+  </div>
+  <div class="section-head muted">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">3 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
+  <div class="col">
+    <article class="card folded q2" id="per-message-stats-count-narration-thinking-blocks" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Per-message stats count narration thinking blocks <a class="anchor" href="#per-message-stats-count-narration-thinking-blocks">#</a></h3>
+      </div>
+      <p class="glance">Per-message character tallies now include narration blocks, so usage stats count a bit more.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Telemetry</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The routine that tallies text and thinking character counts per message now also counts blocks tagged as narration. This uses the raw signature check with no gate, so it counts on every build where the helper is present.</p>
+<div class="blabel">Evidence</div>
+<p><code>isNarrationTaggedBlock</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q1" id="most-of-this-release-is-the-version-stamp-and-compiler-churn" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Most of this release is the version stamp and compiler churn <a class="anchor" href="#most-of-this-release-is-the-version-stamp-and-compiler-churn">#</a></h3>
+      </div>
+      <p class="glance">Nearly all of this release is repeated build-constant updates and renamed variables, not real changes.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>About 90 of the changes are the same build-constant block re-emitted at each place it is used. The rest, including the GitLab merge-request URL pattern, git worktree paths, test and typecheck command detection, the login-error check and a long tail of reformatting in the MCP and plugin sync code, are identical apart from renamed internal variables.</p>
+<div class="blabel">Evidence</div>
+<p><code>GIT_SHA: "d235569e3f61fc4d9aacd7c85e6d1b6253e03f52"</code></p></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q2" id="version-stamped-as-2-1-240" data-f="k-internal-changes t-internal x-setting">
+      <div class="card-top">
+        <h3>Version stamped as 2.1.240 <a class="anchor" href="#version-stamped-as-2-1-240">#</a></h3>
+      </div>
+      <p class="glance">The build now reports itself as version 2.1.240 in version checks and headers.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">claude --version</code></div>        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The embedded version, build time and commit id moved to the 2.1.240 build. These drive <code>claude --version</code>, update checks, Remote Control minimum-version messages, user-agent headers and analytics fields. No behaviour change beyond the new values.</p>
+<div class="blabel">Evidence</div>
+<p><code>VERSION: "2.1.240"</code></p>
+<hr></div>
+    </article>
+  </div>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-opus-5 (effort medium)</div></div><div><div class="k">Primary diff</div><div class="val">&lt;data root&gt;/claude-code/changes/changes-v2.1.240.md</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+
+  function setOpen(card,open){
+    var b=card.querySelector('.more'),body=card.querySelector('.card-body');
+    if(!b||!body)return;
+    body.hidden=!open;
+    card.classList.toggle('open',open);
+    b.setAttribute('aria-expanded',open);
+    b.firstChild.nodeValue=open?'Hide':'Details';
+  }
+
+  document.addEventListener('click',function(ev){
+    var b=ev.target.closest('.more');
+    if(b){setOpen(b.closest('.card'),b.getAttribute('aria-expanded')!=='true');return;}
+
+    var all=ev.target.closest('.openall');
+    if(!all)return;
+    var open=all.dataset.open!=='1';
+    all.dataset.open=open?'1':'0';
+    all.textContent=open?'Close all':'Open all';
+    var list=all.closest('.section-head').nextElementSibling;
+    while(list&&!list.classList.contains('card-list'))list=list.nextElementSibling;
+    if(list)list.querySelectorAll('.card').forEach(function(c){setOpen(c,open)});
+  });
+
+  // A link to a folded card is useless if it lands on a closed one.
+  function openHash(){
+    var el=location.hash&&document.querySelector(location.hash);
+    if(el&&el.classList.contains('folded')){setOpen(el,true);el.scrollIntoView({block:'center'})}
+  }
+  addEventListener('hashchange',openHash);openHash();
+
+  var bar=document.getElementById('filterbar');
+  if(bar){
+    var active=new Set(),
+        cards=[].slice.call(document.querySelectorAll('.card[data-f]')),
+        out=document.getElementById('fbcount');
+
+    function apply(){
+      var shown=0;
+      cards.forEach(function(c){
+        var f=c.dataset.f.split(' '),
+            ok=!active.size||f.some(function(k){return active.has(k)});
+        c.hidden=!ok;
+        if(ok)shown++;
+      });
+      // A heading over nothing is worse than no heading.
+      document.querySelectorAll('.card-list').forEach(function(list){
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
+            head=list.previousElementSibling;
+        list.hidden=!any;
+        while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;
+        if(head)head.hidden=!any;
+        var note=list.previousElementSibling;
+        if(note&&note.classList.contains('section-note'))note.hidden=!any;
+      });
+      out.textContent=active.size?shown+' of '+cards.length+' shown':'';
+      bar.classList.toggle('filtering',active.size>0);
+    }
+
+    bar.addEventListener('click',function(ev){
+      var b=ev.target.closest('.fchip');
+      if(!b)return;
+      var key=b.dataset.key;
+      if(!key){active.clear()}
+      else if(active.has(key)){active.delete(key)}
+      else{active.add(key)}
+      bar.querySelectorAll('.fchip').forEach(function(c){
+        c.classList.toggle('on',c.dataset.key?active.has(c.dataset.key):!active.size);
+      });
+      apply();
+    });
+  }
+</script>
+</body>
+</html>
