@@ -41,7 +41,7 @@
 <div class="sub"><p>Five entries land the reconnection rework for live artifact watches without switching it on. Lease mode, the flag <code>tengu_slate_lantern_ember</code>, defaults to off, so a stock build always takes the long 120 to 240 second backoff tier once a stall repeats rather than the two-tier behaviour the code describes. Failed watch startups can now be classed as temporary outages, meaning a retryable server status or a request that hung at least 10 seconds with no reply, and routed to the slow retry schedule. Close reasons written as <code>cf_mitigated_&lt;status&gt;</code> or <code>upgrade_rejected_&lt;status&gt;</code> are decoded back into an HTTP status and a Cloudflare flag, where the previous build only wrote those strings. Two end-of-watch notices, one for giving up after repeated failures and one for live updates being turned off, are sent passively with their own advice text.</p>
 <p>A disconnect classified as a load shed, meaning a Cloudflare-mitigated close or a 5xx, 429 or 408 upgrade rejection, now deletes the cached token lease instead of carrying it through up to three failed dials, and counts as a stall for backoff purposes. A watch judged to be stalling for a long time waits 120 to 240 seconds between attempts instead of 30 to 60, so a persistently broken watch stops hitting the server every half minute. Giving up is no longer fixed at 30 minutes: each stall run picks its own deadline of 30 minutes plus up to 15 more, so sessions caught in a single outage do not all abandon at once. The notice sent when reconnection is abandoned now says the watch will not reconnect on its own, and arrives passively rather than as an interrupting task notification.</p>
 <p>An error handler in the path that arms a live subscription reported an outer captured value rather than the exception it had just caught, which lost the real error. It now passes the caught error through.</p></div>    <div class="meta-row">
-<span class="chip chip-official pending"><span class="k">Official notes</span> <b>pending</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip chip-official available"><span class="k">Official notes</span> <b>&#10003; synced</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
 <span class="chip"><span class="k">Diff</span> <b>v2.1.248 → v2.1.250</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-opus-5 (effort low)</b></span>    </div>
     <div class="stats">
   <div class="stat f zero"><div class="n">0</div><div class="l">Use it now</div></div>
@@ -54,21 +54,27 @@
 
 <div class="wrap wide">
 <main>
-  <div class="section-head official-head pending">
+  <div class="section-head official-head available">
     <h2>Official Changelog</h2><div class="ln"></div>
-    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Awaiting notes</span>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Official · Anthropic</span>
   </div>
   <div class="official-wrap">
-    <article class="card official pending">
+    <article class="card official available">
       <div class="ob">
         <div class="ob-left">
-          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
           <div>
-            <div class="ob-title">Official release notes pending</div>
-            <div class="ob-sub">Anthropic has not published official notes for v2.1.250 yet. This section updates automatically when the entry appears in the upstream changelog.</div>
+            <div class="ob-title">Anthropic’s official release notes</div>
+            <div class="ob-sub">Published verbatim by Anthropic for v2.1.250. Text is unmodified from the upstream changelog.</div>
           </div>
         </div>
-        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Official changelog &#8599;</a>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#21250" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub &#8599;</a>
+      </div>
+      <ul class="official-list">
+<li>Bug fixes and reliability improvements</li>      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Source: <code>anthropics/claude-code &middot; CHANGELOG.md</code> &middot; 1 entries &middot; synced automatically when Anthropic publishes official notes for a version.
       </div>
     </article>
   </div>
