@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.250 — Changelog</title>
+<meta name="description" content="Source-level changelog for Claude Code v2.1.250."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="oldsite"><div class="wrap wide"><div class="oldsite-row">
+  <p class="oldsite-text">This one's being retired. The changelogs live at
+    <a href="https://changelogs.core-directive.com/">changelogs.core-directive.com</a> now,
+    with search, the documentation diffs and the prompt captures.</p>
+  <a class="oldsite-go" href="https://changelogs.core-directive.com/v/2.1.250">Read v2.1.250 over there &rarr;</a>
+</div></div></div>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.250</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-opus-5 (effort low)</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.250</span></h1>
+<div class="sub"><p>Five entries land the reconnection rework for live artifact watches without switching it on. Lease mode, the flag <code>tengu_slate_lantern_ember</code>, defaults to off, so a stock build always takes the long 120 to 240 second backoff tier once a stall repeats rather than the two-tier behaviour the code describes. Failed watch startups can now be classed as temporary outages, meaning a retryable server status or a request that hung at least 10 seconds with no reply, and routed to the slow retry schedule. Close reasons written as <code>cf_mitigated_&lt;status&gt;</code> or <code>upgrade_rejected_&lt;status&gt;</code> are decoded back into an HTTP status and a Cloudflare flag, where the previous build only wrote those strings. Two end-of-watch notices, one for giving up after repeated failures and one for live updates being turned off, are sent passively with their own advice text.</p>
+<p>A disconnect classified as a load shed, meaning a Cloudflare-mitigated close or a 5xx, 429 or 408 upgrade rejection, now deletes the cached token lease instead of carrying it through up to three failed dials, and counts as a stall for backoff purposes. A watch judged to be stalling for a long time waits 120 to 240 seconds between attempts instead of 30 to 60, so a persistently broken watch stops hitting the server every half minute. Giving up is no longer fixed at 30 minutes: each stall run picks its own deadline of 30 minutes plus up to 15 more, so sessions caught in a single outage do not all abandon at once. The notice sent when reconnection is abandoned now says the watch will not reconnect on its own, and arrives passively rather than as an interrupting task notification.</p>
+<p>An error handler in the path that arms a live subscription reported an outer captured value rather than the exception it had just caught, which lost the real error. It now passes the caught error through.</p></div>    <div class="meta-row">
+<span class="chip chip-official pending"><span class="k">Official notes</span> <b>pending</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.248 → v2.1.250</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-opus-5 (effort low)</b></span>    </div>
+    <div class="stats">
+  <div class="stat f zero"><div class="n">0</div><div class="l">Use it now</div></div>
+  <div class="stat b"><div class="n">9</div><div class="l">You&#39;ll notice</div></div>
+  <div class="stat d zero"><div class="n">0</div><div class="l">Not switched on</div></div>
+  <div class="stat s zero"><div class="n">0</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head official-head pending">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Awaiting notes</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official pending">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div>
+            <div class="ob-title">Official release notes pending</div>
+            <div class="ob-sub">Anthropic has not published official notes for v2.1.250 yet. This section updates automatically when the entry appears in the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Official changelog &#8599;</a>
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
+  <div class="section-head soon-head">
+    <h2>Present but switched off</h2><div class="ln"></div>
+    <span class="ct">1 of 1</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card soonblock">
+      <ul class="official-list">
+        <li><a href="#which-stall-backoff-tier-is-used-depends-on-the-lease-mode-f">A lease-aware short-retry tier exists but lease mode (<code>tengu_slate_lantern_ember</code>) falls back to off, so stock builds never use it.</a> <code class="tok">tengu_slate_lantern_ember</code><span class="ar">Artifacts</span></li>
+      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        Shipped inside the bundle with its gate off, its guard hardcoded false, or nothing calling it. What the code shows, not a roadmap: no claim about what is released, announced or planned.
+      </div>
+    </article>
+  </div>
+  <div class="filterbar" id="filterbar">
+    <span class="fb-label">Filter</span>
+    <div class="fb-chips">
+      <button class="fchip all on" type="button" data-key="">Everything<span class="fn">15</span></button>
+      <button class="fchip kind" type="button" data-key="k-in-development">In Development<span class="fn">5</span></button>
+      <button class="fchip kind" type="button" data-key="k-improvements">Improvements<span class="fn">4</span></button>
+      <button class="fchip kind" type="button" data-key="k-bug-fixes">Bug Fixes<span class="fn">1</span></button>
+      <button class="fchip kind" type="button" data-key="k-internal-changes">Internal Changes<span class="fn">5</span></button>
+      <button class="fchip tok" type="button" data-key="x-setting">Settings<span class="fn">2</span></button>
+      <button class="fchip juice" type="button" data-key="juicy">Juicy<span class="fn">2</span></button>
+      <button class="fchip soon" type="button" data-key="upcoming">Coming soon<span class="fn">1</span></button>
+    </div>
+    <span class="fb-count" id="fbcount"></span>
+  </div>
+  <div class="section-head lead">
+    <h2>What probably matters to you</h2><div class="ln"></div>
+<span class="ct">2 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+<p class="section-note">Anything you can use today, anything that visibly changes, and anything worth poking at. One line each, open for detail.</p>  <div class="card-list">
+  <div class="col">
+    <article class="card folded q3" id="long-stall-backoff-band-and-randomised-give-up-window-for-li" data-f="juicy k-in-development t-notice x-setting">
+      <div class="card-top">
+        <h3>Long-stall backoff band and randomised give-up window for live watches <a class="anchor" href="#long-stall-backoff-band-and-randomised-give-up-window-for-li">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">Stalled watches now wait 2-4 minutes between retries and give up at a random point between 30 and 45 minutes.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">tengu_slate_lantern_ember</code></div>        <span class="where"><b>You&#39;ll notice</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Repeated reconnect stalls now back off 2 to 4 minutes instead of 30 to 60 seconds, and a stalling watch gives up somewhere between 30 and 45 minutes rather than at exactly 30, so clients in one outage do not all abandon at the same moment. The long band is picked when a stall repeats and either the connection was closed by Cloudflare mitigation or lease mode is off, and lease mode (<code>tengu_slate_lantern_ember</code>) defaults to off, so a stock build takes the long band.</p>
+<div class="blabel">Details</div>
+<ul><li>New timing constants: <code>longStallMinMs: 120000</code>, <code>longStallMaxMs: 240000</code>, <code>stallOutJitterMs: 900000</code>.</li><li>Give-up deadline is now per run: <code>maxStallMs</code> plus a random amount up to the jitter.</li><li>A counter event fires once per stall run carrying a startup flag and, when known, <code>http_status</code>.</li><li>The numbers are compiled in and copied into state; nothing in this build overrides them remotely.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>stallOutJitterMs</code>, <code>stall_run_started</code></p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q2" id="which-stall-backoff-tier-is-used-depends-on-the-lease-mode-f" data-f="juicy k-in-development t-notice upcoming x-setting">
+      <div class="card-top">
+        <h3>Which stall backoff tier is used depends on the lease-mode flag <a class="anchor" href="#which-stall-backoff-tier-is-used-depends-on-the-lease-mode-f">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">Repeat stalls take the long 2-4 minute retry tier because lease mode is off in a stock build.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">tengu_slate_lantern_ember</code></div>        <span class="where"><b>You&#39;ll notice</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The reconnect delay picker now has two tiers. The long one, 120 to 240 seconds, is used on the second and later attempts of a stall run when the close was Cloudflare-mitigated, lease mode is off, there is no lease, or the lease will not outlive the next attempt. Lease mode is <code>tengu_slate_lantern_ember</code> with fallback false, so without a remote value every repeat stall takes the long tier.</p>
+<div class="blabel">Details</div>
+<ul><li>Short tier remains 30 to 60 seconds.</li><li>The timing table is a plain in-bundle constant, never reassigned, so the numbers are not server-tunable.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>longStallMaxMs: 240000,</code></p>
+<hr></div>
+    </article>
+  </div>
+  </div>
+  <div class="group-divider rest">
+    <div class="gd-title">Everything else &middot; 13</div>
+    <div class="gd-sub">Smaller changes and internals, grouped as the pipeline found them. Nothing is dropped, it is only further down.</div>
+  </div>
+  <div class="section-head muted">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">4 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
+  <div class="col">
+    <article class="card folded q2" id="connection-lost-notice-reworded-and-made-passive" data-f="k-improvements t-notice">
+      <div class="card-top">
+        <h3>"Connection lost" notice reworded and made passive <a class="anchor" href="#connection-lost-notice-reworded-and-made-passive">#</a></h3>
+      </div>
+      <p class="glance">When a live watch gives up reconnecting, you get a quieter note instead of an interrupting alert.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>When reconnection is abandoned, the notice the model receives now says the watch will not reconnect on its own and is delivered passively rather than as an interrupting task notification.</p>
+<div class="blabel">Details</div>
+<ul><li>The notifier helper takes an options object with advice text and a passive flag instead of a trailing string.</li><li>What the passive flag does further down the notification queue is not visible from this change.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>the live connection kept failing and reconnecting has stopped</code>, <code>it will not reconnect on its own</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="giving-up-on-a-stalled-watch-is-spread-across-a-15-minute-wi" data-f="k-improvements t-notice">
+      <div class="card-top">
+        <h3>Giving up on a stalled watch is spread across a 15-minute window <a class="anchor" href="#giving-up-on-a-stalled-watch-is-spread-across-a-15-minute-wi">#</a></h3>
+      </div>
+      <p class="glance">Stalled watches now give up somewhere between 30 and 45 minutes, not all at once.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>A stalled watch used to be abandoned at exactly 30 minutes. Each stall run now picks its own deadline of 30 minutes plus a random amount up to 15 more, so sessions caught in one outage do not all give up together.</p>
+<div class="blabel">Details</div>
+<ul><li>The new jitter constant is <code>stallOutJitterMs: 900000</code>.</li><li>The window deciding whether a fresh stall continues the previous run also widened, and now accounts for the long backoff band and twice the 15 second request timeout.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>stallOutJitterMs: 900000,</code></p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q2" id="persistently-broken-live-watches-back-off-to-minutes" data-f="k-improvements t-notice">
+      <div class="card-top">
+        <h3>Persistently broken live watches back off to minutes <a class="anchor" href="#persistently-broken-live-watches-back-off-to-minutes">#</a></h3>
+      </div>
+      <p class="glance">A repeatedly failing live watch now retries every few minutes instead of every half minute.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>When a stall is judged long-running, the retry delay is drawn from 120 to 240 seconds rather than 30 to 60, so a live artifact watch that keeps failing stops hammering the server every half minute.</p>
+<div class="blabel">Details</div>
+<ul><li>The long class is chosen on a Cloudflare-mitigated close, when lease mode is off, or when the lease is absent or about to expire.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>longStallMinMs: 120000,</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q3" id="load-shed-disconnects-drop-the-reused-token-lease" data-f="k-improvements t-notice">
+      <div class="card-top">
+        <h3>Load-shed disconnects drop the reused token lease <a class="anchor" href="#load-shed-disconnects-drop-the-reused-token-lease">#</a></h3>
+      </div>
+      <p class="glance">Overload-related disconnects now back off and fetch a fresh token instead of reusing a stale one.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>A disconnect classified as a load shed, meaning a Cloudflare-mitigated close or a 5xx/429/408 upgrade rejection, now both counts as a stall for backoff purposes and deletes the cached token lease instead of keeping it through up to three failed dials.</p>
+<div class="blabel">Details</div>
+<ul><li>The shed classification is computed before the stall check in the socket lifecycle handler.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>...(Ne &amp;&amp; { shed: !0 }),</code></p>
+<hr></div>
+    </article>
+  </div>
+  </div>
+  <div class="section-head muted">
+    <h2>Bug Fixes</h2><div class="ln"></div>
+<span class="ct">1 item</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
+  <div class="col">
+    <article class="card folded q2" id="wrong-value-reported-when-arming-a-live-subscription-failed" data-f="k-bug-fixes t-notice">
+      <div class="card-top">
+        <h3>Wrong value reported when arming a live subscription failed <a class="anchor" href="#wrong-value-reported-when-arming-a-live-subscription-failed">#</a></h3>
+      </div>
+      <p class="glance">When a live subscription fails to start, the error you see is now the actual failure.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>An error handler in the live-subscription arming path reported an outer captured value instead of the exception it had just caught, so the real error was lost. It now passes the caught error.</p>
+<div class="blabel">Evidence</div>
+<p><code>armLiveSubscription: late-park fall-through lost its park</code></p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+  </div>
+  </div>
+  <div class="section-head muted">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">3 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
+  <div class="col">
+    <article class="card folded q3" id="failed-live-watch-startups-are-treated-as-temporary-outages-" data-f="k-in-development t-notice">
+      <div class="card-top">
+        <h3>Failed live-watch startups are treated as temporary outages and retried on the slow schedule <a class="anchor" href="#failed-live-watch-startups-are-treated-as-temporary-outages-">#</a></h3>
+      </div>
+      <p class="glance">Live artifact watches that fail to start from a server hiccup now retry on the patient schedule instead of burning attempts.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>When a live artifact watch fails to start, Claude Code now decides whether the failure looks like a transient server problem rather than a permanent one, and routes it to the slow stall-style retry instead of the fast consecutive-failure backoff. A failure counts as a temporary outage if the server replied with a retryable status, or if the request produced no reply at all and hung for at least 10 seconds. Neither of these markers existed on this error path in 2.1.248.</p>
+<div class="blabel">Details</div>
+<ul><li>The retryable-status test returns true for HTTP status 500 or above, 429 and 408; such a status attaches an <code>unavailable</code> marker to the startup response.</li><li>A startup error code of <code>boot_request_error</code> attaches a <code>noAnswer</code> marker, meaning the request errored out with no reply.</li><li>The startup builder records the time just before the request is issued, so a hung startup can be measured; a <code>noAnswer</code> result plus elapsed time of at least <code>stallThresholdMs</code>, the reconnect timing default compiled at 10000 ms, counts as unavailable.</li><li>The failure helper gained <code>unavailable</code> and <code>httpStatus</code> options and passes a <code>stalled</code> flag plus the HTTP status into the reconnect scheduler.</li><li>All of this sits inside the live-watch feature, which is off unless the <code>tengu_slate_lantern</code> flag is switched on for your account.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>boot_request_error</code>, <code>...(i.errorCode === "boot_request_error" &amp;&amp; { noAnswer: !0 }),</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q3" id="watch-ended-messages-can-be-delivered-without-interrupting-t" data-f="k-in-development t-notice">
+      <div class="card-top">
+        <h3>Watch-ended messages can be delivered without interrupting the model <a class="anchor" href="#watch-ended-messages-can-be-delivered-without-interrupting-t">#</a></h3>
+      </div>
+      <p class="glance">When a watch gives up or is switched off, you get a quieter notice that explains it instead of interrupting.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Two end-of-watch notices, one after repeated connection failures and one when live updates get switched off, are now sent passively and carry their own advice text rather than the default "watch it again if you still need that". The give-up notice tells the agent the watch will not reconnect on its own; the flag-off notice says there is nothing to re-watch. Ordinary stop and other-org notices are unchanged.</p>
+<div class="blabel">Details</div>
+<ul><li>The announcer's final argument changed from an advice string to an options object with <code>advice</code> and <code>passive</code>.</li><li>Both advice strings are new in this build.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>{ advice: Un, passive: !0 },</code>, <code>there is nothing to re-watch while live updates are switched off</code></p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q2" id="cloudflare-and-load-shed-disconnects-are-recognised-and-repo" data-f="k-in-development t-internal">
+      <div class="card-top">
+        <h3>Cloudflare and load-shed disconnects are recognised and reported <a class="anchor" href="#cloudflare-and-load-shed-disconnects-are-recognised-and-repo">#</a></h3>
+      </div>
+      <p class="glance">Claude Code can now tell when a watch was cut off by traffic protection or server overload rather than a real error.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Connection close reasons of the form <code>cf_mitigated_&lt;status&gt;</code> or <code>upgrade_rejected_&lt;status&gt;</code> are now decoded back into an HTTP status and a Cloudflare flag. The previous build only wrote those strings. A close counts as a load shed when the status is 5xx, 429 or 408, or when Cloudflare mitigated it.</p>
+<div class="blabel">Details</div>
+<ul><li>Failure telemetry now carries <code>shed</code>, <code>http_status</code> and <code>cf_mitigated</code> fields; before it could only report a fixed stalled marker.</li><li>A shed close is folded into the stalled decision and no longer clears the cached token lease.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>cf_mitigated</code>, <code>/^(cf_mitigated|upgrade_rejected)_(\d{1,3})$/</code></p>
+<hr></div>
+    </article>
+  </div>
+  </div>
+  <div class="section-head muted">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
+  <div class="col">
+    <article class="card folded q1" id="request-timeout-hoisted-into-a-shared-constant" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Request timeout hoisted into a shared constant <a class="anchor" href="#request-timeout-hoisted-into-a-shared-constant">#</a></h3>
+      </div>
+      <p class="glance">Two 15-second timeouts became one shared value; timing is unchanged.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The two hard-coded 15 second timeouts on the artifact read and the watch-token renew request became one named constant, which also feeds the stall-run window calculation. Same values, so nothing changes for users.</p>
+<div class="blabel">Evidence</div>
+<p><code>handshakeDeadlineMs</code>, <code>Wxt = 15000;</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q1" id="lease-renewal-miss-telemetry-unchanged" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Lease-renewal miss telemetry unchanged <a class="anchor" href="#lease-renewal-miss-telemetry-unchanged">#</a></h3>
+      </div>
+      <p class="glance">Lease-renewal failure reporting works the same; only variable names moved.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Artifacts</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The renewal-miss event still reports the HTTP status or "no_response" and clears the renewable marker; only local variable names moved around it.</p>
+<div class="blabel">Evidence</div>
+<p>`<code> </code>renew_miss_${ee.status ?? "no_response"}<code> </code>`</p>
+<hr></div>
+    </article>
+    <article class="card folded q1" id="build-stamp-repeated-across-the-bundle" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Build stamp repeated across the bundle <a class="anchor" href="#build-stamp-repeated-across-the-bundle">#</a></h3>
+      </div>
+      <p class="glance">The build stamp is copied throughout the bundle and all copies updated together.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The same build-constants object is inlined at roughly 66 places, and all of them updated together. The two builds are stamped under two hours apart on the same day.</p>
+<div class="blabel">Evidence</div>
+<p><code>BUILD_TIME: "2026-08-27T21:19:23Z"</code></p></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q2" id="version-bump-to-2-1-250" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Version bump to 2.1.250 <a class="anchor" href="#version-bump-to-2-1-250">#</a></h3>
+      </div>
+      <p class="glance">The version stamp moves to 2.1.250.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The build stamp advances to 2.1.250 with a new build time and commit hash. It feeds the user agent and metric keys; nothing else changed alongside it.</p>
+<div class="blabel">Evidence</div>
+<p><code>VERSION: "2.1.250"</code>, <code>GIT_SHA: "2f71b9f41af67bfcea88aef7a9f8a0d406825b99"</code>, <code>2f71b9f41af67bfcea88aef7a9f8a0d406825b99</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="shared-test-for-transient-http-statuses" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Shared test for transient HTTP statuses <a class="anchor" href="#shared-test-for-transient-http-statuses">#</a></h3>
+      </div>
+      <p class="glance">One rule now decides which server errors count as temporary, so retries behave consistently.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>One predicate now decides what counts as a temporary outage: any status 500 or above, plus 429 and 408. It marks watch-token startup responses as unavailable and, with the close-code decoder, decides whether a failed live subscribe is a retryable stall.</p>
+<div class="blabel">Evidence</div>
+<p><code>return e !== void 0 &amp;&amp; (e &gt;= 500 || e === 429 || e === 408);</code></p>
+<hr></div>
+    </article>
+  </div>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-opus-5 (effort low)</div></div><div><div class="k">Primary diff</div><div class="val">&lt;data root&gt;/claude-code/changes/changes-v2.1.250.md</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+
+  function setOpen(card,open){
+    var b=card.querySelector('.more'),body=card.querySelector('.card-body');
+    if(!b||!body)return;
+    body.hidden=!open;
+    card.classList.toggle('open',open);
+    b.setAttribute('aria-expanded',open);
+    b.firstChild.nodeValue=open?'Hide':'Details';
+  }
+
+  document.addEventListener('click',function(ev){
+    var b=ev.target.closest('.more');
+    if(b){setOpen(b.closest('.card'),b.getAttribute('aria-expanded')!=='true');return;}
+
+    var all=ev.target.closest('.openall');
+    if(!all)return;
+    var open=all.dataset.open!=='1';
+    all.dataset.open=open?'1':'0';
+    all.textContent=open?'Close all':'Open all';
+    var list=all.closest('.section-head').nextElementSibling;
+    while(list&&!list.classList.contains('card-list'))list=list.nextElementSibling;
+    if(list)list.querySelectorAll('.card').forEach(function(c){setOpen(c,open)});
+  });
+
+  // A link to a folded card is useless if it lands on a closed one.
+  function openHash(){
+    var el=location.hash&&document.querySelector(location.hash);
+    if(el&&el.classList.contains('folded')){setOpen(el,true);el.scrollIntoView({block:'center'})}
+  }
+  addEventListener('hashchange',openHash);openHash();
+
+  var bar=document.getElementById('filterbar');
+  if(bar){
+    var active=new Set(),
+        cards=[].slice.call(document.querySelectorAll('.card[data-f]')),
+        out=document.getElementById('fbcount');
+
+    function apply(){
+      var shown=0;
+      cards.forEach(function(c){
+        var f=c.dataset.f.split(' '),
+            ok=!active.size||f.some(function(k){return active.has(k)});
+        c.hidden=!ok;
+        if(ok)shown++;
+      });
+      // A heading over nothing is worse than no heading.
+      document.querySelectorAll('.card-list').forEach(function(list){
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
+            head=list.previousElementSibling;
+        list.hidden=!any;
+        while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;
+        if(head)head.hidden=!any;
+        var note=list.previousElementSibling;
+        if(note&&note.classList.contains('section-note'))note.hidden=!any;
+      });
+      out.textContent=active.size?shown+' of '+cards.length+' shown':'';
+      bar.classList.toggle('filtering',active.size>0);
+    }
+
+    bar.addEventListener('click',function(ev){
+      var b=ev.target.closest('.fchip');
+      if(!b)return;
+      var key=b.dataset.key;
+      if(!key){active.clear()}
+      else if(active.has(key)){active.delete(key)}
+      else{active.add(key)}
+      bar.querySelectorAll('.fchip').forEach(function(c){
+        c.classList.toggle('on',c.dataset.key?active.has(c.dataset.key):!active.size);
+      });
+      apply();
+    });
+  }
+</script>
+</body>
+</html>
