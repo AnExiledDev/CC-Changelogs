@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code v2.1.252 — Changelog</title>
+<link rel="canonical" href="https://changelogs.core-directive.com/v/2.1.252">
+<meta name="robots" content="noindex, follow">
+<meta name="description" content="Source-level changelog for Claude Code v2.1.252."><link rel="stylesheet" href="../site.css">
+</head>
+<body>
+
+<div class="oldsite"><div class="wrap wide"><div class="oldsite-row">
+  <p class="oldsite-text">This one's being retired. The changelogs live at
+    <a href="https://changelogs.core-directive.com/">changelogs.core-directive.com</a> now,
+    with search, the documentation diffs and the prompt captures.</p>
+  <a class="oldsite-go" href="https://changelogs.core-directive.com/v/2.1.252">Read v2.1.252 over there &rarr;</a>
+</div></div></div>
+
+<div class="nav"><div class="wrap wide"><div class="row">
+  <a class="brand" href="../index.html"><span class="logo-dot"></span> Claude Code Changelogs</a>
+  <a class="link" href="../index.html">Recent</a>
+  <a class="link" href="../archive.html">Archive</a>
+  <span class="spacer"></span>
+  <span class="nav-note">Source-level &middot; unofficial</span>
+  <a class="nav-x" href="https://x.com/AnExiledDev" target="_blank" rel="noopener" title="Follow on X for update notifications">
+    <svg width="15" height="15" viewBox="0 0 300 300" fill="currentColor" aria-hidden="true"><path d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L196.66 300H286L178.57 127.15Zm-36.26 41.27-11.87-16.55L36.12 19.48h40.65l76.18 106.07 11.87 16.55 99.05 137.94h-40.65l-80.91-112.62Z"/></svg>
+    <span>Updates</span>
+  </a>
+</div></div></div>
+
+
+<div class="minibar"><div class="wrap wide"><div class="row">
+  <a class="back" href="../archive.html">&larr; All changelogs</a>
+  <span class="mv">v<span class="v">2.1.252</span></span>
+  <span class="spacer"></span>
+<span class="mini-meta">claude &middot; claude-opus-5 (effort low)</span></div></div></div>
+
+<header class="hero detail">
+  <div class="wrap wide">
+    <div class="eyebrow"><span class="logo-dot"></span> Claude Code &middot; Source-level changelog</div>
+    <h1 class="title">Version <span class="v">2.1.252</span></h1>
+<div class="sub"><p>Several pieces of a reworked prompt system are in this build but switched off. Behind the carved-slate gate (<code>CLAUDE_CODE_CARVED_SLATE</code>, or the remote <code>tengu_carved_slate</code>, default false), Claude Code can send only what changed in your CLAUDE.md instead of the whole block each turn, emit an empty block rather than dropping it when CLAUDE.md has no content so prompt caching holds, and track instruction files as a list separate from memory files. The same gate, plus a <code>tengu_scratch</code> flag, guards a per-session scratchpad directory at <code>&lt;tmpdir&gt;/&lt;session id&gt;/scratchpad</code> that the model is told to use instead of <code>/tmp</code>, skipped entirely for background sessions. Two smaller pieces are also waiting: <code>/context</code> can reuse the tool descriptions actually sent rather than recomputing them, and session configuration now carries a system-prompt append for subagents that nothing yet sets.</p>
+<p>The messages Claude Code sends the model when a session's surroundings change now say why they were sent, naming the trigger as session start, compaction, policy refresh, a directory being added, settings sync or an account change, instead of one generic sentence. Task notifications are truncated at 100,000 characters with a warning logged, live for everyone and no flag needed, so one enormous notification cannot bloat the queue. Task output writes got safer and more explainable on macOS: the resolved path is now checked segment by segment against the device and inode of the pinned directory handle, a redirected write is refused and logged, and a directory that resolves to the same underlying location is accepted rather than rejected. When a write is refused, the error now tells you to restart with <code>CLAUDE_CODE_TMPDIR</code> pointing at a fresh directory. Failed session persistence writes in the remote-control bridge are no longer silent, logging <code>[bridge:repl] Internal event write failed</code> and reporting telemetry.</p></div>    <div class="meta-row">
+<span class="chip chip-official pending"><span class="k">Official notes</span> <b>pending</b></span>      <span class="chip"><span class="k">Package</span> <b>@anthropic-ai/claude-code</b></span>
+<span class="chip"><span class="k">Diff</span> <b>v2.1.251 → v2.1.252</b></span><span class="chip"><span class="k">Provider</span> <b>claude</b></span><span class="chip"><span class="k">Model</span> <b>claude-opus-5 (effort low)</b></span>    </div>
+    <div class="stats">
+  <div class="stat f"><div class="n">1</div><div class="l">Use it now</div></div>
+  <div class="stat b"><div class="n">6</div><div class="l">You&#39;ll notice</div></div>
+  <div class="stat d"><div class="n">5</div><div class="l">Not switched on</div></div>
+  <div class="stat s"><div class="n">3</div><div class="l">Env Vars / Flags</div></div>
+</div>
+  </div>
+</header>
+
+<div class="wrap wide">
+<main>
+  <div class="section-head official-head pending">
+    <h2>Official Changelog</h2><div class="ln"></div>
+    <span class="src-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Awaiting notes</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card official pending">
+      <div class="ob">
+        <div class="ob-left">
+          <span class="ob-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div>
+            <div class="ob-title">Official release notes pending</div>
+            <div class="ob-sub">Anthropic has not published official notes for v2.1.252 yet. This section updates automatically when the entry appears in the upstream changelog.</div>
+          </div>
+        </div>
+        <a class="ob-link" href="https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Official changelog &#8599;</a>
+      </div>
+    </article>
+  </div>
+  <div class="group-divider">
+    <div class="gd-title">Source-Level Analysis</div>
+    <div class="gd-sub">Reverse-engineered from a diff of the bundled CLI &mdash; deeper, structured detail. <b>Unofficial.</b></div>
+  </div>
+  <div class="section-head">
+    <h2>Highlights</h2><div class="ln"></div>
+    <span class="ct">1 of 22</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card highlights">
+      <ul class="official-list">
+        <li><a href="#task-output-directory-errors-now-tell-you-how-to-recover-and">Task output errors now tell you to restart with CLAUDE_CODE_TMPDIR set, and macOS aliases no longer break it.</a> <code class="tok">CLAUDE_CODE_TMPDIR</code></li>
+      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        The rest of the release is below, all 22 findings. Filter it, or open any card for the full detail and source evidence.
+      </div>
+    </article>
+  </div>
+  <div class="section-head soon-head">
+    <h2>Present but switched off</h2><div class="ln"></div>
+    <span class="ct">4 of 5</span>
+  </div>
+  <div class="official-wrap">
+    <article class="card soonblock">
+      <ul class="official-list">
+        <li><a href="#scratchpad-directory-for-the-model-s-temporary-files">A per-session scratchpad directory and its prompt line need both tengu_scratch and CLAUDE_CODE_CARVED_SLATE, both off.</a> <code class="tok">CLAUDE_CODE_CARVED_SLATE</code><code class="tok">CLAUDE_CODE_SESSION_KIND</code><span class="ar">Session Environment</span></li>
+        <li><a href="#sending-only-what-changed-in-claude-md-instead-of-the-whole-">Incremental instruction-file updates and recorded system prompts sit behind CLAUDE_CODE_CARVED_SLATE, default false.</a> <code class="tok">CLAUDE_CODE_CARVED_SLATE</code><span class="ar">Context Management</span></li>
+        <li><a href="#instruction-files-tracked-separately-from-memory-files">A separate instruction-file list exists in session context but only fills when CLAUDE_CODE_CARVED_SLATE is set.</a> <code class="tok">CLAUDE_CODE_CARVED_SLATE</code><span class="ar">Context Management</span></li>
+        <li><a href="#subagents-can-take-their-own-system-prompt-append">A separate subagent system-prompt append setting exists in session config with no caller wiring it up.</a><span class="ar">Subagents</span></li>
+      </ul>
+      <div class="official-foot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        Shipped inside the bundle with its gate off, its guard hardcoded false, or nothing calling it. What the code shows, not a roadmap: no claim about what is released, announced or planned.
+      </div>
+    </article>
+  </div>
+  <div class="filterbar" id="filterbar">
+    <span class="fb-label">Filter</span>
+    <div class="fb-chips">
+      <button class="fchip all on" type="button" data-key="">Everything<span class="fn">22</span></button>
+      <button class="fchip kind" type="button" data-key="k-new-features">New Features<span class="fn">6</span></button>
+      <button class="fchip kind" type="button" data-key="k-in-development">In Development<span class="fn">6</span></button>
+      <button class="fchip kind" type="button" data-key="k-internal-changes">Internal Changes<span class="fn">7</span></button>
+      <button class="fchip kind" type="button" data-key="k-improvements">Improvements<span class="fn">3</span></button>
+      <button class="fchip tok" type="button" data-key="x-slash">Slash commands<span class="fn">1</span></button>
+      <button class="fchip tok" type="button" data-key="x-env">Env vars<span class="fn">5</span></button>
+      <button class="fchip juice" type="button" data-key="juicy">Juicy<span class="fn">4</span></button>
+      <button class="fchip soon" type="button" data-key="upcoming">Coming soon<span class="fn">5</span></button>
+    </div>
+    <span class="fb-count" id="fbcount"></span>
+  </div>
+  <div class="section-head lead">
+    <h2>What probably matters to you</h2><div class="ln"></div>
+<span class="ct">7 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+<p class="section-note">Anything you can use today, anything that visibly changes, and anything worth poking at. One line each, open for detail.</p>  <div class="card-list">
+  <div class="col">
+    <article class="card folded q4" id="task-output-directory-errors-now-tell-you-how-to-recover-and" data-f="juicy k-new-features t-use x-env">
+      <div class="card-top">
+        <h3>Task output directory errors now tell you how to recover, and macOS aliases are tolerated <a class="anchor" href="#task-output-directory-errors-now-tell-you-how-to-recover-and">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">Task output errors now tell you to restart with CLAUDE_CODE_TMPDIR set, and macOS aliases no longer break it.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">CLAUDE_CODE_TMPDIR</code></div>        <span class="where"><b>Use it now</b> &middot; Background Tasks</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>When Claude Code refuses to write a task's output because the temporary tasks directory has moved or turned into a symlink, the error now tells you what to do: restart with <code>CLAUDE_CODE_TMPDIR</code> pointing at a fresh directory. On macOS, a directory that resolves to the same underlying location is now accepted instead of refused.</p>
+<div class="blabel">Details</div>
+<ul><li>Both behaviours are unconditional, no flag.</li><li>The alias tolerance checks the platform and applies only on macOS, where a path can legitimately resolve to the same device and inode through a different route; other platforms still refuse.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>restart Claude Code with CLAUDE_CODE_TMPDIR set to a fresh directory</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q3" id="scratchpad-directory-for-the-model-s-temporary-files" data-f="juicy k-in-development t-soon upcoming x-env">
+      <div class="card-top">
+        <h3>Scratchpad directory for the model's temporary files <a class="anchor" href="#scratchpad-directory-for-the-model-s-temporary-files">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">Claude can get a private per-session scratch folder instead of writing to /tmp, but it's disabled here.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">CLAUDE_CODE_CARVED_SLATE</code><code class="tok">CLAUDE_CODE_SESSION_KIND</code></div>        <span class="where"><b>Not switched on</b> &middot; Session Environment</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Claude Code can hand the model a private per-session directory for scratch files, at <code>&lt;tmpdir&gt;/&lt;session id&gt;/scratchpad</code>, with a system prompt line telling it to use that instead of <code>/tmp</code>. It is off in this build: it requires both the <code>tengu_scratch</code> flag (or an artifact-tool eligibility check) and the carved-slate flag, which reads <code>CLAUDE_CODE_CARVED_SLATE</code> or the remote <code>tengu_carved_slate</code> and defaults to false. It is also skipped entirely when <code>CLAUDE_CODE_SESSION_KIND</code> is <code>bg</code>.</p>
+<div class="blabel">Details</div>
+<ul><li>Both flags default to false, so nothing is created or announced unless they are turned on.</li><li>A matching withdrawal path tells the model the directory is no longer available.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Scratchpad directory: ${e} — always use it for temporary files</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="instruction-files-tracked-separately-from-memory-files" data-f="k-in-development t-soon upcoming x-env">
+      <div class="card-top">
+        <h3>Instruction files tracked separately from memory files <a class="anchor" href="#instruction-files-tracked-separately-from-memory-files">#</a></h3>
+      </div>
+      <p class="glance">Your instruction files are tracked apart from memory files, but the code returns early unless a flag is on.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">CLAUDE_CODE_CARVED_SLATE</code></div>        <span class="where"><b>Not switched on</b> &middot; Context Management</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Session context now carries a separate list of instruction files alongside the memory files list, part of an in-progress rework that keeps CLAUDE.md and instruction content as stable, always-present prompt blocks. The code that fills it returns immediately unless the carved-slate gate is on (<code>CLAUDE_CODE_CARVED_SLATE</code> or the remote <code>tengu_carved_slate</code>, default false), and it is also skipped for bare forks.</p>
+<div class="blabel">Details</div>
+<ul><li>Nothing in this build turns the flag on, so the field stays unpopulated and prompts are built the old way.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>instructionFiles: v</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="a-tool-can-present-a-stored-description-instead-of-its-live-" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>A tool can present a stored description instead of its live one <a class="anchor" href="#a-tool-can-present-a-stored-description-instead-of-its-live-">#</a></h3>
+      </div>
+      <p class="glance">A tool can show the model a previously recorded description instead of its current one.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Tool Definitions</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>When a tool definition is built for the model, a previously recorded description now takes precedence over the tool's own description, falling back to the live one when no recording exists.</p>
+<div class="blabel">Details</div>
+<ul><li>Straight fallback with no flag; it only changes anything for tools that carry a recorded description.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>t.recordedDescription ?? fe.description</code></p></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q3" id="scratchpad-directory-announced-in-context-change-messages" data-f="juicy k-new-features t-notice">
+      <div class="card-top">
+        <h3>Scratchpad directory announced in context-change messages <a class="anchor" href="#scratchpad-directory-announced-in-context-change-messages">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">Claude can now be told about a scratchpad directory, and told when it goes away.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Session Context</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The messages Claude Code sends the model when the session's surroundings change can now announce a scratchpad directory, and can withdraw it: "The scratchpad directory announced earlier is no longer available; use it no further." It also appears in the initial environment block next to Platform, Shell and OS Version.</p>
+<div class="blabel">Details</div>
+<ul><li>Fires whenever the scratchpad path appears or disappears from session context; what populates that path is gated separately (see the scratchpad entry below).</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>The scratchpad directory announced earlier is no longer available; use it no further.</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q3" id="sending-only-what-changed-in-claude-md-instead-of-the-whole-" data-f="juicy k-in-development t-soon upcoming x-env">
+      <div class="card-top">
+        <h3>Sending only what changed in CLAUDE.md instead of the whole block each turn <a class="anchor" href="#sending-only-what-changed-in-claude-md-instead-of-the-whole-">#</a></h3>
+<div class="tags"><span class="tag key">Juicy</span></div>      </div>
+      <p class="glance">Claude can send only the changed parts of your CLAUDE.md each turn, but it's switched off here.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">CLAUDE_CODE_CARVED_SLATE</code></div>        <span class="where"><b>Not switched on</b> &middot; Context Management</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Claude Code can now compare the instruction files it has already announced against the current set and send just the difference, with lines such as "Instruction files were re-read" for changed copies and a list of ones no longer present. It also records the exact system prompt and tool descriptions it sent so unchanged tool descriptions do not have to be rebuilt. Off in this build: it needs the carved-slate flag (<code>CLAUDE_CODE_CARVED_SLATE</code> or remote <code>tengu_carved_slate</code>, default false).</p>
+<div class="blabel">Details</div>
+<ul><li>Additionally suppressed whenever a custom system prompt, an appended system prompt, or an appended subagent system prompt is in play.</li><li>The recorded prompt snapshot is never shown to the model; it renders as nothing and is only used internally.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>Instruction files were re-read</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="subagents-can-take-their-own-system-prompt-append" data-f="k-internal-changes t-soon upcoming">
+      <div class="card-top">
+        <h3>Subagents can take their own system-prompt append <a class="anchor" href="#subagents-can-take-their-own-system-prompt-append">#</a></h3>
+      </div>
+      <p class="glance">Subagents can carry their own appended system prompt text, but nothing sets it yet.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Not switched on</b> &middot; Subagents</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Session configuration now carries a separate setting for text appended to a subagent's system prompt, distinct from the append applied to the main session. Nothing in this change sets it, so it is plumbing waiting on a caller.</p>
+<div class="blabel">Details</div>
+<ul><li>Passed through alongside the existing main-session append when agent configuration is built.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>appendSubagentSystemPrompt: v.appendSubagentSystemPrompt</code></p>
+<hr></div>
+    </article>
+  </div>
+  </div>
+  <div class="group-divider rest">
+    <div class="gd-title">Everything else &middot; 15</div>
+    <div class="gd-sub">Smaller changes and internals, grouped as the pipeline found them. Nothing is dropped, it is only further down.</div>
+  </div>
+  <div class="section-head muted">
+    <h2>New Features</h2><div class="ln"></div>
+<span class="ct">4 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
+  <div class="col">
+    <article class="card folded q2" id="task-notifications-capped-at-100-000-characters" data-f="k-new-features t-notice">
+      <div class="card-top">
+        <h3>Task notifications capped at 100,000 characters <a class="anchor" href="#task-notifications-capped-at-100-000-characters">#</a></h3>
+      </div>
+      <p class="glance">Huge task notifications get trimmed at 100,000 characters so they don't clog the queue.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Notifications produced by tasks are now truncated to 100,000 characters before being queued, with a warning logged when that happens. This is live for everyone with no flag, and stops a single huge task notification from bloating the queue.</p>
+<div class="blabel">Details</div>
+<ul><li>Applies only to queued notifications of the task-notification kind.</li><li>The log line reports the original and truncated lengths.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>enqueuePendingNotification: task-notification capped from ${Rn.value.length} to ${Mr.length} chars</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q1" id="named-triggers-behind-the-context-re-read-notices" data-f="k-new-features t-internal">
+      <div class="card-top">
+        <h3>Named triggers behind the context re-read notices <a class="anchor" href="#named-triggers-behind-the-context-re-read-notices">#</a></h3>
+      </div>
+      <p class="glance">The reasons session context gets re-read are now a named list, each with its own wording.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Session Context</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The set of triggers that can cause session context to be re-read is now an explicit list: session start, compaction, policy refresh, directory added, settings sync and account change, each with a phrase used in the message shown to the model.</p>
+<div class="blabel">Details</div>
+<ul><li>Internal to the context refresh mechanism; readers see the effect in the wording of the change notices.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>policy_refresh</code></p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q2" id="session-context-change-notices-now-say-what-triggered-them" data-f="k-new-features t-notice">
+      <div class="card-top">
+        <h3>Session context change notices now say what triggered them <a class="anchor" href="#session-context-change-notices-now-say-what-triggered-them">#</a></h3>
+      </div>
+      <p class="glance">Claude is now told why your session context changed, like compaction, settings sync or account change.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Session Context</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The note Claude Code sends the model when your account, attached project, git status or Perforce mode changes now states the reason: when this session started, after the conversation was compacted, after a working directory was added, after settings were synced onto this machine, after the account changed, or after the organization's managed settings changed. Previously it was a single generic sentence.</p>
+<div class="blabel">Details</div>
+<ul><li>If none of those values apply any more, Claude Code now says explicitly that the previously announced account, project and git status no longer hold, instead of sending nothing.</li><li>Always active whenever session context changes.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>The session context was re-read</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q1" id="context-refreshes-now-record-why-they-happened" data-f="k-new-features t-internal">
+      <div class="card-top">
+        <h3>Context refreshes now record why they happened <a class="anchor" href="#context-refreshes-now-record-why-they-happened">#</a></h3>
+      </div>
+      <p class="glance">Rebuilt session context now records which trigger caused it, phrased for the model.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Session Context</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>When Claude Code throws away and rebuilds a session's cached user context, it now records the trigger: session start, compaction, policy refresh, a directory being added, settings sync, or an account change. Each maps to a phrase such as "after the organization's managed settings changed".</p>
+<div class="blabel">Details</div>
+<ul><li>Unconditional internal change, no flag.</li><li>The refreshed context now tracks instruction files as well as memory files.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>"after the organization's managed settings changed"</code></p>
+<hr></div>
+    </article>
+  </div>
+  </div>
+  <div class="section-head muted">
+    <h2>Improvements</h2><div class="ln"></div>
+<span class="ct">3 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
+  <div class="col">
+    <article class="card folded q2" id="refused-task-output-writes-now-include-a-recovery-hint" data-f="k-improvements t-notice">
+      <div class="card-top">
+        <h3>Refused task output writes now include a recovery hint <a class="anchor" href="#refused-task-output-writes-now-include-a-recovery-hint">#</a></h3>
+      </div>
+      <p class="glance">When a task's output can't be written, the error now tells you how to recover, not just why.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The error raised when Claude Code will not write a task's output to its directory now appends a recovery instruction when the caller supplies one, rather than only naming the reason.</p>
+<div class="blabel">Evidence</div>
+<p><code>task output swap refused (${e}): ${t}</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q3" id="stricter-check-that-task-output-is-written-to-the-intended-d" data-f="k-improvements t-notice">
+      <div class="card-top">
+        <h3>Stricter check that task output is written to the intended directory on macOS <a class="anchor" href="#stricter-check-that-task-output-is-written-to-the-intended-d">#</a></h3>
+      </div>
+      <p class="glance">On macOS, task output is refused if a symlink or swapped directory would redirect where it lands.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>You&#39;ll notice</b> &middot; Task Output</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>On macOS, before writing task output Claude Code now verifies that the resolved path really is the directory it pinned earlier, walking each path segment and comparing the device and inode against the pinned handle rather than trusting the path string. If a symlink or replaced directory redirects the write, it is refused and logged as a warning. On other platforms the check returns false immediately and nothing changes.</p>
+<div class="blabel">Details</div>
+<ul><li>Refusals log the resolved path and the reason: not reachable by a link-free route.</li><li>Failures swapping task output into place now include text telling you how to recover.</li><li>No feature flag; active on macOS in this build.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>pinWriteTarget: ${w} resolves to ${O}: not the same directory by a link-free route; refused</code></p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q2" id="failed-session-persistence-writes-are-now-reported-instead-o" data-f="k-improvements t-internal">
+      <div class="card-top">
+        <h3>Failed session persistence writes are now reported instead of passing silently <a class="anchor" href="#failed-session-persistence-writes-are-now-reported-instead-o">#</a></h3>
+      </div>
+      <p class="glance">Failed writes of session events during remote control are now logged and reported instead of vanishing.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>When the remote-control bridge fails to write an internal session event to disk, it now logs <code>[bridge:repl] Internal event write failed</code> and reports a <code>tengu_session_persistence_failed</code> telemetry event, instead of the failure going unnoticed.</p>
+<div class="blabel">Details</div>
+<ul><li>Fires only on a write failure inside the bridge persistence path; no flag.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>tengu_session_persistence_failed</code></p>
+<hr></div>
+    </article>
+  </div>
+  </div>
+  <div class="section-head muted">
+    <h2>In Development</h2><div class="ln"></div>
+<span class="ct">3 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
+  <div class="col">
+    <article class="card folded q3" id="context-breakdown-reuses-the-tool-descriptions-that-were-act" data-f="k-in-development t-notice x-slash">
+      <div class="card-top">
+        <h3>Context breakdown reuses the tool descriptions that were actually sent <a class="anchor" href="#context-breakdown-reuses-the-tool-descriptions-that-were-act">#</a></h3>
+      </div>
+      <p class="glance">/context can report the tool description sizes actually sent rather than recalculating them.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">/context</code></div>        <span class="where"><b>You&#39;ll notice</b> &middot; Context Management</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The token counting behind the context breakdown for MCP tools, built-in tools, skills and slash commands can now take the recorded description text from the last prompt that was sent, so <code>/context</code> reports the same numbers the model actually received rather than recomputing them.</p>
+<div class="blabel">Details</div>
+<ul><li>Only populated when the carved-slate flag is on (<code>CLAUDE_CODE_CARVED_SLATE</code> or <code>tengu_carved_slate</code>), which defaults to off, so today the counts are recomputed as before.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>recordedDescription: d?.get(A.name)</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="empty-claude-md-now-emitted-as-a-blank-block-instead-of-bein" data-f="k-in-development t-soon upcoming x-env">
+      <div class="card-top">
+        <h3>Empty CLAUDE.md now emitted as a blank block instead of being dropped <a class="anchor" href="#empty-claude-md-now-emitted-as-a-blank-block-instead-of-bein">#</a></h3>
+      </div>
+      <p class="glance">An empty CLAUDE.md leaves a blank placeholder so prompt caching holds, but only behind a flag.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+<div class="toks"><code class="tok">CLAUDE_CODE_CARVED_SLATE</code></div>        <span class="where"><b>Not switched on</b> &middot; Context Management</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>With no CLAUDE.md content, the context block for it was previously left out entirely. Under the same carved-slate gate it is now emitted as an empty string, keeping the prompt's shape identical between turns so prompt caching holds.</p>
+<div class="blabel">Details</div>
+<ul><li>Gated on <code>CLAUDE_CODE_CARVED_SLATE</code> or <code>tengu_carved_slate</code>, default false, so today the key is still omitted.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>...(d ? { claudeMd: d } : Ml() &amp;&amp; { claudeMd: "" })</code></p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q1" id="scratchpad-path-included-in-environment-change-tracking" data-f="k-in-development t-internal">
+      <div class="card-top">
+        <h3>Scratchpad path included in environment change tracking <a class="anchor" href="#scratchpad-path-included-in-environment-change-tracking">#</a></h3>
+      </div>
+      <p class="glance">A changed scratch folder is now noticed and reported like a changed working directory or git repo.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The environment snapshot Claude Code keeps for a session now has an optional scratchpad directory field, so a change to it is detected and reported like a change to the working directory, git repo or worktree.</p>
+<div class="blabel">Details</div>
+<ul><li>Only ever populated when the scratchpad feature's flags are on, which they are not by default in this build.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>field: "scratchpadDirectory"</code></p>
+<hr></div>
+    </article>
+  </div>
+  </div>
+  <div class="section-head muted">
+    <h2>Internal Changes</h2><div class="ln"></div>
+<span class="ct">5 items</span><button class="openall" type="button" data-open="0">Open all</button>  </div>
+  <div class="card-list">
+  <div class="col">
+    <article class="card folded q2" id="instruction-file-filtering-restructured-into-a-per-file-chec" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Instruction file filtering restructured into a per-file check <a class="anchor" href="#instruction-file-filtering-restructured-into-a-per-file-chec">#</a></h3>
+      </div>
+      <p class="glance">Whether your project and local instruction files get included is now decided file by file, still on by default.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Instruction Files</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The code that decides whether project and local instruction files go into the prompt was rewritten from a single early exit into a per-file test, so it composes with the new change-tracking work. The <code>tengu_paper_halyard</code> flag that can suppress those files still defaults to off, so they are included unless it is turned on remotely.</p>
+<div class="blabel">Evidence</div>
+<p><code>tengu_paper_halyard</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="subagent-system-prompt-suffix-passed-to-one-more-prompt-buil" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Subagent system prompt suffix passed to one more prompt-building call <a class="anchor" href="#subagent-system-prompt-suffix-passed-to-one-more-prompt-buil">#</a></h3>
+      </div>
+      <p class="glance">Extra text appended to a subagent's system prompt now reaches more of the session setup.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Subagents</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The existing option for appending text to a subagent's system prompt is now forwarded into the code that builds a session's tool permission context and original messages, next to the custom and appended system prompt options.</p>
+<div class="blabel">Evidence</div>
+<p><code>appendSubagentSystemPrompt: k</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="two-new-message-kinds-recognised-when-assembling-a-conversat" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Two new message kinds recognised when assembling a conversation <a class="anchor" href="#two-new-message-kinds-recognised-when-assembling-a-conversat">#</a></h3>
+      </div>
+      <p class="glance">Two more kinds of attached content can join your conversation, and neither shows up in history search.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Conversation Assembly</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>Claude Code now recognises two extra kinds of attached content, one carrying instructions and one a snapshot of the prompt, when it decides what goes into the conversation sent to the model. Both are excluded from the message list used for similarity and history search, so they will not surface as past-conversation matches.</p>
+<div class="blabel">Details</div>
+<ul><li>Added to the same lists that already handle types such as session context and date.</li><li>The list entries are unconditional, but nothing in this build shows what produces these two kinds, so whether you ever see them depends on code outside this change.</li></ul>
+<div class="blabel">Evidence</div>
+<p>`"instructions",</p>
+<p>"prompt_snapshot",`</p>
+<hr></div>
+    </article>
+  </div>
+  <div class="col">
+    <article class="card folded q1" id="poll-event-queue-cap-and-reserved-kind-rejection-now-with-re" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Poll event queue cap and reserved-kind rejection, now with renamed internals <a class="anchor" href="#poll-event-queue-cap-and-reserved-kind-rejection-now-with-re">#</a></h3>
+      </div>
+      <p class="glance">Poll events still cap at 1000 pending and reject reserved kinds; only internal names moved.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The queue that holds poll events still rejects anything arriving once 1000 events are pending, reporting a queue cap telemetry event, and still rejects events whose kind is reserved for a server-authored producer unless the caller passes <code>allowReservedKind</code>. Both guardrails are unconditional and were already live; what changed is internal naming and which helper performs the reserved-kind check.</p>
+<div class="blabel">Details</div>
+<ul><li>The cap is a fixed 1000 pending events.</li><li>Reserved-kind rejections name the offending kind in the error.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>poll event rejected: queue depth cap</code>, <code>poll event rejected: kind "${Rn.kind}" is reserved for a server-authored producer</code></p>
+<hr></div>
+    </article>
+    <article class="card folded q2" id="version-bumped-to-2-1-252" data-f="k-internal-changes t-internal">
+      <div class="card-top">
+        <h3>Version bumped to 2.1.252 <a class="anchor" href="#version-bumped-to-2-1-252">#</a></h3>
+      </div>
+      <p class="glance">You are now on version 2.1.252.</p>
+      <div class="card-actions">
+        <button class="more" type="button" aria-expanded="false">Details<span class="chev">&#9662;</span></button>
+        <span class="where"><b>Under the hood</b> &middot; Elsewhere</span>
+      </div>
+      <div class="card-body" hidden><div class="blabel">What</div>
+<p>The bundled version, build time and commit stamps were updated for this release. No behaviour changes ride along with them.</p>
+<div class="blabel">Details</div>
+<ul><li>The same constants object is repeated across many bundled copies, and every copy was updated identically.</li></ul>
+<div class="blabel">Evidence</div>
+<p><code>VERSION: "2.1.252"</code></p>
+<hr></div>
+    </article>
+  </div>
+  </div>
+
+  <footer>
+    <div>Generated from a source-level diff of the published npm package &mdash; reverse-engineered from the bundled CLI, not official release notes.</div>
+    <div class="gen">
+<div><div class="k">Provider · Model</div><div class="val">claude · claude-opus-5 (effort low)</div></div><div><div class="k">Primary diff</div><div class="val">&lt;data root&gt;/claude-code/changes/changes-v2.1.252.md</div></div>    </div>
+  </footer>
+</main>
+</div>
+
+<button class="totop" title="Back to top">&#8593;</button>
+
+<script>
+  var t=document.querySelector('.totop');
+  t.addEventListener('click',function(){scrollTo({top:0,behavior:'smooth'})});
+  addEventListener('scroll',function(){t.classList.toggle('show',scrollY>500)});
+
+  function setOpen(card,open){
+    var b=card.querySelector('.more'),body=card.querySelector('.card-body');
+    if(!b||!body)return;
+    body.hidden=!open;
+    card.classList.toggle('open',open);
+    b.setAttribute('aria-expanded',open);
+    b.firstChild.nodeValue=open?'Hide':'Details';
+  }
+
+  document.addEventListener('click',function(ev){
+    var b=ev.target.closest('.more');
+    if(b){setOpen(b.closest('.card'),b.getAttribute('aria-expanded')!=='true');return;}
+
+    var all=ev.target.closest('.openall');
+    if(!all)return;
+    var open=all.dataset.open!=='1';
+    all.dataset.open=open?'1':'0';
+    all.textContent=open?'Close all':'Open all';
+    var list=all.closest('.section-head').nextElementSibling;
+    while(list&&!list.classList.contains('card-list'))list=list.nextElementSibling;
+    if(list)list.querySelectorAll('.card').forEach(function(c){setOpen(c,open)});
+  });
+
+  // A link to a folded card is useless if it lands on a closed one.
+  function openHash(){
+    var el=location.hash&&document.querySelector(location.hash);
+    if(el&&el.classList.contains('folded')){setOpen(el,true);el.scrollIntoView({block:'center'})}
+  }
+  addEventListener('hashchange',openHash);openHash();
+
+  var bar=document.getElementById('filterbar');
+  if(bar){
+    var active=new Set(),
+        cards=[].slice.call(document.querySelectorAll('.card[data-f]')),
+        out=document.getElementById('fbcount');
+
+    function apply(){
+      var shown=0;
+      cards.forEach(function(c){
+        var f=c.dataset.f.split(' '),
+            ok=!active.size||f.some(function(k){return active.has(k)});
+        c.hidden=!ok;
+        if(ok)shown++;
+      });
+      // A heading over nothing is worse than no heading.
+      document.querySelectorAll('.card-list').forEach(function(list){
+        var any=[].some.call(list.querySelectorAll('.card'),function(c){return !c.hidden}),
+            head=list.previousElementSibling;
+        list.hidden=!any;
+        while(head&&!head.classList.contains('section-head'))head=head.previousElementSibling;
+        if(head)head.hidden=!any;
+        var note=list.previousElementSibling;
+        if(note&&note.classList.contains('section-note'))note.hidden=!any;
+      });
+      out.textContent=active.size?shown+' of '+cards.length+' shown':'';
+      bar.classList.toggle('filtering',active.size>0);
+    }
+
+    bar.addEventListener('click',function(ev){
+      var b=ev.target.closest('.fchip');
+      if(!b)return;
+      var key=b.dataset.key;
+      if(!key){active.clear()}
+      else if(active.has(key)){active.delete(key)}
+      else{active.add(key)}
+      bar.querySelectorAll('.fchip').forEach(function(c){
+        c.classList.toggle('on',c.dataset.key?active.has(c.dataset.key):!active.size);
+      });
+      apply();
+    });
+  }
+</script>
+</body>
+</html>
